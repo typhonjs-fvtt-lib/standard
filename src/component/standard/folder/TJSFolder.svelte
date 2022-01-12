@@ -80,13 +80,12 @@
     * If neither `--tjs-contents-padding` or `--tjs-summary-font-size` is defined the default is `13px * 0.8`.
     */
 
-   import { onDestroy } from 'svelte';
+   import { onDestroy }     from 'svelte';
 
-   import { writable }  from 'svelte/store';
+   import { writable }      from 'svelte/store';
 
-   import {
-      applyStyles,
-      toggleDetails }   from '@typhonjs-fvtt/svelte-standard/action';
+   import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
 
    export let styles;
 

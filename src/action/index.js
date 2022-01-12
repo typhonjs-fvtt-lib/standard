@@ -1,4 +1,3 @@
-export * from './applyStyles.js';
 export * from './autoBlur.js';
 
 export * from './animation/composable/animate.js';

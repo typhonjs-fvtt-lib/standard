@@ -4,39 +4,6 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 /**
- * Provides an action to apply style properties provided as an object.
- *
- * @param {HTMLElement} node - Target element
- *
- * @param {object}      properties - Key / value object of properties to set.
- *
- * @returns {Function} Update function.
- */
-function applyStyles(node, properties)
-{
-   /** Sets properties on node. */
-   function setProperties()
-   {
-      if (typeof properties !== 'object') { return; }
-
-      for (const prop of Object.keys(properties))
-      {
-         node.style.setProperty(`${prop}`, properties[prop]);
-      }
-   }
-
-   setProperties();
-
-   return {
-      update(newProperties)
-      {
-         properties = newProperties;
-         setProperties();
-      }
-   };
-}
-
-/**
  * Provides an action to blur the element when any pointer down event occurs outside the element. This can be useful
  * for input elements including select to blur / unfocus the element when any pointer down occurs outside the element.
  *
@@ -521,5 +488,5 @@ function storeScrolltop(element, store)
    };
 }
 
-export { animate, applyStyles, autoBlur, composable, ripple, rippleFocus, storeScrolltop, toggleDetails };
+export { animate, autoBlur, composable, ripple, rippleFocus, storeScrolltop, toggleDetails };
 //# sourceMappingURL=index.js.map

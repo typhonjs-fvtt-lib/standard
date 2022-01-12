@@ -17,9 +17,8 @@
 
    import { onMount }      from 'svelte';
    import { writable }     from 'svelte/store';
-   import {
-      autoBlur,
-      applyStyles }        from '@typhonjs-fvtt/svelte-standard/action';
+   import { applyStyles }  from '@typhonjs-svelte/lib/action';
+   import { autoBlur }     from '@typhonjs-fvtt/svelte-standard/action';
 
    export let select;
    export let selected;

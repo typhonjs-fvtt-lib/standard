@@ -7,7 +7,7 @@
     * direct CSS props.
     */
 
-   import { applyStyles } from '@typhonjs-fvtt/svelte-standard/action';
+   import { applyStyles } from '@typhonjs-svelte/lib/action';
 
    export let styles;
 </script>

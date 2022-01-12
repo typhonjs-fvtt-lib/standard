@@ -32,16 +32,6 @@ declare function animate({ duration, keyframes, options, event, debounce: deboun
     destroy: () => any;
 };
 /**
- * Provides an action to apply style properties provided as an object.
- *
- * @param {HTMLElement} node - Target element
- *
- * @param {object}      properties - Key / value object of properties to set.
- *
- * @returns {Function} Update function.
- */
-declare function applyStyles(node: HTMLElement, properties: object): Function;
-/**
  * Provides an action to blur the element when any pointer down event occurs outside the element. This can be useful
  * for input elements including select to blur / unfocus the element when any pointer down occurs outside the element.
  *
@@ -148,4 +138,4 @@ declare function storeScrolltop(element: HTMLElement, store: object): {
  */
 declare function toggleDetails(details: HTMLDetailsElement, booleanStore: svelte_store.Writable<boolean>): object;
 
-export { animate, applyStyles, autoBlur, composable, ripple, rippleFocus, storeScrolltop, toggleDetails };
+export { animate, autoBlur, composable, ripple, rippleFocus, storeScrolltop, toggleDetails };
