@@ -1,5 +1,8 @@
 import { SvelteComponent } from 'svelte/types/runtime/internal/Component';
 
+declare class TJSContextMenu extends SvelteComponent {
+    constructor(options: any);
+}
 declare class TJSFolder extends SvelteComponent {
     constructor(options: any);
 }
@@ -16,4 +19,4 @@ declare class TJSToggleIconButton extends SvelteComponent {
     constructor(options: any);
 }
 
-export { TJSFolder, TJSMenu, TJSSelect, TJSStyleProperties, TJSToggleIconButton };
+export { TJSContextMenu, TJSFolder, TJSMenu, TJSSelect, TJSStyleProperties, TJSToggleIconButton };

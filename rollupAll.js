@@ -115,3 +115,18 @@ for (const config of rollupConfigs)
       types: './index.d.ts'
    });
 }
+
+// Handle application & application/legacy by copying the source.
+fs.emptyDirSync('./_dist/application');
+fs.copySync('./src/application', './_dist/application');
+
+fs.writeJSONSync(`./_dist/application/package.json`, {
+   main: './index.js',
+   module: './index.js',
+   type: 'module'
+});
+
+await generateTSDef({
+   main: './_dist/application/index.js',
+   output: './_types/application/index.d.ts'
+});

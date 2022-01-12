@@ -13,6 +13,10 @@
       "types": "./_dist/action/index.d.ts",
       "import": "./_dist/action/index.js"
     },
+    "./application": {
+      "types": "./_dist/application/index.d.ts",
+      "import": "./_dist/application/index.js"
+    },
     "./component": {
       "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
