@@ -1,0 +1,5 @@
+.github/
+.dst/
+_dist/
+docs/
+src/**/*.svelte

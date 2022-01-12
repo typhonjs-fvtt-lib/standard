@@ -1,0 +1,12 @@
+#temporary / remove when published
+package-lock.json
+
+.idea
+.DS_Store
+empty.js
+npm-debug.log
+.dts/
+coverage/
+debug/
+docs/
+node_modules/
