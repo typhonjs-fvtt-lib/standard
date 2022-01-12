@@ -86,7 +86,7 @@
 
    import {
       applyStyles,
-      toggleDetails }   from '@typhonjs-fvtt/svelte-standard/component';
+      toggleDetails }   from '@typhonjs-fvtt/svelte-standard/action';
 
    export let styles;
 

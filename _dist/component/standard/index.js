@@ -1,9 +1,8 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, add_render_callback, create_bidirectional_transition, destroy_each, component_subscribe, select_option, select_value } from 'svelte/internal';
-import { applyStyles, autoBlur } from '@typhonjs-fvtt/svelte-standard/action';
+import { applyStyles, toggleDetails, autoBlur } from '@typhonjs-fvtt/svelte-standard/action';
 import { localize } from '@typhonjs-fvtt/svelte/helper';
 import { onDestroy, getContext, onMount } from 'svelte';
 import { writable } from 'svelte/store';
-import { toggleDetails, applyStyles as applyStyles$1 } from '@typhonjs-fvtt/svelte-standard/component';
 import { quintOut } from 'svelte/easing';
 import { slideFade } from '@typhonjs-fvtt/svelte/transition';
 
@@ -632,7 +631,7 @@ function create_fragment$3(ctx) {
 					listen(details, "openAny", /*openAny_handler*/ ctx[11]),
 					listen(details, "closeAny", /*closeAny_handler*/ ctx[12]),
 					action_destroyer(toggleDetails_action = toggleDetails.call(null, details, /*store*/ ctx[2])),
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, details, /*styles*/ ctx[3]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, details, /*styles*/ ctx[3]))
 				];
 
 				mounted = true;
