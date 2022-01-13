@@ -1,5 +1,5 @@
-import { debounce } from '@typhonjs-fvtt/svelte/util';
-import { subscribeFirstRest } from '@typhonjs-fvtt/svelte/store';
+import { debounce } from '@typhonjs-fvtt/runtime/svelte/util';
+import { subscribeFirstRest } from '@typhonjs-fvtt/runtime/svelte/store';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
 

@@ -1,12 +1,12 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, add_render_callback, create_bidirectional_transition, destroy_each, component_subscribe, globals, current_component, select_option, select_value } from 'svelte/internal';
-import { applyStyles } from '@typhonjs-fvtt/svelte/action';
-import { localize } from '@typhonjs-fvtt/svelte/helper';
+import { applyStyles } from '@typhonjs-fvtt/runtime/svelte/action';
+import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { onDestroy, getContext, createEventDispatcher, onMount } from 'svelte';
 import { writable } from 'svelte/store';
 import { toggleDetails, autoBlur } from '@typhonjs-fvtt/svelte-standard/action';
 import { quintOut } from 'svelte/easing';
-import { slideFade } from '@typhonjs-fvtt/svelte/transition';
-import { outroAndDestroy } from '@typhonjs-fvtt/svelte/util';
+import { slideFade } from '@typhonjs-fvtt/runtime/svelte/transition';
+import { outroAndDestroy } from '@typhonjs-fvtt/runtime/svelte/util';
 
 /**
  * First pass at a system to create a unique style sheet for the UI library that loads default values for all CSS
