@@ -143,21 +143,33 @@ class FoundryStyles
       // Quit now if the Foundry style sheet was not found.
       if (!sheet) { return; }
 
+      const start = performance.now();
+
       // Parse each CSSStyleRule and build the map of selectors to parsed properties.
       for (const rule of sheet.cssRules)
       {
          if (!(rule instanceof CSSStyleRule)) { continue; }
 
-         // Split on attributes and filter out any non-strings / empty strings then trim results.
-         const data = rule.style.cssText.split(';').filter((d) => typeof d === 'string' && d !== '').map(
-          (d) => d.trim());
+         const obj = {};
 
-         // Split property and value.
-         const result = data.map((entry) => entry.split(':').map((d) => d.trim()));
+         // Parse `cssText` into an object of properties & values.
+         for (const entry of rule.style.cssText.split(';'))
+         {
+            // sanity check
+            // if (entry === '') { continue; }
 
-         // Create an object indexing property / value.
-         this.#sheetMap.set(rule.selectorText, Object.fromEntries(result));
+            const parts = entry.split(':');
+
+            // Sanity check.
+            if (parts.length < 2) { continue; }
+
+            obj[parts[0].trim()] = parts[1].trim();
+         }
+
+         this.#sheetMap.set(rule.selectorText, obj);
       }
+const total = performance.now() - start;
+console.log(`!!! Total time (O): ${total}`);
    }
 
    /**
