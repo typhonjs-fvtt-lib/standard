@@ -18,6 +18,7 @@
    import { onMount }      from 'svelte';
    import { writable }     from 'svelte/store';
    import { applyStyles }  from '@typhonjs-svelte/lib/action';
+   import { isStore }      from '@typhonjs-svelte/lib/store';
    import { autoBlur }     from '@typhonjs-fvtt/svelte-standard/action';
 
    export let select;
@@ -31,8 +32,8 @@
     typeof selected === 'string' ? selected : void 0;
    $: options = typeof select === 'object' && Array.isArray(select.options) ? select.options :
     Array.isArray(options) ? options : [];
-   $: store = typeof select === 'object' && typeof select.store === 'object' ? select.store :
-    typeof store === 'object' ? store : writable(void 0);
+   $: store = typeof select === 'object' && isStore(select.store) ? select.store :
+    isStore(store) ? store : writable(void 0);
    $: styles = typeof select === 'object' && typeof select.styles === 'object' ? select.styles :
     typeof styles === 'object' ? styles : void 0;
    $: efx = typeof select === 'object' && typeof select.efx === 'function' ? select.efx :
