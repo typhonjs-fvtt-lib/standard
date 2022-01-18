@@ -143,8 +143,6 @@ class FoundryStyles
       // Quit now if the Foundry style sheet was not found.
       if (!sheet) { return; }
 
-      const start = performance.now();
-
       // Parse each CSSStyleRule and build the map of selectors to parsed properties.
       for (const rule of sheet.cssRules)
       {
@@ -155,9 +153,6 @@ class FoundryStyles
          // Parse `cssText` into an object of properties & values.
          for (const entry of rule.style.cssText.split(';'))
          {
-            // sanity check
-            // if (entry === '') { continue; }
-
             const parts = entry.split(':');
 
             // Sanity check.
@@ -168,8 +163,6 @@ class FoundryStyles
 
          this.#sheetMap.set(rule.selectorText, obj);
       }
-const total = performance.now() - start;
-console.log(`!!! Total time (O): ${total}`);
    }
 
    /**

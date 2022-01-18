@@ -21,6 +21,10 @@
       "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
     },
+    "./store": {
+      "types": "./_dist/store/index.d.ts",
+      "import": "./_dist/store/index.js"
+    },
     "./package.json": "./package.json"
   },
   "imports": {

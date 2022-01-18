@@ -52,9 +52,8 @@ const rollupConfigs = [
             format: 'es',
             plugins: outputPlugins,
             preferConst: true,
-            sourcemap,
-            // sourcemapPathTransform: (sourcePath) => sourcePath.replace(relativePath, `.`)
-         }
+            sourcemap
+        }
       }
    },
    {
@@ -88,8 +87,27 @@ const rollupConfigs = [
             format: 'es',
             plugins: outputPlugins,
             preferConst: true,
-            sourcemap,
-            // sourcemapPathTransform: (sourcePath) => sourcePath.replace(relativePath, `.`)
+            sourcemap
+         }
+      }
+   },
+   {
+      input: {
+         input: 'src/store/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/store'] }),
+            resolve(),
+            sourcemaps()
+         ]
+      },
+      output: {
+         output: {
+            file: '_dist/store/index.js',
+            format: 'es',
+            plugins: outputPlugins,
+            preferConst: true,
+            sourcemap
          }
       }
    },
