@@ -50,8 +50,8 @@
 <div class=tjs-select-container use:efx use:applyStyles={styles}>
 <select class=tjs-select bind:value={$store} use:autoBlur>
    {#each options as option}
-      <option class=tjs-select-option value={option}>
-         {option}
+      <option class=tjs-select-option value={option.value}>
+         {option.label}
       </option>
    {/each}
 </select>

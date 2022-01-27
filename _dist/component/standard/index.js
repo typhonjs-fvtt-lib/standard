@@ -1038,7 +1038,7 @@ function get_each_context$2(ctx, list, i) {
 // (52:3) {#each options as option}
 function create_each_block$2(ctx) {
 	let option;
-	let t0_value = /*option*/ ctx[8] + "";
+	let t0_value = /*option*/ ctx[8].label + "";
 	let t0;
 	let t1;
 	let option_value_value;
@@ -1049,7 +1049,7 @@ function create_each_block$2(ctx) {
 			t0 = text(t0_value);
 			t1 = space();
 			attr(option, "class", "tjs-select-option svelte-10sj76s");
-			option.__value = option_value_value = /*option*/ ctx[8];
+			option.__value = option_value_value = /*option*/ ctx[8].value;
 			option.value = option.__value;
 		},
 		m(target, anchor) {
@@ -1058,9 +1058,9 @@ function create_each_block$2(ctx) {
 			append(option, t1);
 		},
 		p(ctx, dirty) {
-			if (dirty & /*options*/ 1 && t0_value !== (t0_value = /*option*/ ctx[8] + "")) set_data(t0, t0_value);
+			if (dirty & /*options*/ 1 && t0_value !== (t0_value = /*option*/ ctx[8].label + "")) set_data(t0, t0_value);
 
-			if (dirty & /*options*/ 1 && option_value_value !== (option_value_value = /*option*/ ctx[8])) {
+			if (dirty & /*options*/ 1 && option_value_value !== (option_value_value = /*option*/ ctx[8].value)) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
