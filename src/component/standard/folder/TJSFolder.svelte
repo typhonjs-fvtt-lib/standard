@@ -85,6 +85,7 @@
    import { writable }      from 'svelte/store';
 
    import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { isStore }       from '@typhonjs-svelte/lib/store';
    import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
 
    export let styles;
@@ -98,7 +99,8 @@
 
    $: id = typeof folder === 'object' ? folder.icon : typeof id === 'string' ? id : void 0;
    $: label = typeof folder === 'object' ? folder.label : typeof label === 'string' ? label : '';
-   $: store = typeof folder === 'object' ? folder.store : typeof store === 'object' ? store : writable(false);
+   $: store = typeof folder === 'object' && isStore(folder.store) ? folder.store :
+    isStore(store) ? store : writable(false);
 
    /**
     * Create a CustomEvent with details object containing relevant element and props.

@@ -9,6 +9,7 @@
     * --tjs-icon-button-transition
     */
    import { applyStyles }  from '@typhonjs-svelte/lib/action';
+   import { isStore }      from '@typhonjs-svelte/lib/store';
    import { localize }     from '@typhonjs-svelte/lib/helper';
 
    export let button;
@@ -22,8 +23,7 @@
     typeof icon === 'string' ? icon : '';
    $: title = typeof button === 'object' && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : '';
-   $: store = typeof button === 'object' && typeof button.store === 'object' ? button.store :
-    typeof store === 'object' ? store : void 0;
+   $: store = typeof button === 'object' && isStore(button.store) ? button.store : isStore(store) ? store : void 0;
    $: styles = typeof button === 'object' && typeof button.styles === 'object' ? button.styles :
     typeof styles === 'object' ? styles : void 0;
    $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :

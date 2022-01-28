@@ -535,7 +535,7 @@ const get_summary_end_slot_context = ctx => ({});
 const get_label_slot_changes = dirty => ({});
 const get_label_slot_context = ctx => ({});
 
-// (157:25) {label}
+// (159:25) {label}
 function fallback_block(ctx) {
 	let t;
 
@@ -825,9 +825,9 @@ function instance$5($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 36) {
-			$$invalidate(2, store = typeof folder === 'object'
+			$$invalidate(2, store = typeof folder === 'object' && isStore(folder.store)
 			? folder.store
-			: typeof store === 'object' ? store : writable(false));
+			: isStore(store) ? store : writable(false));
 		}
 	};
 
