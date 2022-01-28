@@ -1,4 +1,4 @@
-import { TJSContextMenu }  from '@typhonjs-fvtt/svelte-standard/component';
+import { TJSContextMenu as TJSContextMenuImpl }  from '@typhonjs-fvtt/svelte-standard/component';
 
 /**
  * Provides game wide menu functionality.
@@ -27,15 +27,19 @@ export class TJSContextMenu
     *
     * @param {...*}     [opts.transitionOptions] - The rest of opts defined the slideFade transition options.
     */
-   static createContext({ id = '', x = 0, y = 0, items = [], zIndex = 10000, ...transitionOptions } = {})
+   static create({ id = '', x = 0, y = 0, items = [], zIndex = 10000, ...transitionOptions } = {})
    {
       if (this.#contextMenu !== void 0) { return; }
 
+      // Filter items for any condition that prevents display.
+      const filteredItems = items.filter((item) => item.condition === void 0 ? true :
+       typeof item.condition === 'function' ? item.condition() : item.condition);
+
       // Create the new context menu with the last click x / y point.
-      this.#contextMenu = new TJSContextMenu({
+      this.#contextMenu = new TJSContextMenuImpl({
          target: document.body,
          intro: true,
-         props: { id, x, y, items, zIndex, transitionOptions: { duration: 200, ...transitionOptions } }
+         props: { id, x, y, items: filteredItems, zIndex, transitionOptions: { duration: 200, ...transitionOptions } }
       });
 
       // Register an event listener to remove any active context menu if closed from a menu selection or pointer

@@ -16,8 +16,15 @@
    export let efx;
    export let transitionOptions;
 
-   $: items = typeof menu === 'object' && Array.isArray(menu.items) ? menu.items :
-    Array.isArray(items) ? items : [];
+   $: {
+      const allItems = typeof menu === 'object' && Array.isArray(menu.items) ? menu.items :
+      Array.isArray(items) ? items : [];
+
+      // Filter items for any condition that prevents display.
+      items = allItems.filter((item) => item.condition === void 0 ? true :
+       typeof item.condition === 'function' ? item.condition() : item.condition);
+   }
+
    $: offset = typeof menu === 'object' && typeof menu.offset === 'object' ? menu.offset :
     typeof offset === 'object' ? offset : s_DEFAULT_OFFSET;
    $: styles = typeof menu === 'object' && typeof menu.styles === 'object' ? menu.styles :

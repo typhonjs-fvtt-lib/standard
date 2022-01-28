@@ -1,10 +1,10 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, create_bidirectional_transition, component_subscribe, globals, current_component } from 'svelte/internal';
 import { applyStyles } from '@typhonjs-fvtt/runtime/svelte/action';
+import { isStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { onDestroy, onMount, getContext, createEventDispatcher } from 'svelte';
 import { writable } from 'svelte/store';
 import { toggleDetails, autoBlur } from '@typhonjs-fvtt/svelte-standard/action';
-import { isStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { quintOut } from 'svelte/easing';
 import { slideFade } from '@typhonjs-fvtt/runtime/svelte/transition';
 import { outroAndDestroy } from '@typhonjs-fvtt/runtime/svelte/util';
@@ -455,9 +455,9 @@ function instance$6($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*button, store*/ 260) {
-			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && typeof button.store === 'object'
+			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isStore(button.store)
 			? button.store
-			: typeof store === 'object' ? store : void 0));
+			: isStore(store) ? store : void 0));
 		}
 
 		if ($$self.$$.dirty & /*button, styles*/ 264) {
@@ -1270,7 +1270,7 @@ function get_each_context$1(ctx, list, i) {
 	return child_ctx;
 }
 
-// (127:6) {#each items as item}
+// (134:6) {#each items as item}
 function create_each_block$1(ctx) {
 	let li;
 	let i;
@@ -1536,9 +1536,18 @@ function instance$2($$self, $$props, $$invalidate) {
 
 	$$self.$$.update = () => {
 		if ($$self.$$.dirty & /*menu, items*/ 1025) {
-			$$invalidate(0, items = typeof menu === 'object' && Array.isArray(menu.items)
-			? menu.items
-			: Array.isArray(items) ? items : []);
+			{
+				const allItems = typeof menu === 'object' && Array.isArray(menu.items)
+				? menu.items
+				: Array.isArray(items) ? items : [];
+
+				// Filter items for any condition that prevents display.
+				$$invalidate(0, items = allItems.filter(item => item.condition === void 0
+				? true
+				: typeof item.condition === 'function'
+					? item.condition()
+					: item.condition));
+			}
 		}
 
 		if ($$self.$$.dirty & /*menu, offset*/ 1152) {

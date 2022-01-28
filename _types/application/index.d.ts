@@ -5,7 +5,7 @@ declare class TJSContextMenu {
     /**
      * Stores any active context menu.
      */
-    static "__#117637@#contextMenu": any;
+    static "__#117640@#contextMenu": any;
     /**
      * Creates and manages a game wide context menu.
      *
@@ -23,7 +23,7 @@ declare class TJSContextMenu {
      *
      * @param {...*}     [opts.transitionOptions] - The rest of opts defined the slideFade transition options.
      */
-    static createContext({ id, x, y, items, zIndex, ...transitionOptions }?: {
+    static create({ id, x, y, items, zIndex, ...transitionOptions }?: {
         id?: string;
         x: number;
         y: number;
