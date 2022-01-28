@@ -5,6 +5,7 @@
     * --tjs-input-background
     * --tjs-input-cursor
     * --tjs-input-height
+    * --tjs-input-text-align
     * --tjs-input-width
     *
     * --tjs-comp-input-border
@@ -12,18 +13,21 @@
     * --tjs-comp-input-background
     * --tjs-comp-input-cursor
     * --tjs-comp-input-height
+    * --tjs-comp-input-text-align
     * --tjs-comp-input-width
     */
 
-   import { onMount }      from 'svelte';
-   import { writable }     from 'svelte/store';
-   import { applyStyles }  from '@typhonjs-svelte/lib/action';
-   import { isStore }      from '@typhonjs-svelte/lib/store';
-   import { autoBlur }     from '@typhonjs-fvtt/svelte-standard/action';
+   import { onMount }       from 'svelte';
+   import { writable }      from 'svelte/store';
+   import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { localize }      from '@typhonjs-svelte/lib/helper';
+   import { isStore }       from '@typhonjs-svelte/lib/store';
+   import { autoBlur }      from '@typhonjs-fvtt/svelte-standard/action';
 
    export let input;
    export let type;
    export let disabled;
+   export let placeholder;
    export let store;
    export let styles;
    export let efx;
@@ -32,6 +36,8 @@
     typeof type === 'string' ? type : void 0;
    $: disabled = typeof input === 'object' && typeof input.disabled === 'boolean' ? input.disabled :
     typeof disabled === 'boolean' ? disabled : false;
+   $: placeholder = typeof input === 'object' && typeof input.placeholder === 'string' ? localize(input.placeholder) :
+    typeof placeholder === 'string' ? localize(placeholder) : void 0;
    $: store = typeof input === 'object' && isStore(input.store) ? input.store :
     isStore(store) ? store : writable(void 0);
    $: styles = typeof input === 'object' && typeof input.styles === 'object' ? input.styles :
@@ -48,6 +54,7 @@
     <input class=tjs-input
            bind:value={$store}
            use:autoBlur
+           {placeholder}
            {disabled}
     />
 </div>
@@ -72,6 +79,8 @@
 
         border: var(--tjs-comp-input-border, var(--tjs-input-border));
         border-radius: var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));
+
+        text-align: var(--tjs-comp-input-text-align, var(--tjs-input-text-align));
 
         width: 100%;
         height: 100%;
