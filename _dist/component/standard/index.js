@@ -1290,41 +1290,44 @@ function add_css$1(target) {
 	append_styles(target, "svelte-1md432p", ".tjs-menu.svelte-1md432p.svelte-1md432p.svelte-1md432p{position:absolute;width:fit-content;height:max-content;box-shadow:0 0 2px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));background:var(--typhonjs-color-content-window, #23221d);border:1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));border-radius:5px;color:var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE))}.tjs-menu.svelte-1md432p ol.tjs-menu-items.svelte-1md432p.svelte-1md432p{list-style:none;margin:0;padding:0}.tjs-menu.svelte-1md432p li.tjs-menu-item.svelte-1md432p.svelte-1md432p{padding:0 5px;line-height:32px}.tjs-menu.svelte-1md432p li.tjs-menu-item.svelte-1md432p.svelte-1md432p:hover{color:var(--typhonjs-color-text-primary, #FFF);text-shadow:0 0 4px var(--color-text-hyperlink, var(--typhonjs-color-accent-tertiary, red))}.tjs-menu.svelte-1md432p li.tjs-menu-item.svelte-1md432p>i.svelte-1md432p{margin-right:5px}");
 }
 
+const get_after_slot_changes$1 = dirty => ({});
+const get_after_slot_context$1 = ctx => ({});
+
 function get_each_context$1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[16] = list[i];
+	child_ctx[18] = list[i];
 	return child_ctx;
 }
 
-// (134:6) {#each items as item}
+const get_before_slot_changes$1 = dirty => ({});
+const get_before_slot_context$1 = ctx => ({});
+
+// (135:6) {#each items as item}
 function create_each_block$1(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t0_value = localize(/*item*/ ctx[16].label) + "";
-	let t0;
-	let t1;
+	let t_value = localize(/*item*/ ctx[18].label) + "";
+	let t;
 	let mounted;
 	let dispose;
 
 	function click_handler() {
-		return /*click_handler*/ ctx[11](/*item*/ ctx[16]);
+		return /*click_handler*/ ctx[13](/*item*/ ctx[18]);
 	}
 
 	return {
 		c() {
 			li = element("li");
 			i = element("i");
-			t0 = text(t0_value);
-			t1 = space();
-			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[16].icon) + " svelte-1md432p"));
+			t = text(t_value);
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[18].icon) + " svelte-1md432p"));
 			attr(li, "class", "tjs-menu-item svelte-1md432p");
 		},
 		m(target, anchor) {
 			insert(target, li, anchor);
 			append(li, i);
-			append(li, t0);
-			append(li, t1);
+			append(li, t);
 
 			if (!mounted) {
 				dispose = listen(li, "click", click_handler);
@@ -1334,11 +1337,11 @@ function create_each_block$1(ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*items*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[16].icon) + " svelte-1md432p"))) {
+			if (dirty & /*items*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[18].icon) + " svelte-1md432p"))) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 1 && t0_value !== (t0_value = localize(/*item*/ ctx[16].label) + "")) set_data(t0, t0_value);
+			if (dirty & /*items*/ 1 && t_value !== (t_value = localize(/*item*/ ctx[18].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -1349,13 +1352,17 @@ function create_each_block$1(ctx) {
 }
 
 function create_fragment$2(ctx) {
-	let t;
+	let t0;
 	let nav;
 	let ol;
+	let t1;
+	let t2;
 	let nav_transition;
 	let current;
 	let mounted;
 	let dispose;
+	const before_slot_template = /*#slots*/ ctx[12].before;
+	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[11], get_before_slot_context$1);
 	let each_value = /*items*/ ctx[0];
 	let each_blocks = [];
 
@@ -1363,29 +1370,48 @@ function create_fragment$2(ctx) {
 		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
 	}
 
+	const after_slot_template = /*#slots*/ ctx[12].after;
+	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[11], get_after_slot_context$1);
+
 	return {
 		c() {
-			t = space();
+			t0 = space();
 			nav = element("nav");
 			ol = element("ol");
+			if (before_slot) before_slot.c();
+			t1 = space();
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
 
+			t2 = space();
+			if (after_slot) after_slot.c();
 			attr(ol, "class", "tjs-menu-items svelte-1md432p");
 			attr(nav, "class", "tjs-menu svelte-1md432p");
 		},
 		m(target, anchor) {
-			insert(target, t, anchor);
+			insert(target, t0, anchor);
 			insert(target, nav, anchor);
 			append(nav, ol);
+
+			if (before_slot) {
+				before_slot.m(ol, null);
+			}
+
+			append(ol, t1);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].m(ol, null);
 			}
 
-			/*nav_binding*/ ctx[12](nav);
+			append(ol, t2);
+
+			if (after_slot) {
+				after_slot.m(ol, null);
+			}
+
+			/*nav_binding*/ ctx[14](nav);
 			current = true;
 
 			if (!mounted) {
@@ -1398,6 +1424,21 @@ function create_fragment$2(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
+			if (before_slot) {
+				if (before_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+					update_slot_base(
+						before_slot,
+						before_slot_template,
+						ctx,
+						/*$$scope*/ ctx[11],
+						!current
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
+						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[11], dirty, get_before_slot_changes$1),
+						get_before_slot_context$1
+					);
+				}
+			}
+
 			if (dirty & /*onClick, items, localize*/ 33) {
 				each_value = /*items*/ ctx[0];
 				let i;
@@ -1410,7 +1451,7 @@ function create_fragment$2(ctx) {
 					} else {
 						each_blocks[i] = create_each_block$1(child_ctx);
 						each_blocks[i].c();
-						each_blocks[i].m(ol, null);
+						each_blocks[i].m(ol, t2);
 					}
 				}
 
@@ -1420,9 +1461,26 @@ function create_fragment$2(ctx) {
 
 				each_blocks.length = each_value.length;
 			}
+
+			if (after_slot) {
+				if (after_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+					update_slot_base(
+						after_slot,
+						after_slot_template,
+						ctx,
+						/*$$scope*/ ctx[11],
+						!current
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
+						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[11], dirty, get_after_slot_changes$1),
+						get_after_slot_context$1
+					);
+				}
+			}
 		},
 		i(local) {
 			if (current) return;
+			transition_in(before_slot, local);
+			transition_in(after_slot, local);
 
 			add_render_callback(() => {
 				if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[4], {}, true);
@@ -1432,15 +1490,19 @@ function create_fragment$2(ctx) {
 			current = true;
 		},
 		o(local) {
+			transition_out(before_slot, local);
+			transition_out(after_slot, local);
 			if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[4], {}, false);
 			nav_transition.run(0);
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(t);
+			if (detaching) detach(t0);
 			if (detaching) detach(nav);
+			if (before_slot) before_slot.d(detaching);
 			destroy_each(each_blocks, detaching);
-			/*nav_binding*/ ctx[12](null);
+			if (after_slot) after_slot.d(detaching);
+			/*nav_binding*/ ctx[14](null);
 			if (detaching && nav_transition) nav_transition.end();
 			mounted = false;
 			run_all(dispose);
@@ -1450,6 +1512,7 @@ function create_fragment$2(ctx) {
 
 function instance$2($$self, $$props, $$invalidate) {
 	let $storeElementRoot;
+	let { $$slots: slots = {}, $$scope } = $$props;
 	const s_DEFAULT_OFFSET = { x: 0, y: 0 };
 	let { menu } = $$props;
 	let { items } = $$props;
@@ -1458,7 +1521,7 @@ function instance$2($$self, $$props, $$invalidate) {
 	let { efx } = $$props;
 	let { transitionOptions } = $$props;
 	const storeElementRoot = getContext('storeElementRoot');
-	component_subscribe($$self, storeElementRoot, value => $$invalidate(14, $storeElementRoot = value));
+	component_subscribe($$self, storeElementRoot, value => $$invalidate(16, $storeElementRoot = value));
 
 	// Bound to the nav element / menu.
 	let menuEl;
@@ -1558,6 +1621,7 @@ function instance$2($$self, $$props, $$invalidate) {
 		if ('styles' in $$props) $$invalidate(8, styles = $$props.styles);
 		if ('efx' in $$props) $$invalidate(1, efx = $$props.efx);
 		if ('transitionOptions' in $$props) $$invalidate(9, transitionOptions = $$props.transitionOptions);
+		if ('$$scope' in $$props) $$invalidate(11, $$scope = $$props.$$scope);
 	};
 
 	$$self.$$.update = () => {
@@ -1619,6 +1683,8 @@ function instance$2($$self, $$props, $$invalidate) {
 		styles,
 		transitionOptions,
 		menu,
+		$$scope,
+		slots,
 		click_handler,
 		nav_binding
 	];
@@ -1655,24 +1721,30 @@ function add_css(target) {
 	append_styles(target, "svelte-1ykoenx", ".tjs-context-menu.svelte-1ykoenx.svelte-1ykoenx.svelte-1ykoenx{position:fixed;width:fit-content;font-size:14px;box-shadow:0 0 10px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));height:max-content;min-width:150px;max-width:360px;background:var(--typhonjs-color-content-window, #23221d);border:1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));border-radius:5px;color:var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE))}.tjs-context-menu.svelte-1ykoenx ol.tjs-context-items.svelte-1ykoenx.svelte-1ykoenx{list-style:none;margin:0;padding:0}.tjs-context-menu.svelte-1ykoenx li.tjs-context-item.svelte-1ykoenx.svelte-1ykoenx{padding:0 5px;line-height:32px}.tjs-context-menu.svelte-1ykoenx li.tjs-context-item.svelte-1ykoenx.svelte-1ykoenx:hover{color:var(--typhonjs-color-text-primary, #FFF);text-shadow:0 0 4px var(--color-text-hyperlink, var(--typhonjs-color-accent-tertiary, red))}.tjs-context-menu.svelte-1ykoenx li.tjs-context-item.svelte-1ykoenx>i.svelte-1ykoenx{margin-right:5px}");
 }
 
+const get_after_slot_changes = dirty => ({});
+const get_after_slot_context = ctx => ({});
+
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[15] = list[i];
+	child_ctx[17] = list[i];
 	return child_ctx;
 }
 
-// (96:8) {#each items as item}
+const get_before_slot_changes = dirty => ({});
+const get_before_slot_context = ctx => ({});
+
+// (97:8) {#each items as item}
 function create_each_block(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t_value = localize(/*item*/ ctx[15].label) + "";
+	let t_value = localize(/*item*/ ctx[17].label) + "";
 	let t;
 	let mounted;
 	let dispose;
 
 	function click_handler() {
-		return /*click_handler*/ ctx[10](/*item*/ ctx[15]);
+		return /*click_handler*/ ctx[12](/*item*/ ctx[17]);
 	}
 
 	return {
@@ -1680,7 +1752,7 @@ function create_each_block(ctx) {
 			li = element("li");
 			i = element("i");
 			t = text(t_value);
-			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[15].icon) + " svelte-1ykoenx"));
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[17].icon) + " svelte-1ykoenx"));
 			attr(li, "class", "tjs-context-item svelte-1ykoenx");
 		},
 		m(target, anchor) {
@@ -1696,11 +1768,11 @@ function create_each_block(ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*items*/ 2 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[15].icon) + " svelte-1ykoenx"))) {
+			if (dirty & /*items*/ 2 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[17].icon) + " svelte-1ykoenx"))) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 2 && t_value !== (t_value = localize(/*item*/ ctx[15].label) + "")) set_data(t, t_value);
+			if (dirty & /*items*/ 2 && t_value !== (t_value = localize(/*item*/ ctx[17].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -1711,13 +1783,17 @@ function create_each_block(ctx) {
 }
 
 function create_fragment$1(ctx) {
-	let t;
+	let t0;
 	let nav;
 	let ol;
+	let t1;
+	let t2;
 	let nav_transition;
 	let current;
 	let mounted;
 	let dispose;
+	const before_slot_template = /*#slots*/ ctx[11].before;
+	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[10], get_before_slot_context);
 	let each_value = /*items*/ ctx[1];
 	let each_blocks = [];
 
@@ -1725,31 +1801,50 @@ function create_fragment$1(ctx) {
 		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
 	}
 
+	const after_slot_template = /*#slots*/ ctx[11].after;
+	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[10], get_after_slot_context);
+
 	return {
 		c() {
-			t = space();
+			t0 = space();
 			nav = element("nav");
 			ol = element("ol");
+			if (before_slot) before_slot.c();
+			t1 = space();
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
 
+			t2 = space();
+			if (after_slot) after_slot.c();
 			attr(ol, "class", "tjs-context-items svelte-1ykoenx");
 			attr(nav, "id", /*id*/ ctx[0]);
 			attr(nav, "class", "tjs-context-menu svelte-1ykoenx");
 			set_style(nav, "z-index", /*zIndex*/ ctx[2]);
 		},
 		m(target, anchor) {
-			insert(target, t, anchor);
+			insert(target, t0, anchor);
 			insert(target, nav, anchor);
 			append(nav, ol);
+
+			if (before_slot) {
+				before_slot.m(ol, null);
+			}
+
+			append(ol, t1);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].m(ol, null);
 			}
 
-			/*nav_binding*/ ctx[11](nav);
+			append(ol, t2);
+
+			if (after_slot) {
+				after_slot.m(ol, null);
+			}
+
+			/*nav_binding*/ ctx[13](nav);
 			current = true;
 
 			if (!mounted) {
@@ -1758,6 +1853,21 @@ function create_fragment$1(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
+			if (before_slot) {
+				if (before_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+					update_slot_base(
+						before_slot,
+						before_slot_template,
+						ctx,
+						/*$$scope*/ ctx[10],
+						!current
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
+						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[10], dirty, get_before_slot_changes),
+						get_before_slot_context
+					);
+				}
+			}
+
 			if (dirty & /*onClick, items, localize*/ 34) {
 				each_value = /*items*/ ctx[1];
 				let i;
@@ -1770,7 +1880,7 @@ function create_fragment$1(ctx) {
 					} else {
 						each_blocks[i] = create_each_block(child_ctx);
 						each_blocks[i].c();
-						each_blocks[i].m(ol, null);
+						each_blocks[i].m(ol, t2);
 					}
 				}
 
@@ -1779,6 +1889,21 @@ function create_fragment$1(ctx) {
 				}
 
 				each_blocks.length = each_value.length;
+			}
+
+			if (after_slot) {
+				if (after_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+					update_slot_base(
+						after_slot,
+						after_slot_template,
+						ctx,
+						/*$$scope*/ ctx[10],
+						!current
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
+						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[10], dirty, get_after_slot_changes),
+						get_after_slot_context
+					);
+				}
 			}
 
 			if (!current || dirty & /*id*/ 1) {
@@ -1791,6 +1916,8 @@ function create_fragment$1(ctx) {
 		},
 		i(local) {
 			if (current) return;
+			transition_in(before_slot, local);
+			transition_in(after_slot, local);
 
 			add_render_callback(() => {
 				if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[4], {}, true);
@@ -1800,15 +1927,19 @@ function create_fragment$1(ctx) {
 			current = true;
 		},
 		o(local) {
+			transition_out(before_slot, local);
+			transition_out(after_slot, local);
 			if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[4], {}, false);
 			nav_transition.run(0);
 			current = false;
 		},
 		d(detaching) {
-			if (detaching) detach(t);
+			if (detaching) detach(t0);
 			if (detaching) detach(nav);
+			if (before_slot) before_slot.d(detaching);
 			destroy_each(each_blocks, detaching);
-			/*nav_binding*/ ctx[11](null);
+			if (after_slot) after_slot.d(detaching);
+			/*nav_binding*/ ctx[13](null);
 			if (detaching && nav_transition) nav_transition.end();
 			mounted = false;
 			dispose();
@@ -1817,6 +1948,7 @@ function create_fragment$1(ctx) {
 }
 
 function instance$1($$self, $$props, $$invalidate) {
+	let { $$slots: slots = {}, $$scope } = $$props;
 	let { id = '' } = $$props;
 	let { x = 0 } = $$props;
 	let { y = 0 } = $$props;
@@ -1913,6 +2045,7 @@ function instance$1($$self, $$props, $$invalidate) {
 		if ('items' in $$props) $$invalidate(1, items = $$props.items);
 		if ('zIndex' in $$props) $$invalidate(2, zIndex = $$props.zIndex);
 		if ('transitionOptions' in $$props) $$invalidate(9, transitionOptions = $$props.transitionOptions);
+		if ('$$scope' in $$props) $$invalidate(10, $$scope = $$props.$$scope);
 	};
 
 	return [
@@ -1926,6 +2059,8 @@ function instance$1($$self, $$props, $$invalidate) {
 		x,
 		y,
 		transitionOptions,
+		$$scope,
+		slots,
 		click_handler,
 		nav_binding
 	];

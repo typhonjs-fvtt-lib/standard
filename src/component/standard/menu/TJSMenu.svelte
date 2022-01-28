@@ -131,11 +131,13 @@
      transition:animate
      use:efx>
    <ol class=tjs-menu-items>
+      <slot name="before"/>
       {#each items as item}
          <li class=tjs-menu-item on:click={() => onClick(item.onclick)}>
             <i class={item.icon}></i>{localize(item.label)}
          </li>
       {/each}
+      <slot name="after"/>
    </ol>
 </nav>
 

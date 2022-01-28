@@ -93,9 +93,11 @@
 
 <nav id={id} class=tjs-context-menu transition:animate bind:this={menuEl} style="z-index: {zIndex}">
     <ol class=tjs-context-items>
+        <slot name="before"/>
         {#each items as item}
             <li class=tjs-context-item on:click={() => onClick(item.onclick)}><i class={item.icon}></i>{localize(item.label)}</li>
         {/each}
+        <slot name="after"/>
     </ol>
 </nav>
 
