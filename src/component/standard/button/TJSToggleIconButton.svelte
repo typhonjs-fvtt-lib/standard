@@ -5,6 +5,8 @@
     * --tjs-icon-button-background-selected
     * --tjs-icon-button-border-radius
     * --tjs-icon-button-clip-path
+    * --tjs-icon-button-clip-path-hover
+    * --tjs-icon-button-clip-path-selected
     * --tjs-icon-button-diameter
     * --tjs-icon-button-transition
     */
@@ -74,7 +76,7 @@
       border-radius: var(--tjs-icon-button-border-radius);
       position: relative;
       overflow: hidden;
-      clip-path: var(--tjs-icon-button-clip-path);
+      clip-path: var(--tjs-icon-button-clip-path, none);
       transform-style: preserve-3d;
       width: 100%;
       height: 100%;
@@ -83,10 +85,12 @@
 
    a:hover {
       background: var(--tjs-icon-button-background-hover);
+      clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, none));
    }
 
    a.selected {
       background: var(--tjs-icon-button-background-selected);
+      clip-path: var(--tjs-icon-button-clip-path-selected, var(--tjs-icon-button-clip-path, none));
    }
 
    i {

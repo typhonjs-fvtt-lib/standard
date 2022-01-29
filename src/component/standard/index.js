@@ -24,7 +24,7 @@ cssVariables.set({
    '--tjs-icon-button-border-radius': '50%',
    '--tjs-icon-button-clip-path': 'none',
    '--tjs-icon-button-diameter': '2em',
-   '--tjs-icon-button-transition': 'background 200ms linear'
+   '--tjs-icon-button-transition': 'background 200ms linear, clip-path 200ms linear'
 });
 
 {

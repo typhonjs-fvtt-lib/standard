@@ -152,6 +152,8 @@
       border: 1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));
       border-radius: 5px;
       color: var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));
+
+      text-align: left;
    }
 
    .tjs-menu ol.tjs-menu-items {
@@ -161,8 +163,8 @@
    }
 
    .tjs-menu li.tjs-menu-item {
-      padding: 0 5px;
-      line-height: 32px;
+      padding: 0 0.5em;
+      line-height: 2em;
    }
 
    .tjs-menu li.tjs-menu-item:hover {

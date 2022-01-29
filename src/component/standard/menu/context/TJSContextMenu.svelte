@@ -108,7 +108,7 @@
         font-size: 14px;
         box-shadow: 0 0 10px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));
         height: max-content;
-        min-width: 150px;
+        min-width: 20px;
         max-width: 360px;
         background: var(--typhonjs-color-content-window, #23221d);
         border: 1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));
@@ -123,8 +123,8 @@
     }
 
     .tjs-context-menu li.tjs-context-item {
-        padding: 0 5px;
-        line-height: 32px;
+        padding: 0 0.5em;
+        line-height: 2em;
     }
 
     .tjs-context-menu li.tjs-context-item:hover {
