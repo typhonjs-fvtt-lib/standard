@@ -114,6 +114,7 @@
         border: 1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));
         border-radius: 5px;
         color: var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));
+        text-align: start;
     }
 
     .tjs-context-menu ol.tjs-context-items {

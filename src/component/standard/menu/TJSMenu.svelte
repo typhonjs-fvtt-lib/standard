@@ -153,7 +153,7 @@
       border-radius: 5px;
       color: var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));
 
-      text-align: left;
+      text-align: start;
    }
 
    .tjs-menu ol.tjs-menu-items {
