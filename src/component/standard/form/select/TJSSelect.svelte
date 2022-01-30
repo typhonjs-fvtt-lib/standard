@@ -15,6 +15,18 @@
     * --tjs-comp-select-width
     */
 
+   /**
+    * Note: A Svelte reactivity bug / issue is worked around below. Due to the several reactive statements over handling
+    * props when binding the store directly to the select element the #each block of options causes the compiler to
+    * incorrectly invalidate / run the reactive statements again for `options` and `select` on any changes to the select
+    * element. Running the `select` reactive statements causes the store statement to be run again causing the store to
+    * be unsubscribed and subscribed to. Technically this isn't a problem, but the workaround solution of using an
+    * on:change instead of bind in this instance fixes it.
+    *
+    * @see https://github.com/sveltejs/svelte/issues/4933
+    * @see https://dev.to/isaachagoel/svelte-reactivity-gotchas-solutions-if-you-re-using-svelte-in-production-you-should-read-this-3oj3
+    */
+
    import { onMount }      from 'svelte';
    import { writable }     from 'svelte/store';
    import { applyStyles }  from '@typhonjs-svelte/lib/action';
@@ -48,13 +60,14 @@
 </script>
 
 <div class=tjs-select-container use:efx use:applyStyles={styles}>
-<select class=tjs-select bind:value={$store} use:autoBlur>
-   {#each options as option}
-      <option class=tjs-select-option value={option.value}>
-         {option.label}
-      </option>
-   {/each}
-</select>
+   <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
+   <select class=tjs-select on:change={(event) => $store = event.target.value} use:autoBlur>
+      {#each options as option}
+         <option class=tjs-select-option value={option.value}>
+            {option.label}
+         </option>
+      {/each}
+   </select>
 </div>
 
 <style>
