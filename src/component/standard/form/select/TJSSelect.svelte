@@ -61,7 +61,7 @@
 
 <div class=tjs-select-container use:efx use:applyStyles={styles}>
    <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
-   <select class=tjs-select on:change={(event) => $store = event.target.value} use:autoBlur>
+   <select class=tjs-select bind:value={$store} use:autoBlur>
       {#each options as option}
          <option class=tjs-select-option value={option.value}>
             {option.label}

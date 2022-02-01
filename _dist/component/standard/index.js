@@ -1,4 +1,4 @@
-import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, set_input_value, destroy_each, set_store_value, add_render_callback, create_bidirectional_transition, component_subscribe, globals, current_component } from 'svelte/internal';
+import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, create_bidirectional_transition, component_subscribe, globals, current_component } from 'svelte/internal';
 import { applyStyles } from '@typhonjs-fvtt/runtime/svelte/action';
 import { isStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
@@ -1120,6 +1120,7 @@ function create_fragment$3(ctx) {
 			}
 
 			attr(select_1, "class", "tjs-select svelte-10sj76s");
+			if (/*$store*/ ctx[4] === void 0) add_render_callback(() => /*select_1_change_handler*/ ctx[7].call(select_1));
 			attr(div, "class", "tjs-select-container svelte-10sj76s");
 		},
 		m(target, anchor) {
@@ -1130,9 +1131,11 @@ function create_fragment$3(ctx) {
 				each_blocks[i].m(select_1, null);
 			}
 
+			select_option(select_1, /*$store*/ ctx[4]);
+
 			if (!mounted) {
 				dispose = [
-					listen(select_1, "change", /*change_handler*/ ctx[7]),
+					listen(select_1, "change", /*select_1_change_handler*/ ctx[7]),
 					action_destroyer(autoBlur.call(null, select_1)),
 					action_destroyer(/*efx*/ ctx[3].call(null, div)),
 					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[2]))
@@ -1163,6 +1166,10 @@ function create_fragment$3(ctx) {
 				}
 
 				each_blocks.length = each_value.length;
+			}
+
+			if (dirty & /*$store, options*/ 17) {
+				select_option(select_1, /*$store*/ ctx[4]);
 			}
 
 			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 4) applyStyles_action.update.call(null, /*styles*/ ctx[2]);
@@ -1200,7 +1207,11 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 	});
 
-	const change_handler = event => set_store_value(store, $store = event.target.value, $store);
+	function select_1_change_handler() {
+		$store = select_value(this);
+		store.set($store);
+		($$invalidate(0, options), $$invalidate(6, select));
+	}
 
 	$$self.$$set = $$props => {
 		if ('select' in $$props) $$invalidate(6, select = $$props.select);
@@ -1247,7 +1258,7 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 	};
 
-	return [options, store, styles, efx, $store, selected, select, change_handler];
+	return [options, store, styles, efx, $store, selected, select, select_1_change_handler];
 }
 
 class TJSSelect extends SvelteComponent {
