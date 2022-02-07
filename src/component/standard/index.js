@@ -2,6 +2,7 @@ import { cssVariables, FoundryStyles }    from '#internal';
 
 export { default as TJSToggleIconButton } from './button/TJSToggleIconButton.svelte';
 export { default as TJSFolder }           from './folder/TJSFolder.svelte';
+export { default as TJSIconFolder }       from './folder/TJSIconFolder.svelte';
 export *                                  from './form/index.js';
 export { default as TJSMenu }             from './menu/TJSMenu.svelte';
 export { default as TJSContextMenu }      from './menu/context/TJSContextMenu.svelte';
