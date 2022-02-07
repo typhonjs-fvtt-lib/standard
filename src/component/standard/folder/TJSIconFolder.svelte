@@ -86,35 +86,32 @@
 
    import { applyStyles }   from '@typhonjs-svelte/lib/action';
    import { isStore }       from '@typhonjs-svelte/lib/store';
+   import { isObject }       from '@typhonjs-svelte/lib/util';
    import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
 
    export let styles;
 
-   export let folder;
+   /** @type {object} */
+   export let folder = void 0;
    export let id = folder ? folder.id : void 0;
    export let iconOpen = folder ? folder.iconOpen : '';
    export let iconClosed = folder ? folder.iconClosed : '';
    export let label = folder ? folder.label : '';
    export let store = folder ? folder.store : writable(false);
 
-   const s_REGEX_HTML = /^\s*<.*>$/;
-
    let detailsEl;
    let currentIcon;
 
-   $: id = typeof folder === 'object' ? folder.id : typeof id === 'string' ? id : void 0;
-   $: iconOpen = typeof folder === 'object' ? folder.iconOpen : typeof iconOpen === 'string' ? iconOpen : void 0;
-   $: iconClosed = typeof folder === 'object' ? folder.iconClosed : typeof iconClosed === 'string' ? iconClosed : void 0;
-   $: label = typeof folder === 'object' ? folder.label : typeof label === 'string' ? label : '';
-   $: store = typeof folder === 'object' && isStore(folder.store) ? folder.store :
-    isStore(store) ? store : writable(false);
+   $: id = isObject(folder) ? folder.id : typeof id === 'string' ? id : void 0;
+   $: iconOpen = isObject(folder) ? folder.iconOpen : typeof iconOpen === 'string' ? iconOpen : void 0;
+   $: iconClosed = isObject(folder) ? folder.iconClosed : typeof iconClosed === 'string' ? iconClosed : void 0;
+   $: label = isObject(folder) ? folder.label : typeof label === 'string' ? label : '';
+   $: store = isObject(folder) && isStore(folder.store) ? folder.store : isStore(store) ? store : writable(false);
 
    $:
    {
       const iconData = $store ? iconOpen : iconClosed;
-
-      currentIcon = typeof iconData !== 'string' ? void 0 : s_REGEX_HTML.test(iconData) ? iconData :
-       `<i class="${iconData}"></i>`;
+      currentIcon = typeof iconData !== 'string' ? void 0 : iconData;
    }
 
    /**
@@ -162,7 +159,7 @@
          data-label={label}
          data-closing='false'>
     <summary>
-        {@html currentIcon}
+        {#if currentIcon}<i class={currentIcon}></i>{/if}
 
         <slot name=label>{label}</slot>
 
@@ -187,33 +184,32 @@
         background-blend-mode: var(--tjs-summary-background-blend-mode, initial);
         background: var(--tjs-summary-background, none);
         border: var(--tjs-summary-border, none);
+        border-radius: var(--tjs-summary-border-radius, 0);
+        border-width: var(--tjs-summary-border-width, initial);
         cursor: var(--tjs-summary-cursor, pointer);
         font-size: var(--tjs-summary-font-size, inherit);
         font-weight: var(--tjs-summary-font-weight, bold);
         list-style: none;
-        /*margin: 0 0 0 -5px;*/
+        margin: var(--tjs-summary-margin, 0);
         padding: var(--tjs-summary-padding, 4px) 0;
         user-select: none;
         width: var(--tjs-summary-width, fit-content);
     }
 
     summary i {
-        width: var(--tjs-summary-chevron-size, var(--tjs-summary-font-size, 15px));
-        height: var(--tjs-summary-chevron-size, var(--tjs-summary-font-size, 15px));
         color: var(--tjs-summary-chevron-color, currentColor);
-        opacity: var(--tjs-summary-chevron-opacity, 1);  /* was 0.2 */
-        /*margin: 0 5px 0 0;*/
-        /*transition: opacity 0.2s, transform 0.1s;*/
-        /*transform: rotate(var(--tjs-summary-chevron-rotate-closed, -90deg));*/
+        opacity: var(--tjs-summary-chevron-opacity, 1);
+        margin: 0 0.5em 0 0.25em;
+        transition: opacity 0.2s;
     }
 
     summary:hover i {
         opacity: var(--tjs-summary-chevron-opacity-hover, 1);
     }
 
-    /*[open]:not(details[data-closing='true']) > summary i {*/
-    /*    transform: rotate(var(--tjs-summary-chevron-rotate-open, 0));*/
-    /*}*/
+    details[open] > summary {
+        background: var(--tjs-summary-background-open, var(--tjs-summary-background, inherit));
+    }
 
     .contents {
         position: relative;

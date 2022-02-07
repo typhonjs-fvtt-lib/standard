@@ -3,9 +3,6 @@ import { SvelteComponent } from 'svelte/types/runtime/internal/Component';
 declare class TJSContextMenu extends SvelteComponent {
     constructor(options: any);
 }
-declare class TJSFolder extends SvelteComponent {
-    constructor(options: any);
-}
 declare class TJSIconFolder extends SvelteComponent {
     constructor(options: any);
 }
@@ -21,8 +18,11 @@ declare class TJSSelect extends SvelteComponent {
 declare class TJSStyleProperties extends SvelteComponent {
     constructor(options: any);
 }
+declare class TJSSvgFolder extends SvelteComponent {
+    constructor(options: any);
+}
 declare class TJSToggleIconButton extends SvelteComponent {
     constructor(options: any);
 }
 
-export { TJSContextMenu, TJSFolder, TJSIconFolder, TJSInput, TJSMenu, TJSSelect, TJSStyleProperties, TJSToggleIconButton };
+export { TJSContextMenu, TJSIconFolder, TJSInput, TJSMenu, TJSSelect, TJSStyleProperties, TJSSvgFolder, TJSToggleIconButton };

@@ -97,7 +97,7 @@
 
    let detailsEl;
 
-   $: id = typeof folder === 'object' ? folder.icon : typeof id === 'string' ? id : void 0;
+   $: id = typeof folder === 'object' ? folder.id : typeof id === 'string' ? id : void 0;
    $: label = typeof folder === 'object' ? folder.label : typeof label === 'string' ? label : '';
    $: store = typeof folder === 'object' && isStore(folder.store) ? folder.store :
     isStore(store) ? store : writable(false);
@@ -179,11 +179,13 @@
         background-blend-mode: var(--tjs-summary-background-blend-mode, initial);
         background: var(--tjs-summary-background, none);
         border: var(--tjs-summary-border, none);
+        border-radius: var(--tjs-summary-border-radius, 0);
+        border-width: var(--tjs-summary-border-width, initial);
         cursor: var(--tjs-summary-cursor, pointer);
         font-size: var(--tjs-summary-font-size, inherit);
         font-weight: var(--tjs-summary-font-weight, bold);
         list-style: none;
-        margin: 0 0 0 -5px;
+        margin: var(--tjs-summary-margin, 0 0 0 -5px);
         padding: var(--tjs-summary-padding, 4px) 0;
         user-select: none;
         width: var(--tjs-summary-width, fit-content);
@@ -201,6 +203,10 @@
 
     summary:hover svg {
         opacity: var(--tjs-summary-chevron-opacity-hover, 1);
+    }
+
+    details[open] > summary {
+        background: var(--tjs-summary-background-open, var(--tjs-summary-background, inherit));
     }
 
     [open]:not(details[data-closing='true']) > summary svg {
