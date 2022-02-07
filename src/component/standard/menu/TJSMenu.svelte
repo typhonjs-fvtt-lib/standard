@@ -154,6 +154,8 @@
       color: var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));
 
       text-align: start;
+
+      z-index: 1; /* TODO: make configurable */
    }
 
    .tjs-menu ol.tjs-menu-items {
