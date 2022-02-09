@@ -86,21 +86,29 @@
 
    import { applyStyles }   from '@typhonjs-svelte/lib/action';
    import { isStore }       from '@typhonjs-svelte/lib/store';
+   import { isObject }      from '@typhonjs-svelte/lib/util';
+
    import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
 
    export let styles;
 
-   export let folder;
-   export let id = folder ? folder.id : void 0;
-   export let label = folder ? folder.label : '';
-   export let store = folder ? folder.store : writable(false);
+   export let folder = void 0;
+   export let id = isObject(folder) ? folder.id : void 0;
+   export let label = isObject(folder) ? folder.label : '';
+   export let store = isObject(folder) ? folder.store : writable(false);
+   export let onClick = isObject(folder) ? folder.onClick : () => null;
+   export let onContextMenu = isObject(folder) ? folder.onContextMenu : () => null;
 
    let detailsEl;
 
-   $: id = typeof folder === 'object' ? folder.id : typeof id === 'string' ? id : void 0;
-   $: label = typeof folder === 'object' ? folder.label : typeof label === 'string' ? label : '';
-   $: store = typeof folder === 'object' && isStore(folder.store) ? folder.store :
+   $: id = isObject(folder) ? folder.id : typeof id === 'string' ? id : void 0;
+   $: label = isObject(folder) ? folder.label : typeof label === 'string' ? label : '';
+   $: store = isObject(folder) && isStore(folder.store) ? folder.store :
     isStore(store) ? store : writable(false);
+   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
+    typeof onClick === 'function' ? onClick : () => null;
+   $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
+    typeof onContextMenu === 'function' ? onContextMenu : () => null;
 
    /**
     * Create a CustomEvent with details object containing relevant element and props.
@@ -192,6 +200,7 @@
     }
 
     summary svg {
+        /* TODO: rework width by `em` */
         width: var(--tjs-summary-chevron-size, var(--tjs-summary-font-size, 15px));
         height: var(--tjs-summary-chevron-size, var(--tjs-summary-font-size, 15px));
         color: var(--tjs-summary-chevron-color, currentColor);

@@ -93,11 +93,13 @@
 
    /** @type {object} */
    export let folder = void 0;
-   export let id = folder ? folder.id : void 0;
-   export let iconOpen = folder ? folder.iconOpen : '';
-   export let iconClosed = folder ? folder.iconClosed : '';
-   export let label = folder ? folder.label : '';
-   export let store = folder ? folder.store : writable(false);
+   export let id = isObject(folder) ? folder.id : void 0;
+   export let iconOpen = isObject(folder) ? folder.iconOpen : '';
+   export let iconClosed = isObject(folder) ? folder.iconClosed : '';
+   export let label = isObject(folder) ? folder.label : '';
+   export let store = isObject(folder) ? folder.store : writable(false);
+   export let onClick = isObject(folder) ? folder.onClick : () => null;
+   export let onContextMenu = isObject(folder) ? folder.onContextMenu : () => null;
 
    let detailsEl;
    let currentIcon;
@@ -107,6 +109,10 @@
    $: iconClosed = isObject(folder) ? folder.iconClosed : typeof iconClosed === 'string' ? iconClosed : void 0;
    $: label = isObject(folder) ? folder.label : typeof label === 'string' ? label : '';
    $: store = isObject(folder) && isStore(folder.store) ? folder.store : isStore(store) ? store : writable(false);
+   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
+    typeof onClick === 'function' ? onClick : () => null;
+   $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
+    typeof onContextMenu === 'function' ? onContextMenu : () => null;
 
    $:
    {
@@ -158,7 +164,7 @@
          data-id={id}
          data-label={label}
          data-closing='false'>
-    <summary>
+    <summary on:click={onClick} on:contextmenu={onContextMenu}>
         {#if currentIcon}<i class={currentIcon}></i>{/if}
 
         <slot name=label>{label}</slot>
@@ -194,12 +200,15 @@
         padding: var(--tjs-summary-padding, 4px) 0;
         user-select: none;
         width: var(--tjs-summary-width, fit-content);
+
+        transition: background 0.1s;
     }
 
     summary i {
         color: var(--tjs-summary-chevron-color, currentColor);
         opacity: var(--tjs-summary-chevron-opacity, 1);
-        margin: 0 0.5em 0 0.25em;
+        margin: 0 0 0 0.25em;
+        width: var(--tjs-summary-chevron-width, 1.65em);
         transition: opacity 0.2s;
     }
 
