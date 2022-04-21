@@ -80,15 +80,14 @@
     * If neither `--tjs-contents-padding` or `--tjs-summary-font-size` is defined the default is `13px * 0.8`.
     */
 
-   import { onDestroy }     from 'svelte';
+   import { onDestroy }         from 'svelte';
+   import { writable }          from 'svelte/store';
 
-   import { writable }      from 'svelte/store';
+   import { applyStyles }       from '@typhonjs-svelte/lib/action';
+   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+   import { isObject }          from '@typhonjs-svelte/lib/util';
 
-   import { applyStyles }   from '@typhonjs-svelte/lib/action';
-   import { isStore }       from '@typhonjs-svelte/lib/store';
-   import { isObject }      from '@typhonjs-svelte/lib/util';
-
-   import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
+   import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 
    export let styles;
 
@@ -103,8 +102,8 @@
 
    $: id = isObject(folder) ? folder.id : typeof id === 'string' ? id : void 0;
    $: label = isObject(folder) ? folder.label : typeof label === 'string' ? label : '';
-   $: store = isObject(folder) && isStore(folder.store) ? folder.store :
-    isStore(store) ? store : writable(false);
+   $: store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
+    isWritableStore(store) ? store : writable(false);
    $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
     typeof onClick === 'function' ? onClick : () => null;
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
