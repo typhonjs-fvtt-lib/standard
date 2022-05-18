@@ -1,6 +1,6 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, create_bidirectional_transition, component_subscribe, globals, current_component } from 'svelte/internal';
 import { applyStyles } from '@typhonjs-fvtt/runtime/svelte/action';
-import { isStore } from '@typhonjs-fvtt/runtime/svelte/store';
+import { isWritableStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { onDestroy, onMount, getContext, createEventDispatcher } from 'svelte';
 import { writable } from 'svelte/store';
@@ -232,7 +232,7 @@ function add_css$6(target) {
 	append_styles(target, "svelte-qrlk5m", "div.svelte-qrlk5m{display:block;flex:0 0 var(--tjs-icon-button-diameter);height:var(--tjs-icon-button-diameter);width:var(--tjs-icon-button-diameter);align-self:center;text-align:center}a.svelte-qrlk5m{display:inline-block;background:var(--tjs-icon-button-background);border-radius:var(--tjs-icon-button-border-radius);position:relative;overflow:hidden;clip-path:var(--tjs-icon-button-clip-path, none);transform-style:preserve-3d;width:100%;height:100%;transition:var(--tjs-icon-button-transition)}a.svelte-qrlk5m:hover{background:var(--tjs-icon-button-background-hover);clip-path:var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, none))}a.selected.svelte-qrlk5m{background:var(--tjs-icon-button-background-selected);clip-path:var(--tjs-icon-button-clip-path-selected, var(--tjs-icon-button-clip-path, none))}i.svelte-qrlk5m{line-height:var(--tjs-icon-button-diameter);transform:translateZ(1px)}");
 }
 
-// (58:3) {#if selected}
+// (59:3) {#if selected}
 function create_if_block$1(ctx) {
 	let current;
 	const default_slot_template = /*#slots*/ ctx[11].default;
@@ -455,9 +455,9 @@ function instance$7($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*button, store*/ 260) {
-			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isStore(button.store)
+			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isWritableStore(button.store)
 			? button.store
-			: isStore(store) ? store : void 0));
+			: isWritableStore(store) ? store : void 0));
 		}
 
 		if ($$self.$$.dirty & /*button, styles*/ 264) {
@@ -535,7 +535,7 @@ const get_summary_end_slot_context$1 = ctx => ({});
 const get_label_slot_changes$1 = dirty => ({});
 const get_label_slot_context$1 = ctx => ({});
 
-// (167:25) {label}
+// (166:25) {label}
 function fallback_block$1(ctx) {
 	let t;
 
@@ -829,9 +829,9 @@ function instance$6($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 132) {
-			$$invalidate(2, store = isObject(folder) && isStore(folder.store)
+			$$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
 			? folder.store
-			: isStore(store) ? store : writable(false));
+			: isWritableStore(store) ? store : writable(false));
 		}
 
 		if ($$self.$$.dirty & /*folder, onClick*/ 160) {
@@ -1257,9 +1257,9 @@ function instance$5($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 1028) {
-			$$subscribe_store($$invalidate(2, store = isObject(folder) && isStore(folder.store)
+			$$subscribe_store($$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
 			? folder.store
-			: isStore(store) ? store : writable(false)));
+			: isWritableStore(store) ? store : writable(false)));
 		}
 
 		if ($$self.$$.dirty & /*folder, onClick*/ 1032) {
@@ -1453,9 +1453,9 @@ function instance$4($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*input, store*/ 132) {
-			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isStore(input.store)
+			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isWritableStore(input.store)
 			? input.store
-			: isStore(store) ? store : writable(void 0)));
+			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
 		if ($$self.$$.dirty & /*input, styles*/ 136) {
@@ -1524,7 +1524,7 @@ function get_each_context$2(ctx, list, i) {
 	return child_ctx;
 }
 
-// (65:6) {#each options as option}
+// (67:6) {#each options as option}
 function create_each_block$2(ctx) {
 	let option;
 	let t0_value = /*option*/ ctx[8].label + "";
@@ -1699,9 +1699,9 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*select, store*/ 66) {
-			$$subscribe_store($$invalidate(1, store = typeof select === 'object' && isStore(select.store)
+			$$subscribe_store($$invalidate(1, store = typeof select === 'object' && isWritableStore(select.store)
 			? select.store
-			: isStore(store) ? store : writable(void 0)));
+			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
 		if ($$self.$$.dirty & /*select, styles*/ 68) {
