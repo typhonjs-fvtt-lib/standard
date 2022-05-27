@@ -1,6 +1,6 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, create_bidirectional_transition, component_subscribe, globals, current_component } from 'svelte/internal';
 import { applyStyles } from '@typhonjs-fvtt/runtime/svelte/action';
-import { isWritableStore } from '@typhonjs-fvtt/runtime/svelte/store';
+import { isSettableStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { onDestroy, onMount, getContext, createEventDispatcher } from 'svelte';
 import { writable } from 'svelte/store';
@@ -455,9 +455,9 @@ function instance$7($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*button, store*/ 260) {
-			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isWritableStore(button.store)
+			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isSettableStore(button.store)
 			? button.store
-			: isWritableStore(store) ? store : void 0));
+			: isSettableStore(store) ? store : void 0));
 		}
 
 		if ($$self.$$.dirty & /*button, styles*/ 264) {
@@ -829,9 +829,9 @@ function instance$6($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 132) {
-			$$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
+			$$invalidate(2, store = isObject(folder) && isSettableStore(folder.store)
 			? folder.store
-			: isWritableStore(store) ? store : writable(false));
+			: isSettableStore(store) ? store : writable(false));
 		}
 
 		if ($$self.$$.dirty & /*folder, onClick*/ 160) {
@@ -1257,9 +1257,9 @@ function instance$5($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 1028) {
-			$$subscribe_store($$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
+			$$subscribe_store($$invalidate(2, store = isObject(folder) && isSettableStore(folder.store)
 			? folder.store
-			: isWritableStore(store) ? store : writable(false)));
+			: isSettableStore(store) ? store : writable(false)));
 		}
 
 		if ($$self.$$.dirty & /*folder, onClick*/ 1032) {
@@ -1453,9 +1453,9 @@ function instance$4($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*input, store*/ 132) {
-			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isWritableStore(input.store)
+			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isSettableStore(input.store)
 			? input.store
-			: isWritableStore(store) ? store : writable(void 0)));
+			: isSettableStore(store) ? store : writable(void 0)));
 		}
 
 		if ($$self.$$.dirty & /*input, styles*/ 136) {
@@ -1699,9 +1699,9 @@ function instance$3($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*select, store*/ 66) {
-			$$subscribe_store($$invalidate(1, store = typeof select === 'object' && isWritableStore(select.store)
+			$$subscribe_store($$invalidate(1, store = typeof select === 'object' && isSettableStore(select.store)
 			? select.store
-			: isWritableStore(store) ? store : writable(void 0)));
+			: isSettableStore(store) ? store : writable(void 0)));
 		}
 
 		if ($$self.$$.dirty & /*select, styles*/ 68) {

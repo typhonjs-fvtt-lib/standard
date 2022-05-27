@@ -21,7 +21,7 @@
    import { writable }          from 'svelte/store';
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
    import { localize }          from '@typhonjs-svelte/lib/helper';
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+   import { isSettableStore }   from '@typhonjs-svelte/lib/store';
    import { autoBlur }          from '@typhonjs-fvtt/svelte-standard/action';
 
    export let input;
@@ -38,8 +38,8 @@
     typeof disabled === 'boolean' ? disabled : false;
    $: placeholder = typeof input === 'object' && typeof input.placeholder === 'string' ? localize(input.placeholder) :
     typeof placeholder === 'string' ? localize(placeholder) : void 0;
-   $: store = typeof input === 'object' && isWritableStore(input.store) ? input.store :
-    isWritableStore(store) ? store : writable(void 0);
+   $: store = typeof input === 'object' && isSettableStore(input.store) ? input.store :
+    isSettableStore(store) ? store : writable(void 0);
    $: styles = typeof input === 'object' && typeof input.styles === 'object' ? input.styles :
     typeof styles === 'object' ? styles : void 0;
    $: efx = typeof input === 'object' && typeof input.efx === 'function' ? input.efx :

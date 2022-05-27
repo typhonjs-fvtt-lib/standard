@@ -11,7 +11,7 @@
     * --tjs-icon-button-transition
     */
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
-   import { isWritableStore } from '@typhonjs-svelte/lib/store';
+   import { isSettableStore } from '@typhonjs-svelte/lib/store';
    import { localize }        from '@typhonjs-svelte/lib/helper';
 
    export let button;
@@ -25,7 +25,7 @@
     typeof icon === 'string' ? icon : '';
    $: title = typeof button === 'object' && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : '';
-   $: store = typeof button === 'object' && isWritableStore(button.store) ? button.store : isWritableStore(store) ?
+   $: store = typeof button === 'object' && isSettableStore(button.store) ? button.store : isSettableStore(store) ?
     store : void 0;
    $: styles = typeof button === 'object' && typeof button.styles === 'object' ? button.styles :
     typeof styles === 'object' ? styles : void 0;
