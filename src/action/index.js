@@ -1,5 +1,3 @@
-export * from './autoBlur.js';
-
 export * from './animation/composable/animate.js';
 export * from './animation/composable/composable.js';
 export * from './animation/composable/ripple.js';
