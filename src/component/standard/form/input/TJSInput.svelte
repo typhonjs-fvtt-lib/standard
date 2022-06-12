@@ -19,10 +19,12 @@
 
    import { onMount }           from 'svelte';
    import { writable }          from 'svelte/store';
-   import { applyStyles }       from '@typhonjs-svelte/lib/action';
+
+   import {
+      applyStyles,
+      autoBlur }                from '@typhonjs-svelte/lib/action';
    import { localize }          from '@typhonjs-svelte/lib/helper';
    import { isSettableStore }   from '@typhonjs-svelte/lib/store';
-   import { autoBlur }          from '@typhonjs-fvtt/svelte-standard/action';
 
    export let input;
    export let type;
