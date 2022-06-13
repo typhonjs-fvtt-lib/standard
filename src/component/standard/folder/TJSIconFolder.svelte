@@ -85,7 +85,7 @@
    import { writable }          from 'svelte/store';
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
-   import { isSettableStore }   from '@typhonjs-svelte/lib/store';
+   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
    import { isObject }          from '@typhonjs-svelte/lib/util';
    import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 
@@ -95,7 +95,7 @@
    export let iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen : void 0;
    export let iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed : void 0;
    export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
-   export let store = isObject(folder) && isSettableStore(folder.store) ? folder.store : writable(false);
+   export let store = isObject(folder) && isWritableStore(folder.store) ? folder.store : writable(false);
    export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
    export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
    export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
@@ -117,8 +117,8 @@
    $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
     typeof label === 'string' ? label : '';
 
-   $: store = isObject(folder) && isSettableStore(folder.store) ? folder.store :
-    isSettableStore(store) ? store : writable(false);
+   $: store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
+    isWritableStore(store) ? store : writable(false);
 
    $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
     isObject(styles) ? styles : void 0;

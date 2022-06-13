@@ -1,6 +1,6 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, element, space, attr, null_to_empty, toggle_class, insert, append, listen, action_destroyer, stop_propagation, prevent_default, group_outros, check_outros, is_function, detach, run_all, subscribe, create_slot, noop, bubble, svg_element, set_style, text, set_data, set_store_value, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, empty, create_component, mount_component, destroy_component, update_keyed_each, outro_and_destroy_block, component_subscribe, create_bidirectional_transition, globals, current_component } from 'svelte/internal';
 import { applyStyles, autoBlur } from '@typhonjs-fvtt/runtime/svelte/action';
-import { isSettableStore, propertyStore } from '@typhonjs-fvtt/runtime/svelte/store';
+import { isWritableStore, propertyStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { onDestroy, onMount, getContext, setContext, createEventDispatcher } from 'svelte';
 import { writable } from 'svelte/store';
@@ -457,9 +457,9 @@ function instance$b($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*button, store*/ 260) {
-			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isSettableStore(button.store)
+			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isWritableStore(button.store)
 			? button.store
-			: isSettableStore(store) ? store : void 0));
+			: isWritableStore(store) ? store : void 0));
 		}
 
 		if ($$self.$$.dirty & /*button, styles*/ 264) {
@@ -767,7 +767,7 @@ function instance$a($$self, $$props, $$invalidate) {
 	? folder.label
 	: '' } = $$props;
 
-	let { store = isObject(folder) && isSettableStore(folder.store)
+	let { store = isObject(folder) && isWritableStore(folder.store)
 	? folder.store
 	: writable(false) } = $$props;
 
@@ -899,9 +899,9 @@ function instance$a($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 1028) {
-			$$subscribe_store($$invalidate(2, store = isObject(folder) && isSettableStore(folder.store)
+			$$subscribe_store($$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
 			? folder.store
-			: isSettableStore(store) ? store : writable(false)));
+			: isWritableStore(store) ? store : writable(false)));
 		}
 
 		if ($$self.$$.dirty & /*folder, onClick*/ 1536) {
@@ -1251,7 +1251,7 @@ function instance$9($$self, $$props, $$invalidate) {
 	? folder.label
 	: '' } = $$props;
 
-	let { store = isObject(folder) && isSettableStore(folder.store)
+	let { store = isObject(folder) && isWritableStore(folder.store)
 	? folder.store
 	: writable(false) } = $$props;
 
@@ -1398,9 +1398,9 @@ function instance$9($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*folder, store*/ 8196) {
-			$$subscribe_store($$invalidate(2, store = isObject(folder) && isSettableStore(folder.store)
+			$$subscribe_store($$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
 			? folder.store
-			: isSettableStore(store) ? store : writable(false)));
+			: isWritableStore(store) ? store : writable(false)));
 		}
 
 		if ($$self.$$.dirty & /*folder, styles*/ 8200) {
@@ -1605,9 +1605,9 @@ function instance$8($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*input, store*/ 132) {
-			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isSettableStore(input.store)
+			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isWritableStore(input.store)
 			? input.store
-			: isSettableStore(store) ? store : writable(void 0)));
+			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
 		if ($$self.$$.dirty & /*input, styles*/ 136) {
@@ -1851,9 +1851,9 @@ function instance$7($$self, $$props, $$invalidate) {
 		}
 
 		if ($$self.$$.dirty & /*select, store*/ 66) {
-			$$subscribe_store($$invalidate(1, store = typeof select === 'object' && isSettableStore(select.store)
+			$$subscribe_store($$invalidate(1, store = typeof select === 'object' && isWritableStore(select.store)
 			? select.store
-			: isSettableStore(store) ? store : writable(void 0)));
+			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
 		if ($$self.$$.dirty & /*select, styles*/ 68) {

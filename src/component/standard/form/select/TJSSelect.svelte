@@ -33,7 +33,7 @@
    import {
       applyStyles,
       autoBlur }              from '@typhonjs-svelte/lib/action';
-   import { isSettableStore } from '@typhonjs-svelte/lib/store';
+   import { isWritableStore } from '@typhonjs-svelte/lib/store';
 
    export let select;
    export let selected;
@@ -46,8 +46,8 @@
     typeof selected === 'string' ? selected : void 0;
    $: options = typeof select === 'object' && Array.isArray(select.options) ? select.options :
     Array.isArray(options) ? options : [];
-   $: store = typeof select === 'object' && isSettableStore(select.store) ? select.store :
-    isSettableStore(store) ? store : writable(void 0);
+   $: store = typeof select === 'object' && isWritableStore(select.store) ? select.store :
+    isWritableStore(store) ? store : writable(void 0);
    $: styles = typeof select === 'object' && typeof select.styles === 'object' ? select.styles :
     typeof styles === 'object' ? styles : void 0;
    $: efx = typeof select === 'object' && typeof select.efx === 'function' ? select.efx :
