@@ -156,7 +156,7 @@
    {
       const target = event.target;
 
-      if (target === summaryEl || target === iconEl || target.classList.contains('summary-click'))
+      if (target === summaryEl || target === iconEl || target.querySelector('.summary-click') !== null)
       {
          $store = !$store;
          onClick(event);

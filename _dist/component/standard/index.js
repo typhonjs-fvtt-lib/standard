@@ -535,7 +535,7 @@ const get_summary_end_slot_context$1 = ctx => ({});
 const get_label_slot_changes$1 = dirty => ({});
 const get_label_slot_context$1 = ctx => ({});
 
-// (193:25) {label}
+// (191:25) {label}
 function fallback_block$1(ctx) {
 	let t;
 
@@ -809,10 +809,9 @@ function instance$6($$self, $$props, $$invalidate) {
 	}
 
 	function onClickSummary(event) {
-		event.target.classList.contains('ignore');
 		const target = event.target;
 
-		if (target === summaryEl || target === svgEl || svgEl.contains(event.target) || target.classList.contains('summary-click')) {
+		if (target === summaryEl || target === svgEl || svgEl.contains(event.target) || target.querySelector('.summary-click') !== null) {
 			set_store_value(store, $store = !$store, $store);
 			onClick(event);
 			event.preventDefault();
@@ -1297,7 +1296,7 @@ function instance$5($$self, $$props, $$invalidate) {
 	function onClickSummary(event) {
 		const target = event.target;
 
-		if (target === summaryEl || target === iconEl || target.classList.contains('summary-click')) {
+		if (target === summaryEl || target === iconEl || target.querySelector('.summary-click') !== null) {
 			set_store_value(store, $store = !$store, $store);
 			onClick(event);
 			event.preventDefault();

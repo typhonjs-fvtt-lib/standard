@@ -138,12 +138,10 @@
 
    function onClickSummary(event)
    {
-      event.target.classList.contains('ignore')
-
       const target = event.target;
 
       if (target === summaryEl || target === svgEl || svgEl.contains(event.target) ||
-       target.classList.contains('summary-click'))
+       target.querySelector('.summary-click') !== null)
       {
          $store = !$store;
          onClick(event);
