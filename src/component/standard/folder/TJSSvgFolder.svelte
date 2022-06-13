@@ -54,6 +54,7 @@
     * --tjs-summary-cursor: pointer
     * --tjs-summary-font-size: inherit
     * --tjs-summary-font-weight: bold
+    * --tjs-summary-font-family: inherit
     * --tjs-summary-padding: 4px
     * --tjs-summary-width: fit-content; wraps content initially, set to 100% or other width measurement
     *
@@ -89,23 +90,32 @@
 
    import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 
-   export let styles;
-
    export let folder = void 0;
-   export let id = isObject(folder) ? folder.id : void 0;
-   export let label = isObject(folder) ? folder.label : '';
-   export let store = isObject(folder) ? folder.store : writable(false);
-   export let onClick = isObject(folder) ? folder.onClick : () => null;
-   export let onContextMenu = isObject(folder) ? folder.onContextMenu : () => null;
+   export let id = isObject(folder) && typeof folder.id === 'string' ? folder.id : void 0;
+   export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
+   export let store = isObject(folder) && isSettableStore(folder.store) ? folder.store : writable(false);
+   export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
+   export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
+   export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
+    () => null;
 
-   let detailsEl;
+   let detailsEl, summaryEl, svgEl;
 
-   $: id = isObject(folder) ? folder.id : typeof id === 'string' ? id : void 0;
-   $: label = isObject(folder) ? folder.label : typeof label === 'string' ? label : '';
+   $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
+    typeof id === 'string' ? id : void 0;
+
+   $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
+    typeof label === 'string' ? label : '';
+
    $: store = isObject(folder) && isSettableStore(folder.store) ? folder.store :
     isSettableStore(store) ? store : writable(false);
+
    $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
     typeof onClick === 'function' ? onClick : () => null;
+
+   $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
+    isObject(styles) ? styles : void 0;
+
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
 
@@ -124,6 +134,23 @@
          detail: {element: detailsEl, folder, id, label, store},
          bubbles
       });
+   }
+
+   function onClickSummary(event)
+   {
+      event.target.classList.contains('ignore')
+
+      const target = event.target;
+
+      if (target === summaryEl || target === svgEl || svgEl.contains(event.target) ||
+       target.classList.contains('summary-click'))
+      {
+         $store = !$store;
+         onClick(event);
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 
    // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
@@ -148,13 +175,13 @@
          on:close
          on:openAny
          on:closeAny
-         use:toggleDetails={store}
+         use:toggleDetails={{ store, clickActive: false }}
          use:applyStyles={styles}
          data-id={id}
          data-label={label}
          data-closing='false'>
-    <summary>
-        <svg viewBox="0 0 24 24">
+    <summary bind:this={summaryEl} on:click|capture={onClickSummary} on:contextmenu={onContextMenu}>
+        <svg bind:this={svgEl} viewBox="0 0 24 24">
             <path
                 fill=currentColor
                 stroke=currentColor
@@ -191,6 +218,7 @@
         cursor: var(--tjs-summary-cursor, pointer);
         font-size: var(--tjs-summary-font-size, inherit);
         font-weight: var(--tjs-summary-font-weight, bold);
+        font-family: var(--tjs-summary-font-family, inherit);
         list-style: none;
         margin: var(--tjs-summary-margin, 0 0 0 -5px);
         padding: var(--tjs-summary-padding, 4px) 0;

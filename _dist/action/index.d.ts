@@ -1,5 +1,3 @@
-import * as svelte_store from 'svelte/store';
-
 /**
  * Defines an `Element.animate` animation from provided keyframes and options.
  *
@@ -123,10 +121,14 @@ declare function storeScrolltop(element: HTMLElement, store: object): {
  *
  * @param {HTMLDetailsElement} details - The details element.
  *
- * @param {import('svelte/store').Writable<boolean>} booleanStore - A boolean store.
+ * @param {object} opts - Options parameters.
+ *
+ * @param {import('svelte/store').Writable<boolean>} store - A boolean store.
+ *
+ * @param {boolean} [clickActive] - When false click events are not handled.
  *
  * @returns {object} Destroy callback.
  */
-declare function toggleDetails(details: HTMLDetailsElement, booleanStore: svelte_store.Writable<boolean>): object;
+declare function toggleDetails(details: HTMLDetailsElement, { store, clickActive }?: object): object;
 
 export { animate, composable, ripple, rippleFocus, storeScrolltop, toggleDetails };

@@ -10,11 +10,15 @@ import { subscribeFirstRest } from '@typhonjs-svelte/lib/store';
  *
  * @param {HTMLDetailsElement} details - The details element.
  *
- * @param {import('svelte/store').Writable<boolean>} booleanStore - A boolean store.
+ * @param {object} opts - Options parameters.
+ *
+ * @param {import('svelte/store').Writable<boolean>} store - A boolean store.
+ *
+ * @param {boolean} [clickActive] - When false click events are not handled.
  *
  * @returns {object} Destroy callback.
  */
-export function toggleDetails(details, booleanStore)
+export function toggleDetails(details, { store, clickActive = true } = {})
 {
    /** @type {HTMLElement} */
    const summary = details.querySelector('summary');
@@ -25,8 +29,8 @@ export function toggleDetails(details, booleanStore)
    /** @type {boolean} */
    let open = details.open;
 
-   // The booleanStore sets initial open state and handles animation on further changes.
-   const unsubscribe = subscribeFirstRest(booleanStore, (value) => { open = value; details.open = open }, (value) =>
+   // The store sets initial open state and handles animation on further changes.
+   const unsubscribe = subscribeFirstRest(store, (value) => { open = value; details.open = open }, (value) =>
    {
       open = value;
       handleAnimation();
@@ -94,10 +98,13 @@ export function toggleDetails(details, booleanStore)
     */
    function handleClick(e)
    {
-      e.preventDefault();
+      if (clickActive)
+      {
+         e.preventDefault();
 
-      // Simply set the store to the opposite of current open state and the callback above handles animation.
-      booleanStore.set(!open);
+         // Simply set the store to the opposite of current open state and the callback above handles animation.
+         store.set(!open);
+      }
    }
 
    summary.addEventListener('click', handleClick);

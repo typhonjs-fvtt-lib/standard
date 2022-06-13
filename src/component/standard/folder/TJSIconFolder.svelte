@@ -54,6 +54,7 @@
     * --tjs-summary-cursor: pointer
     * --tjs-summary-font-size: inherit
     * --tjs-summary-font-weight: bold
+    * --tjs-summary-font-family: inherit
     * --tjs-summary-padding: 4px
     * --tjs-summary-width: fit-content; wraps content initially, set to 100% or other width measurement
     *
@@ -88,29 +89,43 @@
    import { isObject }          from '@typhonjs-svelte/lib/util';
    import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 
-   export let styles;
-
    /** @type {object} */
    export let folder = void 0;
-   export let id = isObject(folder) ? folder.id : void 0;
-   export let iconOpen = isObject(folder) ? folder.iconOpen : '';
-   export let iconClosed = isObject(folder) ? folder.iconClosed : '';
-   export let label = isObject(folder) ? folder.label : '';
-   export let store = isObject(folder) ? folder.store : writable(false);
-   export let onClick = isObject(folder) ? folder.onClick : () => null;
-   export let onContextMenu = isObject(folder) ? folder.onContextMenu : () => null;
+   export let id = isObject(folder) && typeof folder.id === 'string' ? folder.id : void 0;
+   export let iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen : void 0;
+   export let iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed : void 0;
+   export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
+   export let store = isObject(folder) && isSettableStore(folder.store) ? folder.store : writable(false);
+   export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
+   export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
+   export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
+    () => null;
 
-   let detailsEl;
+
+   let detailsEl, iconEl, summaryEl;
    let currentIcon;
 
-   $: id = isObject(folder) ? folder.id : typeof id === 'string' ? id : void 0;
-   $: iconOpen = isObject(folder) ? folder.iconOpen : typeof iconOpen === 'string' ? iconOpen : void 0;
-   $: iconClosed = isObject(folder) ? folder.iconClosed : typeof iconClosed === 'string' ? iconClosed : void 0;
-   $: label = isObject(folder) ? folder.label : typeof label === 'string' ? label : '';
-   $: store = isObject(folder) && isSettableStore(folder.store) ? folder.store : isSettableStore(store) ? store :
-    writable(false);
+   $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
+    typeof id === 'string' ? id : void 0;
+
+   $: iconOpen = isObject(folder) && folder.iconOpen === 'string' ? folder.iconOpen :
+    typeof iconOpen === 'string' ? iconOpen : void 0;
+
+   $: iconClosed = isObject(folder) && folder.iconClosed === 'string' ? folder.iconClosed :
+    typeof iconClosed === 'string' ? iconClosed : void 0;
+
+   $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
+    typeof label === 'string' ? label : '';
+
+   $: store = isObject(folder) && isSettableStore(folder.store) ? folder.store :
+    isSettableStore(store) ? store : writable(false);
+
+   $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
+    isObject(styles) ? styles : void 0;
+
    $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
     typeof onClick === 'function' ? onClick : () => null;
+
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
 
@@ -137,6 +152,20 @@
       });
     }
 
+   function onClickSummary(event)
+   {
+      const target = event.target;
+
+      if (target === summaryEl || target === iconEl || target.classList.contains('summary-click'))
+      {
+         $store = !$store;
+         onClick(event);
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
    // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
    // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
    // `createEventDispatcher`.
@@ -159,13 +188,14 @@
          on:close
          on:openAny
          on:closeAny
-         use:toggleDetails={store}
+         use:toggleDetails={{ store, clickActive: false }}
          use:applyStyles={styles}
          data-id={id}
          data-label={label}
          data-closing='false'>
-    <summary on:click={onClick} on:contextmenu={onContextMenu}>
-        {#if currentIcon}<i class={currentIcon}></i>{/if}
+
+    <summary bind:this={summaryEl} on:click|capture={onClickSummary} on:contextmenu={onContextMenu}>
+        {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
         <slot name=label>{label}</slot>
 
@@ -195,6 +225,7 @@
         cursor: var(--tjs-summary-cursor, pointer);
         font-size: var(--tjs-summary-font-size, inherit);
         font-weight: var(--tjs-summary-font-weight, bold);
+        font-family: var(--tjs-summary-font-family, inherit);
         list-style: none;
         margin: var(--tjs-summary-margin, 0);
         padding: var(--tjs-summary-padding, 4px) 0;
