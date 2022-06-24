@@ -17,6 +17,9 @@ type ControlsData = {
 declare class TJSContextMenu extends SvelteComponent {
     constructor(options: any);
 }
+declare class TJSIconButton extends SvelteComponent {
+    constructor(options: any);
+}
 declare class TJSIconFolder extends SvelteComponent {
     constructor(options: any);
 }
@@ -32,9 +35,6 @@ declare class TJSPositionControlLayer extends SvelteComponent {
 declare class TJSSelect extends SvelteComponent {
     constructor(options: any);
 }
-declare class TJSStyleProperties extends SvelteComponent {
-    constructor(options: any);
-}
 declare class TJSSvgFolder extends SvelteComponent {
     constructor(options: any);
 }
@@ -42,4 +42,4 @@ declare class TJSToggleIconButton extends SvelteComponent {
     constructor(options: any);
 }
 
-export { ControlsData, TJSContextMenu, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSStyleProperties, TJSSvgFolder, TJSToggleIconButton };
+export { ControlsData, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton };

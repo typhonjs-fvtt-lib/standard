@@ -99,19 +99,6 @@ declare function rippleFocus({ duration, background, selectors }?: {
     destroy: () => void;
 };
 /**
- * Provides an action to save `scrollTop` of an element with a vertical scrollbar. This action should be used on the
- * scrollable element and must include a writable store that holds the active store for the current `scrollTop` value.
- * You may switch the stores externally and this action will set the `scrollTop` based on the newly set store. This is
- * useful for instance providing a select box that controls the scrollable container.
- *
- * @param {HTMLElement} element - The target scrollable HTML element.
- *
- * @param {object}      store - The host store wrapping another store that is the `scrollTop` target.
- */
-declare function storeScrolltop(element: HTMLElement, store: object): {
-    destroy: () => void;
-};
-/**
  * Provides a toggle action for `details` HTML elements. The boolean store provided controls animation.
  *
  * It is not necessary to bind the store to the `open` attribute of the associated details element.
@@ -131,4 +118,4 @@ declare function storeScrolltop(element: HTMLElement, store: object): {
  */
 declare function toggleDetails(details: HTMLDetailsElement, { store, clickActive }?: object): object;
 
-export { animate, composable, ripple, rippleFocus, storeScrolltop, toggleDetails };
+export { animate, composable, ripple, rippleFocus, toggleDetails };
