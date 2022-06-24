@@ -1,13 +1,12 @@
-import { cssVariables, FoundryStyles }          from '#internal';
+import {
+   cssVariables,
+   FoundryStyles }   from '#internal';
 
-export { default as TJSToggleIconButton }       from './button/TJSToggleIconButton.svelte';
-export { default as TJSSvgFolder }              from './folder/TJSSvgFolder.svelte';
-export { default as TJSIconFolder }             from './folder/TJSIconFolder.svelte';
-export *                                        from './form/index.js';
-export { default as TJSPositionControlLayer }   from './layers/position-control/TJSPositionControlLayer.svelte';
-export { default as TJSMenu }                   from './menu/TJSMenu.svelte';
-export { default as TJSContextMenu }            from './menu/context/TJSContextMenu.svelte';
-export { default as TJSStyleProperties }        from './TJSStyleProperties.svelte';
+export *             from './button';
+export *             from './folder';
+export *             from './form';
+export *             from './layers';
+export *             from './menu';
 
 /**
  * Assign all TyphonJS CSS variables to Foundry defaults.

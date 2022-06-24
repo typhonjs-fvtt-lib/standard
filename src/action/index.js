@@ -4,5 +4,3 @@ export * from './animation/composable/ripple.js';
 export * from './animation/composable/rippleFocus.js';
 
 export * from './animation/toggleDetails.js';
-
-export * from './store/storeScrolltop.js';
