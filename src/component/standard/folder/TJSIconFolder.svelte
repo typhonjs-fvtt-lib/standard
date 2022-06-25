@@ -257,7 +257,8 @@
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
-             on:keyup={onKeyUp}>
+             on:keyup={onKeyUp}
+             class:default-cursor={localOptions.chevronOnly}>
         {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
         <slot name=label>{label}</slot>
@@ -300,6 +301,7 @@
 
     summary i {
         color: var(--tjs-summary-chevron-color, currentColor);
+        cursor: var(--tjs-summary-cursor, pointer);
         opacity: var(--tjs-summary-chevron-opacity, 1);
         margin: 0 0 0 0.25em;
         width: var(--tjs-summary-chevron-width, 1.65em);
@@ -308,6 +310,10 @@
 
     summary:hover i {
         opacity: var(--tjs-summary-chevron-opacity-hover, 1);
+    }
+
+    .default-cursor {
+        cursor: default;
     }
 
     details[open] > summary {

@@ -240,7 +240,8 @@
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
-             on:keyup={onKeyUp}>
+             on:keyup={onKeyUp}
+             class:default-cursor={localOptions.chevronOnly}>
         <svg bind:this={svgEl} viewBox="0 0 24 24">
             <path
                 fill=currentColor
@@ -286,11 +287,16 @@
         width: var(--tjs-summary-width, fit-content);
     }
 
+    .default-cursor {
+        cursor: default;
+    }
+
     summary svg {
         /* TODO: rework width by `em` */
         width: var(--tjs-summary-chevron-size, var(--tjs-summary-font-size, 15px));
         height: var(--tjs-summary-chevron-size, var(--tjs-summary-font-size, 15px));
         color: var(--tjs-summary-chevron-color, currentColor);
+        cursor: var(--tjs-summary-cursor, pointer);
         opacity: var(--tjs-summary-chevron-opacity, 0.2);
         margin: 0 5px 0 0;
         transition: opacity 0.2s, transform 0.1s;
