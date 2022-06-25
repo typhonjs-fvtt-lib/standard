@@ -90,14 +90,35 @@
 
    import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 
+   /** @type {TJSFolderData} */
    export let folder = void 0;
+
+   /** @type {string} */
    export let id = isObject(folder) && typeof folder.id === 'string' ? folder.id : void 0;
+
+   /** @type {string} */
    export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
+
+   /** @type {TJSFolderOptions} */
+   export let options = isObject(folder) && isObject(folder.options) ? folder.options : {};
+
+   /** @type {import('svelte/store').Writable<boolean>} */
    export let store = isObject(folder) && isWritableStore(folder.store) ? folder.store : writable(false);
+
+   /** @type {object} */
    export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
+
+   /** @type {(event?: MouseEvent) => void} */
    export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
+
+   /** @type {(event?: MouseEvent) => void} */
    export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     () => null;
+
+   /** @type {TJSFolderOptions} */
+   const localOptions = {
+      noKeys: false
+   }
 
    let detailsEl, summaryEl, svgEl;
 
@@ -107,14 +128,21 @@
    $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
     typeof label === 'string' ? label : '';
 
+   $: {
+      options = isObject(folder) && isObject(folder.options) ? folder.options :
+       isObject(options) ? options : {};
+
+      if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
+   }
+
    $: store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
     isWritableStore(store) ? store : writable(false);
 
-   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
-    typeof onClick === 'function' ? onClick : () => null;
-
    $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
     isObject(styles) ? styles : void 0;
+
+   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
+    typeof onClick === 'function' ? onClick : () => null;
 
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
@@ -151,6 +179,16 @@
       }
    }
 
+   /**
+    * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * @param {KeyboardEvent} event -
+    */
+   function onKeyUp(event)
+   {
+      if (localOptions.noKeys && event.key === ' ') { event.preventDefault(); }
+   }
+
    // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
    // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
    // `createEventDispatcher`.
@@ -178,7 +216,10 @@
          data-id={id}
          data-label={label}
          data-closing='false'>
-    <summary bind:this={summaryEl} on:click|capture={onClickSummary} on:contextmenu={onContextMenu}>
+    <summary bind:this={summaryEl}
+             on:click|capture={onClickSummary}
+             on:contextmenu={onContextMenu}
+             on:keyup={onKeyUp}>
         <svg bind:this={svgEl} viewBox="0 0 24 24">
             <path
                 fill=currentColor

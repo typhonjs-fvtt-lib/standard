@@ -679,7 +679,7 @@ const get_summary_end_slot_context$1 = ctx => ({});
 const get_label_slot_changes$1 = dirty => ({});
 const get_label_slot_context$1 = ctx => ({});
 
-// (191:25) {label}
+// (232:25) {label}
 function fallback_block$1(ctx) {
 	let t;
 
@@ -713,13 +713,13 @@ function create_fragment$a(ctx) {
 	let current;
 	let mounted;
 	let dispose;
-	const label_slot_template = /*#slots*/ ctx[12].label;
-	const label_slot = create_slot(label_slot_template, ctx, /*$$scope*/ ctx[11], get_label_slot_context$1);
+	const label_slot_template = /*#slots*/ ctx[14].label;
+	const label_slot = create_slot(label_slot_template, ctx, /*$$scope*/ ctx[13], get_label_slot_context$1);
 	const label_slot_or_fallback = label_slot || fallback_block$1(ctx);
-	const summary_end_slot_template = /*#slots*/ ctx[12]["summary-end"];
-	const summary_end_slot = create_slot(summary_end_slot_template, ctx, /*$$scope*/ ctx[11], get_summary_end_slot_context$1);
-	const default_slot_template = /*#slots*/ ctx[12].default;
-	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[11], null);
+	const summary_end_slot_template = /*#slots*/ ctx[14]["summary-end"];
+	const summary_end_slot = create_slot(summary_end_slot_template, ctx, /*$$scope*/ ctx[13], get_summary_end_slot_context$1);
+	const default_slot_template = /*#slots*/ ctx[14].default;
+	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[13], null);
 
 	return {
 		c() {
@@ -753,7 +753,7 @@ function create_fragment$a(ctx) {
 			append(details, summary);
 			append(summary, svg);
 			append(svg, path);
-			/*svg_binding*/ ctx[18](svg);
+			/*svg_binding*/ ctx[20](svg);
 			append(summary, t0);
 
 			if (label_slot_or_fallback) {
@@ -766,7 +766,7 @@ function create_fragment$a(ctx) {
 				summary_end_slot.m(summary, null);
 			}
 
-			/*summary_binding*/ ctx[19](summary);
+			/*summary_binding*/ ctx[21](summary);
 			append(details, t2);
 			append(details, div);
 
@@ -774,7 +774,7 @@ function create_fragment$a(ctx) {
 				default_slot.m(div, null);
 			}
 
-			/*details_binding*/ ctx[20](details);
+			/*details_binding*/ ctx[22](details);
 			current = true;
 
 			if (!mounted) {
@@ -783,11 +783,12 @@ function create_fragment$a(ctx) {
 					listen(summary, "contextmenu", function () {
 						if (is_function(/*onContextMenu*/ ctx[4])) /*onContextMenu*/ ctx[4].apply(this, arguments);
 					}),
-					listen(details, "click", /*click_handler*/ ctx[13]),
-					listen(details, "open", /*open_handler*/ ctx[14]),
-					listen(details, "close", /*close_handler*/ ctx[15]),
-					listen(details, "openAny", /*openAny_handler*/ ctx[16]),
-					listen(details, "closeAny", /*closeAny_handler*/ ctx[17]),
+					listen(summary, "keyup", /*onKeyUp*/ ctx[9]),
+					listen(details, "click", /*click_handler*/ ctx[15]),
+					listen(details, "open", /*open_handler*/ ctx[16]),
+					listen(details, "close", /*close_handler*/ ctx[17]),
+					listen(details, "openAny", /*openAny_handler*/ ctx[18]),
+					listen(details, "closeAny", /*closeAny_handler*/ ctx[19]),
 					action_destroyer(toggleDetails_action = toggleDetails.call(null, details, {
 						store: /*store*/ ctx[2],
 						clickActive: false
@@ -802,15 +803,15 @@ function create_fragment$a(ctx) {
 			ctx = new_ctx;
 
 			if (label_slot) {
-				if (label_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+				if (label_slot.p && (!current || dirty & /*$$scope*/ 8192)) {
 					update_slot_base(
 						label_slot,
 						label_slot_template,
 						ctx,
-						/*$$scope*/ ctx[11],
+						/*$$scope*/ ctx[13],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
-						: get_slot_changes(label_slot_template, /*$$scope*/ ctx[11], dirty, get_label_slot_changes$1),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[13])
+						: get_slot_changes(label_slot_template, /*$$scope*/ ctx[13], dirty, get_label_slot_changes$1),
 						get_label_slot_context$1
 					);
 				}
@@ -821,30 +822,30 @@ function create_fragment$a(ctx) {
 			}
 
 			if (summary_end_slot) {
-				if (summary_end_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+				if (summary_end_slot.p && (!current || dirty & /*$$scope*/ 8192)) {
 					update_slot_base(
 						summary_end_slot,
 						summary_end_slot_template,
 						ctx,
-						/*$$scope*/ ctx[11],
+						/*$$scope*/ ctx[13],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
-						: get_slot_changes(summary_end_slot_template, /*$$scope*/ ctx[11], dirty, get_summary_end_slot_changes$1),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[13])
+						: get_slot_changes(summary_end_slot_template, /*$$scope*/ ctx[13], dirty, get_summary_end_slot_changes$1),
 						get_summary_end_slot_context$1
 					);
 				}
 			}
 
 			if (default_slot) {
-				if (default_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+				if (default_slot.p && (!current || dirty & /*$$scope*/ 8192)) {
 					update_slot_base(
 						default_slot,
 						default_slot_template,
 						ctx,
-						/*$$scope*/ ctx[11],
+						/*$$scope*/ ctx[13],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
-						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[11], dirty, null),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[13])
+						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[13], dirty, null),
 						null
 					);
 				}
@@ -880,12 +881,12 @@ function create_fragment$a(ctx) {
 		},
 		d(detaching) {
 			if (detaching) detach(details);
-			/*svg_binding*/ ctx[18](null);
+			/*svg_binding*/ ctx[20](null);
 			if (label_slot_or_fallback) label_slot_or_fallback.d(detaching);
 			if (summary_end_slot) summary_end_slot.d(detaching);
-			/*summary_binding*/ ctx[19](null);
+			/*summary_binding*/ ctx[21](null);
 			if (default_slot) default_slot.d(detaching);
-			/*details_binding*/ ctx[20](null);
+			/*details_binding*/ ctx[22](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -895,7 +896,7 @@ function create_fragment$a(ctx) {
 function instance$9($$self, $$props, $$invalidate) {
 	let $store,
 		$$unsubscribe_store = noop,
-		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(21, $store = $$value)), store);
+		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(24, $store = $$value)), store);
 
 	$$self.$$.on_destroy.push(() => $$unsubscribe_store());
 	let { $$slots: slots = {}, $$scope } = $$props;
@@ -908,6 +909,10 @@ function instance$9($$self, $$props, $$invalidate) {
 	let { label = isObject(folder) && typeof folder.label === 'string'
 	? folder.label
 	: '' } = $$props;
+
+	let { options = isObject(folder) && isObject(folder.options)
+	? folder.options
+	: {} } = $$props;
 
 	let { store = isObject(folder) && isWritableStore(folder.store)
 	? folder.store
@@ -926,6 +931,9 @@ function instance$9($$self, $$props, $$invalidate) {
 	let { onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function'
 	? folder.onContextMenu
 	: () => null } = $$props;
+
+	/** @type {TJSFolderOptions} */
+	const localOptions = { noKeys: false };
 
 	let detailsEl, summaryEl, svgEl;
 
@@ -960,6 +968,17 @@ function instance$9($$self, $$props, $$invalidate) {
 			onClick(event);
 			event.preventDefault();
 			event.stopPropagation();
+		}
+	}
+
+	/**
+ * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+ *
+ * @param {KeyboardEvent} event -
+ */
+	function onKeyUp(event) {
+		if (localOptions.noKeys && event.key === ' ') {
+			event.preventDefault();
 		}
 	}
 
@@ -1017,48 +1036,61 @@ function instance$9($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('folder' in $$props) $$invalidate(10, folder = $$props.folder);
+		if ('folder' in $$props) $$invalidate(12, folder = $$props.folder);
 		if ('id' in $$props) $$invalidate(0, id = $$props.id);
 		if ('label' in $$props) $$invalidate(1, label = $$props.label);
+		if ('options' in $$props) $$invalidate(10, options = $$props.options);
 		if ('store' in $$props) $$subscribe_store($$invalidate(2, store = $$props.store));
 		if ('styles' in $$props) $$invalidate(3, styles = $$props.styles);
-		if ('onClick' in $$props) $$invalidate(9, onClick = $$props.onClick);
+		if ('onClick' in $$props) $$invalidate(11, onClick = $$props.onClick);
 		if ('onContextMenu' in $$props) $$invalidate(4, onContextMenu = $$props.onContextMenu);
-		if ('$$scope' in $$props) $$invalidate(11, $$scope = $$props.$$scope);
+		if ('$$scope' in $$props) $$invalidate(13, $$scope = $$props.$$scope);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*folder, id*/ 1025) {
+		if ($$self.$$.dirty & /*folder, id*/ 4097) {
 			$$invalidate(0, id = isObject(folder) && typeof folder.id === 'string'
 			? folder.id
 			: typeof id === 'string' ? id : void 0);
 		}
 
-		if ($$self.$$.dirty & /*folder, label*/ 1026) {
+		if ($$self.$$.dirty & /*folder, label*/ 4098) {
 			$$invalidate(1, label = isObject(folder) && typeof folder.label === 'string'
 			? folder.label
 			: typeof label === 'string' ? label : '');
 		}
 
-		if ($$self.$$.dirty & /*folder, store*/ 1028) {
+		if ($$self.$$.dirty & /*folder, options*/ 5120) {
+			{
+				$$invalidate(10, options = isObject(folder) && isObject(folder.options)
+				? folder.options
+				: isObject(options) ? options : {});
+
+				if (typeof options?.noKeys === 'boolean') {
+					localOptions.noKeys = options.noKeys;
+				}
+			}
+		}
+
+		if ($$self.$$.dirty & /*folder, store*/ 4100) {
 			$$subscribe_store($$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
 			? folder.store
 			: isWritableStore(store) ? store : writable(false)));
 		}
 
-		if ($$self.$$.dirty & /*folder, onClick*/ 1536) {
-			$$invalidate(9, onClick = isObject(folder) && typeof folder.onClick === 'function'
-			? folder.onClick
-			: typeof onClick === 'function' ? onClick : () => null);
-		}
-
-		if ($$self.$$.dirty & /*folder, styles*/ 1032) {
+		if ($$self.$$.dirty & /*folder, styles*/ 4104) {
 			$$invalidate(3, styles = isObject(folder) && isObject(folder.styles)
 			? folder.styles
 			: isObject(styles) ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*folder, onContextMenu*/ 1040) {
+		if ($$self.$$.dirty & /*folder, onClick*/ 6144) {
+			$$invalidate(11, onClick = isObject(folder) && typeof folder.onClick === 'function'
+			? folder.onClick
+			: typeof onClick === 'function' ? onClick : () => null);
+		}
+
+		if ($$self.$$.dirty & /*folder, onContextMenu*/ 4112) {
 			$$invalidate(4, onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function'
 			? folder.onContextMenu
 			: typeof onContextMenu === 'function'
@@ -1077,6 +1109,8 @@ function instance$9($$self, $$props, $$invalidate) {
 		summaryEl,
 		svgEl,
 		onClickSummary,
+		onKeyUp,
+		options,
 		onClick,
 		folder,
 		$$scope,
@@ -1103,12 +1137,13 @@ class TJSSvgFolder extends SvelteComponent {
 			create_fragment$a,
 			safe_not_equal,
 			{
-				folder: 10,
+				folder: 12,
 				id: 0,
 				label: 1,
+				options: 10,
 				store: 2,
 				styles: 3,
-				onClick: 9,
+				onClick: 11,
 				onContextMenu: 4
 			},
 			add_css$9
@@ -1127,7 +1162,7 @@ const get_summary_end_slot_context = ctx => ({});
 const get_label_slot_changes = dirty => ({});
 const get_label_slot_context = ctx => ({});
 
-// (198:8) {#if currentIcon}
+// (241:8) {#if currentIcon}
 function create_if_block$2(ctx) {
 	let i;
 	let i_class_value;
@@ -1139,7 +1174,7 @@ function create_if_block$2(ctx) {
 		},
 		m(target, anchor) {
 			insert(target, i, anchor);
-			/*i_binding*/ ctx[22](i);
+			/*i_binding*/ ctx[24](i);
 		},
 		p(ctx, dirty) {
 			if (dirty & /*currentIcon*/ 256 && i_class_value !== (i_class_value = "" + (null_to_empty(/*currentIcon*/ ctx[8]) + " svelte-1ytpfhe"))) {
@@ -1148,12 +1183,12 @@ function create_if_block$2(ctx) {
 		},
 		d(detaching) {
 			if (detaching) detach(i);
-			/*i_binding*/ ctx[22](null);
+			/*i_binding*/ ctx[24](null);
 		}
 	};
 }
 
-// (200:25) {label}
+// (243:25) {label}
 function fallback_block(ctx) {
 	let t;
 
@@ -1186,13 +1221,13 @@ function create_fragment$9(ctx) {
 	let mounted;
 	let dispose;
 	let if_block = /*currentIcon*/ ctx[8] && create_if_block$2(ctx);
-	const label_slot_template = /*#slots*/ ctx[16].label;
-	const label_slot = create_slot(label_slot_template, ctx, /*$$scope*/ ctx[15], get_label_slot_context);
+	const label_slot_template = /*#slots*/ ctx[18].label;
+	const label_slot = create_slot(label_slot_template, ctx, /*$$scope*/ ctx[17], get_label_slot_context);
 	const label_slot_or_fallback = label_slot || fallback_block(ctx);
-	const summary_end_slot_template = /*#slots*/ ctx[16]["summary-end"];
-	const summary_end_slot = create_slot(summary_end_slot_template, ctx, /*$$scope*/ ctx[15], get_summary_end_slot_context);
-	const default_slot_template = /*#slots*/ ctx[16].default;
-	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[15], null);
+	const summary_end_slot_template = /*#slots*/ ctx[18]["summary-end"];
+	const summary_end_slot = create_slot(summary_end_slot_template, ctx, /*$$scope*/ ctx[17], get_summary_end_slot_context);
+	const default_slot_template = /*#slots*/ ctx[18].default;
+	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[17], null);
 
 	return {
 		c() {
@@ -1229,7 +1264,7 @@ function create_fragment$9(ctx) {
 				summary_end_slot.m(summary, null);
 			}
 
-			/*summary_binding*/ ctx[23](summary);
+			/*summary_binding*/ ctx[25](summary);
 			append(details, t2);
 			append(details, div);
 
@@ -1237,7 +1272,7 @@ function create_fragment$9(ctx) {
 				default_slot.m(div, null);
 			}
 
-			/*details_binding*/ ctx[24](details);
+			/*details_binding*/ ctx[26](details);
 			current = true;
 
 			if (!mounted) {
@@ -1246,11 +1281,12 @@ function create_fragment$9(ctx) {
 					listen(summary, "contextmenu", function () {
 						if (is_function(/*onContextMenu*/ ctx[4])) /*onContextMenu*/ ctx[4].apply(this, arguments);
 					}),
-					listen(details, "click", /*click_handler*/ ctx[17]),
-					listen(details, "open", /*open_handler*/ ctx[18]),
-					listen(details, "close", /*close_handler*/ ctx[19]),
-					listen(details, "openAny", /*openAny_handler*/ ctx[20]),
-					listen(details, "closeAny", /*closeAny_handler*/ ctx[21]),
+					listen(summary, "keyup", /*onKeyUp*/ ctx[10]),
+					listen(details, "click", /*click_handler*/ ctx[19]),
+					listen(details, "open", /*open_handler*/ ctx[20]),
+					listen(details, "close", /*close_handler*/ ctx[21]),
+					listen(details, "openAny", /*openAny_handler*/ ctx[22]),
+					listen(details, "closeAny", /*closeAny_handler*/ ctx[23]),
 					action_destroyer(toggleDetails_action = toggleDetails.call(null, details, {
 						store: /*store*/ ctx[2],
 						clickActive: false
@@ -1278,15 +1314,15 @@ function create_fragment$9(ctx) {
 			}
 
 			if (label_slot) {
-				if (label_slot.p && (!current || dirty & /*$$scope*/ 32768)) {
+				if (label_slot.p && (!current || dirty & /*$$scope*/ 131072)) {
 					update_slot_base(
 						label_slot,
 						label_slot_template,
 						ctx,
-						/*$$scope*/ ctx[15],
+						/*$$scope*/ ctx[17],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[15])
-						: get_slot_changes(label_slot_template, /*$$scope*/ ctx[15], dirty, get_label_slot_changes),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[17])
+						: get_slot_changes(label_slot_template, /*$$scope*/ ctx[17], dirty, get_label_slot_changes),
 						get_label_slot_context
 					);
 				}
@@ -1297,30 +1333,30 @@ function create_fragment$9(ctx) {
 			}
 
 			if (summary_end_slot) {
-				if (summary_end_slot.p && (!current || dirty & /*$$scope*/ 32768)) {
+				if (summary_end_slot.p && (!current || dirty & /*$$scope*/ 131072)) {
 					update_slot_base(
 						summary_end_slot,
 						summary_end_slot_template,
 						ctx,
-						/*$$scope*/ ctx[15],
+						/*$$scope*/ ctx[17],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[15])
-						: get_slot_changes(summary_end_slot_template, /*$$scope*/ ctx[15], dirty, get_summary_end_slot_changes),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[17])
+						: get_slot_changes(summary_end_slot_template, /*$$scope*/ ctx[17], dirty, get_summary_end_slot_changes),
 						get_summary_end_slot_context
 					);
 				}
 			}
 
 			if (default_slot) {
-				if (default_slot.p && (!current || dirty & /*$$scope*/ 32768)) {
+				if (default_slot.p && (!current || dirty & /*$$scope*/ 131072)) {
 					update_slot_base(
 						default_slot,
 						default_slot_template,
 						ctx,
-						/*$$scope*/ ctx[15],
+						/*$$scope*/ ctx[17],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[15])
-						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[15], dirty, null),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[17])
+						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[17], dirty, null),
 						null
 					);
 				}
@@ -1359,9 +1395,9 @@ function create_fragment$9(ctx) {
 			if (if_block) if_block.d();
 			if (label_slot_or_fallback) label_slot_or_fallback.d(detaching);
 			if (summary_end_slot) summary_end_slot.d(detaching);
-			/*summary_binding*/ ctx[23](null);
+			/*summary_binding*/ ctx[25](null);
 			if (default_slot) default_slot.d(detaching);
-			/*details_binding*/ ctx[24](null);
+			/*details_binding*/ ctx[26](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -1371,7 +1407,7 @@ function create_fragment$9(ctx) {
 function instance$8($$self, $$props, $$invalidate) {
 	let $store,
 		$$unsubscribe_store = noop,
-		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(14, $store = $$value)), store);
+		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(16, $store = $$value)), store);
 
 	$$self.$$.on_destroy.push(() => $$unsubscribe_store());
 	let { $$slots: slots = {}, $$scope } = $$props;
@@ -1393,6 +1429,10 @@ function instance$8($$self, $$props, $$invalidate) {
 	? folder.label
 	: '' } = $$props;
 
+	let { options = isObject(folder) && isObject(folder.options)
+	? folder.options
+	: {} } = $$props;
+
 	let { store = isObject(folder) && isWritableStore(folder.store)
 	? folder.store
 	: writable(false) } = $$props;
@@ -1410,6 +1450,9 @@ function instance$8($$self, $$props, $$invalidate) {
 	let { onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function'
 	? folder.onContextMenu
 	: () => null } = $$props;
+
+	/** @type {TJSFolderOptions} */
+	const localOptions = { noKeys: false };
 
 	let detailsEl, iconEl, summaryEl;
 	let currentIcon;
@@ -1445,6 +1488,17 @@ function instance$8($$self, $$props, $$invalidate) {
 			onClick(event);
 			event.preventDefault();
 			event.stopPropagation();
+		}
+	}
+
+	/**
+ * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+ *
+ * @param {KeyboardEvent} event -
+ */
+	function onKeyUp(event) {
+		if (localOptions.noKeys && event.key === ' ') {
+			event.preventDefault();
 		}
 	}
 
@@ -1502,62 +1556,75 @@ function instance$8($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('folder' in $$props) $$invalidate(13, folder = $$props.folder);
+		if ('folder' in $$props) $$invalidate(15, folder = $$props.folder);
 		if ('id' in $$props) $$invalidate(0, id = $$props.id);
-		if ('iconOpen' in $$props) $$invalidate(10, iconOpen = $$props.iconOpen);
-		if ('iconClosed' in $$props) $$invalidate(11, iconClosed = $$props.iconClosed);
+		if ('iconOpen' in $$props) $$invalidate(11, iconOpen = $$props.iconOpen);
+		if ('iconClosed' in $$props) $$invalidate(12, iconClosed = $$props.iconClosed);
 		if ('label' in $$props) $$invalidate(1, label = $$props.label);
+		if ('options' in $$props) $$invalidate(13, options = $$props.options);
 		if ('store' in $$props) $$subscribe_store($$invalidate(2, store = $$props.store));
 		if ('styles' in $$props) $$invalidate(3, styles = $$props.styles);
-		if ('onClick' in $$props) $$invalidate(12, onClick = $$props.onClick);
+		if ('onClick' in $$props) $$invalidate(14, onClick = $$props.onClick);
 		if ('onContextMenu' in $$props) $$invalidate(4, onContextMenu = $$props.onContextMenu);
-		if ('$$scope' in $$props) $$invalidate(15, $$scope = $$props.$$scope);
+		if ('$$scope' in $$props) $$invalidate(17, $$scope = $$props.$$scope);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*folder, id*/ 8193) {
+		if ($$self.$$.dirty & /*folder, id*/ 32769) {
 			$$invalidate(0, id = isObject(folder) && typeof folder.id === 'string'
 			? folder.id
 			: typeof id === 'string' ? id : void 0);
 		}
 
-		if ($$self.$$.dirty & /*folder, iconOpen*/ 9216) {
-			$$invalidate(10, iconOpen = isObject(folder) && folder.iconOpen === 'string'
+		if ($$self.$$.dirty & /*folder, iconOpen*/ 34816) {
+			$$invalidate(11, iconOpen = isObject(folder) && folder.iconOpen === 'string'
 			? folder.iconOpen
 			: typeof iconOpen === 'string' ? iconOpen : void 0);
 		}
 
-		if ($$self.$$.dirty & /*folder, iconClosed*/ 10240) {
-			$$invalidate(11, iconClosed = isObject(folder) && folder.iconClosed === 'string'
+		if ($$self.$$.dirty & /*folder, iconClosed*/ 36864) {
+			$$invalidate(12, iconClosed = isObject(folder) && folder.iconClosed === 'string'
 			? folder.iconClosed
 			: typeof iconClosed === 'string' ? iconClosed : void 0);
 		}
 
-		if ($$self.$$.dirty & /*folder, label*/ 8194) {
+		if ($$self.$$.dirty & /*folder, label*/ 32770) {
 			$$invalidate(1, label = isObject(folder) && typeof folder.label === 'string'
 			? folder.label
 			: typeof label === 'string' ? label : '');
 		}
 
-		if ($$self.$$.dirty & /*folder, store*/ 8196) {
+		if ($$self.$$.dirty & /*folder, options*/ 40960) {
+			{
+				$$invalidate(13, options = isObject(folder) && isObject(folder.options)
+				? folder.options
+				: isObject(options) ? options : {});
+
+				if (typeof options?.noKeys === 'boolean') {
+					localOptions.noKeys = options.noKeys;
+				}
+			}
+		}
+
+		if ($$self.$$.dirty & /*folder, store*/ 32772) {
 			$$subscribe_store($$invalidate(2, store = isObject(folder) && isWritableStore(folder.store)
 			? folder.store
 			: isWritableStore(store) ? store : writable(false)));
 		}
 
-		if ($$self.$$.dirty & /*folder, styles*/ 8200) {
+		if ($$self.$$.dirty & /*folder, styles*/ 32776) {
 			$$invalidate(3, styles = isObject(folder) && isObject(folder.styles)
 			? folder.styles
 			: isObject(styles) ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*folder, onClick*/ 12288) {
-			$$invalidate(12, onClick = isObject(folder) && typeof folder.onClick === 'function'
+		if ($$self.$$.dirty & /*folder, onClick*/ 49152) {
+			$$invalidate(14, onClick = isObject(folder) && typeof folder.onClick === 'function'
 			? folder.onClick
 			: typeof onClick === 'function' ? onClick : () => null);
 		}
 
-		if ($$self.$$.dirty & /*folder, onContextMenu*/ 8208) {
+		if ($$self.$$.dirty & /*folder, onContextMenu*/ 32784) {
 			$$invalidate(4, onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function'
 			? folder.onContextMenu
 			: typeof onContextMenu === 'function'
@@ -1565,7 +1632,7 @@ function instance$8($$self, $$props, $$invalidate) {
 				: () => null);
 		}
 
-		if ($$self.$$.dirty & /*$store, iconOpen, iconClosed*/ 19456) {
+		if ($$self.$$.dirty & /*$store, iconOpen, iconClosed*/ 71680) {
 			{
 				const iconData = $store ? iconOpen : iconClosed;
 				$$invalidate(8, currentIcon = typeof iconData !== 'string' ? void 0 : iconData);
@@ -1584,8 +1651,10 @@ function instance$8($$self, $$props, $$invalidate) {
 		summaryEl,
 		currentIcon,
 		onClickSummary,
+		onKeyUp,
 		iconOpen,
 		iconClosed,
+		options,
 		onClick,
 		folder,
 		$store,
@@ -1613,14 +1682,15 @@ class TJSIconFolder extends SvelteComponent {
 			create_fragment$9,
 			safe_not_equal,
 			{
-				folder: 13,
+				folder: 15,
 				id: 0,
-				iconOpen: 10,
-				iconClosed: 11,
+				iconOpen: 11,
+				iconClosed: 12,
 				label: 1,
+				options: 13,
 				store: 2,
 				styles: 3,
-				onClick: 12,
+				onClick: 14,
 				onContextMenu: 4
 			},
 			add_css$8
