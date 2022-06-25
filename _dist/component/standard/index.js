@@ -679,7 +679,7 @@ const get_summary_end_slot_context$1 = ctx => ({});
 const get_label_slot_changes$1 = dirty => ({});
 const get_label_slot_context$1 = ctx => ({});
 
-// (232:25) {label}
+// (253:25) {label}
 function fallback_block$1(ctx) {
 	let t;
 
@@ -933,7 +933,7 @@ function instance$9($$self, $$props, $$invalidate) {
 	: () => null } = $$props;
 
 	/** @type {TJSFolderOptions} */
-	const localOptions = { noKeys: false };
+	const localOptions = { chevronOnly: false, noKeys: false };
 
 	let detailsEl, summaryEl, svgEl;
 
@@ -962,12 +962,26 @@ function instance$9($$self, $$props, $$invalidate) {
 
 	function onClickSummary(event) {
 		const target = event.target;
+		const chevronTarget = target === svgEl || svgEl.contains(event.target);
 
-		if (target === summaryEl || target === svgEl || svgEl.contains(event.target) || target.querySelector('.summary-click') !== null) {
+		if (target === summaryEl || chevronTarget || target.querySelector('.summary-click') !== null) {
+			if (localOptions.chevronOnly && !chevronTarget) {
+				event.preventDefault();
+				event.stopPropagation();
+				return;
+			}
+
 			set_store_value(store, $store = !$store, $store);
 			onClick(event);
 			event.preventDefault();
 			event.stopPropagation();
+		} else {
+			// Handle exclusion cases when no-summary-click class is in target, targets children, or targets parent
+			// element.
+			if (target.classList.contains('no-summary-click') || target.querySelector('.no-summary-click') !== null || target.parentElement && target.parentElement.classList.contains('no-summary-click')) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
 		}
 	}
 
@@ -1066,6 +1080,10 @@ function instance$9($$self, $$props, $$invalidate) {
 				? folder.options
 				: isObject(options) ? options : {});
 
+				if (typeof options?.chevronOnly === 'boolean') {
+					localOptions.chevronOnly = options.chevronOnly;
+				}
+
 				if (typeof options?.noKeys === 'boolean') {
 					localOptions.noKeys = options.noKeys;
 				}
@@ -1162,7 +1180,7 @@ const get_summary_end_slot_context = ctx => ({});
 const get_label_slot_changes = dirty => ({});
 const get_label_slot_context = ctx => ({});
 
-// (241:8) {#if currentIcon}
+// (261:8) {#if currentIcon}
 function create_if_block$2(ctx) {
 	let i;
 	let i_class_value;
@@ -1188,7 +1206,7 @@ function create_if_block$2(ctx) {
 	};
 }
 
-// (243:25) {label}
+// (263:25) {label}
 function fallback_block(ctx) {
 	let t;
 
@@ -1452,7 +1470,7 @@ function instance$8($$self, $$props, $$invalidate) {
 	: () => null } = $$props;
 
 	/** @type {TJSFolderOptions} */
-	const localOptions = { noKeys: false };
+	const localOptions = { chevronOnly: false, noKeys: false };
 
 	let detailsEl, iconEl, summaryEl;
 	let currentIcon;
@@ -1484,10 +1502,23 @@ function instance$8($$self, $$props, $$invalidate) {
 		const target = event.target;
 
 		if (target === summaryEl || target === iconEl || target.querySelector('.summary-click') !== null) {
+			if (localOptions.chevronOnly && target !== iconEl) {
+				event.preventDefault();
+				event.stopPropagation();
+				return;
+			}
+
 			set_store_value(store, $store = !$store, $store);
 			onClick(event);
 			event.preventDefault();
 			event.stopPropagation();
+		} else {
+			// Handle exclusion cases when no-summary-click class is in target, targets children, or targets parent
+			// element.
+			if (target.classList.contains('no-summary-click') || target.querySelector('.no-summary-click') !== null || target.parentElement && target.parentElement.classList.contains('no-summary-click')) {
+				event.preventDefault();
+				event.stopPropagation();
+			}
 		}
 	}
 
@@ -1599,6 +1630,10 @@ function instance$8($$self, $$props, $$invalidate) {
 				$$invalidate(13, options = isObject(folder) && isObject(folder.options)
 				? folder.options
 				: isObject(options) ? options : {});
+
+				if (typeof options?.chevronOnly === 'boolean') {
+					localOptions.chevronOnly = options.chevronOnly;
+				}
 
 				if (typeof options?.noKeys === 'boolean') {
 					localOptions.noKeys = options.noKeys;

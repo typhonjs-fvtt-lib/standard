@@ -4,6 +4,8 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
 /**
  * @typedef {object} TJSFolderOptions
  *
+ * @property {boolean} [chevronOnly=false] - When true only clicks on the folder chevron open / close the summary.
+ *
  * @property {boolean} [noKeys=false] - When true keyboard events do not control the details open / close state.
  *                                      This is useful when embedding an input element in the summary.
  */

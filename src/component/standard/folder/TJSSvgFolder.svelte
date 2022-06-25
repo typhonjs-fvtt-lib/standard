@@ -117,6 +117,7 @@
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
+      chevronOnly: false,
       noKeys: false
    }
 
@@ -132,6 +133,7 @@
       options = isObject(folder) && isObject(folder.options) ? folder.options :
        isObject(options) ? options : {};
 
+      if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
@@ -168,14 +170,33 @@
    {
       const target = event.target;
 
-      if (target === summaryEl || target === svgEl || svgEl.contains(event.target) ||
-       target.querySelector('.summary-click') !== null)
+      const chevronTarget = target === svgEl || svgEl.contains(event.target);
+
+      if (target === summaryEl || chevronTarget || target.querySelector('.summary-click') !== null)
       {
+         if (localOptions.chevronOnly && !chevronTarget)
+         {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+         }
+
          $store = !$store;
          onClick(event);
 
          event.preventDefault();
          event.stopPropagation();
+      }
+      else
+      {
+         // Handle exclusion cases when no-summary-click class is in target, targets children, or targets parent
+         // element.
+         if (target.classList.contains('no-summary-click') || target.querySelector('.no-summary-click') !== null ||
+          (target.parentElement && target.parentElement.classList.contains('no-summary-click')))
+         {
+            event.preventDefault();
+            event.stopPropagation();
+         }
       }
    }
 

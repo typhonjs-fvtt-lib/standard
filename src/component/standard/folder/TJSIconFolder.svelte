@@ -122,6 +122,7 @@
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
+      chevronOnly: false,
       noKeys: false
    }
 
@@ -144,6 +145,7 @@
       options = isObject(folder) && isObject(folder.options) ? folder.options :
        isObject(options) ? options : {};
 
+      if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
@@ -188,11 +190,29 @@
 
       if (target === summaryEl || target === iconEl || target.querySelector('.summary-click') !== null)
       {
+         if (localOptions.chevronOnly && target !== iconEl)
+         {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+         }
+
          $store = !$store;
          onClick(event);
 
          event.preventDefault();
          event.stopPropagation();
+      }
+      else
+      {
+         // Handle exclusion cases when no-summary-click class is in target, targets children, or targets parent
+         // element.
+         if (target.classList.contains('no-summary-click') || target.querySelector('.no-summary-click') !== null ||
+          (target.parentElement && target.parentElement.classList.contains('no-summary-click')))
+         {
+            event.preventDefault();
+            event.stopPropagation();
+         }
       }
    }
 
