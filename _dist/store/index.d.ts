@@ -20,9 +20,14 @@ declare class WorldSettingArrayStore<T extends unknown> {
      *
      * @param {BaseEntryStore}    StoreClass - The entry store class that is instantiated.
      *
-     * @param {object[]}          defaultData - An array of default data objects.
+     * @param {object[]}          [defaultData=[]] - An array of default data objects.
+     *
+     * @param {number}            [childDebounce=500] - An integer between and including 0 - 1000; a debounce time in
+     *                            milliseconds for child store subscriptions to invoke
+     *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
+     *                            store.
      */
-    constructor({ gameSettings, moduleId, key, StoreClass, defaultData }?: any);
+    constructor({ gameSettings, moduleId, key, StoreClass, defaultData, childDebounce }?: any);
     /**
      * @returns {T[]}
      * @protected

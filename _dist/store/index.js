@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { normalizeString } from '@typhonjs-fvtt/runtime/svelte/util';
-import { DynArrayReducer, TJSGameSettings, isWritableStore } from '@typhonjs-fvtt/runtime/svelte/store';
+import { DynArrayReducer, TJSGameSettings, isWritableStore, subscribeIgnoreFirst } from '@typhonjs-fvtt/runtime/svelte/store';
 import { debounce, isObject, uuidv4, klona } from '@typhonjs-fvtt/runtime/svelte/util';
 import { isWritableStore as isWritableStore$1 } from '@typhonjs-fvtt/runtime/svelte/store';
 
@@ -79,7 +79,7 @@ class WorldSettingArrayStore {
    #data = [];
 
    /**
-    * @type {Map<string, T>}
+    * @type {Map<string, { store: T, unsubscribe: Function}>}
     */
    #dataMap = new Map();
 
@@ -121,9 +121,14 @@ class WorldSettingArrayStore {
     *
     * @param {BaseEntryStore}    StoreClass - The entry store class that is instantiated.
     *
-    * @param {object[]}          defaultData - An array of default data objects.
+    * @param {object[]}          [defaultData=[]] - An array of default data objects.
+    *
+    * @param {number}            [childDebounce=500] - An integer between and including 0 - 1000; a debounce time in
+    *                            milliseconds for child store subscriptions to invoke
+    *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
+    *                            store.
     */
-   constructor({ gameSettings, moduleId, key, StoreClass, defaultData = [] } = {})
+   constructor({ gameSettings, moduleId, key, StoreClass, defaultData = [], childDebounce = 500 } = {})
    {
       if (gameSettings !== void 0)
       {
@@ -134,6 +139,11 @@ class WorldSettingArrayStore {
 
          if (typeof key !== 'string') { throw new TypeError(`'key' is not a string.`); }
          if (typeof moduleId !== 'string') { throw new TypeError(`'moduleId' is not a string.`); }
+      }
+
+      if (!Number.isInteger(childDebounce) || childDebounce < 0 || childDebounce > 1000)
+      {
+         throw new TypeError(`'childDebounce' must be an integer between and including 0 - 1000.`);
       }
 
       if (!isWritableStore(StoreClass.prototype))
@@ -164,18 +174,9 @@ class WorldSettingArrayStore {
       this.#key = key;
       this.#StoreClass = StoreClass;
 
-      this.#updateSubscribersBound = debounce(this._updateSubscribers.bind(this), 500);
-
-      for (let cntr = 0; cntr < defaultData.length; cntr++)
-      {
-         const entryData = defaultData[cntr];
-
-         if (!isObject(entryData)) { throw new TypeError(`'defaultData[${cntr}] is not an object.`); }
-
-         if (typeof entryData.id !== 'string') { throw new TypeError(`'defaultData[${cntr}].id' is not a string.`); }
-
-         this.#addStore(entryData);
-      }
+      // Prepare a debounced callback that is used for all child store entry subscriptions.
+      this.#updateSubscribersBound = childDebounce === 0 ? this._updateSubscribers.bind(this) :
+       debounce(() => this._updateSubscribers(), childDebounce);
 
       if (gameSettings)
       {
@@ -250,8 +251,10 @@ class WorldSettingArrayStore {
          throw new Error(`'store.id' (${store.id}) is not a UUIDv4 compliant string.`);
       }
 
+      const unsubscribe = subscribeIgnoreFirst(store, this.#updateSubscribersBound);
+
       this.#data.push(store);
-      this.#dataMap.set(entryData.id, store);
+      this.#dataMap.set(entryData.id, { store, unsubscribe });
 
       return store;
    }
@@ -263,21 +266,28 @@ class WorldSettingArrayStore {
     *
     * @returns {boolean} Delete operation successful.
     */
-   delete(id) {
+   delete(id)
+   {
+      const result = this.#deleteStore(id);
+
+      this._updateSubscribers();
+
+      return result;
+   }
+
+   #deleteStore(id)
+   {
       if (typeof id !== 'string') { throw new TypeError(`'id' is not a string.`); }
 
-      const index = this.#data.findIndex((entry) => entry.id === id);
-
-      if (index >= 0)
+      const storeEntryData = this.#dataMap.get(id);
+      if (storeEntryData)
       {
-         const store = this.#data[index];
+         storeEntryData.unsubscribe();
 
-         store?.destroy?.(); // TODO: Figure out if there is a way to create clean entry stores.
+         this.#dataMap.delete(id);
 
-         this.#data.splice(index, 1);
-         this.#dataMap.delete(store.id);
-
-         this._updateSubscribers();
+         const index = this.#data.findIndex((entry) => entry.id === id);
+         if (index >= 0) { this.#data.splice(index, 1); }
 
          return true;
       }
@@ -296,13 +306,11 @@ class WorldSettingArrayStore {
    {
       if (typeof id !== 'string') { throw new TypeError(`'id' is not a string.`); }
 
-      const index = this.#data.findIndex((entry) => entry.id === id);
+      const storeEntryData = this.#dataMap.get(id);
 
-      if (index >= 0)
+      if (storeEntryData)
       {
-         const entryStore = this.#data[index];
-
-         const data = klona(entryStore.toJSON());
+         const data = klona(storeEntryData.store.toJSON());
          data.id = uuidv4();
 
          if (typeof data?.name === 'string')
@@ -331,7 +339,8 @@ class WorldSettingArrayStore {
     */
    find(id)
    {
-      return this.#dataMap.get(id);
+      const storeEntryData = this.#dataMap.get(id);
+      return storeEntryData ? storeEntryData.store : void 0;
    }
 
    /**
@@ -398,6 +407,9 @@ class WorldSettingArrayStore {
 
       if (rebuildIndex)
       {
+         // Must invoke unsubscribe for all child stores.
+         for (const storeEntryData of dataMap.values()) { storeEntryData.unsubscribe(); }
+
          data.length = 0;
          dataMap.clear();
 
@@ -406,16 +418,7 @@ class WorldSettingArrayStore {
       else
       {
          // Remove entries that are no longer in data.
-         for (const id of removeIDSet)
-         {
-            const index = data.findIndex((entry) => entry.id === id);
-            if (index >= 0)
-            {
-               data[index].destroy();
-               data.splice(index, 1);
-               dataMap.delete(id);
-            }
-         }
+         for (const id of removeIDSet) { this.#deleteStore(id); }
       }
 
       this._updateSubscribers();
