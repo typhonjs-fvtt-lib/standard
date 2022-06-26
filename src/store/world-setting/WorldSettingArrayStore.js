@@ -66,12 +66,12 @@ export class WorldSettingArrayStore {
     *
     * @param {object[]}          [defaultData=[]] - An array of default data objects.
     *
-    * @param {number}            [childDebounce=500] - An integer between and including 0 - 1000; a debounce time in
+    * @param {number}            [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
     *                            milliseconds for child store subscriptions to invoke
     *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
     *                            store.
     */
-   constructor({ gameSettings, moduleId, key, StoreClass, defaultData = [], childDebounce = 500 } = {})
+   constructor({ gameSettings, moduleId, key, StoreClass, defaultData = [], childDebounce = 250 } = {})
    {
       if (gameSettings !== void 0)
       {
