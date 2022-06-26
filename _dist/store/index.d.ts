@@ -22,7 +22,7 @@ declare class WorldSettingArrayStore<T extends unknown> {
      *
      * @param {object[]}          [defaultData=[]] - An array of default data objects.
      *
-     * @param {number}            [childDebounce=500] - An integer between and including 0 - 1000; a debounce time in
+     * @param {number}            [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
      *                            milliseconds for child store subscriptions to invoke
      *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
      *                            store.
@@ -41,6 +41,10 @@ declare class WorldSettingArrayStore<T extends unknown> {
      * @returns {string}
      */
     get key(): string;
+    /**
+     * @returns {number}
+     */
+    get length(): number;
     /**
      * Adds a new store from given data.
      *
@@ -66,13 +70,21 @@ declare class WorldSettingArrayStore<T extends unknown> {
      */
     duplicate(id: string): any;
     /**
+     * Find an entry in the backing child store array.
+     *
+     * @param {function(T): T|void}  predicate - A predicate function
+     *
+     * @returns {T|void} Found entry in array or undefined.
+     */
+    find(predicate: (arg0: T) => T | void): T | void;
+    /**
      * Finds an entry store instance by 'id' / UUIDv4.
      *
      * @param {string}   id - A UUIDv4 string.
      *
      * @returns {T|void} Entry store instance.
      */
-    find(id: string): T | void;
+    get(id: string): T | void;
     /**
      * Sets the children store data by 'id', adds new entry store instances, or removes entries that are no longer in the
      * update list.
@@ -91,6 +103,13 @@ declare class WorldSettingArrayStore<T extends unknown> {
      * @package
      */
     _updateSubscribers(): void;
+    /**
+     * Provide an iterator for public access to entry stores.
+     *
+     * @returns {Generator<T | void>}
+     * @yields {T|void}
+     */
+    [Symbol.iterator](): Generator<T | void>;
     #private;
 }
 /**

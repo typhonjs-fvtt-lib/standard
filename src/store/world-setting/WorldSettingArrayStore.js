@@ -138,6 +138,19 @@ export class WorldSettingArrayStore {
    }
 
    /**
+    * Provide an iterator for public access to entry stores.
+    *
+    * @returns {Generator<T | void>}
+    * @yields {T|void}
+    */
+   *[Symbol.iterator]()
+   {
+      if (this.#data.length === 0) { return; }
+
+      for (const entryStore of this.#data) { yield entryStore; }
+   }
+
+   /**
     * @returns {T[]}
     * @protected
     */
@@ -152,6 +165,11 @@ export class WorldSettingArrayStore {
     * @returns {string}
     */
    get key() { return this.#key; }
+
+   /**
+    * @returns {number}
+    */
+   get length() { return this.#data.length; }
 
    /**
     * Adds a new store from given data.
@@ -256,21 +274,25 @@ export class WorldSettingArrayStore {
          const data = klona(storeEntryData.store.toJSON());
          data.id = uuidv4();
 
-         if (typeof data?.name === 'string')
-         {
-            let cntr = 1;
-            const baseName = data.name ?? '';
-
-            do
-            {
-               data.name = `${baseName}-${cntr++}`;
-            } while (this.#data.findIndex((entry) => entry.name === data.name) >= 0);
-         }
+         // Allow StoreClass to statically perform any specialized duplication.
+         this.#StoreClass?.duplicate?.(data, this);
 
          return this.add(data);
       }
 
       return void 0;
+   }
+
+   /**
+    * Find an entry in the backing child store array.
+    *
+    * @param {function(T): T|void}  predicate - A predicate function
+    *
+    * @returns {T|void} Found entry in array or undefined.
+    */
+   find(predicate)
+   {
+      return this.#data.find(predicate);
    }
 
    /**
@@ -280,7 +302,7 @@ export class WorldSettingArrayStore {
     *
     * @returns {T|void} Entry store instance.
     */
-   find(id)
+   get(id)
    {
       const storeEntryData = this.#dataMap.get(id);
       return storeEntryData ? storeEntryData.store : void 0;
@@ -409,6 +431,11 @@ export class WorldSettingArrayStore {
    }
 }
 
+/**
+ * Provides a base implementation for store entries in {@link WorldSettingArrayStore}.
+ *
+ * In particular providing the required getting / accessor for the 'id' property.
+ */
 class WorldSettingEntryStore
 {
    /**
@@ -437,6 +464,15 @@ class WorldSettingEntryStore
 
       if (!uuidv4.isValid(data.id)) { throw new Error(`'data.id' (${data.id}) is not a valid UUIDv4 string.`)}
    }
+
+   /**
+    * Invoked by WorldSettingArrayStore to provide custom duplication. Override this static method in your entry store.
+    *
+    * @param {object}   data - A copy of local data w/ new ID already set.
+    *
+    * @param {WorldSettingArrayStore} arrayStore - The source WorldSettingArrayStore instance.
+    */
+   static duplicate(data, arrayStore) {}
 
    /**
     * @returns {object}
