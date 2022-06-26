@@ -1,71 +1,12 @@
-import { writable } from 'svelte/store';
-import { normalizeString } from '@typhonjs-fvtt/runtime/svelte/util';
-import { DynArrayReducer, TJSGameSettings, isWritableStore } from '@typhonjs-fvtt/runtime/svelte/store';
-import { isObject, uuidv4, klona } from '@typhonjs-fvtt/runtime/svelte/util';
-import { isWritableStore as isWritableStore$1 } from '@typhonjs-fvtt/runtime/svelte/store';
+import {
+   DynArrayReducer,
+   isWritableStore,
+   TJSGameSettings } from '@typhonjs-fvtt/svelte/store';
 
-/**
- * Creates a filter function to compare objects by a give property key against a regex test. The returned function
- * is also a writable Svelte store that builds a regex from the stores value.
- *
- * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
- *
- * @param {string}   property - Property key to compare.
- *
- * @param {object}   [opts] - Optional parameters.
- *
- * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
- *
- * @returns {(data: object) => boolean} The query string filter.
- */
-function createFilterQuery(property, { caseSensitive = false } = {})
-{
-   let keyword = '';
-   let regex;
-   const storeKeyword = writable(keyword);
-
-   /**
-    * If there is no filter keyword / regex then do not filter otherwise filter based on the regex
-    * created from the search input element.
-    *
-    * @param {object} data - Data object to test against regex.
-    *
-    * @returns {boolean} AnimationStore filter state.
-    */
-   function filterQuery(data)
-   {
-      return keyword === '' || !regex ? true : regex.test(normalizeString(data?.[property]));
-   }
-
-   /**
-    * Create a custom store that changes when the search keyword changes.
-    *
-    * @param {(string) => void} handler - A callback function that accepts strings.
-    *
-    * @returns {import('svelte/store').Unsubscriber}
-    */
-   filterQuery.subscribe = (handler) =>
-   {
-      return storeKeyword.subscribe(handler);
-   };
-
-   /**
-    * Set
-    *
-    * @param {string}   value - A new value for the keyword / regex test.
-    */
-   filterQuery.set = (value) =>
-   {
-      if (typeof value === 'string')
-      {
-         keyword = normalizeString(value);
-         regex = new RegExp(RegExp.escape(keyword), caseSensitive ? '' : 'i');
-         storeKeyword.set(keyword);
-      }
-   };
-
-   return filterQuery;
-}
+import {
+   isObject,
+   klona,
+   uuidv4 }          from '@typhonjs-fvtt/svelte/util';
 
 /**
  * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
@@ -74,7 +15,7 @@ function createFilterQuery(property, { caseSensitive = false } = {})
 /**
  * @template {BaseEntryStore} T
  */
-class WorldSettingArrayStore {
+export class WorldSettingArrayStore {
    /** @type {T[]} */
    #data = [];
 
@@ -136,7 +77,7 @@ class WorldSettingArrayStore {
          throw new TypeError(`'StoreClass' is not a writable store constructor.`);
       }
 
-      let hasIDGetter = false;
+      let hasIDGetter = false
 
       // Walk parent prototype chain. Check for descriptor at each prototype level.
       for (let o = StoreClass.prototype; o; o = Object.getPrototypeOf(o))
@@ -534,40 +475,3 @@ class WorldSettingEntryStore
       for (let cntr = 0; cntr < subscriptions.length; cntr++) { subscriptions[cntr](data); }
    }
 }
-
-/**
- * Wraps a writable stores set method invoking a callback after the store is set. This allows parent / child
- * relationships between stores to update directly without having to subscribe to the child store. This is a particular
- * powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or serializes data.
- *
- * @param {import('svelte/store').Writable} store - A store to wrap.
- *
- * @param {(store?: import('svelte/store').Writable, value?: *) => void} setCallback - A callback to invoke after store
- *                                                                                     set.
- *
- * @returns {import('svelte/store').Writable} Wrapped store.
- */
-function storeCallback(store, setCallback)
-{
-   if (!isWritableStore$1(store)) { throw new TypeError(`'store' is not a writable store.`); }
-   if (typeof setCallback !== 'function') { throw new TypeError(`'setCallback' is not a function.`); }
-
-   /** @type {import('svelte/store').Writable} */
-   const wrapper = {
-      set: (value) => {
-         store.set(value);
-         setCallback(store, value);
-      },
-
-      subscribe: store.subscribe,
-
-      update: typeof store.update === 'function' ? store.update : void 0
-   };
-
-   Object.freeze(wrapper);
-
-   return wrapper;
-}
-
-export { WorldSettingArrayStore, createFilterQuery, storeCallback };
-//# sourceMappingURL=index.js.map
