@@ -1,13 +1,12 @@
 import { SvelteComponent, init, safe_not_equal, append_styles, element, attr, null_to_empty, insert, append, listen, action_destroyer, is_function, noop, detach, run_all, bubble, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, space, toggle_class, stop_propagation, prevent_default, group_outros, check_outros, subscribe, create_slot, svg_element, set_style, text, set_data, set_store_value, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, empty, create_component, mount_component, destroy_component, update_keyed_each, outro_and_destroy_block, component_subscribe, create_bidirectional_transition, globals, current_component } from 'svelte/internal';
-import { applyStyles, applyPosition } from '@typhonjs-fvtt/runtime/svelte/action';
+import { applyStyles, autoBlur } from '@typhonjs-fvtt/runtime/svelte/action';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
-import { applyStyles as applyStyles$1, autoBlur } from '@typhonjs-fvtt/runtime/svelte/action';
 import { isWritableStore, propertyStore } from '@typhonjs-fvtt/runtime/svelte/store';
-import { localize as localize$1 } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { onDestroy, onMount, getContext, setContext, createEventDispatcher } from 'svelte';
 import { writable } from 'svelte/store';
 import { isObject, outroAndDestroy } from '@typhonjs-fvtt/runtime/svelte/util';
 import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
+import { applyPosition } from '@typhonjs-fvtt/runtime/svelte/action';
 import { Position } from '@typhonjs-fvtt/runtime/svelte/application';
 import { quintOut } from 'svelte/easing';
 import { slideFade } from '@typhonjs-fvtt/runtime/svelte/transition';
@@ -445,7 +444,7 @@ function create_fragment$b(ctx) {
 			t = space();
 			if (if_block) if_block.c();
 			attr(i, "class", i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-qrlk5m"));
-			attr(i, "title", i_title_value = localize$1(/*title*/ ctx[1]));
+			attr(i, "title", i_title_value = localize(/*title*/ ctx[1]));
 			toggle_class(i, "selected", /*selected*/ ctx[5]);
 			attr(a, "class", "svelte-qrlk5m");
 			toggle_class(a, "selected", /*selected*/ ctx[5]);
@@ -466,7 +465,7 @@ function create_fragment$b(ctx) {
 					action_destroyer(/*efx*/ ctx[4].call(null, a)),
 					listen(div, "close", /*close_handler*/ ctx[12]),
 					listen(div, "close", stop_propagation(prevent_default(/*onClose*/ ctx[7]))),
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, div, /*styles*/ ctx[3]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[3]))
 				];
 
 				mounted = true;
@@ -477,7 +476,7 @@ function create_fragment$b(ctx) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (!current || dirty & /*title*/ 2 && i_title_value !== (i_title_value = localize$1(/*title*/ ctx[1]))) {
+			if (!current || dirty & /*title*/ 2 && i_title_value !== (i_title_value = localize(/*title*/ ctx[1]))) {
 				attr(i, "title", i_title_value);
 			}
 
@@ -794,7 +793,7 @@ function create_fragment$a(ctx) {
 						store: /*store*/ ctx[2],
 						clickActive: false
 					})),
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, details, /*styles*/ ctx[3]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, details, /*styles*/ ctx[3]))
 				];
 
 				mounted = true;
@@ -1316,7 +1315,7 @@ function create_fragment$9(ctx) {
 						store: /*store*/ ctx[2],
 						clickActive: false
 					})),
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, details, /*styles*/ ctx[3]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, details, /*styles*/ ctx[3]))
 				];
 
 				mounted = true;
@@ -1779,7 +1778,7 @@ function create_fragment$8(ctx) {
 					action_destroyer(autoBlur.call(null, input_1)),
 					listen(input_1, "keydown", /*onKeyDown*/ ctx[7]),
 					action_destroyer(/*efx*/ ctx[4].call(null, div)),
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, div, /*styles*/ ctx[3]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[3]))
 				];
 
 				mounted = true;
@@ -1890,9 +1889,9 @@ function instance$7($$self, $$props, $$invalidate) {
 
 		if ($$self.$$.dirty & /*input, placeholder*/ 1026) {
 			$$invalidate(1, placeholder = isObject(input) && typeof input.placeholder === 'string'
-			? localize$1(input.placeholder)
+			? localize(input.placeholder)
 			: typeof placeholder === 'string'
-				? localize$1(placeholder)
+				? localize(placeholder)
 				: void 0);
 		}
 
@@ -2050,7 +2049,7 @@ function create_fragment$7(ctx) {
 					listen(select_1, "change", /*select_1_change_handler*/ ctx[7]),
 					action_destroyer(autoBlur.call(null, select_1)),
 					action_destroyer(/*efx*/ ctx[3].call(null, div)),
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, div, /*styles*/ ctx[2]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[2]))
 				];
 
 				mounted = true;
@@ -2614,7 +2613,7 @@ function create_fragment$6(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					action_destroyer(applyStyles_action = applyStyles$1.call(null, div, /*data*/ ctx[0].styles)),
+					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*data*/ ctx[0].styles)),
 					action_destroyer(resize_action = resize.call(null, div, {
 						id: /*data*/ ctx[0].id,
 						resizeCallback: /*resizeCallback*/ ctx[4]
@@ -4445,7 +4444,7 @@ function create_each_block$1(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t_value = localize$1(/*item*/ ctx[18].label) + "";
+	let t_value = localize(/*item*/ ctx[18].label) + "";
 	let t;
 	let mounted;
 	let dispose;
@@ -4479,7 +4478,7 @@ function create_each_block$1(ctx) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 1 && t_value !== (t_value = localize$1(/*item*/ ctx[18].label) + "")) set_data(t, t_value);
+			if (dirty & /*items*/ 1 && t_value !== (t_value = localize(/*item*/ ctx[18].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -4876,7 +4875,7 @@ function create_each_block(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t_value = localize$1(/*item*/ ctx[17].label) + "";
+	let t_value = localize(/*item*/ ctx[17].label) + "";
 	let t;
 	let mounted;
 	let dispose;
@@ -4910,7 +4909,7 @@ function create_each_block(ctx) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 2 && t_value !== (t_value = localize$1(/*item*/ ctx[17].label) + "")) set_data(t, t_value);
+			if (dirty & /*items*/ 2 && t_value !== (t_value = localize(/*item*/ ctx[17].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);

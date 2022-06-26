@@ -10,8 +10,8 @@
     * --tjs-icon-button-diameter
     * --tjs-icon-button-transition
     */
-   import { applyStyles }     from '@typhonjs-fvtt/svelte/action';
-   import { localize }        from '@typhonjs-fvtt/svelte/helper';
+   import { applyStyles }     from '@typhonjs-svelte/lib/action';
+   import { localize }        from '@typhonjs-svelte/lib/helper';
 
    export let button;
    export let icon;
