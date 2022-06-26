@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { normalizeString } from '@typhonjs-fvtt/runtime/svelte/util';
 import { DynArrayReducer, TJSGameSettings, isWritableStore } from '@typhonjs-fvtt/runtime/svelte/store';
-import { isObject, uuidv4, klona } from '@typhonjs-fvtt/runtime/svelte/util';
+import { debounce, isObject, uuidv4, klona } from '@typhonjs-fvtt/runtime/svelte/util';
 import { isWritableStore as isWritableStore$1 } from '@typhonjs-fvtt/runtime/svelte/store';
 
 /**
@@ -101,6 +101,11 @@ class WorldSettingArrayStore {
    #subscriptions = [];
 
    /**
+    * @type {Function}
+    */
+   #updateSubscribersBound;
+
+   /**
     * @returns {WorldSettingEntryStore}
     * @constructor
     */
@@ -159,6 +164,8 @@ class WorldSettingArrayStore {
       this.#key = key;
       this.#StoreClass = StoreClass;
 
+      this.#updateSubscribersBound = debounce(this._updateSubscribers.bind(this), 500);
+
       for (let cntr = 0; cntr < defaultData.length; cntr++)
       {
          const entryData = defaultData[cntr];
@@ -167,15 +174,7 @@ class WorldSettingArrayStore {
 
          if (typeof entryData.id !== 'string') { throw new TypeError(`'defaultData[${cntr}].id' is not a string.`); }
 
-         const store = new this.#StoreClass(entryData, this);
-
-         if (!uuidv4.isValid(store.id))
-         {
-            throw new Error(`'store.id' (${store.id}) is not a UUIDv4 compliant string.`);
-         }
-
-         this.#data.push(store);
-         this.#dataMap.set(entryData.id, store);
+         this.#addStore(entryData);
       }
 
       if (gameSettings)
@@ -213,22 +212,38 @@ class WorldSettingArrayStore {
    /**
     * Adds a new store from given data.
     *
-    * @param {object}   data -
+    * @param {object}   entryData -
     *
     * @returns {*}
     */
-   add(data = {})
+   add(entryData = {})
    {
-      if (!isObject(data)) { throw new TypeError(`'data' is not an object.`); }
+      if (!isObject(entryData)) { throw new TypeError(`'entryData' is not an object.`); }
 
-      if (typeof data.id !== 'string') { data.id = uuidv4(); }
+      if (typeof entryData.id !== 'string') { entryData.id = uuidv4(); }
 
-      if (this.#data.findIndex((entry) => entry.id === data.id) >= 0)
+      if (this.#data.findIndex((entry) => entry.id === entryData.id) >= 0)
       {
-         throw new Error(`'data.id' (${data.id}) already in this WorldSettingArrayStore instance.`)
+         throw new Error(`'entryData.id' (${entryData.id}) already in this WorldSettingArrayStore instance.`)
       }
 
-      const store = new this.#StoreClass(data, this);
+      const store = this.#addStore(entryData);
+
+      this._updateSubscribers();
+
+      return store;
+   }
+
+   /**
+    * Add a new store entry from the given data.
+    *
+    * @param {object}   entryData
+    *
+    * @returns {T} New store entry instance.
+    */
+   #addStore(entryData)
+   {
+      const store = new this.#StoreClass(entryData, this);
 
       if (!uuidv4.isValid(store.id))
       {
@@ -236,9 +251,7 @@ class WorldSettingArrayStore {
       }
 
       this.#data.push(store);
-      this.#dataMap.set(data.id, store);
-
-      this._updateSubscribers();
+      this.#dataMap.set(entryData.id, store);
 
       return store;
    }
@@ -349,22 +362,26 @@ class WorldSettingArrayStore {
 
          const localIndex = data.findIndex((entry) => entry.id === id);
 
-         if (localIndex >= 0) {
+         if (localIndex >= 0)
+         {
             const localEntry = data[localIndex];
 
             // Update the entry data.
             localEntry.set(updateData);
 
             // Must move to correct position
-            if (localIndex !== updateIndex) {
+            if (localIndex !== updateIndex)
+            {
                // Remove from current location.
                data.splice(localIndex, 1);
 
-               if (updateIndex < data.length) {
+               if (updateIndex < data.length)
+               {
                   // Insert at new location.
                   data.splice(updateIndex, 0, localEntry);
                }
-               else {
+               else
+               {
                   // Local data length is less than update data index; rebuild index.
                   rebuildIndex = true;
                }
@@ -373,16 +390,9 @@ class WorldSettingArrayStore {
             // Delete from removeIDSet as entry is still in local data.
             removeIDSet.delete(id);
          }
-         else {
-            const store = new this.#StoreClass(updateData, this);
-
-            if (!uuidv4.isValid(store.id))
-            {
-               throw new Error(`'store.id' (${store.id}) is not a UUIDv4 compliant string.`);
-            }
-
-            data.push(store);
-            dataMap.set(store.id, store);
+         else
+         {
+            this.#addStore(updateData);
          }
       }
 
@@ -391,18 +401,7 @@ class WorldSettingArrayStore {
          data.length = 0;
          dataMap.clear();
 
-         for (const entry of updateList)
-         {
-            const store = new this.#StoreClass(entry, this);
-
-            if (!uuidv4.isValid(store.id))
-            {
-               throw new Error(`'store.id' (${store.id}) is not a UUIDv4 compliant string.`);
-            }
-
-            data.push(store);
-            dataMap.set(store.id, store);
-         }
+         for (const updateData of updateList) { this.#addStore(updateData); }
       }
       else
       {
@@ -422,7 +421,8 @@ class WorldSettingArrayStore {
       this._updateSubscribers();
    }
 
-   toJSON() {
+   toJSON()
+   {
       return this.#data;
    }
 
@@ -433,13 +433,15 @@ class WorldSettingArrayStore {
     *
     * @returns {(function(): void)} Unsubscribe function.
     */
-   subscribe(handler) {
+   subscribe(handler)
+   {
       this.#subscriptions.push(handler); // add handler to the array of subscribers
 
       handler(this.#data);                     // call handler with current value
 
       // Return unsubscribe function.
-      return () => {
+      return () =>
+      {
          const index = this.#subscriptions.findIndex((sub) => sub === handler);
          if (index >= 0) { this.#subscriptions.splice(index, 1); }
       };
@@ -448,7 +450,8 @@ class WorldSettingArrayStore {
    /**
     * @package
     */
-   _updateSubscribers() {
+   _updateSubscribers()
+   {
       const subscriptions = this.#subscriptions;
 
       const data = this.#data;
@@ -502,7 +505,8 @@ class WorldSettingEntryStore
     */
    get id() { return this.#data.id; }
 
-   toJSON() {
+   toJSON()
+   {
       return this.#data;
    }
 
@@ -511,13 +515,15 @@ class WorldSettingEntryStore
     *
     * @returns {(function(): void)} Unsubscribe function.
     */
-   subscribe(handler) {
+   subscribe(handler)
+   {
       this.#subscriptions.push(handler);  // add handler to the array of subscribers
 
       handler(this.#data);                // call handler with current value
 
       // Return unsubscribe function.
-      return () => {
+      return () =>
+      {
          const index = this.#subscriptions.findIndex((sub) => sub === handler);
          if (index >= 0) { this.#subscriptions.splice(index, 1); }
       };
@@ -526,7 +532,8 @@ class WorldSettingEntryStore
    /**
     * @protected
     */
-   _updateSubscribers() {
+   _updateSubscribers()
+   {
       const subscriptions = this.#subscriptions;
 
       const data = this.#data;

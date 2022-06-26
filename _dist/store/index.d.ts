@@ -39,11 +39,11 @@ declare class WorldSettingArrayStore<T extends unknown> {
     /**
      * Adds a new store from given data.
      *
-     * @param {object}   data -
+     * @param {object}   entryData -
      *
      * @returns {*}
      */
-    add(data?: object): any;
+    add(entryData?: object): any;
     /**
      * Deletes a given entry store by ID from this world setting array store instance.
      *
