@@ -17,7 +17,6 @@
     * --tjs-comp-input-width
     */
 
-   import { onMount }           from 'svelte';
    import { writable }          from 'svelte/store';
 
    import {
@@ -25,39 +24,67 @@
       autoBlur }                from '@typhonjs-svelte/lib/action';
    import { localize }          from '@typhonjs-svelte/lib/helper';
    import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+   import { isObject }          from '@typhonjs-svelte/lib/util';
 
-   export let input;
+   export let input = void 0;
    export let type;
    export let disabled;
+   export let options;
    export let placeholder;
    export let store;
    export let styles;
    export let efx;
 
-   $: type = typeof input === 'object' && typeof input.type === 'string' ? input.type :
+   const localOptions = {
+      blurOnEnterKey: true
+   }
+
+   let inputEl;
+
+   $: type = isObject(input) && typeof input.type === 'string' ? input.type :
     typeof type === 'string' ? type : void 0;
-   $: disabled = typeof input === 'object' && typeof input.disabled === 'boolean' ? input.disabled :
+
+   $: disabled = isObject(input) && typeof input.disabled === 'boolean' ? input.disabled :
     typeof disabled === 'boolean' ? disabled : false;
-   $: placeholder = typeof input === 'object' && typeof input.placeholder === 'string' ? localize(input.placeholder) :
+
+   $: {
+      options = isObject(input) && isObject(input.options) ? input.options :
+       isObject(options) ? options : {};
+
+      if (typeof options?.blurOnEnterKey === 'boolean') { localOptions.blurOnEnterKey = options.blurOnEnterKey; }
+   }
+
+   $: placeholder = isObject(input) && typeof input.placeholder === 'string' ? localize(input.placeholder) :
     typeof placeholder === 'string' ? localize(placeholder) : void 0;
-   $: store = typeof input === 'object' && isWritableStore(input.store) ? input.store :
+
+   $: store = isObject(input) && isWritableStore(input.store) ? input.store :
     isWritableStore(store) ? store : writable(void 0);
-   $: styles = typeof input === 'object' && typeof input.styles === 'object' ? input.styles :
+
+   $: styles = isObject(input) && isObject(input.styles) ? input.styles :
     typeof styles === 'object' ? styles : void 0;
-   $: efx = typeof input === 'object' && typeof input.efx === 'function' ? input.efx :
+
+   $: efx = isObject(input) && typeof input.efx === 'function' ? input.efx :
     typeof efx === 'function' ? efx : () => {};
 
-   onMount(() =>
+   /**
+    * Blur input on enter key down.
+    *
+    * @param {KeyboardEvent} event -
+    */
+   function onKeyDown(event)
    {
-   });
+      if (localOptions.blurOnEnterKey && event.key === 'Enter') { inputEl.blur(); }
+   }
 </script>
 
 <div class=tjs-input-container use:efx use:applyStyles={styles}>
     <input class=tjs-input
+           bind:this={inputEl}
            bind:value={$store}
            use:autoBlur
            {placeholder}
            {disabled}
+           on:keydown={onKeyDown}
     />
 </div>
 

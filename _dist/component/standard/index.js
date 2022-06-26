@@ -1770,12 +1770,14 @@ function create_fragment$8(ctx) {
 		m(target, anchor) {
 			insert(target, div, anchor);
 			append(div, input_1);
-			set_input_value(input_1, /*$store*/ ctx[5]);
+			/*input_1_binding*/ ctx[11](input_1);
+			set_input_value(input_1, /*$store*/ ctx[6]);
 
 			if (!mounted) {
 				dispose = [
-					listen(input_1, "input", /*input_1_input_handler*/ ctx[8]),
+					listen(input_1, "input", /*input_1_input_handler*/ ctx[12]),
 					action_destroyer(autoBlur.call(null, input_1)),
+					listen(input_1, "keydown", /*onKeyDown*/ ctx[7]),
 					action_destroyer(/*efx*/ ctx[4].call(null, div)),
 					action_destroyer(applyStyles_action = applyStyles$1.call(null, div, /*styles*/ ctx[3]))
 				];
@@ -1792,8 +1794,8 @@ function create_fragment$8(ctx) {
 				input_1.disabled = /*disabled*/ ctx[0];
 			}
 
-			if (dirty & /*$store*/ 32 && input_1.value !== /*$store*/ ctx[5]) {
-				set_input_value(input_1, /*$store*/ ctx[5]);
+			if (dirty & /*$store*/ 64 && input_1.value !== /*$store*/ ctx[6]) {
+				set_input_value(input_1, /*$store*/ ctx[6]);
 			}
 
 			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 8) applyStyles_action.update.call(null, /*styles*/ ctx[3]);
@@ -1802,6 +1804,7 @@ function create_fragment$8(ctx) {
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(div);
+			/*input_1_binding*/ ctx[11](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -1811,21 +1814,38 @@ function create_fragment$8(ctx) {
 function instance$7($$self, $$props, $$invalidate) {
 	let $store,
 		$$unsubscribe_store = noop,
-		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(5, $store = $$value)), store);
+		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(6, $store = $$value)), store);
 
 	$$self.$$.on_destroy.push(() => $$unsubscribe_store());
-	let { input } = $$props;
+	let { input = void 0 } = $$props;
 	let { type } = $$props;
 	let { disabled } = $$props;
+	let { options } = $$props;
 	let { placeholder } = $$props;
 	let { store } = $$props;
 	$$subscribe_store();
 	let { styles } = $$props;
 	let { efx } = $$props;
+	const localOptions = { blurOnEnterKey: true };
+	let inputEl;
 
-	onMount(() => {
-		
-	});
+	/**
+ * Blur input on enter key down.
+ *
+ * @param {KeyboardEvent} event -
+ */
+	function onKeyDown(event) {
+		if (localOptions.blurOnEnterKey && event.key === 'Enter') {
+			inputEl.blur();
+		}
+	}
+
+	function input_1_binding($$value) {
+		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+			inputEl = $$value;
+			$$invalidate(5, inputEl);
+		});
+	}
 
 	function input_1_input_handler() {
 		$store = this.value;
@@ -1833,9 +1853,10 @@ function instance$7($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('input' in $$props) $$invalidate(7, input = $$props.input);
-		if ('type' in $$props) $$invalidate(6, type = $$props.type);
+		if ('input' in $$props) $$invalidate(10, input = $$props.input);
+		if ('type' in $$props) $$invalidate(8, type = $$props.type);
 		if ('disabled' in $$props) $$invalidate(0, disabled = $$props.disabled);
+		if ('options' in $$props) $$invalidate(9, options = $$props.options);
 		if ('placeholder' in $$props) $$invalidate(1, placeholder = $$props.placeholder);
 		if ('store' in $$props) $$subscribe_store($$invalidate(2, store = $$props.store));
 		if ('styles' in $$props) $$invalidate(3, styles = $$props.styles);
@@ -1843,40 +1864,52 @@ function instance$7($$self, $$props, $$invalidate) {
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*input, type*/ 192) {
-			$$invalidate(6, type = typeof input === 'object' && typeof input.type === 'string'
+		if ($$self.$$.dirty & /*input, type*/ 1280) {
+			$$invalidate(8, type = isObject(input) && typeof input.type === 'string'
 			? input.type
 			: typeof type === 'string' ? type : void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, disabled*/ 129) {
-			$$invalidate(0, disabled = typeof input === 'object' && typeof input.disabled === 'boolean'
+		if ($$self.$$.dirty & /*input, disabled*/ 1025) {
+			$$invalidate(0, disabled = isObject(input) && typeof input.disabled === 'boolean'
 			? input.disabled
 			: typeof disabled === 'boolean' ? disabled : false);
 		}
 
-		if ($$self.$$.dirty & /*input, placeholder*/ 130) {
-			$$invalidate(1, placeholder = typeof input === 'object' && typeof input.placeholder === 'string'
+		if ($$self.$$.dirty & /*input, options*/ 1536) {
+			{
+				$$invalidate(9, options = isObject(input) && isObject(input.options)
+				? input.options
+				: isObject(options) ? options : {});
+
+				if (typeof options?.blurOnEnterKey === 'boolean') {
+					localOptions.blurOnEnterKey = options.blurOnEnterKey;
+				}
+			}
+		}
+
+		if ($$self.$$.dirty & /*input, placeholder*/ 1026) {
+			$$invalidate(1, placeholder = isObject(input) && typeof input.placeholder === 'string'
 			? localize$1(input.placeholder)
 			: typeof placeholder === 'string'
 				? localize$1(placeholder)
 				: void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, store*/ 132) {
-			$$subscribe_store($$invalidate(2, store = typeof input === 'object' && isWritableStore(input.store)
+		if ($$self.$$.dirty & /*input, store*/ 1028) {
+			$$subscribe_store($$invalidate(2, store = isObject(input) && isWritableStore(input.store)
 			? input.store
 			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
-		if ($$self.$$.dirty & /*input, styles*/ 136) {
-			$$invalidate(3, styles = typeof input === 'object' && typeof input.styles === 'object'
+		if ($$self.$$.dirty & /*input, styles*/ 1032) {
+			$$invalidate(3, styles = isObject(input) && isObject(input.styles)
 			? input.styles
 			: typeof styles === 'object' ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, efx*/ 144) {
-			$$invalidate(4, efx = typeof input === 'object' && typeof input.efx === 'function'
+		if ($$self.$$.dirty & /*input, efx*/ 1040) {
+			$$invalidate(4, efx = isObject(input) && typeof input.efx === 'function'
 			? input.efx
 			: typeof efx === 'function'
 				? efx
@@ -1892,9 +1925,13 @@ function instance$7($$self, $$props, $$invalidate) {
 		store,
 		styles,
 		efx,
+		inputEl,
 		$store,
+		onKeyDown,
 		type,
+		options,
 		input,
+		input_1_binding,
 		input_1_input_handler
 	];
 }
@@ -1910,9 +1947,10 @@ class TJSInput extends SvelteComponent {
 			create_fragment$8,
 			safe_not_equal,
 			{
-				input: 7,
-				type: 6,
+				input: 10,
+				type: 8,
 				disabled: 0,
+				options: 9,
 				placeholder: 1,
 				store: 2,
 				styles: 3,
