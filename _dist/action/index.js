@@ -189,7 +189,12 @@ function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 0.7)', 
 
       function blurRipple()
       {
-         if (!(span instanceof HTMLElement)) { return; }
+         // When clicking outside the browser window or to another tab `document.activeElement` remains
+         // the same despite blur being invoked; IE the target element.
+         if (!(span instanceof HTMLElement) || document.activeElement === targetEl)
+         {
+            return;
+         }
 
          const animation = span.animate(
          [
@@ -211,11 +216,15 @@ function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 0.7)', 
          {
             clientX = clientY = -1;
             span.remove();
+            span = void 0;
          };
       }
 
       function focusRipple()
       {
+         // If already focused and the span exists do not create another ripple effect.
+         if (span instanceof HTMLElement) { return; }
+
          const elementRect = element.getBoundingClientRect();
 
          // The order of events don't always occur with a pointer event first. In this case use the center of the

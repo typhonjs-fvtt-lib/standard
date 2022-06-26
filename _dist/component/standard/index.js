@@ -967,7 +967,7 @@ function instance$9($$self, $$props, $$invalidate) {
 
 	function onClickSummary(event) {
 		const target = event.target;
-		const chevronTarget = target === svgEl || svgEl.contains(event.target);
+		const chevronTarget = target === svgEl || svgEl.contains(target);
 
 		if (target === summaryEl || chevronTarget || target.querySelector('.summary-click') !== null) {
 			if (localOptions.chevronOnly && !chevronTarget) {
