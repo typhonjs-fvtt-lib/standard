@@ -1825,7 +1825,12 @@ function instance$7($$self, $$props, $$invalidate) {
 	$$subscribe_store();
 	let { styles } = $$props;
 	let { efx } = $$props;
-	const localOptions = { blurOnEnterKey: true };
+
+	const localOptions = {
+		blurOnEnterKey: true,
+		clearOnEscKey: false
+	};
+
 	let inputEl;
 
 	/**
@@ -1835,6 +1840,11 @@ function instance$7($$self, $$props, $$invalidate) {
  */
 	function onKeyDown(event) {
 		if (localOptions.blurOnEnterKey && event.key === 'Enter') {
+			inputEl.blur();
+		}
+
+		if (localOptions.clearOnEscKey && event.key === 'Escape') {
+			store.set('');
 			inputEl.blur();
 		}
 	}
@@ -1883,6 +1893,10 @@ function instance$7($$self, $$props, $$invalidate) {
 
 				if (typeof options?.blurOnEnterKey === 'boolean') {
 					localOptions.blurOnEnterKey = options.blurOnEnterKey;
+				}
+
+				if (typeof options?.clearOnEscKey === 'boolean') {
+					localOptions.clearOnEscKey = options.clearOnEscKey;
 				}
 			}
 		}

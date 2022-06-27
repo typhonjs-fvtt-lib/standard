@@ -36,7 +36,8 @@
    export let efx;
 
    const localOptions = {
-      blurOnEnterKey: true
+      blurOnEnterKey: true,
+      clearOnEscKey: false
    }
 
    let inputEl;
@@ -52,6 +53,7 @@
        isObject(options) ? options : {};
 
       if (typeof options?.blurOnEnterKey === 'boolean') { localOptions.blurOnEnterKey = options.blurOnEnterKey; }
+      if (typeof options?.clearOnEscKey === 'boolean') { localOptions.clearOnEscKey = options.clearOnEscKey; }
    }
 
    $: placeholder = isObject(input) && typeof input.placeholder === 'string' ? localize(input.placeholder) :
@@ -74,6 +76,12 @@
    function onKeyDown(event)
    {
       if (localOptions.blurOnEnterKey && event.key === 'Enter') { inputEl.blur(); }
+
+      if (localOptions.clearOnEscKey && event.key === 'Escape')
+      {
+         store.set('');
+         inputEl.blur();
+      }
    }
 </script>
 
