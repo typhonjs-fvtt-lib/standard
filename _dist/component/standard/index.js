@@ -1769,14 +1769,15 @@ function create_fragment$8(ctx) {
 		m(target, anchor) {
 			insert(target, div, anchor);
 			append(div, input_1);
-			/*input_1_binding*/ ctx[11](input_1);
+			/*input_1_binding*/ ctx[12](input_1);
 			set_input_value(input_1, /*$store*/ ctx[6]);
 
 			if (!mounted) {
 				dispose = [
-					listen(input_1, "input", /*input_1_input_handler*/ ctx[12]),
+					listen(input_1, "input", /*input_1_input_handler*/ ctx[13]),
 					action_destroyer(autoBlur.call(null, input_1)),
-					listen(input_1, "keydown", /*onKeyDown*/ ctx[7]),
+					listen(input_1, "focusin", /*onFocusIn*/ ctx[7]),
+					listen(input_1, "keydown", /*onKeyDown*/ ctx[8]),
 					action_destroyer(/*efx*/ ctx[4].call(null, div)),
 					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[3]))
 				];
@@ -1803,7 +1804,7 @@ function create_fragment$8(ctx) {
 		o: noop,
 		d(detaching) {
 			if (detaching) detach(div);
-			/*input_1_binding*/ ctx[11](null);
+			/*input_1_binding*/ ctx[12](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -1828,10 +1829,16 @@ function instance$7($$self, $$props, $$invalidate) {
 
 	const localOptions = {
 		blurOnEnterKey: true,
+		cancelOnEscKey: false,
 		clearOnEscKey: false
 	};
 
 	let inputEl;
+	let initialValue;
+
+	function onFocusIn(event) {
+		initialValue = localOptions.cancelOnEscKey ? inputEl.value : void 0;
+	}
 
 	/**
  * Blur input on enter key down.
@@ -1841,12 +1848,21 @@ function instance$7($$self, $$props, $$invalidate) {
 	function onKeyDown(event) {
 		if (localOptions.blurOnEnterKey && event.key === 'Enter') {
 			inputEl.blur();
+			return;
 		}
 
-		if (localOptions.clearOnEscKey && event.key === 'Escape') {
-			store.set('');
-			inputEl.blur();
+		if (event.key === 'Escape') {
+			if (localOptions.cancelOnEscKey && typeof initialValue === 'string') {
+				store.set(initialValue);
+				initialValue = void 0;
+				inputEl.blur();
+			} else if (localOptions.clearOnEscKey) {
+				store.set('');
+				inputEl.blur();
+			}
 		}
+
+		if (localOptions.clearOnEscKey && event.key === 'Escape') ;
 	}
 
 	function input_1_binding($$value) {
@@ -1862,10 +1878,10 @@ function instance$7($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('input' in $$props) $$invalidate(10, input = $$props.input);
-		if ('type' in $$props) $$invalidate(8, type = $$props.type);
+		if ('input' in $$props) $$invalidate(11, input = $$props.input);
+		if ('type' in $$props) $$invalidate(9, type = $$props.type);
 		if ('disabled' in $$props) $$invalidate(0, disabled = $$props.disabled);
-		if ('options' in $$props) $$invalidate(9, options = $$props.options);
+		if ('options' in $$props) $$invalidate(10, options = $$props.options);
 		if ('placeholder' in $$props) $$invalidate(1, placeholder = $$props.placeholder);
 		if ('store' in $$props) $$subscribe_store($$invalidate(2, store = $$props.store));
 		if ('styles' in $$props) $$invalidate(3, styles = $$props.styles);
@@ -1873,26 +1889,30 @@ function instance$7($$self, $$props, $$invalidate) {
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*input, type*/ 1280) {
-			$$invalidate(8, type = isObject(input) && typeof input.type === 'string'
+		if ($$self.$$.dirty & /*input, type*/ 2560) {
+			$$invalidate(9, type = isObject(input) && typeof input.type === 'string'
 			? input.type
 			: typeof type === 'string' ? type : void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, disabled*/ 1025) {
+		if ($$self.$$.dirty & /*input, disabled*/ 2049) {
 			$$invalidate(0, disabled = isObject(input) && typeof input.disabled === 'boolean'
 			? input.disabled
 			: typeof disabled === 'boolean' ? disabled : false);
 		}
 
-		if ($$self.$$.dirty & /*input, options*/ 1536) {
+		if ($$self.$$.dirty & /*input, options*/ 3072) {
 			{
-				$$invalidate(9, options = isObject(input) && isObject(input.options)
+				$$invalidate(10, options = isObject(input) && isObject(input.options)
 				? input.options
 				: isObject(options) ? options : {});
 
 				if (typeof options?.blurOnEnterKey === 'boolean') {
 					localOptions.blurOnEnterKey = options.blurOnEnterKey;
+				}
+
+				if (typeof options?.cancelOnEscKey === 'boolean') {
+					localOptions.cancelOnEscKey = options.cancelOnEscKey;
 				}
 
 				if (typeof options?.clearOnEscKey === 'boolean') {
@@ -1901,7 +1921,7 @@ function instance$7($$self, $$props, $$invalidate) {
 			}
 		}
 
-		if ($$self.$$.dirty & /*input, placeholder*/ 1026) {
+		if ($$self.$$.dirty & /*input, placeholder*/ 2050) {
 			$$invalidate(1, placeholder = isObject(input) && typeof input.placeholder === 'string'
 			? localize(input.placeholder)
 			: typeof placeholder === 'string'
@@ -1909,19 +1929,19 @@ function instance$7($$self, $$props, $$invalidate) {
 				: void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, store*/ 1028) {
+		if ($$self.$$.dirty & /*input, store*/ 2052) {
 			$$subscribe_store($$invalidate(2, store = isObject(input) && isWritableStore(input.store)
 			? input.store
 			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
-		if ($$self.$$.dirty & /*input, styles*/ 1032) {
+		if ($$self.$$.dirty & /*input, styles*/ 2056) {
 			$$invalidate(3, styles = isObject(input) && isObject(input.styles)
 			? input.styles
 			: typeof styles === 'object' ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, efx*/ 1040) {
+		if ($$self.$$.dirty & /*input, efx*/ 2064) {
 			$$invalidate(4, efx = isObject(input) && typeof input.efx === 'function'
 			? input.efx
 			: typeof efx === 'function'
@@ -1940,6 +1960,7 @@ function instance$7($$self, $$props, $$invalidate) {
 		efx,
 		inputEl,
 		$store,
+		onFocusIn,
 		onKeyDown,
 		type,
 		options,
@@ -1960,10 +1981,10 @@ class TJSInput extends SvelteComponent {
 			create_fragment$8,
 			safe_not_equal,
 			{
-				input: 10,
-				type: 8,
+				input: 11,
+				type: 9,
 				disabled: 0,
-				options: 9,
+				options: 10,
 				placeholder: 1,
 				store: 2,
 				styles: 3,

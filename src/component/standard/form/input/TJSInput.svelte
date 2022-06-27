@@ -37,6 +37,7 @@
 
    const localOptions = {
       blurOnEnterKey: true,
+      cancelOnEscKey: false,
       clearOnEscKey: false
    }
 
@@ -53,6 +54,7 @@
        isObject(options) ? options : {};
 
       if (typeof options?.blurOnEnterKey === 'boolean') { localOptions.blurOnEnterKey = options.blurOnEnterKey; }
+      if (typeof options?.cancelOnEscKey === 'boolean') { localOptions.cancelOnEscKey = options.cancelOnEscKey; }
       if (typeof options?.clearOnEscKey === 'boolean') { localOptions.clearOnEscKey = options.clearOnEscKey; }
    }
 
@@ -68,6 +70,13 @@
    $: efx = isObject(input) && typeof input.efx === 'function' ? input.efx :
     typeof efx === 'function' ? efx : () => {};
 
+   let initialValue;
+
+   function onFocusIn(event)
+   {
+      initialValue = localOptions.cancelOnEscKey ? inputEl.value : void 0;
+   }
+
    /**
     * Blur input on enter key down.
     *
@@ -75,12 +84,25 @@
     */
    function onKeyDown(event)
    {
-      if (localOptions.blurOnEnterKey && event.key === 'Enter') { inputEl.blur(); }
+      if (localOptions.blurOnEnterKey && event.key === 'Enter') { inputEl.blur(); return; }
+
+      if (event.key === 'Escape')
+      {
+         if (localOptions.cancelOnEscKey && typeof initialValue === 'string')
+         {
+            store.set(initialValue);
+            initialValue = void 0;
+            inputEl.blur();
+         }
+         else if (localOptions.clearOnEscKey)
+         {
+            store.set('');
+            inputEl.blur();
+         }
+      }
 
       if (localOptions.clearOnEscKey && event.key === 'Escape')
       {
-         store.set('');
-         inputEl.blur();
       }
    }
 </script>
@@ -92,6 +114,7 @@
            use:autoBlur
            {placeholder}
            {disabled}
+           on:focusin={onFocusIn}
            on:keydown={onKeyDown}
     />
 </div>
