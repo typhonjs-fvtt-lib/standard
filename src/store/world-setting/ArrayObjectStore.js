@@ -1,71 +1,13 @@
-import { writable } from 'svelte/store';
-import { normalizeString } from '@typhonjs-fvtt/runtime/svelte/util';
-import { DynArrayReducer, isWritableStore, subscribeIgnoreFirst, TJSGameSettings } from '@typhonjs-fvtt/runtime/svelte/store';
-import { debounce, isObject, uuidv4, klona } from '@typhonjs-fvtt/runtime/svelte/util';
-import { isWritableStore as isWritableStore$1 } from '@typhonjs-fvtt/runtime/svelte/store';
+import {
+   DynArrayReducer,
+   isWritableStore,
+   subscribeIgnoreFirst }  from '@typhonjs-fvtt/svelte/store';
 
-/**
- * Creates a filter function to compare objects by a give property key against a regex test. The returned function
- * is also a writable Svelte store that builds a regex from the stores value.
- *
- * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
- *
- * @param {string}   property - Property key to compare.
- *
- * @param {object}   [opts] - Optional parameters.
- *
- * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
- *
- * @returns {(data: object) => boolean} The query string filter.
- */
-function createFilterQuery(property, { caseSensitive = false } = {})
-{
-   let keyword = '';
-   let regex;
-   const storeKeyword = writable(keyword);
-
-   /**
-    * If there is no filter keyword / regex then do not filter otherwise filter based on the regex
-    * created from the search input element.
-    *
-    * @param {object} data - Data object to test against regex.
-    *
-    * @returns {boolean} AnimationStore filter state.
-    */
-   function filterQuery(data)
-   {
-      return keyword === '' || !regex ? true : regex.test(normalizeString(data?.[property]));
-   }
-
-   /**
-    * Create a custom store that changes when the search keyword changes.
-    *
-    * @param {(string) => void} handler - A callback function that accepts strings.
-    *
-    * @returns {import('svelte/store').Unsubscriber}
-    */
-   filterQuery.subscribe = (handler) =>
-   {
-      return storeKeyword.subscribe(handler);
-   };
-
-   /**
-    * Set
-    *
-    * @param {string}   value - A new value for the keyword / regex test.
-    */
-   filterQuery.set = (value) =>
-   {
-      if (typeof value === 'string')
-      {
-         keyword = normalizeString(value);
-         regex = new RegExp(RegExp.escape(keyword), caseSensitive ? '' : 'i');
-         storeKeyword.set(keyword);
-      }
-   };
-
-   return filterQuery;
-}
+import {
+   debounce,
+   isObject,
+   klona,
+   uuidv4 }                from '@typhonjs-fvtt/svelte/util';
 
 /**
  * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
@@ -74,7 +16,7 @@ function createFilterQuery(property, { caseSensitive = false } = {})
 /**
  * @template {BaseEntryStore} T
  */
-class ArrayObjectStore
+export class ArrayObjectStore
 {
    /** @type {T[]} */
    #data = [];
@@ -88,9 +30,6 @@ class ArrayObjectStore
     * @type {DynArrayReducer<T>}
     */
    #dataReducer = new DynArrayReducer({ data: this.#data });
-
-   /** @type {string} */
-   #key;
 
    #StoreClass;
 
@@ -126,7 +65,7 @@ class ArrayObjectStore
          throw new TypeError(`'StoreClass' is not a writable store constructor.`);
       }
 
-      let hasIDGetter = false;
+      let hasIDGetter = false
 
       // Walk parent prototype chain. Check for descriptor at each prototype level.
       for (let o = StoreClass.prototype; o; o = Object.getPrototypeOf(o))
@@ -229,6 +168,19 @@ class ArrayObjectStore
       this.#dataMap.set(entryData.id, { store, unsubscribe });
 
       return store;
+   }
+
+   /**
+    * Removes all child store entries.
+    */
+   clear()
+   {
+      for (const storeEntryData of this.#dataMap.values()) { storeEntryData.unsubscribe(); }
+
+      this.#dataMap.clear();
+      this.#data.length = 0;
+
+      this.updateSubscribers();
    }
 
    /**
@@ -428,8 +380,10 @@ class ArrayObjectStore
 
    /**
     * Updates subscribers.
+    *
+    * @param {boolean}  [force=false] - When manual update option is required and force is true notify subscribers.
     */
-   updateSubscribers()
+   updateSubscribers(force = false)
    {
       const subscriptions = this.#subscriptions;
 
@@ -477,11 +431,11 @@ class ObjectEntryStore
    }
 
    /**
-    * Invoked by WorldSettingArrayStore to provide custom duplication. Override this static method in your entry store.
+    * Invoked by ArrayObjectStore to provide custom duplication. Override this static method in your entry store.
     *
     * @param {object}   data - A copy of local data w/ new ID already set.
     *
-    * @param {WorldSettingArrayStore} arrayStore - The source WorldSettingArrayStore instance.
+    * @param {ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
     */
    static duplicate(data, arrayStore) {}
 
@@ -547,106 +501,3 @@ class ObjectEntryStore
  *                            {@link ArrayObjectStore.updateSubscribers} notifying subscribers to this array
  *                            store.
  */
-
-/**
- * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
- */
-
-/**
- * @template {BaseEntryStore} T
- */
-class WorldSettingArrayStore extends ArrayObjectStore
-{
-   /** @type {string} */
-   #key;
-
-   /**
-    *
-    * @param {object}            params - Required parameters.
-    *
-    * @param {TJSGameSettings}   params.gameSettings - An instance of TJSGameSettings.
-    *
-    * @param {string}            params.moduleId - Game setting 'moduleId' field.
-    *
-    * @param {string}            params.key - Game setting 'key' field.
-    *
-    * @param {ArrayObjectStoreParams} params.rest - Rest of ArrayObjectStore parameters.
-    *
-    */
-   constructor({ gameSettings, moduleId, key, ...rest })
-   {
-      super(rest);
-
-      if (gameSettings !== void 0)
-      {
-         if (!(gameSettings instanceof TJSGameSettings))
-         {
-            throw new TypeError(`'gameSettings' is not an instance of TJSGameSettings.`);
-         }
-
-         if (typeof key !== 'string') { throw new TypeError(`'key' is not a string.`); }
-         if (typeof moduleId !== 'string') { throw new TypeError(`'moduleId' is not a string.`); }
-      }
-
-      this.#key = key;
-
-      if (gameSettings)
-      {
-         gameSettings.register({
-            moduleId,
-            key,
-            store: this,
-            options: {
-               scope: 'world',
-               config: false,
-               default: Array.isArray(rest.defaultData) ?? [],
-               type: Array
-            }
-         });
-      }
-   }
-
-   /**
-    * @returns {string}
-    */
-   get key() { return this.#key; }
-}
-
-/**
- * Wraps a writable stores set method invoking a callback after the store is set. This allows hard coupled parent /
- * child relationships between stores to update directly without having to subscribe to the child store. This is a
- * particular powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or
- * serializes data.
- *
- * Note: Do consider carefully if this is an optimum solution; this is a quick implementation helper, but a better
- * solution is properly managing store relationships through subscription.
- *
- * @template T
- *
- * @param {import('svelte/store').Writable<T>} store - A store to wrap.
- *
- * @param {(store?: import('svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
- *                                                                                        store set.
- *
- * @returns {import('svelte/store').Writable<T>} Wrapped store.
- */
-function storeCallback(store, setCallback)
-{
-   if (!isWritableStore$1(store)) { throw new TypeError(`'store' is not a writable store.`); }
-   if (typeof setCallback !== 'function') { throw new TypeError(`'setCallback' is not a function.`); }
-
-   /** @type {import('svelte/store').Writable<T>} */
-   return {
-      set: (value) => {
-         store.set(value);
-         setCallback(store, value);
-      },
-
-      subscribe: store.subscribe,
-
-      update: typeof store.update === 'function' ? store.update : void 0
-   };
-}
-
-export { WorldSettingArrayStore, createFilterQuery, storeCallback };
-//# sourceMappingURL=index.js.map

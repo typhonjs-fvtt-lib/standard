@@ -3,31 +3,118 @@ import * as svelte_store from 'svelte/store';
 type BaseEntryStore = typeof svelte_store.Writable & {
     get id(): string;
 };
+type ArrayObjectStoreParams = {
+    /**
+     * - The entry store class that is instantiated.
+     */
+    StoreClass: BaseEntryStore;
+    /**
+     * - An array of default data objects.
+     */
+    defaultData?: object[];
+    /**
+     * - An integer between and including 0 - 1000; a debounce time in
+     * milliseconds for child store subscriptions to invoke
+     * {@link ArrayObjectStore.updateSubscribers } notifying subscribers to this array
+     * store.
+     */
+    childDebounce?: number;
+};
+/**
+ * @typedef {object} ArrayObjectStoreParams
+ *
+ * @property {BaseEntryStore} StoreClass - The entry store class that is instantiated.
+ *
+ * @property {object[]}       [defaultData=[]] - An array of default data objects.
+ *
+ * @property {number}         [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
+ *                            milliseconds for child store subscriptions to invoke
+ *                            {@link ArrayObjectStore.updateSubscribers} notifying subscribers to this array
+ *                            store.
+ */
 /**
  * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
  */
 /**
  * @template {BaseEntryStore} T
  */
-declare class WorldSettingArrayStore<T extends unknown> {
+declare class WorldSettingArrayStore<T extends unknown> extends ArrayObjectStore<any> {
     /**
      *
-     * @param {TJSGameSettings}   gameSettings - An instance of TJSGameSettings.
+     * @param {object}            params - Required parameters.
      *
-     * @param {string}            moduleId - Game setting 'moduleId' field.
+     * @param {TJSGameSettings}   params.gameSettings - An instance of TJSGameSettings.
      *
-     * @param {string}            key - Game setting 'key' field.
+     * @param {string}            params.moduleId - Game setting 'moduleId' field.
      *
-     * @param {BaseEntryStore}    StoreClass - The entry store class that is instantiated.
+     * @param {string}            params.key - Game setting 'key' field.
      *
-     * @param {object[]}          [defaultData=[]] - An array of default data objects.
+     * @param {ArrayObjectStoreParams} params.rest - Rest of ArrayObjectStore parameters.
      *
-     * @param {number}            [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
-     *                            milliseconds for child store subscriptions to invoke
-     *                            {@link WorldSettingArrayStore.updateSubscribers} notifying subscribers to this array
-     *                            store.
      */
-    constructor({ gameSettings, moduleId, key, StoreClass, defaultData, childDebounce }?: any);
+    constructor({ gameSettings, moduleId, key, ...rest }: {
+        gameSettings: any;
+        moduleId: string;
+        key: string;
+        rest: ArrayObjectStoreParams;
+    });
+    /**
+     * @returns {string}
+     */
+    get key(): string;
+    #private;
+}
+/**
+ * Creates a filter function to compare objects by a give property key against a regex test. The returned function
+ * is also a writable Svelte store that builds a regex from the stores value.
+ *
+ * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
+ *
+ * @param {string}   property - Property key to compare.
+ *
+ * @param {object}   [opts] - Optional parameters.
+ *
+ * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
+ *
+ * @returns {(data: object) => boolean} The query string filter.
+ */
+declare function createFilterQuery(property: string, { caseSensitive }?: {
+    caseSensitive?: boolean;
+}): (data: object) => boolean;
+/**
+ * Wraps a writable stores set method invoking a callback after the store is set. This allows hard coupled parent /
+ * child relationships between stores to update directly without having to subscribe to the child store. This is a
+ * particular powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or
+ * serializes data.
+ *
+ * Note: Do consider carefully if this is an optimum solution; this is a quick implementation helper, but a better
+ * solution is properly managing store relationships through subscription.
+ *
+ * @template T
+ *
+ * @param {import('svelte/store').Writable<T>} store - A store to wrap.
+ *
+ * @param {(store?: import('svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
+ *                                                                                        store set.
+ *
+ * @returns {import('svelte/store').Writable<T>} Wrapped store.
+ */
+declare function storeCallback<T>(store: svelte_store.Writable<T>, setCallback: (store?: svelte_store.Writable<T>, value?: T) => void): svelte_store.Writable<T>;
+/**
+ * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
+ */
+/**
+ * @template {BaseEntryStore} T
+ */
+declare class ArrayObjectStore<T extends unknown> {
+    /**
+     * @returns {ObjectEntryStore}
+     */
+    static get EntryStore(): ObjectEntryStore;
+    /**
+     * @param {ArrayObjectStoreParams} params -
+     */
+    constructor({ StoreClass, defaultData, childDebounce }?: ArrayObjectStoreParams);
     /**
      * @returns {T[]}
      * @protected
@@ -37,10 +124,6 @@ declare class WorldSettingArrayStore<T extends unknown> {
      * @returns {DynArrayReducer<T>}
      */
     get dataReducer(): any;
-    /**
-     * @returns {string}
-     */
-    get key(): string;
     /**
      * @returns {number}
      */
@@ -113,40 +196,44 @@ declare class WorldSettingArrayStore<T extends unknown> {
     #private;
 }
 /**
- * Creates a filter function to compare objects by a give property key against a regex test. The returned function
- * is also a writable Svelte store that builds a regex from the stores value.
+ * Provides a base implementation for store entries in {@link ArrayObjectStore}.
  *
- * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
- *
- * @param {string}   property - Property key to compare.
- *
- * @param {object}   [opts] - Optional parameters.
- *
- * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
- *
- * @returns {(data: object) => boolean} The query string filter.
+ * In particular providing the required getting / accessor for the 'id' property.
  */
-declare function createFilterQuery(property: string, { caseSensitive }?: {
-    caseSensitive?: boolean;
-}): (data: object) => boolean;
-/**
- * Wraps a writable stores set method invoking a callback after the store is set. This allows hard coupled parent /
- * child relationships between stores to update directly without having to subscribe to the child store. This is a
- * particular powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or
- * serializes data.
- *
- * Note: Do consider carefully if this is an optimum solution; this is a quick implementation helper, but a better
- * solution is properly managing store relationships through subscription.
- *
- * @template T
- *
- * @param {import('svelte/store').Writable<T>} store - A store to wrap.
- *
- * @param {(store?: import('svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
- *                                                                                        store set.
- *
- * @returns {import('svelte/store').Writable<T>} Wrapped store.
- */
-declare function storeCallback<T>(store: svelte_store.Writable<T>, setCallback: (store?: svelte_store.Writable<T>, value?: T) => void): svelte_store.Writable<T>;
+declare class ObjectEntryStore {
+    /**
+     * Invoked by WorldSettingArrayStore to provide custom duplication. Override this static method in your entry store.
+     *
+     * @param {object}   data - A copy of local data w/ new ID already set.
+     *
+     * @param {WorldSettingArrayStore} arrayStore - The source WorldSettingArrayStore instance.
+     */
+    static duplicate(data: object, arrayStore: WorldSettingArrayStore<any>): void;
+    /**
+     * @param {object}   data -
+     */
+    constructor(data?: object);
+    /**
+     * @returns {object}
+     * @protected
+     */
+    protected get _data(): any;
+    /**
+     * @returns {string}
+     */
+    get id(): string;
+    toJSON(): any;
+    /**
+     * @param {function(object): void} handler - Callback function that is invoked on update / changes.
+     *
+     * @returns {(function(): void)} Unsubscribe function.
+     */
+    subscribe(handler: (arg0: object) => void): (() => void);
+    /**
+     * @protected
+     */
+    protected _updateSubscribers(): void;
+    #private;
+}
 
-export { BaseEntryStore, WorldSettingArrayStore, createFilterQuery, storeCallback };
+export { ArrayObjectStoreParams, BaseEntryStore, WorldSettingArrayStore, createFilterQuery, storeCallback };
