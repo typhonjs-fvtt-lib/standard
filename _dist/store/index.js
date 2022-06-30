@@ -125,7 +125,7 @@ class WorldSettingArrayStore {
     *
     * @param {number}            [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
     *                            milliseconds for child store subscriptions to invoke
-    *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
+    *                            {@link WorldSettingArrayStore.updateSubscribers} notifying subscribers to this array
     *                            store.
     */
    constructor({ gameSettings, moduleId, key, StoreClass, defaultData = [], childDebounce = 250 } = {})
@@ -175,8 +175,8 @@ class WorldSettingArrayStore {
       this.#StoreClass = StoreClass;
 
       // Prepare a debounced callback that is used for all child store entry subscriptions.
-      this.#updateSubscribersBound = childDebounce === 0 ? this._updateSubscribers.bind(this) :
-       debounce(() => this._updateSubscribers(), childDebounce);
+      this.#updateSubscribersBound = childDebounce === 0 ? this.updateSubscribers.bind(this) :
+       debounce(() => this.updateSubscribers(), childDebounce);
 
       if (gameSettings)
       {
@@ -248,7 +248,7 @@ class WorldSettingArrayStore {
 
       const store = this.#addStore(entryData);
 
-      this._updateSubscribers();
+      this.updateSubscribers();
 
       return store;
    }
@@ -288,7 +288,7 @@ class WorldSettingArrayStore {
    {
       const result = this.#deleteStore(id);
 
-      this._updateSubscribers();
+      this.updateSubscribers();
 
       return result;
    }
@@ -443,7 +443,7 @@ class WorldSettingArrayStore {
          for (const id of removeIDSet) { this.#deleteStore(id); }
       }
 
-      this._updateSubscribers();
+      this.updateSubscribers();
    }
 
    toJSON()
@@ -473,9 +473,9 @@ class WorldSettingArrayStore {
    }
 
    /**
-    * @package
+    * Updates subscribers.
     */
-   _updateSubscribers()
+   updateSubscribers()
    {
       const subscriptions = this.#subscriptions;
 
@@ -582,24 +582,30 @@ class WorldSettingEntryStore
 }
 
 /**
- * Wraps a writable stores set method invoking a callback after the store is set. This allows parent / child
- * relationships between stores to update directly without having to subscribe to the child store. This is a particular
- * powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or serializes data.
+ * Wraps a writable stores set method invoking a callback after the store is set. This allows hard coupled parent /
+ * child relationships between stores to update directly without having to subscribe to the child store. This is a
+ * particular powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or
+ * serializes data.
  *
- * @param {import('svelte/store').Writable} store - A store to wrap.
+ * Note: Do consider carefully if this is an optimum solution; this is a quick implementation helper, but a better
+ * solution is properly managing store relationships through subscription.
  *
- * @param {(store?: import('svelte/store').Writable, value?: *) => void} setCallback - A callback to invoke after store
- *                                                                                     set.
+ * @template T
  *
- * @returns {import('svelte/store').Writable} Wrapped store.
+ * @param {import('svelte/store').Writable<T>} store - A store to wrap.
+ *
+ * @param {(store?: import('svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
+ *                                                                                        store set.
+ *
+ * @returns {import('svelte/store').Writable<T>} Wrapped store.
  */
 function storeCallback(store, setCallback)
 {
    if (!isWritableStore$1(store)) { throw new TypeError(`'store' is not a writable store.`); }
    if (typeof setCallback !== 'function') { throw new TypeError(`'setCallback' is not a function.`); }
 
-   /** @type {import('svelte/store').Writable} */
-   const wrapper = {
+   /** @type {import('svelte/store').Writable<T>} */
+   return {
       set: (value) => {
          store.set(value);
          setCallback(store, value);
@@ -609,10 +615,6 @@ function storeCallback(store, setCallback)
 
       update: typeof store.update === 'function' ? store.update : void 0
    };
-
-   Object.freeze(wrapper);
-
-   return wrapper;
 }
 
 export { WorldSettingArrayStore, createFilterQuery, storeCallback };

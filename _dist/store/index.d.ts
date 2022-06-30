@@ -24,7 +24,7 @@ declare class WorldSettingArrayStore<T extends unknown> {
      *
      * @param {number}            [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
      *                            milliseconds for child store subscriptions to invoke
-     *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
+     *                            {@link WorldSettingArrayStore.updateSubscribers} notifying subscribers to this array
      *                            store.
      */
     constructor({ gameSettings, moduleId, key, StoreClass, defaultData, childDebounce }?: any);
@@ -100,9 +100,9 @@ declare class WorldSettingArrayStore<T extends unknown> {
      */
     subscribe(handler: (arg0: T[]) => void): (() => void);
     /**
-     * @package
+     * Updates subscribers.
      */
-    _updateSubscribers(): void;
+    updateSubscribers(): void;
     /**
      * Provide an iterator for public access to entry stores.
      *
@@ -130,17 +130,23 @@ declare function createFilterQuery(property: string, { caseSensitive }?: {
     caseSensitive?: boolean;
 }): (data: object) => boolean;
 /**
- * Wraps a writable stores set method invoking a callback after the store is set. This allows parent / child
- * relationships between stores to update directly without having to subscribe to the child store. This is a particular
- * powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or serializes data.
+ * Wraps a writable stores set method invoking a callback after the store is set. This allows hard coupled parent /
+ * child relationships between stores to update directly without having to subscribe to the child store. This is a
+ * particular powerful pattern when the `setCallback` is a debounced function that syncs a parent store and / or
+ * serializes data.
  *
- * @param {import('svelte/store').Writable} store - A store to wrap.
+ * Note: Do consider carefully if this is an optimum solution; this is a quick implementation helper, but a better
+ * solution is properly managing store relationships through subscription.
  *
- * @param {(store?: import('svelte/store').Writable, value?: *) => void} setCallback - A callback to invoke after store
- *                                                                                     set.
+ * @template T
  *
- * @returns {import('svelte/store').Writable} Wrapped store.
+ * @param {import('svelte/store').Writable<T>} store - A store to wrap.
+ *
+ * @param {(store?: import('svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
+ *                                                                                        store set.
+ *
+ * @returns {import('svelte/store').Writable<T>} Wrapped store.
  */
-declare function storeCallback(store: svelte_store.Writable<any>, setCallback: (store?: svelte_store.Writable<any>, value?: any) => void): svelte_store.Writable<any>;
+declare function storeCallback<T>(store: svelte_store.Writable<T>, setCallback: (store?: svelte_store.Writable<T>, value?: T) => void): svelte_store.Writable<T>;
 
 export { BaseEntryStore, WorldSettingArrayStore, createFilterQuery, storeCallback };

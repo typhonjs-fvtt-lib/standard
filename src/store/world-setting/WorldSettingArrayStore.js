@@ -68,7 +68,7 @@ export class WorldSettingArrayStore {
     *
     * @param {number}            [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
     *                            milliseconds for child store subscriptions to invoke
-    *                            {@link WorldSettingArrayStore._updateSubscribers} notifying subscribers to this array
+    *                            {@link WorldSettingArrayStore.updateSubscribers} notifying subscribers to this array
     *                            store.
     */
    constructor({ gameSettings, moduleId, key, StoreClass, defaultData = [], childDebounce = 250 } = {})
@@ -118,8 +118,8 @@ export class WorldSettingArrayStore {
       this.#StoreClass = StoreClass;
 
       // Prepare a debounced callback that is used for all child store entry subscriptions.
-      this.#updateSubscribersBound = childDebounce === 0 ? this._updateSubscribers.bind(this) :
-       debounce(() => this._updateSubscribers(), childDebounce);
+      this.#updateSubscribersBound = childDebounce === 0 ? this.updateSubscribers.bind(this) :
+       debounce(() => this.updateSubscribers(), childDebounce);
 
       if (gameSettings)
       {
@@ -191,7 +191,7 @@ export class WorldSettingArrayStore {
 
       const store = this.#addStore(entryData);
 
-      this._updateSubscribers();
+      this.updateSubscribers();
 
       return store;
    }
@@ -231,7 +231,7 @@ export class WorldSettingArrayStore {
    {
       const result = this.#deleteStore(id);
 
-      this._updateSubscribers();
+      this.updateSubscribers();
 
       return result;
    }
@@ -386,7 +386,7 @@ export class WorldSettingArrayStore {
          for (const id of removeIDSet) { this.#deleteStore(id); }
       }
 
-      this._updateSubscribers();
+      this.updateSubscribers();
    }
 
    toJSON()
@@ -416,9 +416,9 @@ export class WorldSettingArrayStore {
    }
 
    /**
-    * @package
+    * Updates subscribers.
     */
-   _updateSubscribers()
+   updateSubscribers()
    {
       const subscriptions = this.#subscriptions;
 
