@@ -19,49 +19,62 @@ type ArrayObjectStoreParams = {
      * store.
      */
     childDebounce?: number;
+    /**
+     * - When true a DynArrayReducer will be instantiated wrapping store
+     *    data and accessible from {@link ArrayObjectStore.dataReducer }.
+     */
+    dataReducer?: boolean;
+    /**
+     * - When true {@link ArrayObjectStore.updateSubscribers } must be
+     * invoked with a single boolean parameter for subscribers to be updated.
+     */
+    manualUpdate?: boolean;
 };
+type ArrayObjectUpdateData = boolean | object | undefined;
+type CrudArrayObjectStoreParams = ArrayObjectStoreParams;
 /**
- * @typedef {object} ArrayObjectStoreParams
+ * @typedef {ArrayObjectStoreParams} CrudArrayObjectStoreParams
  *
- * @property {BaseEntryStore} StoreClass - The entry store class that is instantiated.
+ * @property {CrudDispatch}   [crudDispatch] -
  *
- * @property {object[]}       [defaultData=[]] - An array of default data objects.
- *
- * @property {number}         [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
- *                            milliseconds for child store subscriptions to invoke
- *                            {@link ArrayObjectStore.updateSubscribers} notifying subscribers to this array
- *                            store.
+ * @property {object}         [extraData] -
  */
 /**
- * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
+ * @typedef {({ action: string, id?: string, data?: object }) => boolean} CrudDispatch
+ *
+ * A function that accepts an object w/ 'action', 'moduleId', 'key' properties and optional 'id' / UUIDv4 string and
+ * 'data' property.
  */
 /**
  * @template {BaseEntryStore} T
  */
-declare class WorldSettingArrayStore<T extends unknown> extends ArrayObjectStore<any> {
+declare class WorldSettingArrayStore<T extends unknown> extends CrudArrayObjectStore<any> {
     /**
      *
-     * @param {object}            params - Required parameters.
+     * @param {object}            [opts] - Optional parameters.
      *
-     * @param {TJSGameSettings}   params.gameSettings - An instance of TJSGameSettings.
+     * @param {TJSGameSettings}   [opts.gameSettings] - An instance of TJSGameSettings.
      *
-     * @param {string}            params.moduleId - Game setting 'moduleId' field.
+     * @param {string}            [opts.moduleId] - Game setting 'moduleId' field.
      *
-     * @param {string}            params.key - Game setting 'key' field.
+     * @param {string}            [opts.key] - Game setting 'key' field.
      *
-     * @param {ArrayObjectStoreParams} params.rest - Rest of ArrayObjectStore parameters.
-     *
+     * @param {CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore parameters.
      */
-    constructor({ gameSettings, moduleId, key, ...rest }: {
-        gameSettings: any;
-        moduleId: string;
-        key: string;
-        rest: ArrayObjectStoreParams;
+    constructor({ gameSettings, moduleId, key, ...rest }?: {
+        gameSettings?: any;
+        moduleId?: string;
+        key?: string;
+        rest?: CrudArrayObjectStoreParams;
     });
     /**
      * @returns {string}
      */
     get key(): string;
+    /**
+     * @returns {string}
+     */
+    get moduleId(): string;
     #private;
 }
 /**
@@ -101,6 +114,47 @@ declare function createFilterQuery(property: string, { caseSensitive }?: {
  */
 declare function storeCallback<T>(store: svelte_store.Writable<T>, setCallback: (store?: svelte_store.Writable<T>, value?: T) => void): svelte_store.Writable<T>;
 /**
+ * @typedef {object} ArrayObjectStoreParams
+ *
+ * @property {BaseEntryStore} StoreClass - The entry store class that is instantiated.
+ *
+ * @property {object[]}       [defaultData=[]] - An array of default data objects.
+ *
+ * @property {number}         [childDebounce=250] - An integer between and including 0 - 1000; a debounce time in
+ *                            milliseconds for child store subscriptions to invoke
+ *                            {@link ArrayObjectStore.updateSubscribers} notifying subscribers to this array
+ *                            store.
+ *
+ * @property {boolean}        [dataReducer=false] - When true a DynArrayReducer will be instantiated wrapping store
+ *                                                  data and accessible from {@link ArrayObjectStore.dataReducer}.
+ *
+ * @property {boolean}        [manualUpdate=false] - When true {@link ArrayObjectStore.updateSubscribers} must be
+ *                            invoked with a single boolean parameter for subscribers to be updated.
+ */
+/**
+ * @typedef {boolean|object|undefined} ArrayObjectUpdateData
+ */
+/**
+ * @template {BaseEntryStore} T
+ */
+declare class CrudArrayObjectStore<T extends unknown> extends ArrayObjectStore<any> {
+    /**
+     * @param {object}                  [opts] - Optional parameters.
+     *
+     * @param {CrudDispatch}            [opts.crudDispatch] -
+     *
+     * @param {object}                  [opts.extraData] -
+     *
+     * @param {ArrayObjectStoreParams}  [opts.rest] - Rest of ArrayObjectStore parameters.
+     */
+    constructor({ crudDispatch, extraData, ...rest }?: {
+        crudDispatch?: any;
+        extraData?: object;
+        rest?: ArrayObjectStoreParams;
+    });
+    #private;
+}
+/**
  * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
  */
 /**
@@ -114,7 +168,7 @@ declare class ArrayObjectStore<T extends unknown> {
     /**
      * @param {ArrayObjectStoreParams} params -
      */
-    constructor({ StoreClass, defaultData, childDebounce }?: ArrayObjectStoreParams);
+    constructor({ StoreClass, defaultData, childDebounce, dataReducer, manualUpdate }?: ArrayObjectStoreParams);
     /**
      * @returns {T[]}
      * @protected
@@ -129,13 +183,17 @@ declare class ArrayObjectStore<T extends unknown> {
      */
     get length(): number;
     /**
-     * Adds a new store from given data.
+     * Removes all child store entries.
+     */
+    clear(): void;
+    /**
+     * Creates a new store from given data.
      *
      * @param {object}   entryData -
      *
-     * @returns {*}
+     * @returns {T}
      */
-    add(entryData?: object): any;
+    create(entryData?: object): T;
     /**
      * Deletes a given entry store by ID from this world setting array store instance.
      *
@@ -184,8 +242,10 @@ declare class ArrayObjectStore<T extends unknown> {
     subscribe(handler: (arg0: T[]) => void): (() => void);
     /**
      * Updates subscribers.
+     *
+     * @param {ArrayObjectUpdateData}  [update] -
      */
-    updateSubscribers(): void;
+    updateSubscribers(update?: ArrayObjectUpdateData): void;
     /**
      * Provide an iterator for public access to entry stores.
      *
@@ -202,13 +262,13 @@ declare class ArrayObjectStore<T extends unknown> {
  */
 declare class ObjectEntryStore {
     /**
-     * Invoked by WorldSettingArrayStore to provide custom duplication. Override this static method in your entry store.
+     * Invoked by ArrayObjectStore to provide custom duplication. Override this static method in your entry store.
      *
      * @param {object}   data - A copy of local data w/ new ID already set.
      *
-     * @param {WorldSettingArrayStore} arrayStore - The source WorldSettingArrayStore instance.
+     * @param {ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
      */
-    static duplicate(data: object, arrayStore: WorldSettingArrayStore<any>): void;
+    static duplicate(data: object, arrayStore: ArrayObjectStore<any>): void;
     /**
      * @param {object}   data -
      */
@@ -236,4 +296,4 @@ declare class ObjectEntryStore {
     #private;
 }
 
-export { ArrayObjectStoreParams, BaseEntryStore, WorldSettingArrayStore, createFilterQuery, storeCallback };
+export { ArrayObjectStoreParams, ArrayObjectUpdateData, BaseEntryStore, CrudArrayObjectStoreParams, WorldSettingArrayStore, createFilterQuery, storeCallback };

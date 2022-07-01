@@ -1,47 +1,46 @@
-import { TJSGameSettings }    from '@typhonjs-fvtt/svelte/store';
+import { TJSGameSettings }       from '@typhonjs-fvtt/svelte/store';
 
-import { ArrayObjectStore }   from './ArrayObjectStore.js';
-
-/**
- * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
- */
+import { CrudArrayObjectStore }  from '../array-object';
 
 /**
  * @template {BaseEntryStore} T
  */
-export class WorldSettingArrayStore extends ArrayObjectStore
+export class WorldSettingArrayStore extends CrudArrayObjectStore
 {
    /** @type {string} */
    #key;
 
+   /** @type {string} */
+   #moduleId;
+
    /**
     *
-    * @param {object}            params - Required parameters.
+    * @param {object}            [opts] - Optional parameters.
     *
-    * @param {TJSGameSettings}   params.gameSettings - An instance of TJSGameSettings.
+    * @param {TJSGameSettings}   [opts.gameSettings] - An instance of TJSGameSettings.
     *
-    * @param {string}            params.moduleId - Game setting 'moduleId' field.
+    * @param {string}            [opts.moduleId] - Game setting 'moduleId' field.
     *
-    * @param {string}            params.key - Game setting 'key' field.
+    * @param {string}            [opts.key] - Game setting 'key' field.
     *
-    * @param {ArrayObjectStoreParams} params.rest - Rest of ArrayObjectStore parameters.
-    *
+    * @param {CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore parameters.
     */
    constructor({ gameSettings, moduleId, key, ...rest })
    {
-      super(rest);
+      super({
+         ...rest,
+         extraData: { moduleId, key }
+      });
 
-      if (gameSettings !== void 0)
+      if (gameSettings !== void 0 && !(gameSettings instanceof TJSGameSettings))
       {
-         if (!(gameSettings instanceof TJSGameSettings))
-         {
-            throw new TypeError(`'gameSettings' is not an instance of TJSGameSettings.`);
-         }
-
-         if (typeof key !== 'string') { throw new TypeError(`'key' is not a string.`); }
-         if (typeof moduleId !== 'string') { throw new TypeError(`'moduleId' is not a string.`); }
+         throw new TypeError(`'gameSettings' is not an instance of TJSGameSettings.`);
       }
 
+      if (typeof key !== 'string') { throw new TypeError(`'key' is not a string.`); }
+      if (typeof moduleId !== 'string') { throw new TypeError(`'moduleId' is not a string.`); }
+
+      this.#moduleId = moduleId;
       this.#key = key;
 
       if (gameSettings)
@@ -53,7 +52,7 @@ export class WorldSettingArrayStore extends ArrayObjectStore
             options: {
                scope: 'world',
                config: false,
-               default: Array.isArray(rest.defaultData) ?? [],
+               default: Array.isArray(rest.defaultData) ? rest.defaultData : [],
                type: Array
             }
          });
@@ -64,4 +63,9 @@ export class WorldSettingArrayStore extends ArrayObjectStore
     * @returns {string}
     */
    get key() { return this.#key; }
+
+   /**
+    * @returns {string}
+    */
+   get moduleId() { return this.#moduleId; }
 }

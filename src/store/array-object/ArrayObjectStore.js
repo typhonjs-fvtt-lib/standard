@@ -1,13 +1,15 @@
 import {
    DynArrayReducer,
    isWritableStore,
-   subscribeIgnoreFirst }  from '@typhonjs-fvtt/svelte/store';
+   subscribeIgnoreFirst }     from '@typhonjs-fvtt/svelte/store';
 
 import {
    debounce,
    isObject,
    klona,
-   uuidv4 }                from '@typhonjs-fvtt/svelte/util';
+   uuidv4 }                   from '@typhonjs-fvtt/svelte/util';
+
+import { ObjectEntryStore }   from './ObjectEntryStore.js';
 
 /**
  * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
@@ -29,7 +31,12 @@ export class ArrayObjectStore
    /**
     * @type {DynArrayReducer<T>}
     */
-   #dataReducer = new DynArrayReducer({ data: this.#data });
+   #dataReducer;
+
+   /**
+    * @type {boolean}
+    */
+   #manualUpdate;
 
    #StoreClass;
 
@@ -53,12 +60,14 @@ export class ArrayObjectStore
    /**
     * @param {ArrayObjectStoreParams} params -
     */
-   constructor({ StoreClass, defaultData = [], childDebounce = 250 } = {})
+   constructor({ StoreClass, defaultData = [], childDebounce = 250, dataReducer = false, manualUpdate = false } = {})
    {
       if (!Number.isInteger(childDebounce) || childDebounce < 0 || childDebounce > 1000)
       {
          throw new TypeError(`'childDebounce' must be an integer between and including 0 - 1000.`);
       }
+
+      if (typeof manualUpdate !== 'boolean') { throw new TypeError(`'manualUpdate' is not a boolean.`); }
 
       if (!isWritableStore(StoreClass.prototype))
       {
@@ -85,11 +94,15 @@ export class ArrayObjectStore
 
       if (!Array.isArray(defaultData)) { throw new TypeError(`'defaultData' is not an array.`); }
 
+      this.#manualUpdate = manualUpdate;
+
       this.#StoreClass = StoreClass;
+
+      if (dataReducer) { this.#dataReducer = new DynArrayReducer({ data: this.#data }); }
 
       // Prepare a debounced callback that is used for all child store entry subscriptions.
       this.#updateSubscribersBound = childDebounce === 0 ? this.updateSubscribers.bind(this) :
-       debounce(() => this.updateSubscribers(), childDebounce);
+       debounce((data) => this.updateSubscribers(data), childDebounce);
    }
 
    /**
@@ -114,7 +127,16 @@ export class ArrayObjectStore
    /**
     * @returns {DynArrayReducer<T>}
     */
-   get dataReducer() { return this.#dataReducer; }
+   get dataReducer()
+   {
+      if (!this.#dataReducer)
+      {
+         throw new Error(
+          `'dataReducer' is not initialized; did you forget to specify 'dataReducer' as true in constructor options?`);
+      }
+
+      return this.#dataReducer;
+   }
 
    /**
     * @returns {number}
@@ -122,13 +144,26 @@ export class ArrayObjectStore
    get length() { return this.#data.length; }
 
    /**
-    * Adds a new store from given data.
+    * Removes all child store entries.
+    */
+   clear()
+   {
+      for (const storeEntryData of this.#dataMap.values()) { storeEntryData.unsubscribe(); }
+
+      this.#dataMap.clear();
+      this.#data.length = 0;
+
+      this.updateSubscribers();
+   }
+
+   /**
+    * Creates a new store from given data.
     *
     * @param {object}   entryData -
     *
-    * @returns {*}
+    * @returns {T}
     */
-   add(entryData = {})
+   create(entryData = {})
    {
       if (!isObject(entryData)) { throw new TypeError(`'entryData' is not an object.`); }
 
@@ -139,7 +174,7 @@ export class ArrayObjectStore
          throw new Error(`'entryData.id' (${entryData.id}) already in this ArrayObjectStore instance.`)
       }
 
-      const store = this.#addStore(entryData);
+      const store = this.#createStore(entryData);
 
       this.updateSubscribers();
 
@@ -153,7 +188,7 @@ export class ArrayObjectStore
     *
     * @returns {T} New store entry instance.
     */
-   #addStore(entryData)
+   #createStore(entryData)
    {
       const store = new this.#StoreClass(entryData, this);
 
@@ -171,19 +206,6 @@ export class ArrayObjectStore
    }
 
    /**
-    * Removes all child store entries.
-    */
-   clear()
-   {
-      for (const storeEntryData of this.#dataMap.values()) { storeEntryData.unsubscribe(); }
-
-      this.#dataMap.clear();
-      this.#data.length = 0;
-
-      this.updateSubscribers();
-   }
-
-   /**
     * Deletes a given entry store by ID from this world setting array store instance.
     *
     * @param {string}  id - ID of entry to delete.
@@ -194,7 +216,7 @@ export class ArrayObjectStore
    {
       const result = this.#deleteStore(id);
 
-      this.updateSubscribers();
+      if (result) { this.updateSubscribers(); }
 
       return result;
    }
@@ -240,7 +262,7 @@ export class ArrayObjectStore
          // Allow StoreClass to statically perform any specialized duplication.
          this.#StoreClass?.duplicate?.(data, this);
 
-         return this.add(data);
+         return this.create(data);
       }
 
       return void 0;
@@ -279,7 +301,11 @@ export class ArrayObjectStore
     */
    set(updateList)
    {
-      if (!Array.isArray(updateList)) { throw new TypeError(`'updateList' is not an Array.`); }
+      if (!Array.isArray(updateList))
+      {
+         console.warn(`ArrayObjectStore.set warning: aborting set operation as 'updateList' is not an array.`);
+         return;
+      }
 
       const data = this.#data;
       const dataMap = this.#dataMap;
@@ -329,7 +355,7 @@ export class ArrayObjectStore
          }
          else
          {
-            this.#addStore(updateData);
+            this.#createStore(updateData);
          }
       }
 
@@ -341,7 +367,7 @@ export class ArrayObjectStore
          data.length = 0;
          dataMap.clear();
 
-         for (const updateData of updateList) { this.#addStore(updateData); }
+         for (const updateData of updateList) { this.#createStore(updateData); }
       }
       else
       {
@@ -381,111 +407,23 @@ export class ArrayObjectStore
    /**
     * Updates subscribers.
     *
-    * @param {boolean}  [force=false] - When manual update option is required and force is true notify subscribers.
+    * @param {ArrayObjectUpdateData}  [update] -
     */
-   updateSubscribers(force = false)
+   updateSubscribers(update)
    {
-      const subscriptions = this.#subscriptions;
+      const updateGate = typeof update === 'boolean' ? update : !this.#manualUpdate;
 
-      const data = this.#data;
+      if (updateGate)
+      {
+         const subscriptions = this.#subscriptions;
 
-      for (let cntr = 0; cntr < subscriptions.length; cntr++) { subscriptions[cntr](data); }
+         const data = this.#data;
+
+         for (let cntr = 0; cntr < subscriptions.length; cntr++) { subscriptions[cntr](data); }
+      }
 
       // This will update the filtered data and `dataReducer` store and forces an update to subscribers.
-      this.#dataReducer.index.update(true);
-   }
-}
-
-/**
- * Provides a base implementation for store entries in {@link ArrayObjectStore}.
- *
- * In particular providing the required getting / accessor for the 'id' property.
- */
-class ObjectEntryStore
-{
-   /**
-    * @type {object}
-    */
-   #data;
-
-   /**
-    * Stores the subscribers.
-    *
-    * @type {(function(object): void)[]}
-    */
-   #subscriptions = [];
-
-   /**
-    * @param {object}   data -
-    */
-   constructor(data = {})
-   {
-      if (!isObject(data)) { throw new TypeError(`'data' is not an object.`); }
-
-      this.#data = data;
-
-      // If an id is missing then add it.
-      if (typeof data.id !== 'string') { this.#data.id = uuidv4(); }
-
-      if (!uuidv4.isValid(data.id)) { throw new Error(`'data.id' (${data.id}) is not a valid UUIDv4 string.`)}
-   }
-
-   /**
-    * Invoked by ArrayObjectStore to provide custom duplication. Override this static method in your entry store.
-    *
-    * @param {object}   data - A copy of local data w/ new ID already set.
-    *
-    * @param {ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
-    */
-   static duplicate(data, arrayStore) {}
-
-   /**
-    * @returns {object}
-    * @protected
-    */
-   get _data() { return this.#data; }
-
-   // ----------------------------------------------------------------------------------------------------------------
-
-   /**
-    * @returns {string}
-    */
-   get id() { return this.#data.id; }
-
-   toJSON()
-   {
-      return this.#data;
-   }
-
-   /**
-    * @param {function(object): void} handler - Callback function that is invoked on update / changes.
-    *
-    * @returns {(function(): void)} Unsubscribe function.
-    */
-   subscribe(handler)
-   {
-      this.#subscriptions.push(handler);  // add handler to the array of subscribers
-
-      handler(this.#data);                // call handler with current value
-
-      // Return unsubscribe function.
-      return () =>
-      {
-         const index = this.#subscriptions.findIndex((sub) => sub === handler);
-         if (index >= 0) { this.#subscriptions.splice(index, 1); }
-      };
-   }
-
-   /**
-    * @protected
-    */
-   _updateSubscribers()
-   {
-      const subscriptions = this.#subscriptions;
-
-      const data = this.#data;
-
-      for (let cntr = 0; cntr < subscriptions.length; cntr++) { subscriptions[cntr](data); }
+      if (this.#dataReducer) { this.#dataReducer.index.update(true); }
    }
 }
 
@@ -500,4 +438,14 @@ class ObjectEntryStore
  *                            milliseconds for child store subscriptions to invoke
  *                            {@link ArrayObjectStore.updateSubscribers} notifying subscribers to this array
  *                            store.
+ *
+ * @property {boolean}        [dataReducer=false] - When true a DynArrayReducer will be instantiated wrapping store
+ *                                                  data and accessible from {@link ArrayObjectStore.dataReducer}.
+ *
+ * @property {boolean}        [manualUpdate=false] - When true {@link ArrayObjectStore.updateSubscribers} must be
+ *                            invoked with a single boolean parameter for subscribers to be updated.
+ */
+
+/**
+ * @typedef {boolean|object|undefined} ArrayObjectUpdateData
  */
