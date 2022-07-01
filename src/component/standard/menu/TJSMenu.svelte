@@ -1,11 +1,11 @@
 <script>
-   import {
-      getContext
-   }                    from 'svelte';
-   import { quintOut }  from 'svelte/easing';
+   import { getContext }   from 'svelte';
+   import { quintOut }     from 'svelte/easing';
 
-   import { localize }  from '@typhonjs-svelte/lib/helper';
-   import { slideFade } from '@typhonjs-svelte/lib/transition';
+   import { localize }     from '@typhonjs-svelte/lib/helper';
+   import { slideFade }    from '@typhonjs-svelte/lib/transition';
+
+   import { getClosestStackingContext }   from '#internal';
 
    const s_DEFAULT_OFFSET = { x: 0, y: 0 };
 
@@ -57,6 +57,9 @@
       const elementRoot = $storeElementRoot;
       if (!elementRoot) { return; }
 
+      const result = getClosestStackingContext(node.parentElement);
+console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
+
       const elementRootRect = elementRoot.getBoundingClientRect();
       const elementRootRight = elementRootRect.x + elementRootRect.width;
 
@@ -68,21 +71,72 @@
       const adjustedOffset = {...s_DEFAULT_OFFSET, ...offset};
 
       node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - elementRootRect.top}px`;
+      // node.style.top = `${adjustedOffset.y + parentRect.height}px`;
+      // node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - parentRect.top}px`;
+
+      console.log(`! TJSM - animate - 1 - elementRootRect: `, elementRootRect);
+      console.log(`! TJSM - animate - 2 - elementRootRight: `, elementRootRight);
+      console.log(`! TJSM - animate - 3 - nodeRect: `, nodeRect);
+      console.log(`! TJSM - animate - 4 - parentRect: `, parentRect);
+      console.log(`! TJSM - animate - 5 - parentRight: `, parentRight);
+      console.log(`! TJSM - animate - 6 - node.style.top: `, node.style.top);
 
       // Check to make sure that the menu width does not exceed the right side of the element root. If not open right.
       if (parentRect.x + nodeRect.width < elementRootRight)
+      // if (parentRect.x + nodeRect.width < parentRight)
       {
          node.style.left = `${adjustedOffset.x + parentRect.x - elementRootRect.x}px`;
+         // node.style.left = `${adjustedOffset.x + parentRect.x}px`;
          node.style.removeProperty('right');
       }
       else // Open left.
       {
          node.style.right = `${elementRootRight - parentRight}px`;
+         // node.style.right = `${parentRight}px`;
          node.style.removeProperty('left');
       }
 
       return slideFade(node, transitionOptions);
    }
+
+   /*
+   	function animate(node) {
+		const elementRoot = $storeElementRoot;
+
+		if (!elementRoot) {
+			return;
+		}
+
+		const elementRootRect = elementRoot.getBoundingClientRect();
+		const elementRootRight = elementRootRect.x + elementRootRect.width;
+		const nodeRect = node.getBoundingClientRect();
+		const parentRect = node.parentElement.getBoundingClientRect();
+		const parentRight = parentRect.x + parentRect.width;
+
+		const parentParentRect = node.parentElement.getBoundingClientRect();
+		const parentParentRight = parentParentRect.x + parentParentRect.width;
+
+		const adjustedOffset = { ...s_DEFAULT_OFFSET, ...offset };
+
+		// node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - elementRootRect.top}px`;
+		node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - parentParentRect.top}px`;
+
+		// Check to make sure that the menu width does not exceed the right side of the element root. If not open right.
+		// if (parentRect.x + nodeRect.width < elementRootRight) {
+		if (parentRect.x + nodeRect.width < parentParentRight) {
+			// node.style.left = `${adjustedOffset.x + parentRect.x - elementRootRect.x}px`;
+			node.style.left = `${adjustedOffset.x + parentRect.x - parentParentRect.x}px`;
+			node.style.removeProperty('right');
+		} else // Open left.
+		{
+			// node.style.right = `${elementRootRight - parentRight}px`;
+			node.style.right = `${parentParentRight - parentRight}px`;
+			node.style.removeProperty('left');
+		}
+
+		return slideFade(node, transitionOptions);
+	}
+    */
 
    /**
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
@@ -124,16 +178,18 @@
 </script>
 
 <!-- bind to `document.body` to receive pointer down events to close the context menu. -->
-<svelte:body on:pointerdown={onClose}/>
+<svelte:body on:pointerdown={onClose} on:wheel={onClose}/>
 
 <nav class=tjs-menu
      bind:this={menuEl}
      transition:animate
-     use:efx>
+     use:efx
+     on:click|preventDefault|stopPropagation={() => null}
+     on:wheel|preventDefault|stopPropagation={() => null}>
    <ol class=tjs-menu-items>
       <slot name="before"/>
       {#each items as item}
-         <li class=tjs-menu-item on:click={() => onClick(item.onclick)}>
+         <li class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item.onclick)}>
             <i class={item.icon}></i>{localize(item.label)}
          </li>
       {/each}

@@ -91,11 +91,19 @@
 <!-- bind to `document.body` to receive pointer down events to close the context menu. -->
 <svelte:body on:pointerdown={onClose}/>
 
-<nav id={id} class=tjs-context-menu transition:animate bind:this={menuEl} style="z-index: {zIndex}">
+<nav id={id}
+     class=tjs-context-menu
+     transition:animate
+     bind:this={menuEl}
+     style="z-index: {zIndex}"
+     on:click|preventDefault|stopPropagation={() => null}>
     <ol class=tjs-context-items>
         <slot name="before"/>
         {#each items as item}
-            <li class=tjs-context-item on:click={() => onClick(item.onclick)}><i class={item.icon}></i>{localize(item.label)}</li>
+            <li class=tjs-context-item
+                on:click|preventDefault|stopPropagation={() => onClick(item.onclick)}>
+                   <i class={item.icon}></i>{localize(item.label)}
+            </li>
         {/each}
         <slot name="after"/>
     </ol>
