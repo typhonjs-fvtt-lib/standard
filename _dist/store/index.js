@@ -295,7 +295,7 @@ class ArrayObjectStore
    /**
     * Removes all child store entries.
     */
-   clear()
+   clearEntries()
    {
       for (const storeEntryData of this.#dataMap.values()) { storeEntryData.unsubscribe(); }
 
@@ -312,7 +312,7 @@ class ArrayObjectStore
     *
     * @returns {T}
     */
-   create(entryData = {})
+   createEntry(entryData = {})
    {
       if (!isObject(entryData)) { throw new TypeError(`'entryData' is not an object.`); }
 
@@ -361,7 +361,7 @@ class ArrayObjectStore
     *
     * @returns {boolean} Delete operation successful.
     */
-   delete(id)
+   deleteEntry(id)
    {
       const result = this.#deleteStore(id);
 
@@ -397,7 +397,7 @@ class ArrayObjectStore
     *
     * @returns {*} Instance of StoreClass.
     */
-   duplicate(id)
+   duplicateEntry(id)
    {
       if (typeof id !== 'string') { throw new TypeError(`'id' is not a string.`); }
 
@@ -411,7 +411,7 @@ class ArrayObjectStore
          // Allow StoreClass to statically perform any specialized duplication.
          this.#StoreClass?.duplicate?.(data, this);
 
-         return this.create(data);
+         return this.createEntry(data);
       }
 
       return void 0;
@@ -424,7 +424,7 @@ class ArrayObjectStore
     *
     * @returns {T|void} Found entry in array or undefined.
     */
-   find(predicate)
+   findEntry(predicate)
    {
       return this.#data.find(predicate);
    }
@@ -436,7 +436,7 @@ class ArrayObjectStore
     *
     * @returns {T|void} Entry store instance.
     */
-   get(id)
+   getEntry(id)
    {
       const storeEntryData = this.#dataMap.get(id);
       return storeEntryData ? storeEntryData.store : void 0;
@@ -644,9 +644,9 @@ class CrudArrayObjectStore extends ArrayObjectStore
    /**
     * Removes all child store entries.
     */
-   clear()
+   clearEntries()
    {
-      super.clear();
+      super.clearEntries();
 
       if (this.#crudDispatch)
       {
@@ -661,9 +661,9 @@ class CrudArrayObjectStore extends ArrayObjectStore
     *
     * @returns {T}
     */
-   create(entryData = {})
+   createEntry(entryData = {})
    {
-      const store = super.create(entryData);
+      const store = super.createEntry(entryData);
 
       if (store && this.#crudDispatch)
       {
@@ -683,9 +683,9 @@ class CrudArrayObjectStore extends ArrayObjectStore
     *
     * @returns {boolean} Delete operation successful.
     */
-   delete(id)
+   deleteEntry(id)
    {
-      const result = super.delete(id);
+      const result = super.deleteEntry(id);
 
       if (result && this.#crudDispatch)
       {

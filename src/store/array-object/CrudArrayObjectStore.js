@@ -49,9 +49,9 @@ export class CrudArrayObjectStore extends ArrayObjectStore
    /**
     * Removes all child store entries.
     */
-   clear()
+   clearEntries()
    {
-      super.clear();
+      super.clearEntries();
 
       if (this.#crudDispatch)
       {
@@ -66,9 +66,9 @@ export class CrudArrayObjectStore extends ArrayObjectStore
     *
     * @returns {T}
     */
-   create(entryData = {})
+   createEntry(entryData = {})
    {
-      const store = super.create(entryData);
+      const store = super.createEntry(entryData);
 
       if (store && this.#crudDispatch)
       {
@@ -88,9 +88,9 @@ export class CrudArrayObjectStore extends ArrayObjectStore
     *
     * @returns {boolean} Delete operation successful.
     */
-   delete(id)
+   deleteEntry(id)
    {
-      const result = super.delete(id);
+      const result = super.deleteEntry(id);
 
       if (result && this.#crudDispatch)
       {

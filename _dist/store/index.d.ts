@@ -185,7 +185,7 @@ declare class ArrayObjectStore<T extends unknown> {
     /**
      * Removes all child store entries.
      */
-    clear(): void;
+    clearEntries(): void;
     /**
      * Creates a new store from given data.
      *
@@ -193,7 +193,7 @@ declare class ArrayObjectStore<T extends unknown> {
      *
      * @returns {T}
      */
-    create(entryData?: object): T;
+    createEntry(entryData?: object): T;
     /**
      * Deletes a given entry store by ID from this world setting array store instance.
      *
@@ -201,7 +201,7 @@ declare class ArrayObjectStore<T extends unknown> {
      *
      * @returns {boolean} Delete operation successful.
      */
-    delete(id: string): boolean;
+    deleteEntry(id: string): boolean;
     /**
      * Duplicates an entry store by the given ID.
      *
@@ -209,7 +209,7 @@ declare class ArrayObjectStore<T extends unknown> {
      *
      * @returns {*} Instance of StoreClass.
      */
-    duplicate(id: string): any;
+    duplicateEntry(id: string): any;
     /**
      * Find an entry in the backing child store array.
      *
@@ -217,7 +217,7 @@ declare class ArrayObjectStore<T extends unknown> {
      *
      * @returns {T|void} Found entry in array or undefined.
      */
-    find(predicate: (arg0: T) => T | void): T | void;
+    findEntry(predicate: (arg0: T) => T | void): T | void;
     /**
      * Finds an entry store instance by 'id' / UUIDv4.
      *
@@ -225,7 +225,7 @@ declare class ArrayObjectStore<T extends unknown> {
      *
      * @returns {T|void} Entry store instance.
      */
-    get(id: string): T | void;
+    getEntry(id: string): T | void;
     /**
      * Sets the children store data by 'id', adds new entry store instances, or removes entries that are no longer in the
      * update list.

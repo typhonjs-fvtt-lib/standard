@@ -146,7 +146,7 @@ export class ArrayObjectStore
    /**
     * Removes all child store entries.
     */
-   clear()
+   clearEntries()
    {
       for (const storeEntryData of this.#dataMap.values()) { storeEntryData.unsubscribe(); }
 
@@ -163,7 +163,7 @@ export class ArrayObjectStore
     *
     * @returns {T}
     */
-   create(entryData = {})
+   createEntry(entryData = {})
    {
       if (!isObject(entryData)) { throw new TypeError(`'entryData' is not an object.`); }
 
@@ -212,7 +212,7 @@ export class ArrayObjectStore
     *
     * @returns {boolean} Delete operation successful.
     */
-   delete(id)
+   deleteEntry(id)
    {
       const result = this.#deleteStore(id);
 
@@ -248,7 +248,7 @@ export class ArrayObjectStore
     *
     * @returns {*} Instance of StoreClass.
     */
-   duplicate(id)
+   duplicateEntry(id)
    {
       if (typeof id !== 'string') { throw new TypeError(`'id' is not a string.`); }
 
@@ -262,7 +262,7 @@ export class ArrayObjectStore
          // Allow StoreClass to statically perform any specialized duplication.
          this.#StoreClass?.duplicate?.(data, this);
 
-         return this.create(data);
+         return this.createEntry(data);
       }
 
       return void 0;
@@ -275,7 +275,7 @@ export class ArrayObjectStore
     *
     * @returns {T|void} Found entry in array or undefined.
     */
-   find(predicate)
+   findEntry(predicate)
    {
       return this.#data.find(predicate);
    }
@@ -287,7 +287,7 @@ export class ArrayObjectStore
     *
     * @returns {T|void} Entry store instance.
     */
-   get(id)
+   getEntry(id)
    {
       const storeEntryData = this.#dataMap.get(id);
       return storeEntryData ? storeEntryData.store : void 0;
