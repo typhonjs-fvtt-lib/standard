@@ -1,15 +1,5 @@
 import { SvelteComponent } from 'svelte/types/runtime/internal/Component';
 
-type StackingContext = {
-    /**
-     * A DOM Element
-     */
-    node: Element;
-    /**
-     * Reason for why a stacking context was created
-     */
-    reason: string;
-};
 type ControlsData = {
     /**
      * -
@@ -52,4 +42,4 @@ declare class TJSToggleIconButton extends SvelteComponent {
     constructor(options: any);
 }
 
-export { ControlsData, StackingContext, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton };
+export { ControlsData, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton };

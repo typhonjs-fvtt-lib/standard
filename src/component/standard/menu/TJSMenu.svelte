@@ -1,11 +1,9 @@
 <script>
-   import { getContext }   from 'svelte';
-   import { quintOut }     from 'svelte/easing';
+   import { quintOut }           from 'svelte/easing';
 
-   import { localize }     from '@typhonjs-svelte/lib/helper';
-   import { slideFade }    from '@typhonjs-svelte/lib/transition';
-
-   import { getClosestStackingContext }   from '#internal';
+   import { localize }           from '@typhonjs-svelte/lib/helper';
+   import { slideFade }          from '@typhonjs-svelte/lib/transition';
+   import { getStackingContext } from '@typhonjs-svelte/lib/util';
 
    const s_DEFAULT_OFFSET = { x: 0, y: 0 };
 
@@ -18,7 +16,7 @@
 
    $: {
       const allItems = typeof menu === 'object' && Array.isArray(menu.items) ? menu.items :
-      Array.isArray(items) ? items : [];
+       Array.isArray(items) ? items : [];
 
       // Filter items for any condition that prevents display.
       items = allItems.filter((item) => item.condition === void 0 ? true :
@@ -35,8 +33,6 @@
     typeof menu === 'object' && typeof menu.transitionOptions === 'object' ? menu.transitionOptions :
      typeof transitionOptions === 'object' ? transitionOptions : { duration: 200, easing: quintOut };
 
-   const storeElementRoot = getContext('storeElementRoot');
-
    // Bound to the nav element / menu.
    let menuEl;
 
@@ -45,8 +41,8 @@
 
    /**
     * Provides a custom transform allowing inspection of the element to change positioning styles based on the
-    * height / width of the element and the containing `element root`. This allows the menu to expand left or right when
-    * the menu exceeds the bounds of the containing `element root`.
+    * height / width of the element and the containing stacking context element. This allows the menu to expand left or
+    * right when the menu exceeds the bounds of the containing stacking context element.
     *
     * @param {HTMLElement} node - nav element.
     *
@@ -54,89 +50,39 @@
     */
    function animate(node)
    {
-      const elementRoot = $storeElementRoot;
-      if (!elementRoot) { return; }
+      const result = getStackingContext(node.parentElement);
 
-      const result = getClosestStackingContext(node.parentElement);
-console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
+      if (!(result?.node instanceof HTMLElement))
+      {
+         console.warn(`'TJSMenu.animate warning: Could not locate parent stacking context element.`);
+         return;
+      }
 
-      const elementRootRect = elementRoot.getBoundingClientRect();
-      const elementRootRight = elementRootRect.x + elementRootRect.width;
+      const stackingContextRect = result?.node.getBoundingClientRect();
+      const stackingContextRight = stackingContextRect.x + stackingContextRect.width;
 
       const nodeRect = node.getBoundingClientRect();
       const parentRect = node.parentElement.getBoundingClientRect();
 
-      const parentRight = parentRect.x + parentRect.width;
-
       const adjustedOffset = {...s_DEFAULT_OFFSET, ...offset};
 
-      node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - elementRootRect.top}px`;
-      // node.style.top = `${adjustedOffset.y + parentRect.height}px`;
-      // node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - parentRect.top}px`;
+      node.style.top = `${adjustedOffset.y + parentRect.height}px`;
 
-      console.log(`! TJSM - animate - 1 - elementRootRect: `, elementRootRect);
-      console.log(`! TJSM - animate - 2 - elementRootRight: `, elementRootRight);
-      console.log(`! TJSM - animate - 3 - nodeRect: `, nodeRect);
-      console.log(`! TJSM - animate - 4 - parentRect: `, parentRect);
-      console.log(`! TJSM - animate - 5 - parentRight: `, parentRight);
-      console.log(`! TJSM - animate - 6 - node.style.top: `, node.style.top);
-
-      // Check to make sure that the menu width does not exceed the right side of the element root. If not open right.
-      if (parentRect.x + nodeRect.width < elementRootRight)
-      // if (parentRect.x + nodeRect.width < parentRight)
+      // Check to make sure that the menu width does not exceed the right side of the stacking context element.
+      // If not open to the right.
+      if (parentRect.x + nodeRect.width < stackingContextRight)
       {
-         node.style.left = `${adjustedOffset.x + parentRect.x - elementRootRect.x}px`;
-         // node.style.left = `${adjustedOffset.x + parentRect.x}px`;
+         node.style.left = `${adjustedOffset.x}px`;
          node.style.removeProperty('right');
       }
       else // Open left.
       {
-         node.style.right = `${elementRootRight - parentRight}px`;
-         // node.style.right = `${parentRight}px`;
+         node.style.right = `${adjustedOffset.x}px`;
          node.style.removeProperty('left');
       }
 
       return slideFade(node, transitionOptions);
    }
-
-   /*
-   	function animate(node) {
-		const elementRoot = $storeElementRoot;
-
-		if (!elementRoot) {
-			return;
-		}
-
-		const elementRootRect = elementRoot.getBoundingClientRect();
-		const elementRootRight = elementRootRect.x + elementRootRect.width;
-		const nodeRect = node.getBoundingClientRect();
-		const parentRect = node.parentElement.getBoundingClientRect();
-		const parentRight = parentRect.x + parentRect.width;
-
-		const parentParentRect = node.parentElement.getBoundingClientRect();
-		const parentParentRight = parentParentRect.x + parentParentRect.width;
-
-		const adjustedOffset = { ...s_DEFAULT_OFFSET, ...offset };
-
-		// node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - elementRootRect.top}px`;
-		node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - parentParentRect.top}px`;
-
-		// Check to make sure that the menu width does not exceed the right side of the element root. If not open right.
-		// if (parentRect.x + nodeRect.width < elementRootRight) {
-		if (parentRect.x + nodeRect.width < parentParentRight) {
-			// node.style.left = `${adjustedOffset.x + parentRect.x - elementRootRect.x}px`;
-			node.style.left = `${adjustedOffset.x + parentRect.x - parentParentRect.x}px`;
-			node.style.removeProperty('right');
-		} else // Open left.
-		{
-			// node.style.right = `${elementRootRight - parentRight}px`;
-			node.style.right = `${parentParentRight - parentRight}px`;
-			node.style.removeProperty('left');
-		}
-
-		return slideFade(node, transitionOptions);
-	}
-    */
 
    /**
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
@@ -151,7 +97,7 @@ console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
 
       if (!closed)
       {
-         menuEl.dispatchEvent(new CustomEvent('close', {bubbles: true}));
+         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
          closed = true;
       }
    }
@@ -172,7 +118,7 @@ console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
       if (!closed)
       {
          closed = true;
-         menuEl.dispatchEvent(new CustomEvent('close', {bubbles: true}));
+         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
       }
    }
 </script>
@@ -200,9 +146,10 @@ console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
 <style>
    .tjs-menu {
       position: absolute;
-      width: fit-content;
+      width: max-content;
       height: max-content;
 
+      /* TODO: Finalize CSS variables; these are not final! */
       box-shadow: 0 0 2px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));
       background: var(--typhonjs-color-content-window, #23221d);
       border: 1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));
@@ -231,6 +178,7 @@ console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
    }
 
    .tjs-menu li.tjs-menu-item > i {
+      width: 1em;
       margin-right: 5px;
    }
 </style>

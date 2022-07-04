@@ -4,7 +4,7 @@ import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { isWritableStore, propertyStore } from '@typhonjs-fvtt/runtime/svelte/store';
 import { onDestroy, onMount, getContext, setContext, createEventDispatcher } from 'svelte';
 import { writable } from 'svelte/store';
-import { isObject, outroAndDestroy } from '@typhonjs-fvtt/runtime/svelte/util';
+import { isObject, getStackingContext, outroAndDestroy } from '@typhonjs-fvtt/runtime/svelte/util';
 import { toggleDetails } from '@typhonjs-fvtt/svelte-standard/action';
 import { applyPosition } from '@typhonjs-fvtt/runtime/svelte/action';
 import { Position } from '@typhonjs-fvtt/runtime/svelte/application';
@@ -228,162 +228,6 @@ class FoundryStyles
    }
 }
 
-/**
- * Recursive function that finds the closest parent stacking context.
- * See also https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context
- *
- * @param {Element} node -
- *
- * @returns {StackingContext} The closest parent stacking context
- */
-function getClosestStackingContext(node)
-{
-   // the root element (HTML).
-   if (!node || node.nodeName === 'HTML')
-   {
-      return { node: document.documentElement, reason: 'root' };
-   }
-
-   // handle shadow root elements.
-   if (node.nodeName === '#document-fragment')
-   {
-      return getClosestStackingContext(node.host);
-   }
-
-   const computedStyle = getComputedStyle(node);
-
-   // position: fixed or sticky.
-   if (computedStyle.position === 'fixed' || computedStyle.position === 'sticky')
-   {
-      return { node: node, reason: `position: ${computedStyle.position}` };
-   }
-
-   // positioned (absolutely or relatively) with a z-index value other than "auto".
-   if (computedStyle.zIndex !== 'auto' && computedStyle.position !== 'static')
-   {
-      return { node: node, reason: `position: ${computedStyle.position}; z-index: ${computedStyle.zIndex}` };
-   }
-
-   // elements with an opacity value less than 1.
-   if (computedStyle.opacity !== '1')
-   {
-      return { node: node, reason: `opacity: ${computedStyle.opacity}` };
-   }
-
-   // elements with a transform value other than "none".
-   if (computedStyle.transform !== 'none')
-   {
-      return { node: node, reason: `transform: ${computedStyle.transform}` };
-   }
-
-   // elements with a mix-blend-mode value other than "normal".
-   if (computedStyle.mixBlendMode !== 'normal')
-   {
-      return { node: node, reason: `mixBlendMode: ${computedStyle.mixBlendMode}` };
-   }
-
-   // elements with a filter value other than "none".
-   if (computedStyle.filter !== 'none')
-   {
-      return { node: node, reason: `filter: ${computedStyle.filter}` };
-   }
-
-   // elements with a perspective value other than "none".
-   if (computedStyle.perspective !== 'none')
-   {
-      return { node: node, reason: `perspective: ${computedStyle.perspective}` };
-   }
-
-   // elements with a clip-path value other than "none".
-   if (computedStyle.clipPath !== 'none')
-   {
-      return { node: node, reason: `clip-path: ${computedStyle.clipPath} ` };
-   }
-
-   // elements with a mask value other than "none".
-   const mask = computedStyle.mask || computedStyle.webkitMask;
-   if (mask !== 'none' && mask !== undefined)
-   {
-      return { node: node, reason: `mask:  ${mask}` };
-   }
-
-   // elements with a mask-image value other than "none".
-   const maskImage = computedStyle.maskImage || computedStyle.webkitMaskImage;
-   if (maskImage !== 'none' && maskImage !== undefined)
-   {
-      return { node: node, reason: `mask-image: ${maskImage}` };
-   }
-
-   // elements with a mask-border value other than "none".
-   const maskBorder = computedStyle.maskBorder || computedStyle.webkitMaskBorder;
-   if (maskBorder !== 'none' && maskBorder !== undefined)
-   {
-      return { node: node, reason: `mask-border: ${maskBorder}` };
-   }
-
-   // elements with isolation set to "isolate".
-   if (computedStyle.isolation === 'isolate')
-   {
-      return { node: node, reason: `isolation: ${computedStyle.isolation}` };
-   }
-
-   // transform or opacity in will-change even if you don't specify values for these attributes directly.
-   if (computedStyle.willChange === 'transform' || computedStyle.willChange === 'opacity')
-   {
-      return { node: node, reason: `willChange: ${computedStyle.willChange}` };
-   }
-
-   // elements with -webkit-overflow-scrolling set to "touch".
-   if (computedStyle.webkitOverflowScrolling === 'touch')
-   {
-      return { node: node, reason: '-webkit-overflow-scrolling: touch' };
-   }
-
-   // an item with a z-index value other than "auto".
-   if (computedStyle.zIndex !== 'auto')
-   {
-      const parentStyle = getComputedStyle(node.parentNode);
-      // with a flex|inline-flex parent.
-      if (parentStyle.display === 'flex' || parentStyle.display === 'inline-flex')
-      {
-         return {
-            node: node,
-            reason: `flex-item; z-index: ${computedStyle.zIndex}`,
-         };
-         // with a grid parent.
-      }
-      else if (parentStyle.grid !== 'none / none / none / row / auto / auto')
-      {
-         return {
-            node: node,
-            reason: `child of grid container; z-index: ${computedStyle.zIndex}`,
-         };
-      }
-   }
-
-   // contain with a value of layout, or paint, or a composite value that includes either of them
-   const contain = computedStyle.contain;
-   if (['layout', 'paint', 'strict', 'content'].indexOf(contain) > -1 ||
-    contain.indexOf('paint') > -1 ||
-    contain.indexOf('layout') > -1
-   )
-   {
-      return {
-         node: node,
-         reason: `contain: ${contain}`,
-      };
-   }
-
-   return getClosestStackingContext(node.parentNode);
-}
-
-/**
- * @typedef {Object} StackingContext
- *
- * @property {Element} node          A DOM Element
- * @property {string}  reason        Reason for why a stacking context was created
- */
-
 /* src\component\standard\button\TJSIconButton.svelte generated by Svelte v3.46.0 */
 
 function add_css$b(target) {
@@ -495,7 +339,7 @@ function instance$b($$self, $$props, $$invalidate) {
 			: typeof efx === 'function'
 				? efx
 				: () => {
-
+						
 					});
 		}
 	};
@@ -528,7 +372,7 @@ class TJSIconButton extends SvelteComponent {
 /* src\component\standard\button\TJSToggleIconButton.svelte generated by Svelte v3.46.0 */
 
 function add_css$a(target) {
-	append_styles(target, "svelte-qrlk5m", "div.svelte-qrlk5m{display:block;flex:0 0 var(--tjs-icon-button-diameter);height:var(--tjs-icon-button-diameter);width:var(--tjs-icon-button-diameter);align-self:center;text-align:center}a.svelte-qrlk5m{display:inline-block;background:var(--tjs-icon-button-background);border-radius:var(--tjs-icon-button-border-radius);position:relative;overflow:hidden;clip-path:var(--tjs-icon-button-clip-path, none);transform-style:preserve-3d;width:100%;height:100%;transition:var(--tjs-icon-button-transition)}a.svelte-qrlk5m:hover{background:var(--tjs-icon-button-background-hover);clip-path:var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, none))}a.selected.svelte-qrlk5m{background:var(--tjs-icon-button-background-selected);clip-path:var(--tjs-icon-button-clip-path-selected, var(--tjs-icon-button-clip-path, none))}i.svelte-qrlk5m{line-height:var(--tjs-icon-button-diameter);transform:translateZ(1px)}");
+	append_styles(target, "svelte-722z82", "div.svelte-722z82{display:block;position:relative;flex:0 0 var(--tjs-icon-button-diameter);height:var(--tjs-icon-button-diameter);width:var(--tjs-icon-button-diameter);align-self:center;text-align:center}a.svelte-722z82{display:inline-block;background:var(--tjs-icon-button-background);border-radius:var(--tjs-icon-button-border-radius);position:relative;overflow:hidden;clip-path:var(--tjs-icon-button-clip-path, none);transform-style:preserve-3d;width:100%;height:100%;transition:var(--tjs-icon-button-transition)}a.svelte-722z82:hover{background:var(--tjs-icon-button-background-hover);clip-path:var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, none))}a.selected.svelte-722z82{background:var(--tjs-icon-button-background-selected);clip-path:var(--tjs-icon-button-clip-path-selected, var(--tjs-icon-button-clip-path, none))}i.svelte-722z82{line-height:var(--tjs-icon-button-diameter);transform:translateZ(1px)}");
 }
 
 // (59:3) {#if selected}
@@ -599,12 +443,12 @@ function create_fragment$b(ctx) {
 			i = element("i");
 			t = space();
 			if (if_block) if_block.c();
-			attr(i, "class", i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-qrlk5m"));
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-722z82"));
 			attr(i, "title", i_title_value = localize(/*title*/ ctx[1]));
 			toggle_class(i, "selected", /*selected*/ ctx[5]);
-			attr(a, "class", "svelte-qrlk5m");
+			attr(a, "class", "svelte-722z82");
 			toggle_class(a, "selected", /*selected*/ ctx[5]);
-			attr(div, "class", "svelte-qrlk5m");
+			attr(div, "class", "svelte-722z82");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
@@ -628,7 +472,7 @@ function create_fragment$b(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
-			if (!current || dirty & /*icon*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-qrlk5m"))) {
+			if (!current || dirty & /*icon*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-722z82"))) {
 				attr(i, "class", i_class_value);
 			}
 
@@ -771,7 +615,7 @@ function instance$a($$self, $$props, $$invalidate) {
 			: typeof efx === 'function'
 				? efx
 				: () => {
-
+						
 					});
 		}
 
@@ -2103,7 +1947,7 @@ function instance$7($$self, $$props, $$invalidate) {
 			: typeof efx === 'function'
 				? efx
 				: () => {
-
+						
 					});
 		}
 	};
@@ -2355,7 +2199,7 @@ function instance$6($$self, $$props, $$invalidate) {
 			: typeof efx === 'function'
 				? efx
 				: () => {
-
+						
 					});
 		}
 	};
@@ -4615,7 +4459,7 @@ class TJSPositionControlLayer extends SvelteComponent {
 /* src\component\standard\menu\TJSMenu.svelte generated by Svelte v3.46.0 */
 
 function add_css$1(target) {
-	append_styles(target, "svelte-1uy10ia", ".tjs-menu.svelte-1uy10ia.svelte-1uy10ia.svelte-1uy10ia{position:absolute;width:fit-content;height:max-content;box-shadow:0 0 2px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));background:var(--typhonjs-color-content-window, #23221d);border:1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));border-radius:5px;color:var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));text-align:start;z-index:1}.tjs-menu.svelte-1uy10ia ol.tjs-menu-items.svelte-1uy10ia.svelte-1uy10ia{list-style:none;margin:0;padding:0}.tjs-menu.svelte-1uy10ia li.tjs-menu-item.svelte-1uy10ia.svelte-1uy10ia{padding:0 0.5em;line-height:2em}.tjs-menu.svelte-1uy10ia li.tjs-menu-item.svelte-1uy10ia.svelte-1uy10ia:hover{color:var(--typhonjs-color-text-primary, #FFF);text-shadow:0 0 4px var(--color-text-hyperlink, var(--typhonjs-color-accent-tertiary, red))}.tjs-menu.svelte-1uy10ia li.tjs-menu-item.svelte-1uy10ia>i.svelte-1uy10ia{margin-right:5px}");
+	append_styles(target, "svelte-argoi9", ".tjs-menu.svelte-argoi9.svelte-argoi9.svelte-argoi9{position:absolute;width:max-content;height:max-content;box-shadow:0 0 2px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));background:var(--typhonjs-color-content-window, #23221d);border:1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));border-radius:5px;color:var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));text-align:start;z-index:1}.tjs-menu.svelte-argoi9 ol.tjs-menu-items.svelte-argoi9.svelte-argoi9{list-style:none;margin:0;padding:0}.tjs-menu.svelte-argoi9 li.tjs-menu-item.svelte-argoi9.svelte-argoi9{padding:0 0.5em;line-height:2em}.tjs-menu.svelte-argoi9 li.tjs-menu-item.svelte-argoi9.svelte-argoi9:hover{color:var(--typhonjs-color-text-primary, #FFF);text-shadow:0 0 4px var(--color-text-hyperlink, var(--typhonjs-color-accent-tertiary, red))}.tjs-menu.svelte-argoi9 li.tjs-menu-item.svelte-argoi9>i.svelte-argoi9{width:1em;margin-right:5px}");
 }
 
 const get_after_slot_changes$1 = dirty => ({});
@@ -4623,25 +4467,25 @@ const get_after_slot_context$1 = ctx => ({});
 
 function get_each_context$1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[18] = list[i];
+	child_ctx[16] = list[i];
 	return child_ctx;
 }
 
 const get_before_slot_changes$1 = dirty => ({});
 const get_before_slot_context$1 = ctx => ({});
 
-// (191:6) {#each items as item}
+// (137:6) {#each items as item}
 function create_each_block$1(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t_value = localize(/*item*/ ctx[18].label) + "";
+	let t_value = localize(/*item*/ ctx[16].label) + "";
 	let t;
 	let mounted;
 	let dispose;
 
 	function click_handler() {
-		return /*click_handler*/ ctx[13](/*item*/ ctx[18]);
+		return /*click_handler*/ ctx[12](/*item*/ ctx[16]);
 	}
 
 	return {
@@ -4649,8 +4493,8 @@ function create_each_block$1(ctx) {
 			li = element("li");
 			i = element("i");
 			t = text(t_value);
-			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[18].icon) + " svelte-1uy10ia"));
-			attr(li, "class", "tjs-menu-item svelte-1uy10ia");
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[16].icon) + " svelte-argoi9"));
+			attr(li, "class", "tjs-menu-item svelte-argoi9");
 		},
 		m(target, anchor) {
 			insert(target, li, anchor);
@@ -4665,11 +4509,11 @@ function create_each_block$1(ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*items*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[18].icon) + " svelte-1uy10ia"))) {
+			if (dirty & /*items*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[16].icon) + " svelte-argoi9"))) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 1 && t_value !== (t_value = localize(/*item*/ ctx[18].label) + "")) set_data(t, t_value);
+			if (dirty & /*items*/ 1 && t_value !== (t_value = localize(/*item*/ ctx[16].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -4689,8 +4533,8 @@ function create_fragment$1(ctx) {
 	let current;
 	let mounted;
 	let dispose;
-	const before_slot_template = /*#slots*/ ctx[12].before;
-	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[11], get_before_slot_context$1);
+	const before_slot_template = /*#slots*/ ctx[11].before;
+	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[10], get_before_slot_context$1);
 	let each_value = /*items*/ ctx[0];
 	let each_blocks = [];
 
@@ -4698,8 +4542,8 @@ function create_fragment$1(ctx) {
 		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
 	}
 
-	const after_slot_template = /*#slots*/ ctx[12].after;
-	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[11], get_after_slot_context$1);
+	const after_slot_template = /*#slots*/ ctx[11].after;
+	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[10], get_after_slot_context$1);
 
 	return {
 		c() {
@@ -4715,8 +4559,8 @@ function create_fragment$1(ctx) {
 
 			t2 = space();
 			if (after_slot) after_slot.c();
-			attr(ol, "class", "tjs-menu-items svelte-1uy10ia");
-			attr(nav, "class", "tjs-menu svelte-1uy10ia");
+			attr(ol, "class", "tjs-menu-items svelte-argoi9");
+			attr(nav, "class", "tjs-menu svelte-argoi9");
 		},
 		m(target, anchor) {
 			insert(target, t0, anchor);
@@ -4739,13 +4583,13 @@ function create_fragment$1(ctx) {
 				after_slot.m(ol, null);
 			}
 
-			/*nav_binding*/ ctx[14](nav);
+			/*nav_binding*/ ctx[13](nav);
 			current = true;
 
 			if (!mounted) {
 				dispose = [
-					listen(document.body, "pointerdown", /*onClose*/ ctx[6]),
-					listen(document.body, "wheel", /*onClose*/ ctx[6]),
+					listen(document.body, "pointerdown", /*onClose*/ ctx[5]),
+					listen(document.body, "wheel", /*onClose*/ ctx[5]),
 					action_destroyer(/*efx*/ ctx[1].call(null, nav)),
 					listen(nav, "click", stop_propagation(prevent_default(click_handler_1$1))),
 					listen(nav, "wheel", stop_propagation(prevent_default(wheel_handler)))
@@ -4756,21 +4600,21 @@ function create_fragment$1(ctx) {
 		},
 		p(ctx, [dirty]) {
 			if (before_slot) {
-				if (before_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+				if (before_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
 					update_slot_base(
 						before_slot,
 						before_slot_template,
 						ctx,
-						/*$$scope*/ ctx[11],
+						/*$$scope*/ ctx[10],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
-						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[11], dirty, get_before_slot_changes$1),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
+						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[10], dirty, get_before_slot_changes$1),
 						get_before_slot_context$1
 					);
 				}
 			}
 
-			if (dirty & /*onClick, items, localize*/ 33) {
+			if (dirty & /*onClick, items, localize*/ 17) {
 				each_value = /*items*/ ctx[0];
 				let i;
 
@@ -4794,15 +4638,15 @@ function create_fragment$1(ctx) {
 			}
 
 			if (after_slot) {
-				if (after_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
+				if (after_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
 					update_slot_base(
 						after_slot,
 						after_slot_template,
 						ctx,
-						/*$$scope*/ ctx[11],
+						/*$$scope*/ ctx[10],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
-						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[11], dirty, get_after_slot_changes$1),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
+						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[10], dirty, get_after_slot_changes$1),
 						get_after_slot_context$1
 					);
 				}
@@ -4814,7 +4658,7 @@ function create_fragment$1(ctx) {
 			transition_in(after_slot, local);
 
 			add_render_callback(() => {
-				if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[4], {}, true);
+				if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[3], {}, true);
 				nav_transition.run(1);
 			});
 
@@ -4823,7 +4667,7 @@ function create_fragment$1(ctx) {
 		o(local) {
 			transition_out(before_slot, local);
 			transition_out(after_slot, local);
-			if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[4], {}, false);
+			if (!nav_transition) nav_transition = create_bidirectional_transition(nav, /*animate*/ ctx[3], {}, false);
 			nav_transition.run(0);
 			current = false;
 		},
@@ -4833,7 +4677,7 @@ function create_fragment$1(ctx) {
 			if (before_slot) before_slot.d(detaching);
 			destroy_each(each_blocks, detaching);
 			if (after_slot) after_slot.d(detaching);
-			/*nav_binding*/ ctx[14](null);
+			/*nav_binding*/ ctx[13](null);
 			if (detaching && nav_transition) nav_transition.end();
 			mounted = false;
 			run_all(dispose);
@@ -4845,7 +4689,6 @@ const click_handler_1$1 = () => null;
 const wheel_handler = () => null;
 
 function instance$1($$self, $$props, $$invalidate) {
-	let $storeElementRoot;
 	let { $$slots: slots = {}, $$scope } = $$props;
 	const s_DEFAULT_OFFSET = { x: 0, y: 0 };
 	let { menu } = $$props;
@@ -4854,8 +4697,6 @@ function instance$1($$self, $$props, $$invalidate) {
 	let { styles } = $$props;
 	let { efx } = $$props;
 	let { transitionOptions } = $$props;
-	const storeElementRoot = getContext('storeElementRoot');
-	component_subscribe($$self, storeElementRoot, value => $$invalidate(16, $storeElementRoot = value));
 
 	// Bound to the nav element / menu.
 	let menuEl;
@@ -4865,96 +4706,42 @@ function instance$1($$self, $$props, $$invalidate) {
 
 	/**
  * Provides a custom transform allowing inspection of the element to change positioning styles based on the
- * height / width of the element and the containing `element root`. This allows the menu to expand left or right when
- * the menu exceeds the bounds of the containing `element root`.
+ * height / width of the element and the containing stacking context element. This allows the menu to expand left or
+ * right when the menu exceeds the bounds of the containing stacking context element.
  *
  * @param {HTMLElement} node - nav element.
  *
  * @returns {object} Transition object.
  */
 	function animate(node) {
-		const elementRoot = $storeElementRoot;
+		const result = getStackingContext(node.parentElement);
 
-		if (!elementRoot) {
+		if (!(result?.node instanceof HTMLElement)) {
+			console.warn(`'TJSMenu.animate warning: Could not locate parent stacking context element.`);
 			return;
 		}
 
-		const result = getClosestStackingContext(node.parentElement);
-		console.log(`! TJSM - animate - 0 - closest stacking context: `, result);
-		const elementRootRect = elementRoot.getBoundingClientRect();
-		const elementRootRight = elementRootRect.x + elementRootRect.width;
+		const stackingContextRect = result?.node.getBoundingClientRect();
+		const stackingContextRight = stackingContextRect.x + stackingContextRect.width;
 		const nodeRect = node.getBoundingClientRect();
 		const parentRect = node.parentElement.getBoundingClientRect();
-		const parentRight = parentRect.x + parentRect.width;
 		const adjustedOffset = { ...s_DEFAULT_OFFSET, ...offset };
-		// node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - elementRootRect.top}px`;
+		node.style.top = `${adjustedOffset.y + parentRect.height}px`;
 
-		// node.style.top = `${adjustedOffset.y + parentRect.height}px`;
-		// node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - parentRect.top}px`;
-		console.log(`! TJSM - animate - 1 - elementRootRect: `, elementRootRect);
-
-		console.log(`! TJSM - animate - 2 - elementRootRight: `, elementRootRight);
-		console.log(`! TJSM - animate - 3 - nodeRect: `, nodeRect);
-		console.log(`! TJSM - animate - 4 - parentRect: `, parentRect);
-		console.log(`! TJSM - animate - 5 - parentRight: `, parentRight);
-		console.log(`! TJSM - animate - 6 - node.style.top: `, node.style.top);
-
-		// Check to make sure that the menu width does not exceed the right side of the element root. If not open right.
-		if (parentRect.x + nodeRect.width < elementRootRight) // if (parentRect.x + nodeRect.width < parentRight)
-		{
-			node.style.left = `${adjustedOffset.x + parentRect.x - elementRootRect.x}px`;
-
-			// node.style.left = `${adjustedOffset.x + parentRect.x}px`;
+		// Check to make sure that the menu width does not exceed the right side of the stacking context element.
+		// If not open to the right.
+		if (parentRect.x + nodeRect.width < stackingContextRight) {
+			node.style.left = `${adjustedOffset.x}px`;
 			node.style.removeProperty('right');
 		} else // Open left.
 		{
-			node.style.right = `${elementRootRight - parentRight}px`;
-
-			// node.style.right = `${parentRight}px`;
+			node.style.right = `${adjustedOffset.x}px`;
 			node.style.removeProperty('left');
 		}
 
 		return slideFade(node, transitionOptions);
 	}
 
-	/*
-	function animate(node) {
-		const elementRoot = $storeElementRoot;
-
-		if (!elementRoot) {
-			return;
-		}
-
-		const elementRootRect = elementRoot.getBoundingClientRect();
-		const elementRootRight = elementRootRect.x + elementRootRect.width;
-		const nodeRect = node.getBoundingClientRect();
-		const parentRect = node.parentElement.getBoundingClientRect();
-		const parentRight = parentRect.x + parentRect.width;
-
-		const parentParentRect = node.parentElement.getBoundingClientRect();
-		const parentParentRight = parentParentRect.x + parentParentRect.width;
-
-		const adjustedOffset = { ...s_DEFAULT_OFFSET, ...offset };
-
-		// node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - elementRootRect.top}px`;
-		node.style.top = `${adjustedOffset.y + parentRect.top + parentRect.height - parentParentRect.top}px`;
-
-		// Check to make sure that the menu width does not exceed the right side of the element root. If not open right.
-		// if (parentRect.x + nodeRect.width < elementRootRight) {
-		if (parentRect.x + nodeRect.width < parentParentRight) {
-			// node.style.left = `${adjustedOffset.x + parentRect.x - elementRootRect.x}px`;
-			node.style.left = `${adjustedOffset.x + parentRect.x - parentParentRect.x}px`;
-			node.style.removeProperty('right');
-		} else // Open left.
-		{
-			// node.style.right = `${elementRootRight - parentRight}px`;
-			node.style.right = `${parentParentRight - parentRight}px`;
-			node.style.removeProperty('left');
-		}
-
-		return slideFade(node, transitionOptions);
-	}
- */
 	/**
  * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
  * transition and destroys the component.
@@ -5004,17 +4791,17 @@ function instance$1($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('menu' in $$props) $$invalidate(10, menu = $$props.menu);
+		if ('menu' in $$props) $$invalidate(9, menu = $$props.menu);
 		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-		if ('offset' in $$props) $$invalidate(7, offset = $$props.offset);
-		if ('styles' in $$props) $$invalidate(8, styles = $$props.styles);
+		if ('offset' in $$props) $$invalidate(6, offset = $$props.offset);
+		if ('styles' in $$props) $$invalidate(7, styles = $$props.styles);
 		if ('efx' in $$props) $$invalidate(1, efx = $$props.efx);
-		if ('transitionOptions' in $$props) $$invalidate(9, transitionOptions = $$props.transitionOptions);
-		if ('$$scope' in $$props) $$invalidate(11, $$scope = $$props.$$scope);
+		if ('transitionOptions' in $$props) $$invalidate(8, transitionOptions = $$props.transitionOptions);
+		if ('$$scope' in $$props) $$invalidate(10, $$scope = $$props.$$scope);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*menu, items*/ 1025) {
+		if ($$self.$$.dirty & /*menu, items*/ 513) {
 			{
 				const allItems = typeof menu === 'object' && Array.isArray(menu.items)
 				? menu.items
@@ -5029,30 +4816,30 @@ function instance$1($$self, $$props, $$invalidate) {
 			}
 		}
 
-		if ($$self.$$.dirty & /*menu, offset*/ 1152) {
-			$$invalidate(7, offset = typeof menu === 'object' && typeof menu.offset === 'object'
+		if ($$self.$$.dirty & /*menu, offset*/ 576) {
+			$$invalidate(6, offset = typeof menu === 'object' && typeof menu.offset === 'object'
 			? menu.offset
 			: typeof offset === 'object' ? offset : s_DEFAULT_OFFSET);
 		}
 
-		if ($$self.$$.dirty & /*menu, styles*/ 1280) {
-			$$invalidate(8, styles = typeof menu === 'object' && typeof menu.styles === 'object'
+		if ($$self.$$.dirty & /*menu, styles*/ 640) {
+			$$invalidate(7, styles = typeof menu === 'object' && typeof menu.styles === 'object'
 			? menu.styles
 			: typeof styles === 'object' ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*menu, efx*/ 1026) {
+		if ($$self.$$.dirty & /*menu, efx*/ 514) {
 			$$invalidate(1, efx = typeof menu === 'object' && typeof menu.efx === 'function'
 			? menu.efx
 			: typeof efx === 'function'
 				? efx
 				: () => {
-
+						
 					});
 		}
 
-		if ($$self.$$.dirty & /*menu, transitionOptions*/ 1536) {
-			$$invalidate(9, transitionOptions = typeof menu === 'object' && typeof menu.transitionOptions === 'object'
+		if ($$self.$$.dirty & /*menu, transitionOptions*/ 768) {
+			$$invalidate(8, transitionOptions = typeof menu === 'object' && typeof menu.transitionOptions === 'object'
 			? menu.transitionOptions
 			: typeof transitionOptions === 'object'
 				? transitionOptions
@@ -5064,7 +4851,6 @@ function instance$1($$self, $$props, $$invalidate) {
 		items,
 		efx,
 		menuEl,
-		storeElementRoot,
 		animate,
 		onClick,
 		onClose,
@@ -5090,12 +4876,12 @@ class TJSMenu extends SvelteComponent {
 			create_fragment$1,
 			safe_not_equal,
 			{
-				menu: 10,
+				menu: 9,
 				items: 0,
-				offset: 7,
-				styles: 8,
+				offset: 6,
+				styles: 7,
 				efx: 1,
-				transitionOptions: 9
+				transitionOptions: 8
 			},
 			add_css$1
 		);

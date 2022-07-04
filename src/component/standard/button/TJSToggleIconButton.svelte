@@ -64,6 +64,7 @@
 <style>
    div {
       display: block;
+      position: relative;
       flex: 0 0 var(--tjs-icon-button-diameter);
       height: var(--tjs-icon-button-diameter);
       width: var(--tjs-icon-button-diameter);
