@@ -747,7 +747,7 @@ class WorldSettingArrayStore extends CrudArrayObjectStore
    #key;
 
    /** @type {string} */
-   #moduleId;
+   #namespace;
 
    /**
     *
@@ -755,17 +755,17 @@ class WorldSettingArrayStore extends CrudArrayObjectStore
     *
     * @param {TJSGameSettings}   [opts.gameSettings] - An instance of TJSGameSettings.
     *
-    * @param {string}            [opts.moduleId] - Game setting 'moduleId' field.
+    * @param {string}            [opts.namespace] - Game setting 'namespace' field.
     *
     * @param {string}            [opts.key] - Game setting 'key' field.
     *
     * @param {CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore parameters.
     */
-   constructor({ gameSettings, moduleId, key, ...rest })
+   constructor({ gameSettings, namespace, key, ...rest })
    {
       super({
          ...rest,
-         extraData: { moduleId, key }
+         extraData: { namespace, key }
       });
 
       if (gameSettings !== void 0 && !(gameSettings instanceof TJSGameSettings))
@@ -774,15 +774,15 @@ class WorldSettingArrayStore extends CrudArrayObjectStore
       }
 
       if (typeof key !== 'string') { throw new TypeError(`'key' is not a string.`); }
-      if (typeof moduleId !== 'string') { throw new TypeError(`'moduleId' is not a string.`); }
+      if (typeof namespace !== 'string') { throw new TypeError(`'namespace' is not a string.`); }
 
-      this.#moduleId = moduleId;
+      this.#namespace = namespace;
       this.#key = key;
 
       if (gameSettings)
       {
          gameSettings.register({
-            moduleId,
+            namespace,
             key,
             store: this,
             options: {
@@ -803,7 +803,7 @@ class WorldSettingArrayStore extends CrudArrayObjectStore
    /**
     * @returns {string}
     */
-   get moduleId() { return this.#moduleId; }
+   get namespace() { return this.#namespace; }
 }
 
 /**

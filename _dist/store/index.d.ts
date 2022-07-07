@@ -224,15 +224,15 @@ declare class WorldSettingArrayStore<T extends unknown> extends CrudArrayObjectS
      *
      * @param {TJSGameSettings}   [opts.gameSettings] - An instance of TJSGameSettings.
      *
-     * @param {string}            [opts.moduleId] - Game setting 'moduleId' field.
+     * @param {string}            [opts.namespace] - Game setting 'namespace' field.
      *
      * @param {string}            [opts.key] - Game setting 'key' field.
      *
      * @param {CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore parameters.
      */
-    constructor({ gameSettings, moduleId, key, ...rest }?: {
+    constructor({ gameSettings, namespace, key, ...rest }?: {
         gameSettings?: any;
-        moduleId?: string;
+        namespace?: string;
         key?: string;
         rest?: CrudArrayObjectStoreParams;
     });
@@ -243,7 +243,7 @@ declare class WorldSettingArrayStore<T extends unknown> extends CrudArrayObjectS
     /**
      * @returns {string}
      */
-    get moduleId(): string;
+    get namespace(): string;
     #private;
 }
 /**
