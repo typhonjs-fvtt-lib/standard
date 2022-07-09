@@ -56,6 +56,21 @@
    }
 
    /**
+    * In this case we can't set pointer-events: none for the div due to the slotted component, so process clicks on the
+    * div in respect to onClickPropagate.
+    *
+    * @param {MouseEvent} event -
+    */
+   function onClickDiv(event)
+   {
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
     * Handles `close` event from any children elements.
     */
    function onClose(event)
@@ -71,7 +86,7 @@
    }
 </script>
 
-<div on:close on:click on:close={onClose} use:applyStyles={styles}>
+<div on:close on:click on:click={onClickDiv} on:close={onClose} use:applyStyles={styles}>
    <a on:click={onClick} use:efx class:selected>
       <i class={icon} class:selected title={localize(title)}></i>
    </a>
@@ -82,7 +97,6 @@
 
 <style>
    div {
-      pointer-events: none;
       display: block;
       position: relative;
       flex: 0 0 var(--tjs-icon-button-diameter);
