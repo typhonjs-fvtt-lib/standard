@@ -100,10 +100,6 @@
             inputEl.blur();
          }
       }
-
-      if (localOptions.clearOnEscKey && event.key === 'Escape')
-      {
-      }
    }
 </script>
 
@@ -121,6 +117,7 @@
 
 <style>
     .tjs-input-container {
+        pointer-events: none;
         background: var(--tjs-comp-input-background, var(--tjs-input-background));
         border-radius: var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));
         display: block;
@@ -131,6 +128,7 @@
     }
 
     input {
+        pointer-events: initial;
         display: inline-block;
         position: relative;
         overflow: hidden;

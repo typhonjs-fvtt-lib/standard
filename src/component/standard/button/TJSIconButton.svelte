@@ -18,6 +18,7 @@
    export let title;
    export let styles;
    export let efx;
+   export let onClickPropagate;
 
    $: icon = typeof button === 'object' && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : '';
@@ -27,9 +28,20 @@
     typeof styles === 'object' ? styles : void 0;
    $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
+   $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
+    typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
+
+   function onClick(event)
+   {
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
 </script>
 
-<div on:close use:applyStyles={styles}>
+<div on:click on:click={onClick} use:applyStyles={styles}>
     <a on:click use:efx>
         <i class={icon} title={localize(title)}></i>
     </a>
@@ -37,6 +49,7 @@
 
 <style>
     div {
+        pointer-events: none;
         display: block;
         flex: 0 0 var(--tjs-icon-button-diameter);
         height: var(--tjs-icon-button-diameter);
@@ -46,6 +59,7 @@
     }
 
     a {
+        pointer-events: initial;
         display: inline-block;
         background: var(--tjs-icon-button-background);
         border-radius: var(--tjs-icon-button-border-radius);

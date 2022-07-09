@@ -20,6 +20,8 @@
    export let store;
    export let styles;
    export let efx;
+   export let onClickPropagate;
+   export let onClosePropagate;
 
    $: icon = typeof button === 'object' && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : '';
@@ -32,28 +34,45 @@
    $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
 
+   $: onClosePropagate = typeof button === 'object' && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
+    typeof onClosePropagate === 'boolean' ? onClosePropagate : true;
+   $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
+    typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
+
    let selected = false;
 
    $: if (store) { selected = $store; }
 
-   function onClick()
+   function onClick(event)
    {
       selected = !selected;
       if (store) { store.set(selected); }
+
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 
    /**
     * Handles `close` event from any children elements.
     */
-   function onClose()
+   function onClose(event)
    {
       selected = false;
       if (store) { store.set(false); }
+
+      if (!onClosePropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 </script>
 
-<div on:close on:close|preventDefault|stopPropagation={onClose} use:applyStyles={styles}>
-   <a on:click on:click={onClick} use:efx class:selected>
+<div on:close on:click on:close={onClose} use:applyStyles={styles}>
+   <a on:click={onClick} use:efx class:selected>
       <i class={icon} class:selected title={localize(title)}></i>
    </a>
    {#if selected}
@@ -63,6 +82,7 @@
 
 <style>
    div {
+      pointer-events: none;
       display: block;
       position: relative;
       flex: 0 0 var(--tjs-icon-button-diameter);
@@ -73,6 +93,7 @@
    }
 
    a {
+      pointer-events: initial;
       display: inline-block;
       background: var(--tjs-icon-button-background);
       border-radius: var(--tjs-icon-button-border-radius);

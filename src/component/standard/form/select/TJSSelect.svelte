@@ -74,6 +74,7 @@
 
 <style>
    .tjs-select-container {
+      pointer-events: none;
       background: var(--tjs-comp-select-background, var(--tjs-input-background));
       border-radius: var(--tjs-comp-select-border-radius, var(--tjs-input-border-radius));
       display: block;
@@ -84,6 +85,7 @@
    }
 
    select {
+      pointer-events: initial;
       display: inline-block;
       position: relative;
       overflow: hidden;
