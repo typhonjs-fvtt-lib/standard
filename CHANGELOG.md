@@ -1,4 +1,22 @@
 # Changelog
+## Release 0.0.2
+- Updated components
+  - TJSIconFolder / TJSSvgFolder
+    - Options: 'chevron only click', 'no keyboard / spacebar open'
+    - Fixed click detect with child / slotted components
+    
+  - Add TJSIconButton; basic icon button.
+ 
+  - TJSMenu; better positioning / absolute in relative parent.
+  
+  - TJSInput
+    - fixed efx / rippleFocus multiple clicks issue
+    - Options: 'blurOnKeyEnter', 'cancelOnEscKey', 'clearOnEscKey'
+
+
+- Stores
+  - Added ArrayObjectStore, CrudArrayObjectStore, WorldSettingArrayStore
+
 ## Release 0.0.1
 - Refined TJSIconFolder / TJSSvgFolder
   - slotted components can now be interacted with and not cause folder open / close on click.
