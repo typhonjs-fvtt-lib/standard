@@ -1,6 +1,10 @@
-import { writable }        from 'svelte/store';
+import { get, writable }   from 'svelte/store';
 
-import { normalizeString } from '@typhonjs-svelte/lib/util';
+import { isWritableStore } from '@typhonjs-fvtt/svelte/store';
+
+import {
+   isIterable,
+   normalizeString }       from '@typhonjs-fvtt/svelte/util';
 
 /**
  * Creates a filter function to compare objects by a give property key against a regex test. The returned function
@@ -8,19 +12,44 @@ import { normalizeString } from '@typhonjs-svelte/lib/util';
  *
  * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
  *
- * @param {string}   property - Property key to compare.
+ * @param {string|Iterable<string>}   properties - Property key to compare.
  *
  * @param {object}   [opts] - Optional parameters.
  *
  * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
  *
+ * @param {import('svelte/store').Writable<string>}  [opts.store=void] - Use the provided store to instead of creating
+ *                                                                       a default writable store.
+ *
  * @returns {(data: object) => boolean} The query string filter.
  */
-export function createFilterQuery(property, { caseSensitive = false } = {})
+export function createFilterQuery(properties, { caseSensitive = false, store } = {})
 {
    let keyword = '';
    let regex;
-   const storeKeyword = writable(keyword);
+
+   if (store !== void 0 && !isWritableStore(store))
+   {
+      throw new TypeError(`createFilterQuery error: 'store' is not a writable store.`);
+   }
+
+   const storeKeyword = store ? store : writable(keyword);
+
+   // If an existing store is provided then set initial values.
+   if (store)
+   {
+      const current = get(store);
+
+      if (typeof current === 'string')
+      {
+         keyword = normalizeString(current);
+         regex = new RegExp(RegExp.escape(keyword), caseSensitive ? '' : 'i');
+      }
+      else
+      {
+         store.set(keyword);
+      }
+   }
 
    /**
     * If there is no filter keyword / regex then do not filter otherwise filter based on the regex
@@ -32,7 +61,21 @@ export function createFilterQuery(property, { caseSensitive = false } = {})
     */
    function filterQuery(data)
    {
-      return keyword === '' || !regex ? true : regex.test(normalizeString(data?.[property]));
+      if (keyword === '' || !regex) { return true; }
+
+      if (isIterable(properties))
+      {
+         for (const property of properties)
+         {
+            if (regex.test(normalizeString(data?.[property]))) { return true; }
+         }
+
+         return false;
+      }
+      else
+      {
+         return regex.test(normalizeString(data?.[properties]));
+      }
    }
 
    /**
