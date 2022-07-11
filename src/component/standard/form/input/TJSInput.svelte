@@ -1,5 +1,12 @@
 <script>
    /**
+    * A generic input type has issues w/ 2-way binding w/ Svelte.
+    * https://github.com/sveltejs/svelte/issues/3921
+    *
+    * A "hack" is used to set the type on the input element: `{...{ type }}`
+    *
+    * Only use this component for text inputs presently. More work to come.
+    *
     * --tjs-input-border
     * --tjs-input-border-radius
     * --tjs-input-background
@@ -105,6 +112,7 @@
 
 <div class=tjs-input-container use:efx use:applyStyles={styles}>
     <input class=tjs-input
+           {...{ type }}
            bind:this={inputEl}
            bind:value={$store}
            use:autoBlur
@@ -142,6 +150,8 @@
 
         width: 100%;
         height: 100%;
+
+        padding: var(--tjs-comp-input-padding, var(--tjs-input-padding));
 
         color: inherit;
         font-family: inherit;

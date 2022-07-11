@@ -17,6 +17,7 @@
    export let button;
    export let icon;
    export let title;
+   export let titleSelected;
    export let store;
    export let styles;
    export let efx;
@@ -27,6 +28,8 @@
     typeof icon === 'string' ? icon : '';
    $: title = typeof button === 'object' && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : '';
+   $: titleSelected = typeof button === 'object' && typeof button.titleSelected === 'string' ? button.titleSelected :
+    typeof titleSelected === 'string' ? titleSelected : '';
    $: store = typeof button === 'object' && isWritableStore(button.store) ? button.store : isWritableStore(store) ?
     store : void 0;
    $: styles = typeof button === 'object' && typeof button.styles === 'object' ? button.styles :
@@ -42,6 +45,9 @@
    let selected = false;
 
    $: if (store) { selected = $store; }
+
+   // Chose the current title when `selected` changes; if there is no `titleSelected` fallback to `title`.
+   $: titleCurrent = selected && titleSelected !== '' ? titleSelected : title
 
    function onClick(event)
    {
@@ -86,9 +92,13 @@
    }
 </script>
 
-<div on:close on:click on:click={onClickDiv} on:close={onClose} use:applyStyles={styles}>
+<div on:close on:click
+     on:click={onClickDiv}
+     on:close={onClose}
+     title={localize(titleCurrent)}
+     use:applyStyles={styles}>
    <a on:click={onClick} use:efx class:selected>
-      <i class={icon} class:selected title={localize(title)}></i>
+      <i class={icon} class:selected></i>
    </a>
    {#if selected}
       <slot/>

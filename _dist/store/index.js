@@ -1,7 +1,6 @@
 import { isWritableStore, DynArrayReducer, subscribeIgnoreFirst, TJSGameSettings } from '@typhonjs-fvtt/runtime/svelte/store';
-import { isObject, uuidv4, debounce, klona } from '@typhonjs-fvtt/runtime/svelte/util';
-import { writable } from 'svelte/store';
-import { normalizeString } from '@typhonjs-fvtt/runtime/svelte/util';
+import { isObject, uuidv4, debounce, klona, normalizeString, isIterable } from '@typhonjs-fvtt/runtime/svelte/util';
+import { writable, get } from 'svelte/store';
 import { isWritableStore as isWritableStore$1 } from '@typhonjs-fvtt/runtime/svelte/store';
 
 /**
@@ -681,19 +680,44 @@ class CrudArrayObjectStore extends ArrayObjectStore
  *
  * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
  *
- * @param {string}   property - Property key to compare.
+ * @param {string|Iterable<string>}   properties - Property key to compare.
  *
  * @param {object}   [opts] - Optional parameters.
  *
  * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
  *
+ * @param {import('svelte/store').Writable<string>}  [opts.store=void] - Use the provided store to instead of creating
+ *                                                                       a default writable store.
+ *
  * @returns {(data: object) => boolean} The query string filter.
  */
-function createFilterQuery(property, { caseSensitive = false } = {})
+function createFilterQuery(properties, { caseSensitive = false, store } = {})
 {
    let keyword = '';
    let regex;
-   const storeKeyword = writable(keyword);
+
+   if (store !== void 0 && !isWritableStore(store))
+   {
+      throw new TypeError(`createFilterQuery error: 'store' is not a writable store.`);
+   }
+
+   const storeKeyword = store ? store : writable(keyword);
+
+   // If an existing store is provided then set initial values.
+   if (store)
+   {
+      const current = get(store);
+
+      if (typeof current === 'string')
+      {
+         keyword = normalizeString(current);
+         regex = new RegExp(RegExp.escape(keyword), caseSensitive ? '' : 'i');
+      }
+      else
+      {
+         store.set(keyword);
+      }
+   }
 
    /**
     * If there is no filter keyword / regex then do not filter otherwise filter based on the regex
@@ -705,7 +729,21 @@ function createFilterQuery(property, { caseSensitive = false } = {})
     */
    function filterQuery(data)
    {
-      return keyword === '' || !regex ? true : regex.test(normalizeString(data?.[property]));
+      if (keyword === '' || !regex) { return true; }
+
+      if (isIterable(properties))
+      {
+         for (const property of properties)
+         {
+            if (regex.test(normalizeString(data?.[property]))) { return true; }
+         }
+
+         return false;
+      }
+      else
+      {
+         return regex.test(normalizeString(data?.[properties]));
+      }
    }
 
    /**

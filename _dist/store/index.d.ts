@@ -265,16 +265,20 @@ declare class WorldSettingArrayStore<T extends unknown> extends CrudArrayObjectS
  *
  * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
  *
- * @param {string}   property - Property key to compare.
+ * @param {string|Iterable<string>}   properties - Property key to compare.
  *
  * @param {object}   [opts] - Optional parameters.
  *
  * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
  *
+ * @param {import('svelte/store').Writable<string>}  [opts.store=void] - Use the provided store to instead of creating
+ *                                                                       a default writable store.
+ *
  * @returns {(data: object) => boolean} The query string filter.
  */
-declare function createFilterQuery(property: string, { caseSensitive }?: {
+declare function createFilterQuery(properties: string | Iterable<string>, { caseSensitive, store }?: {
     caseSensitive?: boolean;
+    store?: svelte_store.Writable<string>;
 }): (data: object) => boolean;
 /**
  * => boolean} CrudDispatch

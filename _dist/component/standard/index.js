@@ -1,4 +1,4 @@
-import { SvelteComponent, init, safe_not_equal, append_styles, element, attr, null_to_empty, insert, append, listen, action_destroyer, is_function, noop, detach, run_all, bubble, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, space, toggle_class, group_outros, check_outros, subscribe, create_slot, svg_element, set_style, text, set_data, set_store_value, binding_callbacks, set_input_value, add_render_callback, select_option, destroy_each, select_value, stop_propagation, prevent_default, empty, create_component, mount_component, destroy_component, update_keyed_each, outro_and_destroy_block, component_subscribe, create_bidirectional_transition, globals, current_component } from 'svelte/internal';
+import { SvelteComponent, init, safe_not_equal, append_styles, element, attr, null_to_empty, insert, append, listen, action_destroyer, is_function, noop, detach, run_all, bubble, update_slot_base, get_all_dirty_from_scope, get_slot_changes, transition_in, transition_out, space, toggle_class, group_outros, check_outros, subscribe, create_slot, svg_element, set_style, text, set_data, set_store_value, binding_callbacks, assign, set_attributes, set_input_value, get_spread_update, add_render_callback, select_option, destroy_each, select_value, stop_propagation, prevent_default, empty, create_component, mount_component, destroy_component, update_keyed_each, outro_and_destroy_block, component_subscribe, create_bidirectional_transition, globals, current_component } from 'svelte/internal';
 import { applyStyles, autoBlur } from '@typhonjs-fvtt/runtime/svelte/action';
 import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
 import { isWritableStore, propertyStore } from '@typhonjs-fvtt/runtime/svelte/store';
@@ -239,7 +239,7 @@ function create_fragment$c(ctx) {
 	let a;
 	let i;
 	let i_class_value;
-	let i_title_value;
+	let div_title_value;
 	let applyStyles_action;
 	let mounted;
 	let dispose;
@@ -250,8 +250,8 @@ function create_fragment$c(ctx) {
 			a = element("a");
 			i = element("i");
 			attr(i, "class", i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-su3d4z"));
-			attr(i, "title", i_title_value = localize(/*title*/ ctx[1]));
 			attr(a, "class", "svelte-su3d4z");
+			attr(div, "title", div_title_value = localize(/*title*/ ctx[1]));
 			attr(div, "class", "svelte-su3d4z");
 		},
 		m(target, anchor) {
@@ -276,8 +276,8 @@ function create_fragment$c(ctx) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*title*/ 2 && i_title_value !== (i_title_value = localize(/*title*/ ctx[1]))) {
-				attr(i, "title", i_title_value);
+			if (dirty & /*title*/ 2 && div_title_value !== (div_title_value = localize(/*title*/ ctx[1]))) {
+				attr(div, "title", div_title_value);
 			}
 
 			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 4) applyStyles_action.update.call(null, /*styles*/ ctx[2]);
@@ -404,11 +404,11 @@ function add_css$a(target) {
 	append_styles(target, "svelte-qlfxx4", "div.svelte-qlfxx4{display:block;position:relative;flex:0 0 var(--tjs-icon-button-diameter);height:var(--tjs-icon-button-diameter);width:var(--tjs-icon-button-diameter);align-self:center;text-align:center}a.svelte-qlfxx4{pointer-events:initial;display:inline-block;background:var(--tjs-icon-button-background);border-radius:var(--tjs-icon-button-border-radius);position:relative;overflow:hidden;clip-path:var(--tjs-icon-button-clip-path, none);transform-style:preserve-3d;width:100%;height:100%;transition:var(--tjs-icon-button-transition)}a.svelte-qlfxx4:hover{background:var(--tjs-icon-button-background-hover);clip-path:var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, none))}a.selected.svelte-qlfxx4{background:var(--tjs-icon-button-background-selected);clip-path:var(--tjs-icon-button-clip-path-selected, var(--tjs-icon-button-clip-path, none))}i.svelte-qlfxx4{line-height:var(--tjs-icon-button-diameter);transform:translateZ(1px)}");
 }
 
-// (93:3) {#if selected}
+// (103:3) {#if selected}
 function create_if_block$3(ctx) {
 	let current;
-	const default_slot_template = /*#slots*/ ctx[14].default;
-	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[13], null);
+	const default_slot_template = /*#slots*/ ctx[16].default;
+	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[15], null);
 
 	return {
 		c() {
@@ -423,15 +423,15 @@ function create_if_block$3(ctx) {
 		},
 		p(ctx, dirty) {
 			if (default_slot) {
-				if (default_slot.p && (!current || dirty & /*$$scope*/ 8192)) {
+				if (default_slot.p && (!current || dirty & /*$$scope*/ 32768)) {
 					update_slot_base(
 						default_slot,
 						default_slot_template,
 						ctx,
-						/*$$scope*/ ctx[13],
+						/*$$scope*/ ctx[15],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[13])
-						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[13], dirty, null),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[15])
+						: get_slot_changes(default_slot_template, /*$$scope*/ ctx[15], dirty, null),
 						null
 					);
 				}
@@ -457,13 +457,13 @@ function create_fragment$b(ctx) {
 	let a;
 	let i;
 	let i_class_value;
-	let i_title_value;
 	let t;
+	let div_title_value;
 	let applyStyles_action;
 	let current;
 	let mounted;
 	let dispose;
-	let if_block = /*selected*/ ctx[5] && create_if_block$3(ctx);
+	let if_block = /*selected*/ ctx[4] && create_if_block$3(ctx);
 
 	return {
 		c() {
@@ -473,10 +473,10 @@ function create_fragment$b(ctx) {
 			t = space();
 			if (if_block) if_block.c();
 			attr(i, "class", i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-qlfxx4"));
-			attr(i, "title", i_title_value = localize(/*title*/ ctx[1]));
-			toggle_class(i, "selected", /*selected*/ ctx[5]);
+			toggle_class(i, "selected", /*selected*/ ctx[4]);
 			attr(a, "class", "svelte-qlfxx4");
-			toggle_class(a, "selected", /*selected*/ ctx[5]);
+			toggle_class(a, "selected", /*selected*/ ctx[4]);
+			attr(div, "title", div_title_value = localize(/*titleCurrent*/ ctx[5]));
 			attr(div, "class", "svelte-qlfxx4");
 		},
 		m(target, anchor) {
@@ -490,12 +490,12 @@ function create_fragment$b(ctx) {
 			if (!mounted) {
 				dispose = [
 					listen(a, "click", /*onClick*/ ctx[6]),
-					action_destroyer(/*efx*/ ctx[4].call(null, a)),
-					listen(div, "close", /*close_handler*/ ctx[15]),
-					listen(div, "click", /*click_handler*/ ctx[16]),
+					action_destroyer(/*efx*/ ctx[3].call(null, a)),
+					listen(div, "close", /*close_handler*/ ctx[17]),
+					listen(div, "click", /*click_handler*/ ctx[18]),
 					listen(div, "click", /*onClickDiv*/ ctx[7]),
 					listen(div, "close", /*onClose*/ ctx[8]),
-					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[3]))
+					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[2]))
 				];
 
 				mounted = true;
@@ -506,23 +506,19 @@ function create_fragment$b(ctx) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (!current || dirty & /*title*/ 2 && i_title_value !== (i_title_value = localize(/*title*/ ctx[1]))) {
-				attr(i, "title", i_title_value);
+			if (dirty & /*icon, selected*/ 17) {
+				toggle_class(i, "selected", /*selected*/ ctx[4]);
 			}
 
-			if (dirty & /*icon, selected*/ 33) {
-				toggle_class(i, "selected", /*selected*/ ctx[5]);
+			if (dirty & /*selected*/ 16) {
+				toggle_class(a, "selected", /*selected*/ ctx[4]);
 			}
 
-			if (dirty & /*selected*/ 32) {
-				toggle_class(a, "selected", /*selected*/ ctx[5]);
-			}
-
-			if (/*selected*/ ctx[5]) {
+			if (/*selected*/ ctx[4]) {
 				if (if_block) {
 					if_block.p(ctx, dirty);
 
-					if (dirty & /*selected*/ 32) {
+					if (dirty & /*selected*/ 16) {
 						transition_in(if_block, 1);
 					}
 				} else {
@@ -541,7 +537,11 @@ function create_fragment$b(ctx) {
 				check_outros();
 			}
 
-			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 8) applyStyles_action.update.call(null, /*styles*/ ctx[3]);
+			if (!current || dirty & /*titleCurrent*/ 32 && div_title_value !== (div_title_value = localize(/*titleCurrent*/ ctx[5]))) {
+				attr(div, "title", div_title_value);
+			}
+
+			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 4) applyStyles_action.update.call(null, /*styles*/ ctx[2]);
 		},
 		i(local) {
 			if (current) return;
@@ -562,15 +562,18 @@ function create_fragment$b(ctx) {
 }
 
 function instance$a($$self, $$props, $$invalidate) {
+	let titleCurrent;
+
 	let $store,
 		$$unsubscribe_store = noop,
-		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(12, $store = $$value)), store);
+		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(14, $store = $$value)), store);
 
 	$$self.$$.on_destroy.push(() => $$unsubscribe_store());
 	let { $$slots: slots = {}, $$scope } = $$props;
 	let { button } = $$props;
 	let { icon } = $$props;
 	let { title } = $$props;
+	let { titleSelected } = $$props;
 	let { store } = $$props;
 	$$subscribe_store();
 	let { styles } = $$props;
@@ -580,7 +583,7 @@ function instance$a($$self, $$props, $$invalidate) {
 	let selected = false;
 
 	function onClick(event) {
-		$$invalidate(5, selected = !selected);
+		$$invalidate(4, selected = !selected);
 
 		if (store) {
 			store.set(selected);
@@ -609,7 +612,7 @@ function instance$a($$self, $$props, $$invalidate) {
  * Handles `close` event from any children elements.
  */
 	function onClose(event) {
-		$$invalidate(5, selected = false);
+		$$invalidate(4, selected = false);
 
 		if (store) {
 			store.set(false);
@@ -630,44 +633,51 @@ function instance$a($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('button' in $$props) $$invalidate(11, button = $$props.button);
+		if ('button' in $$props) $$invalidate(13, button = $$props.button);
 		if ('icon' in $$props) $$invalidate(0, icon = $$props.icon);
-		if ('title' in $$props) $$invalidate(1, title = $$props.title);
-		if ('store' in $$props) $$subscribe_store($$invalidate(2, store = $$props.store));
-		if ('styles' in $$props) $$invalidate(3, styles = $$props.styles);
-		if ('efx' in $$props) $$invalidate(4, efx = $$props.efx);
-		if ('onClickPropagate' in $$props) $$invalidate(9, onClickPropagate = $$props.onClickPropagate);
-		if ('onClosePropagate' in $$props) $$invalidate(10, onClosePropagate = $$props.onClosePropagate);
-		if ('$$scope' in $$props) $$invalidate(13, $$scope = $$props.$$scope);
+		if ('title' in $$props) $$invalidate(9, title = $$props.title);
+		if ('titleSelected' in $$props) $$invalidate(10, titleSelected = $$props.titleSelected);
+		if ('store' in $$props) $$subscribe_store($$invalidate(1, store = $$props.store));
+		if ('styles' in $$props) $$invalidate(2, styles = $$props.styles);
+		if ('efx' in $$props) $$invalidate(3, efx = $$props.efx);
+		if ('onClickPropagate' in $$props) $$invalidate(11, onClickPropagate = $$props.onClickPropagate);
+		if ('onClosePropagate' in $$props) $$invalidate(12, onClosePropagate = $$props.onClosePropagate);
+		if ('$$scope' in $$props) $$invalidate(15, $$scope = $$props.$$scope);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*button, icon*/ 2049) {
+		if ($$self.$$.dirty & /*button, icon*/ 8193) {
 			$$invalidate(0, icon = typeof button === 'object' && typeof button.icon === 'string'
 			? button.icon
 			: typeof icon === 'string' ? icon : '');
 		}
 
-		if ($$self.$$.dirty & /*button, title*/ 2050) {
-			$$invalidate(1, title = typeof button === 'object' && typeof button.title === 'string'
+		if ($$self.$$.dirty & /*button, title*/ 8704) {
+			$$invalidate(9, title = typeof button === 'object' && typeof button.title === 'string'
 			? button.title
 			: typeof title === 'string' ? title : '');
 		}
 
-		if ($$self.$$.dirty & /*button, store*/ 2052) {
-			$$subscribe_store($$invalidate(2, store = typeof button === 'object' && isWritableStore(button.store)
+		if ($$self.$$.dirty & /*button, titleSelected*/ 9216) {
+			$$invalidate(10, titleSelected = typeof button === 'object' && typeof button.titleSelected === 'string'
+			? button.titleSelected
+			: typeof titleSelected === 'string' ? titleSelected : '');
+		}
+
+		if ($$self.$$.dirty & /*button, store*/ 8194) {
+			$$subscribe_store($$invalidate(1, store = typeof button === 'object' && isWritableStore(button.store)
 			? button.store
 			: isWritableStore(store) ? store : void 0));
 		}
 
-		if ($$self.$$.dirty & /*button, styles*/ 2056) {
-			$$invalidate(3, styles = typeof button === 'object' && typeof button.styles === 'object'
+		if ($$self.$$.dirty & /*button, styles*/ 8196) {
+			$$invalidate(2, styles = typeof button === 'object' && typeof button.styles === 'object'
 			? button.styles
 			: typeof styles === 'object' ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*button, efx*/ 2064) {
-			$$invalidate(4, efx = typeof button === 'object' && typeof button.efx === 'function'
+		if ($$self.$$.dirty & /*button, efx*/ 8200) {
+			$$invalidate(3, efx = typeof button === 'object' && typeof button.efx === 'function'
 			? button.efx
 			: typeof efx === 'function'
 				? efx
@@ -676,39 +686,46 @@ function instance$a($$self, $$props, $$invalidate) {
 					});
 		}
 
-		if ($$self.$$.dirty & /*button, onClosePropagate*/ 3072) {
-			$$invalidate(10, onClosePropagate = typeof button === 'object' && typeof button.onClosePropagate === 'boolean'
+		if ($$self.$$.dirty & /*button, onClosePropagate*/ 12288) {
+			$$invalidate(12, onClosePropagate = typeof button === 'object' && typeof button.onClosePropagate === 'boolean'
 			? button.onClosePropagate
 			: typeof onClosePropagate === 'boolean'
 				? onClosePropagate
 				: true);
 		}
 
-		if ($$self.$$.dirty & /*button, onClickPropagate*/ 2560) {
-			$$invalidate(9, onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean'
+		if ($$self.$$.dirty & /*button, onClickPropagate*/ 10240) {
+			$$invalidate(11, onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean'
 			? button.onClickPropagate
 			: typeof onClickPropagate === 'boolean'
 				? onClickPropagate
 				: true);
 		}
 
-		if ($$self.$$.dirty & /*store, $store*/ 4100) {
+		if ($$self.$$.dirty & /*store, $store*/ 16386) {
 			if (store) {
-				$$invalidate(5, selected = $store);
+				$$invalidate(4, selected = $store);
 			}
+		}
+
+		if ($$self.$$.dirty & /*selected, titleSelected, title*/ 1552) {
+			// Chose the current title when `selected` changes; if there is no `titleSelected` fallback to `title`.
+			$$invalidate(5, titleCurrent = selected && titleSelected !== '' ? titleSelected : title);
 		}
 	};
 
 	return [
 		icon,
-		title,
 		store,
 		styles,
 		efx,
 		selected,
+		titleCurrent,
 		onClick,
 		onClickDiv,
 		onClose,
+		title,
+		titleSelected,
 		onClickPropagate,
 		onClosePropagate,
 		button,
@@ -731,14 +748,15 @@ class TJSToggleIconButton extends SvelteComponent {
 			create_fragment$b,
 			safe_not_equal,
 			{
-				button: 11,
+				button: 13,
 				icon: 0,
-				title: 1,
-				store: 2,
-				styles: 3,
-				efx: 4,
-				onClickPropagate: 9,
-				onClosePropagate: 10
+				title: 9,
+				titleSelected: 10,
+				store: 1,
+				styles: 2,
+				efx: 3,
+				onClickPropagate: 11,
+				onClosePropagate: 12
 			},
 			add_css$a
 		);
@@ -1825,7 +1843,7 @@ class TJSIconFolder extends SvelteComponent {
 /* src\component\standard\form\input\TJSInput.svelte generated by Svelte v3.49.0 */
 
 function add_css$7(target) {
-	append_styles(target, "svelte-1rqgqcl", ".tjs-input-container.svelte-1rqgqcl{pointer-events:none;background:var(--tjs-comp-input-background, var(--tjs-input-background));border-radius:var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));display:block;overflow:hidden;height:var(--tjs-comp-input-height, var(--tjs-input-height));width:var(--tjs-comp-input-width, var(--tjs-input-width));transform-style:preserve-3d}input.svelte-1rqgqcl{pointer-events:initial;display:inline-block;position:relative;overflow:hidden;background:transparent;border:var(--tjs-comp-input-border, var(--tjs-input-border));border-radius:var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));text-align:var(--tjs-comp-input-text-align, var(--tjs-input-text-align));width:100%;height:100%;color:inherit;font-family:inherit;font-size:inherit;line-height:inherit;cursor:var(--tjs-comp-input-cursor, var(--tjs-input-cursor));transform:translateZ(1px)}");
+	append_styles(target, "svelte-mfkuj3", ".tjs-input-container.svelte-mfkuj3{pointer-events:none;background:var(--tjs-comp-input-background, var(--tjs-input-background));border-radius:var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));display:block;overflow:hidden;height:var(--tjs-comp-input-height, var(--tjs-input-height));width:var(--tjs-comp-input-width, var(--tjs-input-width));transform-style:preserve-3d}input.svelte-mfkuj3{pointer-events:initial;display:inline-block;position:relative;overflow:hidden;background:transparent;border:var(--tjs-comp-input-border, var(--tjs-input-border));border-radius:var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));text-align:var(--tjs-comp-input-text-align, var(--tjs-input-text-align));width:100%;height:100%;padding:var(--tjs-comp-input-padding, var(--tjs-input-padding));color:inherit;font-family:inherit;font-size:inherit;line-height:inherit;cursor:var(--tjs-comp-input-cursor, var(--tjs-input-cursor));transform:translateZ(1px)}");
 }
 
 function create_fragment$8(ctx) {
@@ -1835,48 +1853,61 @@ function create_fragment$8(ctx) {
 	let mounted;
 	let dispose;
 
+	let input_1_levels = [
+		{ class: "tjs-input" },
+		{ type: /*type*/ ctx[0] },
+		{ placeholder: /*placeholder*/ ctx[2] },
+		{ disabled: /*disabled*/ ctx[1] }
+	];
+
+	let input_1_data = {};
+
+	for (let i = 0; i < input_1_levels.length; i += 1) {
+		input_1_data = assign(input_1_data, input_1_levels[i]);
+	}
+
 	return {
 		c() {
 			div = element("div");
 			input_1 = element("input");
-			attr(input_1, "class", "tjs-input svelte-1rqgqcl");
-			attr(input_1, "placeholder", /*placeholder*/ ctx[1]);
-			input_1.disabled = /*disabled*/ ctx[0];
-			attr(div, "class", "tjs-input-container svelte-1rqgqcl");
+			set_attributes(input_1, input_1_data);
+			toggle_class(input_1, "svelte-mfkuj3", true);
+			attr(div, "class", "tjs-input-container svelte-mfkuj3");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
 			append(div, input_1);
+			if (input_1.autofocus) input_1.focus();
 			/*input_1_binding*/ ctx[12](input_1);
-			set_input_value(input_1, /*$store*/ ctx[6]);
+			set_input_value(input_1, /*$store*/ ctx[7]);
 
 			if (!mounted) {
 				dispose = [
 					listen(input_1, "input", /*input_1_input_handler*/ ctx[13]),
 					action_destroyer(autoBlur.call(null, input_1)),
-					listen(input_1, "focusin", /*onFocusIn*/ ctx[7]),
-					listen(input_1, "keydown", /*onKeyDown*/ ctx[8]),
-					action_destroyer(/*efx*/ ctx[4].call(null, div)),
-					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[3]))
+					listen(input_1, "focusin", /*onFocusIn*/ ctx[8]),
+					listen(input_1, "keydown", /*onKeyDown*/ ctx[9]),
+					action_destroyer(/*efx*/ ctx[5].call(null, div)),
+					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[4]))
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*placeholder*/ 2) {
-				attr(input_1, "placeholder", /*placeholder*/ ctx[1]);
+			set_attributes(input_1, input_1_data = get_spread_update(input_1_levels, [
+				{ class: "tjs-input" },
+				dirty & /*type*/ 1 && { type: /*type*/ ctx[0] },
+				dirty & /*placeholder*/ 4 && { placeholder: /*placeholder*/ ctx[2] },
+				dirty & /*disabled*/ 2 && { disabled: /*disabled*/ ctx[1] }
+			]));
+
+			if (dirty & /*$store*/ 128 && input_1.value !== /*$store*/ ctx[7]) {
+				set_input_value(input_1, /*$store*/ ctx[7]);
 			}
 
-			if (dirty & /*disabled*/ 1) {
-				input_1.disabled = /*disabled*/ ctx[0];
-			}
-
-			if (dirty & /*$store*/ 64 && input_1.value !== /*$store*/ ctx[6]) {
-				set_input_value(input_1, /*$store*/ ctx[6]);
-			}
-
-			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 8) applyStyles_action.update.call(null, /*styles*/ ctx[3]);
+			toggle_class(input_1, "svelte-mfkuj3", true);
+			if (applyStyles_action && is_function(applyStyles_action.update) && dirty & /*styles*/ 16) applyStyles_action.update.call(null, /*styles*/ ctx[4]);
 		},
 		i: noop,
 		o: noop,
@@ -1892,7 +1923,7 @@ function create_fragment$8(ctx) {
 function instance$7($$self, $$props, $$invalidate) {
 	let $store,
 		$$unsubscribe_store = noop,
-		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(6, $store = $$value)), store);
+		$$subscribe_store = () => ($$unsubscribe_store(), $$unsubscribe_store = subscribe(store, $$value => $$invalidate(7, $store = $$value)), store);
 
 	$$self.$$.on_destroy.push(() => $$unsubscribe_store());
 	let { input = void 0 } = $$props;
@@ -1944,7 +1975,7 @@ function instance$7($$self, $$props, $$invalidate) {
 	function input_1_binding($$value) {
 		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
 			inputEl = $$value;
-			$$invalidate(5, inputEl);
+			$$invalidate(6, inputEl);
 		});
 	}
 
@@ -1955,24 +1986,24 @@ function instance$7($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		if ('input' in $$props) $$invalidate(11, input = $$props.input);
-		if ('type' in $$props) $$invalidate(9, type = $$props.type);
-		if ('disabled' in $$props) $$invalidate(0, disabled = $$props.disabled);
+		if ('type' in $$props) $$invalidate(0, type = $$props.type);
+		if ('disabled' in $$props) $$invalidate(1, disabled = $$props.disabled);
 		if ('options' in $$props) $$invalidate(10, options = $$props.options);
-		if ('placeholder' in $$props) $$invalidate(1, placeholder = $$props.placeholder);
-		if ('store' in $$props) $$subscribe_store($$invalidate(2, store = $$props.store));
-		if ('styles' in $$props) $$invalidate(3, styles = $$props.styles);
-		if ('efx' in $$props) $$invalidate(4, efx = $$props.efx);
+		if ('placeholder' in $$props) $$invalidate(2, placeholder = $$props.placeholder);
+		if ('store' in $$props) $$subscribe_store($$invalidate(3, store = $$props.store));
+		if ('styles' in $$props) $$invalidate(4, styles = $$props.styles);
+		if ('efx' in $$props) $$invalidate(5, efx = $$props.efx);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*input, type*/ 2560) {
-			$$invalidate(9, type = isObject(input) && typeof input.type === 'string'
+		if ($$self.$$.dirty & /*input, type*/ 2049) {
+			$$invalidate(0, type = isObject(input) && typeof input.type === 'string'
 			? input.type
 			: typeof type === 'string' ? type : void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, disabled*/ 2049) {
-			$$invalidate(0, disabled = isObject(input) && typeof input.disabled === 'boolean'
+		if ($$self.$$.dirty & /*input, disabled*/ 2050) {
+			$$invalidate(1, disabled = isObject(input) && typeof input.disabled === 'boolean'
 			? input.disabled
 			: typeof disabled === 'boolean' ? disabled : false);
 		}
@@ -1997,28 +2028,28 @@ function instance$7($$self, $$props, $$invalidate) {
 			}
 		}
 
-		if ($$self.$$.dirty & /*input, placeholder*/ 2050) {
-			$$invalidate(1, placeholder = isObject(input) && typeof input.placeholder === 'string'
+		if ($$self.$$.dirty & /*input, placeholder*/ 2052) {
+			$$invalidate(2, placeholder = isObject(input) && typeof input.placeholder === 'string'
 			? localize(input.placeholder)
 			: typeof placeholder === 'string'
 				? localize(placeholder)
 				: void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, store*/ 2052) {
-			$$subscribe_store($$invalidate(2, store = isObject(input) && isWritableStore(input.store)
+		if ($$self.$$.dirty & /*input, store*/ 2056) {
+			$$subscribe_store($$invalidate(3, store = isObject(input) && isWritableStore(input.store)
 			? input.store
 			: isWritableStore(store) ? store : writable(void 0)));
 		}
 
-		if ($$self.$$.dirty & /*input, styles*/ 2056) {
-			$$invalidate(3, styles = isObject(input) && isObject(input.styles)
+		if ($$self.$$.dirty & /*input, styles*/ 2064) {
+			$$invalidate(4, styles = isObject(input) && isObject(input.styles)
 			? input.styles
 			: typeof styles === 'object' ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*input, efx*/ 2064) {
-			$$invalidate(4, efx = isObject(input) && typeof input.efx === 'function'
+		if ($$self.$$.dirty & /*input, efx*/ 2080) {
+			$$invalidate(5, efx = isObject(input) && typeof input.efx === 'function'
 			? input.efx
 			: typeof efx === 'function'
 				? efx
@@ -2029,6 +2060,7 @@ function instance$7($$self, $$props, $$invalidate) {
 	};
 
 	return [
+		type,
 		disabled,
 		placeholder,
 		store,
@@ -2038,7 +2070,6 @@ function instance$7($$self, $$props, $$invalidate) {
 		$store,
 		onFocusIn,
 		onKeyDown,
-		type,
 		options,
 		input,
 		input_1_binding,
@@ -2058,13 +2089,13 @@ class TJSInput extends SvelteComponent {
 			safe_not_equal,
 			{
 				input: 11,
-				type: 9,
-				disabled: 0,
+				type: 0,
+				disabled: 1,
 				options: 10,
-				placeholder: 1,
-				store: 2,
-				styles: 3,
-				efx: 4
+				placeholder: 2,
+				store: 3,
+				styles: 4,
+				efx: 5
 			},
 			add_css$7
 		);
@@ -2079,14 +2110,14 @@ function add_css$6(target) {
 
 function get_each_context$4(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[8] = list[i];
+	child_ctx[10] = list[i];
 	return child_ctx;
 }
 
 // (67:6) {#each options as option}
 function create_each_block$4(ctx) {
 	let option;
-	let t0_value = /*option*/ ctx[8].label + "";
+	let t0_value = /*option*/ ctx[10].label + "";
 	let t0;
 	let t1;
 	let option_value_value;
@@ -2097,7 +2128,7 @@ function create_each_block$4(ctx) {
 			t0 = text(t0_value);
 			t1 = space();
 			attr(option, "class", "tjs-select-option svelte-166po96");
-			option.__value = option_value_value = /*option*/ ctx[8].value;
+			option.__value = option_value_value = /*option*/ ctx[10].value;
 			option.value = option.__value;
 		},
 		m(target, anchor) {
@@ -2106,9 +2137,9 @@ function create_each_block$4(ctx) {
 			append(option, t1);
 		},
 		p(ctx, dirty) {
-			if (dirty & /*options*/ 1 && t0_value !== (t0_value = /*option*/ ctx[8].label + "")) set_data(t0, t0_value);
+			if (dirty & /*options*/ 1 && t0_value !== (t0_value = /*option*/ ctx[10].label + "")) set_data(t0, t0_value);
 
-			if (dirty & /*options*/ 1 && option_value_value !== (option_value_value = /*option*/ ctx[8].value)) {
+			if (dirty & /*options*/ 1 && option_value_value !== (option_value_value = /*option*/ ctx[10].value)) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
@@ -2142,7 +2173,7 @@ function create_fragment$7(ctx) {
 			}
 
 			attr(select_1, "class", "tjs-select svelte-166po96");
-			if (/*$store*/ ctx[4] === void 0) add_render_callback(() => /*select_1_change_handler*/ ctx[7].call(select_1));
+			if (/*$store*/ ctx[4] === void 0) add_render_callback(() => /*select_1_change_handler*/ ctx[9].call(select_1));
 			attr(div, "class", "tjs-select-container svelte-166po96");
 		},
 		m(target, anchor) {
@@ -2157,8 +2188,10 @@ function create_fragment$7(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(select_1, "change", /*select_1_change_handler*/ ctx[7]),
+					listen(select_1, "change", /*change_handler_1*/ ctx[8]),
+					listen(select_1, "change", /*select_1_change_handler*/ ctx[9]),
 					action_destroyer(autoBlur.call(null, select_1)),
+					listen(div, "change", /*change_handler*/ ctx[7]),
 					action_destroyer(/*efx*/ ctx[3].call(null, div)),
 					action_destroyer(applyStyles_action = applyStyles.call(null, div, /*styles*/ ctx[2]))
 				];
@@ -2229,6 +2262,14 @@ function instance$6($$self, $$props, $$invalidate) {
 		}
 	});
 
+	function change_handler(event) {
+		bubble.call(this, $$self, event);
+	}
+
+	function change_handler_1(event) {
+		bubble.call(this, $$self, event);
+	}
+
 	function select_1_change_handler() {
 		$store = select_value(this);
 		store.set($store);
@@ -2280,7 +2321,18 @@ function instance$6($$self, $$props, $$invalidate) {
 		}
 	};
 
-	return [options, store, styles, efx, $store, selected, select, select_1_change_handler];
+	return [
+		options,
+		store,
+		styles,
+		efx,
+		$store,
+		selected,
+		select,
+		change_handler,
+		change_handler_1,
+		select_1_change_handler
+	];
 }
 
 class TJSSelect extends SvelteComponent {
