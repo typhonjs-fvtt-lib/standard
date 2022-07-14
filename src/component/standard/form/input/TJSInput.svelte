@@ -162,4 +162,8 @@
 
         transform: translateZ(1px);
     }
+
+    input::placeholder {
+        color: var(--tjs-input-placeholder-color, inherit);
+    }
 </style>
