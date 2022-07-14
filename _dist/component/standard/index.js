@@ -4595,25 +4595,25 @@ const get_after_slot_context$1 = ctx => ({});
 
 function get_each_context$1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[16] = list[i];
+	child_ctx[17] = list[i];
 	return child_ctx;
 }
 
 const get_before_slot_changes$1 = dirty => ({});
 const get_before_slot_context$1 = ctx => ({});
 
-// (137:6) {#each items as item}
+// (152:6) {#each items as item}
 function create_each_block$1(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t_value = localize(/*item*/ ctx[16].label) + "";
+	let t_value = localize(/*item*/ ctx[17].label) + "";
 	let t;
 	let mounted;
 	let dispose;
 
 	function click_handler() {
-		return /*click_handler*/ ctx[12](/*item*/ ctx[16]);
+		return /*click_handler*/ ctx[13](/*item*/ ctx[17]);
 	}
 
 	return {
@@ -4621,7 +4621,7 @@ function create_each_block$1(ctx) {
 			li = element("li");
 			i = element("i");
 			t = text(t_value);
-			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[16].icon) + " svelte-argoi9"));
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[17].icon) + " svelte-argoi9"));
 			attr(li, "class", "tjs-menu-item svelte-argoi9");
 		},
 		m(target, anchor) {
@@ -4637,11 +4637,11 @@ function create_each_block$1(ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*items*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[16].icon) + " svelte-argoi9"))) {
+			if (dirty & /*items*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[17].icon) + " svelte-argoi9"))) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 1 && t_value !== (t_value = localize(/*item*/ ctx[16].label) + "")) set_data(t, t_value);
+			if (dirty & /*items*/ 1 && t_value !== (t_value = localize(/*item*/ ctx[17].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -4661,8 +4661,8 @@ function create_fragment$1(ctx) {
 	let current;
 	let mounted;
 	let dispose;
-	const before_slot_template = /*#slots*/ ctx[11].before;
-	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[10], get_before_slot_context$1);
+	const before_slot_template = /*#slots*/ ctx[12].before;
+	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[11], get_before_slot_context$1);
 	let each_value = /*items*/ ctx[0];
 	let each_blocks = [];
 
@@ -4670,8 +4670,8 @@ function create_fragment$1(ctx) {
 		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
 	}
 
-	const after_slot_template = /*#slots*/ ctx[11].after;
-	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[10], get_after_slot_context$1);
+	const after_slot_template = /*#slots*/ ctx[12].after;
+	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[11], get_after_slot_context$1);
 
 	return {
 		c() {
@@ -4711,11 +4711,12 @@ function create_fragment$1(ctx) {
 				after_slot.m(ol, null);
 			}
 
-			/*nav_binding*/ ctx[13](nav);
+			/*nav_binding*/ ctx[14](nav);
 			current = true;
 
 			if (!mounted) {
 				dispose = [
+					listen(window, "blur", /*onWindowBlur*/ ctx[6]),
 					listen(document.body, "pointerdown", /*onClose*/ ctx[5]),
 					listen(document.body, "wheel", /*onClose*/ ctx[5]),
 					action_destroyer(/*efx*/ ctx[1].call(null, nav)),
@@ -4728,15 +4729,15 @@ function create_fragment$1(ctx) {
 		},
 		p(ctx, [dirty]) {
 			if (before_slot) {
-				if (before_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+				if (before_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
 					update_slot_base(
 						before_slot,
 						before_slot_template,
 						ctx,
-						/*$$scope*/ ctx[10],
+						/*$$scope*/ ctx[11],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
-						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[10], dirty, get_before_slot_changes$1),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
+						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[11], dirty, get_before_slot_changes$1),
 						get_before_slot_context$1
 					);
 				}
@@ -4766,15 +4767,15 @@ function create_fragment$1(ctx) {
 			}
 
 			if (after_slot) {
-				if (after_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+				if (after_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
 					update_slot_base(
 						after_slot,
 						after_slot_template,
 						ctx,
-						/*$$scope*/ ctx[10],
+						/*$$scope*/ ctx[11],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
-						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[10], dirty, get_after_slot_changes$1),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
+						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[11], dirty, get_after_slot_changes$1),
 						get_after_slot_context$1
 					);
 				}
@@ -4805,7 +4806,7 @@ function create_fragment$1(ctx) {
 			if (before_slot) before_slot.d(detaching);
 			destroy_each(each_blocks, detaching);
 			if (after_slot) after_slot.d(detaching);
-			/*nav_binding*/ ctx[13](null);
+			/*nav_binding*/ ctx[14](null);
 			if (detaching && nav_transition) nav_transition.end();
 			mounted = false;
 			run_all(dispose);
@@ -4909,6 +4910,16 @@ function instance$1($$self, $$props, $$invalidate) {
 		}
 	}
 
+	/**
+ * Closes menu when browser window is blurred.
+ */
+	function onWindowBlur() {
+		if (!closed) {
+			closed = true;
+			menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+		}
+	}
+
 	const click_handler = item => onClick(item.onclick);
 
 	function nav_binding($$value) {
@@ -4919,17 +4930,17 @@ function instance$1($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
-		if ('menu' in $$props) $$invalidate(9, menu = $$props.menu);
+		if ('menu' in $$props) $$invalidate(10, menu = $$props.menu);
 		if ('items' in $$props) $$invalidate(0, items = $$props.items);
-		if ('offset' in $$props) $$invalidate(6, offset = $$props.offset);
-		if ('styles' in $$props) $$invalidate(7, styles = $$props.styles);
+		if ('offset' in $$props) $$invalidate(7, offset = $$props.offset);
+		if ('styles' in $$props) $$invalidate(8, styles = $$props.styles);
 		if ('efx' in $$props) $$invalidate(1, efx = $$props.efx);
-		if ('transitionOptions' in $$props) $$invalidate(8, transitionOptions = $$props.transitionOptions);
-		if ('$$scope' in $$props) $$invalidate(10, $$scope = $$props.$$scope);
+		if ('transitionOptions' in $$props) $$invalidate(9, transitionOptions = $$props.transitionOptions);
+		if ('$$scope' in $$props) $$invalidate(11, $$scope = $$props.$$scope);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*menu, items*/ 513) {
+		if ($$self.$$.dirty & /*menu, items*/ 1025) {
 			{
 				const allItems = typeof menu === 'object' && Array.isArray(menu.items)
 				? menu.items
@@ -4944,19 +4955,19 @@ function instance$1($$self, $$props, $$invalidate) {
 			}
 		}
 
-		if ($$self.$$.dirty & /*menu, offset*/ 576) {
-			$$invalidate(6, offset = typeof menu === 'object' && typeof menu.offset === 'object'
+		if ($$self.$$.dirty & /*menu, offset*/ 1152) {
+			$$invalidate(7, offset = typeof menu === 'object' && typeof menu.offset === 'object'
 			? menu.offset
 			: typeof offset === 'object' ? offset : s_DEFAULT_OFFSET);
 		}
 
-		if ($$self.$$.dirty & /*menu, styles*/ 640) {
-			$$invalidate(7, styles = typeof menu === 'object' && typeof menu.styles === 'object'
+		if ($$self.$$.dirty & /*menu, styles*/ 1280) {
+			$$invalidate(8, styles = typeof menu === 'object' && typeof menu.styles === 'object'
 			? menu.styles
 			: typeof styles === 'object' ? styles : void 0);
 		}
 
-		if ($$self.$$.dirty & /*menu, efx*/ 514) {
+		if ($$self.$$.dirty & /*menu, efx*/ 1026) {
 			$$invalidate(1, efx = typeof menu === 'object' && typeof menu.efx === 'function'
 			? menu.efx
 			: typeof efx === 'function'
@@ -4966,8 +4977,8 @@ function instance$1($$self, $$props, $$invalidate) {
 					});
 		}
 
-		if ($$self.$$.dirty & /*menu, transitionOptions*/ 768) {
-			$$invalidate(8, transitionOptions = typeof menu === 'object' && typeof menu.transitionOptions === 'object'
+		if ($$self.$$.dirty & /*menu, transitionOptions*/ 1536) {
+			$$invalidate(9, transitionOptions = typeof menu === 'object' && typeof menu.transitionOptions === 'object'
 			? menu.transitionOptions
 			: typeof transitionOptions === 'object'
 				? transitionOptions
@@ -4982,6 +4993,7 @@ function instance$1($$self, $$props, $$invalidate) {
 		animate,
 		onClick,
 		onClose,
+		onWindowBlur,
 		offset,
 		styles,
 		transitionOptions,
@@ -5004,12 +5016,12 @@ class TJSMenu extends SvelteComponent {
 			create_fragment$1,
 			safe_not_equal,
 			{
-				menu: 9,
+				menu: 10,
 				items: 0,
-				offset: 6,
-				styles: 7,
+				offset: 7,
+				styles: 8,
 				efx: 1,
-				transitionOptions: 8
+				transitionOptions: 9
 			},
 			add_css$1
 		);
@@ -5029,25 +5041,25 @@ const get_after_slot_context = ctx => ({});
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[17] = list[i];
+	child_ctx[19] = list[i];
 	return child_ctx;
 }
 
 const get_before_slot_changes = dirty => ({});
 const get_before_slot_context = ctx => ({});
 
-// (102:8) {#each items as item}
+// (121:8) {#each items as item}
 function create_each_block(ctx) {
 	let li;
 	let i;
 	let i_class_value;
-	let t_value = localize(/*item*/ ctx[17].label) + "";
+	let t_value = localize(/*item*/ ctx[19].label) + "";
 	let t;
 	let mounted;
 	let dispose;
 
 	function click_handler() {
-		return /*click_handler*/ ctx[12](/*item*/ ctx[17]);
+		return /*click_handler*/ ctx[14](/*item*/ ctx[19]);
 	}
 
 	return {
@@ -5055,7 +5067,7 @@ function create_each_block(ctx) {
 			li = element("li");
 			i = element("i");
 			t = text(t_value);
-			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[17].icon) + " svelte-ugn418"));
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*item*/ ctx[19].icon) + " svelte-ugn418"));
 			attr(li, "class", "tjs-context-item svelte-ugn418");
 		},
 		m(target, anchor) {
@@ -5071,11 +5083,11 @@ function create_each_block(ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*items*/ 2 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[17].icon) + " svelte-ugn418"))) {
+			if (dirty & /*items*/ 2 && i_class_value !== (i_class_value = "" + (null_to_empty(/*item*/ ctx[19].icon) + " svelte-ugn418"))) {
 				attr(i, "class", i_class_value);
 			}
 
-			if (dirty & /*items*/ 2 && t_value !== (t_value = localize(/*item*/ ctx[17].label) + "")) set_data(t, t_value);
+			if (dirty & /*items*/ 2 && t_value !== (t_value = localize(/*item*/ ctx[19].label) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
 			if (detaching) detach(li);
@@ -5095,8 +5107,8 @@ function create_fragment(ctx) {
 	let current;
 	let mounted;
 	let dispose;
-	const before_slot_template = /*#slots*/ ctx[11].before;
-	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[10], get_before_slot_context);
+	const before_slot_template = /*#slots*/ ctx[12].before;
+	const before_slot = create_slot(before_slot_template, ctx, /*$$scope*/ ctx[11], get_before_slot_context);
 	let each_value = /*items*/ ctx[1];
 	let each_blocks = [];
 
@@ -5104,8 +5116,8 @@ function create_fragment(ctx) {
 		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
 	}
 
-	const after_slot_template = /*#slots*/ ctx[11].after;
-	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[10], get_after_slot_context);
+	const after_slot_template = /*#slots*/ ctx[12].after;
+	const after_slot = create_slot(after_slot_template, ctx, /*$$scope*/ ctx[11], get_after_slot_context);
 
 	return {
 		c() {
@@ -5147,12 +5159,14 @@ function create_fragment(ctx) {
 				after_slot.m(ol, null);
 			}
 
-			/*nav_binding*/ ctx[13](nav);
+			/*nav_binding*/ ctx[15](nav);
 			current = true;
 
 			if (!mounted) {
 				dispose = [
+					listen(window, "blur", /*onWindowBlur*/ ctx[7]),
 					listen(document_1.body, "pointerdown", /*onClose*/ ctx[6]),
+					listen(document_1.body, "wheel", /*wheel_handler*/ ctx[13]),
 					listen(nav, "click", stop_propagation(prevent_default(click_handler_1)))
 				];
 
@@ -5161,15 +5175,15 @@ function create_fragment(ctx) {
 		},
 		p(ctx, [dirty]) {
 			if (before_slot) {
-				if (before_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+				if (before_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
 					update_slot_base(
 						before_slot,
 						before_slot_template,
 						ctx,
-						/*$$scope*/ ctx[10],
+						/*$$scope*/ ctx[11],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
-						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[10], dirty, get_before_slot_changes),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
+						: get_slot_changes(before_slot_template, /*$$scope*/ ctx[11], dirty, get_before_slot_changes),
 						get_before_slot_context
 					);
 				}
@@ -5199,15 +5213,15 @@ function create_fragment(ctx) {
 			}
 
 			if (after_slot) {
-				if (after_slot.p && (!current || dirty & /*$$scope*/ 1024)) {
+				if (after_slot.p && (!current || dirty & /*$$scope*/ 2048)) {
 					update_slot_base(
 						after_slot,
 						after_slot_template,
 						ctx,
-						/*$$scope*/ ctx[10],
+						/*$$scope*/ ctx[11],
 						!current
-						? get_all_dirty_from_scope(/*$$scope*/ ctx[10])
-						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[10], dirty, get_after_slot_changes),
+						? get_all_dirty_from_scope(/*$$scope*/ ctx[11])
+						: get_slot_changes(after_slot_template, /*$$scope*/ ctx[11], dirty, get_after_slot_changes),
 						get_after_slot_context
 					);
 				}
@@ -5246,7 +5260,7 @@ function create_fragment(ctx) {
 			if (before_slot) before_slot.d(detaching);
 			destroy_each(each_blocks, detaching);
 			if (after_slot) after_slot.d(detaching);
-			/*nav_binding*/ ctx[13](null);
+			/*nav_binding*/ ctx[15](null);
 			if (detaching && nav_transition) nav_transition.end();
 			mounted = false;
 			run_all(dispose);
@@ -5318,16 +5332,18 @@ function instance($$self, $$props, $$invalidate) {
  * Determines if a pointer pressed to the document body closes the context menu. If the click occurs outside the
  * context menu then fire the `close` event and run the outro transition then destroy the component.
  *
- * @param {PointerEvent}   event - Pointer event from document body click.
+ * @param {PointerEvent|MouseEvent}  event - Pointer or mouse event from document body click / scroll wheel.
+ *
+ * @param {boolean}                  [isWheel=false] - True when scroll wheel; do not perform 2nd early out test.
  */
-	async function onClose(event) {
+	function onClose(event, isWheel = false) {
 		// Early out if the pointer down is inside the menu element.
 		if (event.target === menuEl || menuEl.contains(event.target)) {
 			return;
 		}
 
 		// Early out if the event page X / Y is the same as this context menu.
-		if (Math.floor(event.pageX) === x && Math.floor(event.pageY) === y) {
+		if (!isWheel && Math.floor(event.pageX) === x && Math.floor(event.pageY) === y) {
 			return;
 		}
 
@@ -5338,6 +5354,18 @@ function instance($$self, $$props, $$invalidate) {
 		}
 	}
 
+	/**
+ * Closes context menu when browser window is blurred.
+ */
+	function onWindowBlur() {
+		if (!closed) {
+			dispatch('close');
+			closed = true;
+			outroAndDestroy(local);
+		}
+	}
+
+	const wheel_handler = event => onClose(event, true);
 	const click_handler = item => onClick(item.onclick);
 
 	function nav_binding($$value) {
@@ -5349,12 +5377,12 @@ function instance($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		if ('id' in $$props) $$invalidate(0, id = $$props.id);
-		if ('x' in $$props) $$invalidate(7, x = $$props.x);
-		if ('y' in $$props) $$invalidate(8, y = $$props.y);
+		if ('x' in $$props) $$invalidate(8, x = $$props.x);
+		if ('y' in $$props) $$invalidate(9, y = $$props.y);
 		if ('items' in $$props) $$invalidate(1, items = $$props.items);
 		if ('zIndex' in $$props) $$invalidate(2, zIndex = $$props.zIndex);
-		if ('transitionOptions' in $$props) $$invalidate(9, transitionOptions = $$props.transitionOptions);
-		if ('$$scope' in $$props) $$invalidate(10, $$scope = $$props.$$scope);
+		if ('transitionOptions' in $$props) $$invalidate(10, transitionOptions = $$props.transitionOptions);
+		if ('$$scope' in $$props) $$invalidate(11, $$scope = $$props.$$scope);
 	};
 
 	return [
@@ -5365,11 +5393,13 @@ function instance($$self, $$props, $$invalidate) {
 		animate,
 		onClick,
 		onClose,
+		onWindowBlur,
 		x,
 		y,
 		transitionOptions,
 		$$scope,
 		slots,
+		wheel_handler,
 		click_handler,
 		nav_binding
 	];
@@ -5387,11 +5417,11 @@ class TJSContextMenu extends SvelteComponent {
 			safe_not_equal,
 			{
 				id: 0,
-				x: 7,
-				y: 8,
+				x: 8,
+				y: 9,
 				items: 1,
 				zIndex: 2,
-				transitionOptions: 9
+				transitionOptions: 10
 			},
 			add_css
 		);

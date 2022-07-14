@@ -121,10 +121,25 @@
          menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
       }
    }
+
+   /**
+    * Closes menu when browser window is blurred.
+    */
+   function onWindowBlur()
+   {
+      if (!closed)
+      {
+         closed = true;
+         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+      }
+   }
 </script>
 
-<!-- bind to `document.body` to receive pointer down events to close the context menu. -->
+<!-- bind to `document.body` to receive pointer down & scroll wheel events to close the menu. -->
 <svelte:body on:pointerdown={onClose} on:wheel={onClose}/>
+
+<!-- bind to 'window' to close menu when browser window is blurred. -->
+<svelte:window on:blur={onWindowBlur}/>
 
 <nav class=tjs-menu
      bind:this={menuEl}

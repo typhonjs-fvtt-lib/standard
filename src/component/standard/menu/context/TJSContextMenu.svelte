@@ -70,15 +70,17 @@
     * Determines if a pointer pressed to the document body closes the context menu. If the click occurs outside the
     * context menu then fire the `close` event and run the outro transition then destroy the component.
     *
-    * @param {PointerEvent}   event - Pointer event from document body click.
+    * @param {PointerEvent|MouseEvent}  event - Pointer or mouse event from document body click / scroll wheel.
+    *
+    * @param {boolean}                  [isWheel=false] - True when scroll wheel; do not perform 2nd early out test.
     */
-   async function onClose(event)
+   function onClose(event, isWheel = false)
    {
       // Early out if the pointer down is inside the menu element.
       if (event.target === menuEl || menuEl.contains(event.target)) { return; }
 
       // Early out if the event page X / Y is the same as this context menu.
-      if (Math.floor(event.pageX) === x && Math.floor(event.pageY) === y) { return; }
+      if (!isWheel && Math.floor(event.pageX) === x && Math.floor(event.pageY) === y) { return; }
 
       if (!closed)
       {
@@ -87,9 +89,26 @@
          outroAndDestroy(local);
       }
    }
+
+   /**
+    * Closes context menu when browser window is blurred.
+    */
+   function onWindowBlur()
+   {
+      if (!closed)
+      {
+         dispatch('close');
+         closed = true;
+         outroAndDestroy(local);
+      }
+   }
 </script>
-<!-- bind to `document.body` to receive pointer down events to close the context menu. -->
-<svelte:body on:pointerdown={onClose}/>
+
+<!-- bind to `document.body` to receive pointer down & scroll wheel events to close the context menu. -->
+<svelte:body on:pointerdown={onClose} on:wheel={(event) => onClose(event, true)}/>
+
+<!-- bind to 'window' to close context menu when browser window is blurred. -->
+<svelte:window on:blur={onWindowBlur}/>
 
 <nav id={id}
      class=tjs-context-menu
