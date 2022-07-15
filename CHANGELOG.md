@@ -1,4 +1,11 @@
 # Changelog
+## Release 0.0.3 (minor)
+- Hardened TJSContextMenu / TJSMenu to close on scroll wheel events and clicks outside browser window.
+
+- Added CSS variable for TJSInput / placeholder. 
+
+- Finetuned a few other components.
+
 ## Release 0.0.2
 - Updated components
   - TJSIconFolder / TJSSvgFolder
