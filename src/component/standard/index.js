@@ -5,6 +5,7 @@ import {
 export *             from './button';
 export *             from './folder';
 export *             from './form';
+export *             from './label';
 export *             from './layers';
 export *             from './menu';
 

@@ -41,5 +41,8 @@ declare class TJSSvgFolder extends SvelteComponent {
 declare class TJSToggleIconButton extends SvelteComponent {
     constructor(options: any);
 }
+declare class TJSToggleLabel extends SvelteComponent {
+    constructor(options: any);
+}
 
-export { ControlsData, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton };
+export { ControlsData, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton, TJSToggleLabel };
