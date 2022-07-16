@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.4 (minor)
+- Fix `tjs-input-cursor` CSS variable to be `inherit`
+
 ## Release 0.0.3 (minor)
 - Hardened TJSContextMenu / TJSMenu to close on scroll wheel events and clicks outside browser window.
 
