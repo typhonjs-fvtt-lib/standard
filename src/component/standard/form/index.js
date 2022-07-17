@@ -1,2 +1,2 @@
-export { default as TJSInput }   from './input/TJSInput.svelte';
+export *                         from './input';
 export { default as TJSSelect }  from './select/TJSSelect.svelte';

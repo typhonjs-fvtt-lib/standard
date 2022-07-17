@@ -26,6 +26,9 @@ declare class TJSIconFolder extends SvelteComponent {
 declare class TJSInput extends SvelteComponent {
     constructor(options: any);
 }
+declare class TJSInputText extends SvelteComponent {
+    constructor(options: any);
+}
 declare class TJSMenu extends SvelteComponent {
     constructor(options: any);
 }
@@ -45,4 +48,4 @@ declare class TJSToggleLabel extends SvelteComponent {
     constructor(options: any);
 }
 
-export { ControlsData, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton, TJSToggleLabel };
+export { ControlsData, TJSContextMenu, TJSIconButton, TJSIconFolder, TJSInput, TJSInputText, TJSMenu, TJSPositionControlLayer, TJSSelect, TJSSvgFolder, TJSToggleIconButton, TJSToggleLabel };

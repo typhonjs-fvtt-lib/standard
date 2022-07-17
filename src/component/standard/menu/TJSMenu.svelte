@@ -1,37 +1,89 @@
 <script>
-   import { quintOut }           from 'svelte/easing';
+   /**
+    * --tjs-menu-background - #23221d
+    * --tjs-menu-border-color - #000
+    * --tjs-menu-box-shadow-color - #000
+    * --tjs-menu-color - #EEE
+    * --tjs-menu-hr-border-top-color - #555
+    * --tjs-menu-hr-border-bottom-color - #444
+    * --tjs-menu-item-hover-color - #FFF
+    * --tjs-menu-item-hover-text-shadow-color - red
+    * --tjs-menu-z-index - 100
+    */
 
-   import { localize }           from '@typhonjs-svelte/lib/helper';
-   import { slideFade }          from '@typhonjs-svelte/lib/transition';
-   import { getStackingContext } from '@typhonjs-svelte/lib/util';
+   import { quintOut }     from 'svelte/easing';
+
+   import { localize }     from '@typhonjs-svelte/lib/helper';
+   import { slideFade }    from '@typhonjs-svelte/lib/transition';
+   import {
+      getStackingContext,
+      isIterable,
+      isObject,
+      isSvelteComponent }  from '@typhonjs-svelte/lib/util';
 
    const s_DEFAULT_OFFSET = { x: 0, y: 0 };
 
-   export let menu;
-   export let items;
-   export let offset;
-   export let styles;
-   export let efx;
-   export let transitionOptions;
+   export let menu = void 0;
+   export let items = void 0;
+   export let offset = void 0;
+   export let styles = void 0;
+   export let efx = void 0;
+   export let transitionOptions = void 0;
+
+   let allItems;
 
    $: {
-      const allItems = typeof menu === 'object' && Array.isArray(menu.items) ? menu.items :
-       Array.isArray(items) ? items : [];
+      const tempList = isObject(menu) && isIterable(menu.items) ? menu.items :
+       isIterable(items) ? items : [];
 
-      // Filter items for any condition that prevents display.
-      items = allItems.filter((item) => item.condition === void 0 ? true :
-       typeof item.condition === 'function' ? item.condition() : item.condition);
+      const tempItems = [];
+
+      let cntr = -1;
+
+      for (const item of tempList)
+      {
+         cntr++;
+         if (!isObject(item)) { throw new TypeError(`TJSMenu error: 'item[${cntr}]' is not an object.`); }
+
+         // Filter items for any condition that prevents display.
+         if (typeof item.condition === 'function' && !item.condition()) { continue; }
+         if (typeof item.condition === 'boolean' && !item.condition) { continue; }
+
+         let type;
+
+         if (isSvelteComponent(item.class)) { type = 'class'; }
+         else if (typeof item.icon === 'string') { type = 'icon'; }
+         else if (typeof item.image === 'string') { type = 'image'; }
+         else if (typeof item.separator === 'string')
+         {
+            if (item.separator !== 'hr')
+            {
+               throw new Error (
+                `TJSMenu error: 'item[${cntr}]' has unknown separator type; only 'hr' is currently supported.`)
+            }
+
+            type = 'separator-hr';
+         }
+
+         if (type === void 0) { throw new TypeError(`TJSMenu error: Unknown type for 'item[${cntr}]'.`); }
+
+         tempItems.push({ ...item, '#type': type });
+      }
+
+      allItems = tempItems;
    }
 
-   $: offset = typeof menu === 'object' && typeof menu.offset === 'object' ? menu.offset :
-    typeof offset === 'object' ? offset : s_DEFAULT_OFFSET;
-   $: styles = typeof menu === 'object' && typeof menu.styles === 'object' ? menu.styles :
-    typeof styles === 'object' ? styles : void 0;
-   $: efx = typeof menu === 'object' && typeof menu.efx === 'function' ? menu.efx :
+   $: offset = isObject(menu) && isObject(menu.offset) ? menu.offset :
+    isObject(offset) ? offset : s_DEFAULT_OFFSET;
+
+   $: styles = isObject(menu) && isObject(menu.styles) ? menu.styles :
+    isObject(styles) ? styles : void 0;
+
+   $: efx = isObject(menu) && typeof menu.efx === 'function' ? menu.efx :
     typeof efx === 'function' ? efx : () => {};
-   $: transitionOptions =
-    typeof menu === 'object' && typeof menu.transitionOptions === 'object' ? menu.transitionOptions :
-     typeof transitionOptions === 'object' ? transitionOptions : { duration: 200, easing: quintOut };
+
+   $: transitionOptions = isObject(menu) && isObject(menu.transitionOptions) ? menu.transitionOptions :
+     isObject(transitionOptions) ? transitionOptions : { duration: 200, easing: quintOut };
 
    // Bound to the nav element / menu.
    let menuEl;
@@ -88,17 +140,18 @@
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
     * transition and destroys the component.
     *
-    * @param {function} callback - Function to invoke on click.
+    * @param {object} [item] - Item object to find on click callback function.
     */
-   function onClick(callback)
+   function onClick(item)
    {
-      if (typeof callback === 'function')
-      { callback(); }
+      const callback = item?.onClick ?? item?.onclick;
+
+      if (typeof callback === 'function') { callback(item); }
 
       if (!closed)
       {
-         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
          closed = true;
+         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
       }
    }
 
@@ -147,15 +200,30 @@
      use:efx
      on:click|preventDefault|stopPropagation={() => null}
      on:wheel|preventDefault|stopPropagation={() => null}>
-   <ol class=tjs-menu-items>
-      <slot name="before"/>
-      {#each items as item}
-         <li class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item.onclick)}>
-            <i class={item.icon}></i>{localize(item.label)}
-         </li>
+   <section class=tjs-menu-items>
+      <div on:click|preventDefault|stopPropagation={onClick}>
+         <slot />
+      </div>
+      <slot name=before />
+      {#each allItems as item}
+         {#if item['#type'] === 'class'}
+            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={onClick}>
+               <svelte:component this={item.class} />
+            </div>
+         {:else if item['#type'] === 'icon'}
+            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)}>
+               <i class={item.icon}></i>{localize(item.label)}
+            </div>
+         {:else if item['#type'] === 'image'}
+            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)}>
+               <img src={item.image} alt={item.alt}>{localize(item.label)}
+            </div>
+         {:else if item['#type'] === 'separator-hr'}
+            <hr>
+         {/if}
       {/each}
-      <slot name="after"/>
-   </ol>
+      <slot name=after />
+   </section>
 </nav>
 
 <style>
@@ -164,36 +232,50 @@
       width: max-content;
       height: max-content;
 
-      /* TODO: Finalize CSS variables; these are not final! */
-      box-shadow: 0 0 2px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));
-      background: var(--typhonjs-color-content-window, #23221d);
-      border: 1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));
+      background: var(--tjs-menu-background, #23221d);
+      border: 1px solid var(--tjs-menu-border-color, #000);
       border-radius: 5px;
-      color: var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));
+      box-shadow: 0 0 2px var(--tjs-menu-box-shadow-color, #000);
+      color: var(--tjs-menu-color, #EEE);
 
       text-align: start;
 
-      z-index: 1; /* TODO: make configurable */
+      z-index: var(--tjs-menu-z-index, 100);
    }
 
-   .tjs-menu ol.tjs-menu-items {
-      list-style: none;
+   .tjs-menu section.tjs-menu-items {
       margin: 0;
       padding: 0;
    }
 
-   .tjs-menu li.tjs-menu-item {
+   .tjs-menu div.tjs-menu-item {
+      display: flex;
+      align-items: center;
       padding: 0 0.5em;
       line-height: 2em;
    }
 
-   .tjs-menu li.tjs-menu-item:hover {
-      color: var(--typhonjs-color-text-primary, #FFF);
-      text-shadow: 0 0 4px var(--color-text-hyperlink, var(--typhonjs-color-accent-tertiary, red));
+   .tjs-menu div.tjs-menu-item:hover {
+      color: var(--tjs-menu-item-hover-color, #FFF);
+      text-shadow: 0 0 4px var(--tjs-menu-item-hover-text-shadow-color, red);
    }
 
-   .tjs-menu li.tjs-menu-item > i {
+   .tjs-menu section.tjs-menu-items hr {
+      margin-block-start: 0;
+      margin-block-end: 0;
+      margin: 0 0.15em;
+      border-top: 1px solid var(--tjs-menu-hr-border-top-color, #555);
+      border-bottom: 1px solid var(--tjs-menu-hr-border-bottom-color, #444);
+   }
+
+   .tjs-menu div.tjs-menu-item i {
       width: 1em;
-      margin-right: 5px;
+      margin-right: 0.25em;
+   }
+
+   .tjs-menu div.tjs-menu-item img {
+      width: 1em;
+      height: 1em;
+      margin-right: 0.25em;
    }
 </style>

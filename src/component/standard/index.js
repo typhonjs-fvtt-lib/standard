@@ -39,9 +39,19 @@ cssVariables.set({
       '--tjs-input-background': 'background' in props ? props.background : 'rgba(0, 0, 0, 0.05)',
       '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--color-border-light-tertiary)',
       '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '3px',
-      '--tjs-input-cursor': 'inherit',
       '--tjs-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
       '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
       '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)'
    });
 }
+
+cssVariables.set({
+   '--tjs-label-transition': 'background 200ms linear'
+});
+
+cssVariables.set({
+   '--tjs-menu-border-color': 'var(--color-border-dark, #000)',
+   '--tjs-menu-box-shadow-color': 'var(--color-shadow-dark, #000)',
+   '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)',
+   '--tjs-menu-item-hover-text-shadow-color': 'var(--color-text-hyperlink, red)',
+});
