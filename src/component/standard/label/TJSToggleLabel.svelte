@@ -1,6 +1,8 @@
 <script>
    /**
     * --tjs-label-background
+    * --tjs-label-background-hover
+    * --tjs-label-background-selected
     * --tjs-label-border-radius
     * --tjs-label-font-size - inherit
     * --tjs-label-font-weight - inherit
@@ -8,8 +10,6 @@
     * --tjs-label-overflow - hidden
     * --tjs-label-padding - 0
     * --tjs-label-transition - global default: 'background 200ms linear'
-    * --tjs-label-background-hover
-    * --tjs-label-background-selected
     */
 
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
