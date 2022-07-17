@@ -1,8 +1,8 @@
 <script>
    /**
     * --tjs-menu-background - #23221d
-    * --tjs-menu-border-color - #000
-    * --tjs-menu-box-shadow-color - #000
+    * --tjs-menu-border - 1px solid #000
+    * --tjs-menu-box-shadow - 0 0 2px #000
     * --tjs-menu-color - #EEE
     * --tjs-menu-hr-border-top-color - #555
     * --tjs-menu-hr-border-bottom-color - #444
@@ -233,9 +233,9 @@
       height: max-content;
 
       background: var(--tjs-menu-background, #23221d);
-      border: 1px solid var(--tjs-menu-border-color, #000);
+      border: var(--tjs-menu-border, 1px solid #000);
       border-radius: var(--tjs-menu-border-radius, 5px);
-      box-shadow: 0 0 2px var(--tjs-menu-box-shadow-color, #000);
+      box-shadow: var(--tjs-menu-box-shadow, 0 0 2px #000);
       color: var(--tjs-menu-color, #EEE);
 
       text-align: start;

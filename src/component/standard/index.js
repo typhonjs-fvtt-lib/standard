@@ -50,8 +50,8 @@ cssVariables.set({
 });
 
 cssVariables.set({
-   '--tjs-menu-border-color': 'var(--color-border-dark, #000)',
-   '--tjs-menu-box-shadow-color': 'var(--color-shadow-dark, #000)',
+   '--tjs-menu-border': '1px solid var(--color-border-dark, #000)',
+   '--tjs-menu-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
    '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)',
    '--tjs-menu-item-hover-text-shadow-color': 'var(--color-text-hyperlink, red)',
 });
