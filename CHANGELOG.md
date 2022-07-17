@@ -1,4 +1,16 @@
 # Changelog
+## Release 0.0.5 (medium)
+- Added TJSToggleLabel component
+  - Acts like TJSToggleIconButton allowing a TJSMenu to be nested, but the trigger is a label
+  - several options too many to list.
+
+- TJSMenu updated
+  - Can now embed a content component w/ a slot. 
+  - before and after slots
+  - Items list can now have `image`, `separator: 'hr'` for a separator, `class` for a Svelte component.
+
+- Fixed issues w/ TJSInput; started separating support w/ TJSInputText.
+
 ## Release 0.0.4 (minor)
 - Fix `tjs-input-cursor` CSS variable to be `inherit`
 
