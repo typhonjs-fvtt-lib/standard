@@ -234,7 +234,7 @@
 
       background: var(--tjs-menu-background, #23221d);
       border: 1px solid var(--tjs-menu-border-color, #000);
-      border-radius: 5px;
+      border-radius: var(--tjs-menu-border-radius, 5px);
       box-shadow: 0 0 2px var(--tjs-menu-box-shadow-color, #000);
       color: var(--tjs-menu-color, #EEE);
 

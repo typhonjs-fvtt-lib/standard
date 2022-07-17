@@ -130,8 +130,8 @@
       position: relative;
 
       display: flex;
-      justify-content: center;
-      align-items: center;
+      justify-content: var(--tjs-label-justify-content, center);
+      align-items: var(--tjs-label-align-items, center);
 
       pointer-events: initial;
 
