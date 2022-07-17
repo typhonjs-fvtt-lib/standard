@@ -1,169 +1,38 @@
 <script>
    /**
-    * A generic input type has issues w/ 2-way binding w/ Svelte.
-    * https://github.com/sveltejs/svelte/issues/3921
+    * Provides a generic "input" component that creates the specific input component based on 'type'.
     *
-    * A "hack" is used to set the type on the input element: `{...{ type }}`
+    * You must provide the configuration solely through the `input` prop which is passed onto the actual implementation.
     *
-    * Only use this component for text inputs presently. More work to come.
-    *
-    * --tjs-input-border
-    * --tjs-input-border-radius
-    * --tjs-input-background
-    * --tjs-input-cursor
-    * --tjs-input-height
-    * --tjs-input-text-align
-    * --tjs-input-width
-    *
-    * --tjs-comp-input-border
-    * --tjs-comp-input-border-radius
-    * --tjs-comp-input-background
-    * --tjs-comp-input-cursor
-    * --tjs-comp-input-height
-    * --tjs-comp-input-text-align
-    * --tjs-comp-input-width
+    * If no `type` property is available in the input object `text` is assumed as the default.
     */
 
-   import { writable }          from 'svelte/store';
-
-   import {
-      applyStyles,
-      autoBlur }                from '@typhonjs-svelte/lib/action';
-   import { localize }          from '@typhonjs-svelte/lib/helper';
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
    import { isObject }          from '@typhonjs-svelte/lib/util';
 
+   import TJSInputText          from './TJSInputText.svelte';
+
    export let input = void 0;
-   export let type;
-   export let disabled;
-   export let options;
-   export let placeholder;
-   export let store;
-   export let styles;
-   export let efx;
 
-   const localOptions = {
-      blurOnEnterKey: true,
-      cancelOnEscKey: false,
-      clearOnEscKey: false
-   }
-
-   let inputEl;
-
-   $: type = isObject(input) && typeof input.type === 'string' ? input.type :
-    typeof type === 'string' ? type : void 0;
-
-   $: disabled = isObject(input) && typeof input.disabled === 'boolean' ? input.disabled :
-    typeof disabled === 'boolean' ? disabled : false;
+   let component;
 
    $: {
-      options = isObject(input) && isObject(input.options) ? input.options :
-       isObject(options) ? options : {};
+      const type = isObject(input) && typeof input.type === 'string' ? input.type : 'text';
 
-      if (typeof options?.blurOnEnterKey === 'boolean') { localOptions.blurOnEnterKey = options.blurOnEnterKey; }
-      if (typeof options?.cancelOnEscKey === 'boolean') { localOptions.cancelOnEscKey = options.cancelOnEscKey; }
-      if (typeof options?.clearOnEscKey === 'boolean') { localOptions.clearOnEscKey = options.clearOnEscKey; }
-   }
-
-   $: placeholder = isObject(input) && typeof input.placeholder === 'string' ? localize(input.placeholder) :
-    typeof placeholder === 'string' ? localize(placeholder) : void 0;
-
-   $: store = isObject(input) && isWritableStore(input.store) ? input.store :
-    isWritableStore(store) ? store : writable(void 0);
-
-   $: styles = isObject(input) && isObject(input.styles) ? input.styles :
-    typeof styles === 'object' ? styles : void 0;
-
-   $: efx = isObject(input) && typeof input.efx === 'function' ? input.efx :
-    typeof efx === 'function' ? efx : () => {};
-
-   let initialValue;
-
-   function onFocusIn(event)
-   {
-      initialValue = localOptions.cancelOnEscKey ? inputEl.value : void 0;
-   }
-
-   /**
-    * Blur input on enter key down.
-    *
-    * @param {KeyboardEvent} event -
-    */
-   function onKeyDown(event)
-   {
-      if (localOptions.blurOnEnterKey && event.key === 'Enter') { inputEl.blur(); return; }
-
-      if (event.key === 'Escape')
+      switch (type)
       {
-         if (localOptions.cancelOnEscKey && typeof initialValue === 'string')
-         {
-            store.set(initialValue);
-            initialValue = void 0;
-            inputEl.blur();
-         }
-         else if (localOptions.clearOnEscKey)
-         {
-            store.set('');
-            inputEl.blur();
-         }
+         case 'email':
+         case 'password':
+         case 'search':
+         case 'text':
+         case 'url':
+            component = TJSInputText;
+            break;
+
+         default:
+            throw new Error(
+             `'TJSInput currently only supports text input types: 'email', 'password', 'search', 'text', 'url'.`);
       }
    }
 </script>
 
-<div class=tjs-input-container use:efx use:applyStyles={styles}>
-    <input class=tjs-input
-           {...{ type }}
-           bind:this={inputEl}
-           bind:value={$store}
-           use:autoBlur
-           {placeholder}
-           {disabled}
-           on:focusin={onFocusIn}
-           on:keydown={onKeyDown}
-    />
-</div>
-
-<style>
-    .tjs-input-container {
-        pointer-events: none;
-        background: var(--tjs-comp-input-background, var(--tjs-input-background));
-        border-radius: var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));
-        display: block;
-        overflow: hidden;
-        height: var(--tjs-comp-input-height, var(--tjs-input-height));
-        width: var(--tjs-comp-input-width, var(--tjs-input-width));
-        transform-style: preserve-3d;
-    }
-
-    input {
-        pointer-events: initial;
-        display: inline-block;
-        position: relative;
-        overflow: hidden;
-
-        background: transparent;
-
-        border: var(--tjs-comp-input-border, var(--tjs-input-border));
-        border-radius: var(--tjs-comp-input-border-radius, var(--tjs-input-border-radius));
-
-        text-align: var(--tjs-comp-input-text-align, var(--tjs-input-text-align));
-
-        width: 100%;
-        height: 100%;
-
-        padding: var(--tjs-comp-input-padding, var(--tjs-input-padding));
-
-        color: inherit;
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
-
-        cursor: var(--tjs-comp-input-cursor, var(--tjs-input-cursor));
-
-        transform: translateZ(1px);
-    }
-
-    input::placeholder {
-        color: var(--tjs-input-placeholder-color, inherit);
-    }
-</style>
+<svelte:component this={component} {input} />
