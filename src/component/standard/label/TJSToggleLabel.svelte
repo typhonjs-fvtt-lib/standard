@@ -46,9 +46,9 @@
     typeof efx === 'function' ? efx : () => {};
 
    $: onClosePropagate = isObject(label) && typeof label.onClosePropagate === 'boolean' ? label.onClosePropagate :
-    typeof onClosePropagate === 'boolean' ? onClosePropagate : true;
+    typeof onClosePropagate === 'boolean' ? onClosePropagate : false
    $: onClickPropagate = isObject(label) && typeof label.onClickPropagate === 'boolean' ? label.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
+    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
    let selected = false;
 
@@ -62,6 +62,21 @@
       selected = !selected;
       if (store) { store.set(selected); }
 
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * In this case we can't set pointer-events: none for the div due to the slotted component, so process clicks on the
+    * div in respect to onClickPropagate.
+    *
+    * @param {MouseEvent} event -
+    */
+   function onClickDiv(event)
+   {
       if (!onClickPropagate)
       {
          event.preventDefault();
@@ -86,6 +101,7 @@
 </script>
 
 <div on:close on:click
+     on:click={onClickDiv}
      on:close={onClose}
      title={localize(titleCurrent)}
      use:applyStyles={styles}>
@@ -108,7 +124,6 @@
    div {
       display: block;
       position: relative;
-      pointer-events: none;
    }
 
    span {

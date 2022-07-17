@@ -38,9 +38,9 @@
     typeof efx === 'function' ? efx : () => {};
 
    $: onClosePropagate = typeof button === 'object' && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
-    typeof onClosePropagate === 'boolean' ? onClosePropagate : true;
+    typeof onClosePropagate === 'boolean' ? onClosePropagate : false;
    $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
+    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
    let selected = false;
 
