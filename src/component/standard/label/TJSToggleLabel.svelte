@@ -1,21 +1,27 @@
 <script>
    /**
     * --tjs-label-background
+    * --tjs-label-border-radius
+    * --tjs-label-font-size - inherit
+    * --tjs-label-font-weight - inherit
+    * --tjs-label-font-family - inherit
+    * --tjs-label-overflow - hidden
+    * --tjs-label-padding - 0
+    * --tjs-label-transition - global default: 'background 200ms linear'
     * --tjs-label-background-hover
     * --tjs-label-background-selected
-    * --tjs-label-border-radius
-    * --tjs-label-clip-path
-    * --tjs-label-clip-path-hover
-    * --tjs-label-clip-path-selected
-    * --tjs-label-diameter
-    * --tjs-label-transition
     */
+
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
-   import { isWritableStore } from '@typhonjs-svelte/lib/store';
    import { localize }        from '@typhonjs-svelte/lib/helper';
+   import { isWritableStore } from '@typhonjs-svelte/lib/store';
+   import {
+      isObject,
+      isSvelteComponent }     from '@typhonjs-svelte/lib/util';
 
    export let label;
    export let text;
+   export let comp;
    export let title;
    export let titleSelected;
    export let store;
@@ -24,22 +30,24 @@
    export let onClickPropagate;
    export let onClosePropagate;
 
-   $: text = typeof label === 'object' && typeof label.text === 'string' ? label.text :
+   $: text = isObject(label) && typeof label.text === 'string' ? label.text :
     typeof text === 'string' ? text : '';
-   $: title = typeof label === 'object' && typeof label.title === 'string' ? label.title :
+   $: comp = isObject(label) && isSvelteComponent(label.comp) ? label.comp :
+    isSvelteComponent(comp) ? comp : void 0;
+   $: title = isObject(label) && typeof label.title === 'string' ? label.title :
     typeof title === 'string' ? title : '';
-   $: titleSelected = typeof label === 'object' && typeof label.titleSelected === 'string' ? label.titleSelected :
+   $: titleSelected = isObject(label) && typeof label.titleSelected === 'string' ? label.titleSelected :
     typeof titleSelected === 'string' ? titleSelected : '';
-   $: store = typeof label === 'object' && isWritableStore(label.store) ? label.store : isWritableStore(store) ?
+   $: store = isObject(label) && isWritableStore(label.store) ? label.store : isWritableStore(store) ?
     store : void 0;
-   $: styles = typeof label === 'object' && typeof label.styles === 'object' ? label.styles :
+   $: styles = isObject(label) && typeof label.styles === 'object' ? label.styles :
     typeof styles === 'object' ? styles : void 0;
-   $: efx = typeof label === 'object' && typeof label.efx === 'function' ? label.efx :
+   $: efx = isObject(label) && typeof label.efx === 'function' ? label.efx :
     typeof efx === 'function' ? efx : () => {};
 
-   $: onClosePropagate = typeof label === 'object' && typeof label.onClosePropagate === 'boolean' ? label.onClosePropagate :
+   $: onClosePropagate = isObject(label) && typeof label.onClosePropagate === 'boolean' ? label.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : true;
-   $: onClickPropagate = typeof label === 'object' && typeof label.onClickPropagate === 'boolean' ? label.onClickPropagate :
+   $: onClickPropagate = isObject(label) && typeof label.onClickPropagate === 'boolean' ? label.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
 
    let selected = false;
@@ -81,8 +89,15 @@
      on:close={onClose}
      title={localize(titleCurrent)}
      use:applyStyles={styles}>
+   <slot name=outer />
    <span on:click={onClick} use:efx class:selected>
-      <slot name=left />{localize(text)}<slot name=right />
+      <slot name=left />
+      {#if comp}
+         <svelte:component this={comp}/>
+      {:else}
+         <a>{localize(text)}</a>
+      {/if}
+      <slot name=right />
    </span>
    {#if selected}
       <slot/>
@@ -93,40 +108,37 @@
    div {
       display: block;
       position: relative;
-      /*flex: 0 0 var(--tjs-label-diameter);*/
-      /*height: var(--tjs-label-diameter);*/
-      /*width: var(--tjs-label-diameter);*/
-      /*align-self: center;*/
-      /*text-align: center;*/
       pointer-events: none;
    }
 
    span {
-      pointer-events: initial;
-      display: inline-block;
-      background: var(--tjs-label-background);
-      /*border-radius: var(--tjs-label-border-radius);*/
       position: relative;
-      overflow: hidden;
-      /*clip-path: var(--tjs-label-clip-path, none);*/
-      transform-style: preserve-3d;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      pointer-events: initial;
+
       width: 100%;
       height: 100%;
+
+      background: var(--tjs-label-background);
+      border-radius: var(--tjs-label-border-radius);
+      font-size: var(--tjs-label-font-size, inherit);
+      font-weight: var(--tjs-label-font-weight, inherit);
+      font-family: var(--tjs-label-font-family, inherit);
+      overflow: var(--tjs-label-overflow, hidden);
+      padding: var(--tjs-label-padding, 0 0.25em);
+      transform-style: preserve-3d;
       transition: var(--tjs-label-transition);
    }
 
    span:hover {
       background: var(--tjs-label-background-hover);
-      /*clip-path: var(--tjs-label-clip-path-hover, var(--tjs-label-clip-path, none));*/
    }
 
    span.selected {
       background: var(--tjs-label-background-selected);
-      /*clip-path: var(--tjs-label-clip-path-selected, var(--tjs-label-clip-path, none));*/
    }
-
-   /*i {*/
-   /*   line-height: var(--tjs-label-diameter);*/
-   /*   transform: translateZ(1px);*/
-   /*}*/
 </style>
