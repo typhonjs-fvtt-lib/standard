@@ -171,7 +171,7 @@
         width: 100%;
         height: 100%;
 
-        padding: var(--tjs-input-text-padding, var(--tjs-input-padding));
+        padding: var(--tjs-input-text-padding, var(--tjs-input-padding, initial));
 
         color: inherit;
         font-family: inherit;
