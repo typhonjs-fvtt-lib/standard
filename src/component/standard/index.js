@@ -1,6 +1,6 @@
 import {
    cssVariables,
-   FoundryStyles }   from '#internal';
+   FoundryStyles }   from '../../internal';
 
 export *             from './button';
 export *             from './folder';
