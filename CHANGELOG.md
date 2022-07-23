@@ -1,6 +1,6 @@
 # Changelog
 ## Release 0.0.6 (minor)
-- Fix Vite teeting issues.
+- Fix Vite teething issues.
 
 ## Release 0.0.5 (medium)
 - Added TJSToggleLabel component
