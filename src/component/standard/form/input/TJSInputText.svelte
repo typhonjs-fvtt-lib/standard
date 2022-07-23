@@ -38,13 +38,13 @@
    import { isObject }          from '@typhonjs-svelte/lib/util';
 
    export let input = void 0;
-   export let type;
-   export let disabled;
-   export let options;
-   export let placeholder;
-   export let store;
-   export let styles;
-   export let efx;
+   export let type = void 0;
+   export let disabled = void 0;
+   export let options = void 0;
+   export let placeholder = void 0;
+   export let store = void 0;
+   export let styles = void 0;
+   export let efx = void 0;
 
    const localOptions = {
       blurOnEnterKey: true,

@@ -10,7 +10,7 @@
    import ResizeControl       from './resize/ResizeControl.svelte';
    import SelectedBorder      from './SelectedBorder.svelte';
 
-   export let control;
+   export let control = void 0;
 
    setContext('pcControl', control)
 

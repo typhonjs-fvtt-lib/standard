@@ -14,15 +14,15 @@
    import { isWritableStore } from '@typhonjs-svelte/lib/store';
    import { localize }        from '@typhonjs-svelte/lib/helper';
 
-   export let button;
-   export let icon;
-   export let title;
-   export let titleSelected;
-   export let store;
-   export let styles;
-   export let efx;
-   export let onClickPropagate;
-   export let onClosePropagate;
+   export let button = void 0;
+   export let icon = void 0;
+   export let title = void 0;
+   export let titleSelected = void 0;
+   export let store = void 0;
+   export let styles = void 0;
+   export let efx = void 0;
+   export let onClickPropagate = void 0;
+   export let onClosePropagate = void 0;
 
    $: icon = typeof button === 'object' && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : '';

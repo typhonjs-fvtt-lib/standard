@@ -35,12 +35,12 @@
       autoBlur }              from '@typhonjs-svelte/lib/action';
    import { isWritableStore } from '@typhonjs-svelte/lib/store';
 
-   export let select;
-   export let selected;
-   export let options;
-   export let store;
-   export let styles;
-   export let efx;
+   export let select = void 0;
+   export let selected = void 0;
+   export let options = void 0;
+   export let store = void 0;
+   export let styles = void 0;
+   export let efx = void 0;
 
    $: selected = typeof select === 'object' && typeof select.selected === 'string' ? select.selected :
     typeof selected === 'string' ? selected : void 0;

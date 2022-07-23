@@ -10,7 +10,7 @@
 
    export let controls = controlsStore;
 
-   export let components;
+   export let components = void 0;
 
    export let active = true;
    export let boundingRect = void 0;

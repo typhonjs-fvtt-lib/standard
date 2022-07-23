@@ -19,16 +19,16 @@
       isObject,
       isSvelteComponent }     from '@typhonjs-svelte/lib/util';
 
-   export let label;
-   export let text;
-   export let comp;
-   export let title;
-   export let titleSelected;
-   export let store;
-   export let styles;
-   export let efx;
-   export let onClickPropagate;
-   export let onClosePropagate;
+   export let label = void 0;
+   export let text = void 0;
+   export let comp = void 0;
+   export let title = void 0;
+   export let titleSelected = void 0;
+   export let store = void 0;
+   export let styles = void 0;
+   export let efx = void 0;
+   export let onClickPropagate = void 0;
+   export let onClosePropagate = void 0;
 
    $: text = isObject(label) && typeof label.text === 'string' ? label.text :
     typeof text === 'string' ? text : '';

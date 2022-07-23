@@ -6,7 +6,7 @@
    import { resize }          from './resize.js';
    import { applyResizeData } from './applyResizeData.js';
 
-   export let data;
+   export let data = void 0;
 
    const control = getContext('pcControl');
    const controls = getContext('pclControls');

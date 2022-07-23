@@ -13,12 +13,12 @@
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
    import { localize }        from '@typhonjs-svelte/lib/helper';
 
-   export let button;
-   export let icon;
-   export let title;
-   export let styles;
-   export let efx;
-   export let onClickPropagate;
+   export let button = void 0;
+   export let icon = void 0;
+   export let title = void 0;
+   export let styles = void 0;
+   export let efx = void 0;
+   export let onClickPropagate = void 0;
 
    $: icon = typeof button === 'object' && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : '';
