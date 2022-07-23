@@ -1,6 +1,6 @@
 import {
    cssVariables,
-   FoundryStyles }   from '../../internal/index.js';     // TODO: Figure out better build to use #internal again.
+   FoundryStyles }   from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
 export *             from './button';
 export *             from './folder';
