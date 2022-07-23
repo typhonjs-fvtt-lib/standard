@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.6 (minor)
+- Fix Vite teeting issues.
+
 ## Release 0.0.5 (medium)
 - Added TJSToggleLabel component
   - Acts like TJSToggleIconButton allowing a TJSMenu to be nested, but the trigger is a label
