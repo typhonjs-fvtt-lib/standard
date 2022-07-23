@@ -38,7 +38,7 @@
     "@typhonjs-build-test/esm-d-ts": "^0.0.2",
     "@typhonjs-config/eslint-config": "^0.3.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
-    "@typhonjs-utils/file-util": "^0.0.5",
+    "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
     "fs-extra": "^10",
     "rollup": "^2",
