@@ -1,10 +1,10 @@
 import alias               from '@rollup/plugin-alias';
 import resolve             from '@rollup/plugin-node-resolve';
 import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
+import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
 import sourcemaps          from 'rollup-plugin-sourcemaps';
-import svelte              from 'rollup-plugin-svelte';
 import { terser }          from 'rollup-plugin-terser';
 import upath               from 'upath';
 
@@ -58,41 +58,6 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/component/standard/index.js',
-         external: s_LOCAL_EXTERNAL,
-         plugins: [
-            alias({
-               entries: [
-                  { find: '#internal', replacement: './src/internal/index.js' }
-               ]
-            }),
-            svelte({
-               emitCss: false,
-               onwarn: (warning, handler) =>
-               {
-                  // Suppress `a11y-missing-attribute` for missing href in <a> links.
-                  if (warning.message.includes(`<a> element should have an href attribute`)) { return; }
-
-                  // Let Rollup handle all other warnings normally.
-                  handler(warning);
-               }
-            }),
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/component'] }),
-            resolve()
-         ]
-      },
-      output: {
-         output: {
-            file: '_dist/component/standard/index.js',
-            format: 'es',
-            plugins: outputPlugins,
-            preferConst: true,
-            sourcemap
-         }
-      }
-   },
-   {
-      input: {
          input: 'src/store/index.js',
          external: s_LOCAL_EXTERNAL,
          plugins: [
@@ -134,7 +99,7 @@ for (const config of rollupConfigs)
    });
 }
 
-// Handle application & application/legacy by copying the source.
+// Handle application by copying the source.
 fs.emptyDirSync('./_dist/application');
 fs.copySync('./src/application', './_dist/application');
 
@@ -148,3 +113,22 @@ await generateTSDef({
    main: './_dist/application/index.js',
    output: './_types/application/index.d.ts'
 });
+
+// Handle component/standard by copying the source.
+fs.emptyDirSync('./_dist/component');
+fs.copySync('./src/component', './_dist/component');
+
+fs.writeJSONSync(`./_dist/component/standard/package.json`, {
+   main: './index.js',
+   module: './index.js',
+   type: 'module'
+});
+
+const compFiles = await getFileList({ dir: './_dist/component/standard' });
+for (const compFile of compFiles)
+{
+   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
+   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
+   fs.writeFileSync(compFile, fileData);
+}
