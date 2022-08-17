@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.7 (minor)
+- Fix for CSS variable initialization when a route prefix is enabled.
+
 ## Release 0.0.6 (minor)
 - Fix Vite teething issues.
 
