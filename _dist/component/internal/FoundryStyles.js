@@ -20,6 +20,8 @@ export class FoundryStyles
 
       let sheet;
 
+      const foundryStyleSheet = foundry.utils.getRoute('/css/style.css');
+
       // Find the core Foundry stylesheet.
       for (const styleSheet of styleSheets)
       {
@@ -27,7 +29,7 @@ export class FoundryStyles
 
          try { url = new URL(styleSheet.href); } catch (err) { continue; }
 
-         if (url.pathname === '/css/style.css')
+         if (typeof url.pathname === 'string' && url.pathname === foundryStyleSheet)
          {
             this.#sheet = sheet = styleSheet;
             break;

@@ -35,14 +35,17 @@ cssVariables.set({
     */
    const props = FoundryStyles.getProperties('input[type="text"], input[type="number"]');
 
-   cssVariables.set({
-      '--tjs-input-background': 'background' in props ? props.background : 'rgba(0, 0, 0, 0.05)',
-      '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--color-border-light-tertiary)',
-      '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '3px',
-      '--tjs-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
-      '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
-      '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)'
-   });
+   if (typeof props === 'object')
+   {
+      cssVariables.set({
+         '--tjs-input-background': 'background' in props ? props.background : 'rgba(0, 0, 0, 0.05)',
+         '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--color-border-light-tertiary)',
+         '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '3px',
+         '--tjs-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
+         '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
+         '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)'
+      });
+   }
 }
 
 cssVariables.set({
