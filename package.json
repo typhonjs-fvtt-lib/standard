@@ -1,6 +1,6 @@
 {
   "name": "@typhonjs-fvtt/svelte-standard",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library.",
   "type": "module",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
