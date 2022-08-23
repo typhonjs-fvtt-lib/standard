@@ -100,8 +100,7 @@
    }
 </script>
 
-<div on:close on:click
-     on:click={onClickDiv}
+<div on:click={onClickDiv}
      on:close={onClose}
      title={localize(titleCurrent)}
      use:applyStyles={styles}>
