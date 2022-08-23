@@ -1,4 +1,8 @@
 # Changelog
+## Release 0.0.8 (minor)
+- Fix for unintentional "double bubble" of click / close events on TJSIconButton, TJSToggleIconButton, and 
+  TJSToggleLabel.
+
 ## Release 0.0.7 (minor)
 - Fix for CSS variable initialization when a route prefix is enabled.
 
