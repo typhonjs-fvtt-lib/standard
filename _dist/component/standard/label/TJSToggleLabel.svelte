@@ -31,7 +31,7 @@
    export let onClosePropagate = void 0;
 
    $: text = isObject(label) && typeof label.text === 'string' ? label.text :
-    typeof text === 'string' ? text : '';
+    typeof text === 'string' ? text : void 0;
    $: comp = isObject(label) && isSvelteComponent(label.comp) ? label.comp :
     isSvelteComponent(comp) ? comp : void 0;
    $: title = isObject(label) && typeof label.title === 'string' ? label.title :
@@ -109,7 +109,7 @@
       <slot name=left />
       {#if comp}
          <svelte:component this={comp}/>
-      {:else}
+      {:else if typeof text === 'string'}
          <a>{localize(text)}</a>
       {/if}
       <slot name=right />
