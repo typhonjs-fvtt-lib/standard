@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.10 (medium)
+- Added TJSProseMirror component providing ProseMirror editing for `Foundry v10+`.
+
 ## Release 0.0.9 (minor)
 - Small mod to TJSToggleLabel to only potentially render `left` or `right` slot when `comp` or `text` prop not defined.
 
