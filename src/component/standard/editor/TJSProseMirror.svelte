@@ -65,7 +65,7 @@
       onMount,
       tick }               from 'svelte';
 
-   import { TJSDocument }  from '@typhonjs-fvtt/runtime/svelte/store';
+   import { TJSDocument }  from '@typhonjs-fvtt/svelte/store';
 
    export let content = '';
    export let options = {};
