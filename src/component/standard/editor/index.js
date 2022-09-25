@@ -1,1 +1,1 @@
-export { default as TJSProseMirror } from './TJSProseMirror.svelte';
+export { default as TJSProseMirror }   from './TJSProseMirror.svelte';

@@ -63,9 +63,12 @@
       createEventDispatcher,
       onDestroy,
       onMount,
-      tick }               from 'svelte';
+      tick
+   }                        from 'svelte';
 
-   import { TJSDocument }  from '@typhonjs-fvtt/svelte/store';
+   import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
+
+   import * as Plugins      from './plugins';
 
    export let content = '';
    export let options = {};
@@ -165,18 +168,6 @@
    });
 
    /**
-    * Provides an additional key mapping to `Mod-q` to destroy the editor.
-    */
-   class CustomKeyMaps extends ProseMirror.ProseMirrorKeyMaps
-   {
-      buildMapping() {
-         const mapping = super.buildMapping()
-         mapping['Mod-q'] = destroyEditor;
-         return mapping;
-      }
-   }
-
-   /**
     * Destroys any active editor.
     */
    function destroyEditor(fireCancel = true)
@@ -205,12 +196,13 @@
          ...options,
 
          plugins: {
-            menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
+            menu: Plugins.TJSProseMirrorMenu.build(ProseMirror.defaultSchema, {
                destroyOnSave: remove,
                onSave: () => saveEditor({ remove })
             }),
-            keyMaps: CustomKeyMaps.build(ProseMirror.defaultSchema, {
-               onSave: () => saveEditor({ remove })
+            keyMaps: Plugins.TJSProseMirrorKeyMaps.build(ProseMirror.defaultSchema, {
+               onSave: () => saveEditor({ remove }),
+               onQuit: () => destroyEditor()
             }),
             ...options.plugins
          }
