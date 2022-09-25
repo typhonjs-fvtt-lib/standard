@@ -196,7 +196,7 @@
          ...options,
 
          plugins: {
-            menu: Plugins.TJSProseMirrorMenu.build(ProseMirror.defaultSchema, {
+            menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
                destroyOnSave: remove,
                onSave: () => saveEditor({ remove })
             }),

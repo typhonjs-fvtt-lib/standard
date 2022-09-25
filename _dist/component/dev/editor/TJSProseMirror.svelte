@@ -68,7 +68,9 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/runtime/svelte/store';
 
-   import { applyDevTools } from 'prosemirror-dev-toolkit';
+   import {
+      applyDevTools,
+      removeDevTools }      from 'prosemirror-dev-toolkit';
 
    import * as Plugins      from '../../standard/editor/plugins';
 
@@ -176,7 +178,20 @@
    {
       if (editor)
       {
-         editor.destroy();
+         try
+         {
+            editor.destroy();
+         }
+         catch (err)
+         {
+            console.warn(
+             `Currently there is a flaw in the Foundry ProseMirrorMenu plugin when closing an app window with an ` +
+              `active instance of 'prosemirror-dev-tools'. To avoid this close any active editors before closing ` +
+               `the app.`);
+
+            console.error(err);
+         }
+
          editor = void 0;
          editorActive = false;
 
@@ -198,7 +213,7 @@
          ...options,
 
          plugins: {
-            menu: Plugins.TJSProseMirrorMenu.build(ProseMirror.defaultSchema, {
+            menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
                destroyOnSave: remove,
                onSave: () => saveEditor({ remove })
             }),
@@ -217,7 +232,7 @@
 
       editor = await ProseMirrorEditor.create(editorContentEl, content, editorOptions);
 
-      applyDevTools(editor.view);
+      applyDevTools(editor.view, { buttonPosition: 'bottom-right'});
 
       // `.editor-container` div is added automatically; add inline style to set margin to 0.
       const containerEl = editorEl.querySelector('.editor-container');
