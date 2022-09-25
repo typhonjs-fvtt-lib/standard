@@ -21,6 +21,10 @@
       "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
     },
+    "./component/dev": {
+      "types": "./_dist/component/dev/index.d.ts",
+      "import": "./_dist/component/dev/index.js"
+    },
     "./store": {
       "types": "./_dist/store/index.d.ts",
       "import": "./_dist/store/index.js"
@@ -41,6 +45,7 @@
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
     "fs-extra": "^10",
+    "prosemirror-dev-toolkit": "^1.0.3",
     "rollup": "^2",
     "rollup-plugin-sourcemaps": "^0.6.0",
     "rollup-plugin-svelte": "^7",

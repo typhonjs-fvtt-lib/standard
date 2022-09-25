@@ -114,6 +114,8 @@ await generateTSDef({
    output: './_types/application/index.d.ts'
 });
 
+// Svelte standard components ----------------------------------------------------------------------------------------
+
 // Handle component/standard by copying the source.
 fs.emptyDirSync('./_dist/component');
 fs.copySync('./src/component', './_dist/component');
@@ -124,7 +126,16 @@ fs.writeJSONSync(`./_dist/component/standard/package.json`, {
    type: 'module'
 });
 
-const compFiles = await getFileList({ dir: './_dist/component/standard' });
+let compFiles = await getFileList({ dir: './_dist/component/dev' });
+for (const compFile of compFiles)
+{
+   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
+   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
+   fs.writeFileSync(compFile, fileData);
+}
+
+compFiles = await getFileList({ dir: './_dist/component/standard' });
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
