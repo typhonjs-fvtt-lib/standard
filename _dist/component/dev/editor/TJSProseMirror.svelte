@@ -68,7 +68,9 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/runtime/svelte/store';
 
-   import * as Plugins      from './plugins';
+   import { applyDevTools } from 'prosemirror-dev-toolkit';
+
+   import * as Plugins      from '../../standard/editor/plugins';
 
    export let content = '';
    export let options = {};
@@ -214,6 +216,8 @@
       await tick();
 
       editor = await ProseMirrorEditor.create(editorContentEl, content, editorOptions);
+
+      applyDevTools(editor.view);
 
       // `.editor-container` div is added automatically; add inline style to set margin to 0.
       const containerEl = editorEl.querySelector('.editor-container');
