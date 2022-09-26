@@ -157,15 +157,23 @@
    // Enrich content when it changes.
    $: if (content) { TextEditor.enrichHTML(content, { async: true }).then((enriched) => enrichedContent = enriched); }
 
-   onDestroy(() => destroyEditor());
+   onDestroy(() =>
+   {
+      // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
+      if (editorActive)
+      {
+         saveEditor({ remove: typeof options.button === 'boolean' ? options.button : true });
+      }
+      else
+      {
+         destroyEditor();
+      }
+   });
 
    /**
     * If `options.editable` is true and `options.button` is false then start the editor on mount.
     */
-   onMount(() =>
-   {
-      if (editable && !editorButton) { initEditor(); }
-   });
+   onMount(() => { if (editable && !editorButton) { initEditor(); } });
 
    /**
     * Destroys any active editor.
@@ -176,7 +184,9 @@
       {
          editor.destroy();
          editor = void 0;
-         editorActive = false;
+
+         // Post on next micro-task to allow any event propagation for `Escape` key to trigger first.
+         setTimeout(() => { editorActive = false; }, 0);
 
          if (fireCancel) { dispatch('editor:cancel'); }
       }
@@ -196,14 +206,18 @@
          ...options,
 
          plugins: {
+            ...ProseMirror.defaultPlugins,
+
             menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
                destroyOnSave: remove,
                onSave: () => saveEditor({ remove })
             }),
+
             keyMaps: Plugins.TJSProseMirrorKeyMaps.build(ProseMirror.defaultSchema, {
                onSave: () => saveEditor({ remove }),
                onQuit: () => destroyEditor()
             }),
+
             ...options.plugins
          }
       };
@@ -219,13 +233,30 @@
       const containerEl = editorEl.querySelector('.editor-container');
       if (containerEl) { containerEl.style = 'margin: var(--tjs-editor-container-margin, 0)'; }
 
+      editor.view.focus();
+
       dispatch('editor:start');
+   }
+
+   /**
+    * Prevents `Escape` key from propagating when the editor is active preventing the app from being closed. The
+    * `Escape` key is used to close the active editor first.
+    *
+    * @param {KeyboardEvent}    event - A keyboard event from `.editor`.
+    */
+   function onKeydown(event)
+   {
+      if (editorActive && event.key === 'Escape')
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 
    function saveEditor({ remove = true } = {})
    {
       // Remove the editor
-      if (remove && editor)
+      if (editor)
       {
          if (editor.isDirty())
          {
@@ -244,14 +275,15 @@
             dispatch('editor:save', { content });
          }
 
-         destroyEditor(false);
+         if (remove) { destroyEditor(false); }
       }
    }
 </script>
 
 <div bind:this={editorEl}
      class="editor prosemirror"
-     class:editor-active={editorActive}>
+     class:editor-active={editorActive}
+     on:keydown={onKeydown}>
     {#if editorButton}
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
     {/if}

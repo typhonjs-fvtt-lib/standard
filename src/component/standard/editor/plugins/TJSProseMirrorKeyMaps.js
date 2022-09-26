@@ -1,5 +1,5 @@
 /**
- * Provides an additional key mapping to `Mod-q` to destroy the editor.
+ * Provides an additional key mapping to `Escape` to destroy / cancel the active editor.
  */
 export class TJSProseMirrorKeyMaps extends ProseMirror.ProseMirrorKeyMaps
 {
@@ -18,19 +18,25 @@ export class TJSProseMirrorKeyMaps extends ProseMirror.ProseMirrorKeyMaps
    {
       super(schema, options);
 
-      if (typeof options.onQuit === 'function')
-      {
-         this.#onQuit = options.onQuit;
-      }
+      if (typeof options.onQuit === 'function') { this.#onQuit = options.onQuit; }
    }
 
-   buildMapping() {
+   /**
+    * Swaps the Foundry default `Escape` / selectParentNode to `Mod-p` and enables `onQuit` function for `Escape`.
+    *
+    * @returns {Object<ProseMirrorCommand>}
+    */
+   buildMapping()
+   {
       const mapping = super.buildMapping()
 
       // Add onQuit callback if defined.
       if (this.#onQuit)
       {
-         mapping['Mod-q'] = this.#onQuit;
+         // Swap Foundry core mapping for `Escape` / selectParentNode to `Mod-p`.
+         if (mapping['Escape']) { mapping['Mod-p'] = mapping['Escape']; }
+
+         mapping['Escape'] = () => this.#onQuit();
       }
 
       return mapping;
