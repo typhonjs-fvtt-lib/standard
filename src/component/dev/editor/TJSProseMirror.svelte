@@ -79,7 +79,7 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
-   import { applyDevTools } from 'prosemirror-dev-toolkit';
+   import { applyDevTools } from '@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror';
 
    import * as Plugins      from '../../standard/editor/plugins';
 
