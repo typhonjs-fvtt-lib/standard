@@ -296,14 +296,15 @@
    }
 
    /**
-    * Prevents `Escape` key from propagating when the editor is active preventing the app from being closed. The
-    * `Escape` key is used to close the active editor first.
+    * Prevents `Escape` key or `Ctrl-s` from propagating when the editor is active preventing the app from being closed.
+    * The `Escape` key is used to close the active editor first. Foundry by default when `Ctrl-s` is pressed as of v10
+    * scrolls the canvas down which is undesired when saving an editor as well.
     *
     * @param {KeyboardEvent}    event - A keyboard event from `.editor`.
     */
    function onKeydown(event)
    {
-      if (editorActive && event.key === 'Escape')
+      if (editorActive && (event.key === 'Escape' || (event.key === 's' && event.ctrlKey)))
       {
          event.preventDefault();
          event.stopPropagation();
