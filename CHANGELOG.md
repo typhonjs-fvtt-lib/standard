@@ -1,4 +1,9 @@
 # Changelog
+## Release 0.0.11 (medium)
+- Refined TJSProseMirror component.
+- Added developer mode for TJSProseMirror imported from `@typhonjs-fvtt/svelte-standard/component/dev`.
+- TJSProseMirror now exports `enrichedContent` prop / new event `editor:enrichedContent`.
+
 ## Release 0.0.10 (medium)
 - Added TJSProseMirror component providing ProseMirror editing for `Foundry v10+`.
 
