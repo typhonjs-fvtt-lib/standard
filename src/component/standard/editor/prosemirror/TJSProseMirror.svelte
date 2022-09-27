@@ -319,7 +319,7 @@
                content = data;
             }
 
-            dispatch('editor:save', { content });
+            dispatch('editor:save', { content: data });
          }
 
          if (remove) { destroyEditor(false); }
