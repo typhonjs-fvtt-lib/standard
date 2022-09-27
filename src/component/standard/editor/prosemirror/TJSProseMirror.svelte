@@ -335,12 +335,7 @@
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
     {/if}
     {#if editorActive}
-        <div bind:this={editorContentEl}
-             class=editor-content
-             data-edit=text
-             data-engine=prosemirror
-             data-collaborate=false>
-        </div>
+        <div bind:this={editorContentEl} class=editor-content />
     {:else}
         <div class=editor-enriched>
             {@html enrichedContent}
