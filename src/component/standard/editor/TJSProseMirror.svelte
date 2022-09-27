@@ -17,6 +17,10 @@
     *
     * `options.document` - Set to a Foundry document to load and save content from it. Requires `fieldName` to be set.
     *
+    * `options.DOMPurify` - The DOMPurify export from `@typhonjs-fvtt/runtime/dompurify`. Sanitizes content client side.
+    *                       Note: ProseMirror already does essential `<script>` sanitization, so this is just an extra
+    *                       option that is available as an extra precaution.
+    *
     * `options.fieldName` - [string] A field name to load and save to / from associated document. IE `a.b.c`.
     *
     * Notable options passed onto Foundry ProseMirror support.
@@ -33,7 +37,6 @@
     * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
     * `editor:save` - Fired when editing is saved. You can access the content from `event.detail.content`.
     * `editor:start` - Fired when editing is started.
-    *
     *
     * The following CSS variables control the associated styles with the default values.
     *
@@ -53,8 +56,14 @@
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
     * --tjs-editor-content-overflow - auto
+    * --tjs-editor-content-padding - 0 0 0 0.25em
+    *
+    * `.editor-container` HTMLDivElement; when editing - removes default margins.
+    * ---------------------------------
+    * --tjs-editor-container-margin - 0
     *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
+    * ---------------------------------
     * --tjs-editor-edit-right - 5px
     * --tjs-editor-edit-top - 0
     */
@@ -70,7 +79,17 @@
 
    import * as Plugins      from './plugins';
 
+   /** @type {string} */
    export let content = '';
+
+   /** @type {string} */
+   export let enrichedContent = '';
+
+   /**
+    * Provides the options object that can be reactively updated. See documentation above.
+    *
+    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string }}
+    */
    export let options = {};
 
    const dispatch = createEventDispatcher();
@@ -94,8 +113,6 @@
 
    /** @type {HTMLDivElement} */
    let editorEl;
-
-   let enrichedContent = '';
 
    /**
     * Respond to changes in `options.editable`.
@@ -260,7 +277,15 @@
       {
          if (editor.isDirty())
          {
-            const data = ProseMirror.dom.serializeString(editor.view.state.doc);
+            let data = ProseMirror.dom.serializeString(editor.view.state.doc);
+
+            // Perform client side sanitization if DOMPurify is available in options.
+            // ProseMirror does essential `<script>` based sanitization, so this is just an extra option to provide
+            // specific sanitization.
+            if (options?.DOMPurify && typeof options?.DOMPurify?.sanitizeWithVideo === 'function')
+            {
+               data = options.DOMPurify.sanitizeWithVideo(data);
+            }
 
             // Save to document if available
             if ($doc && options.fieldName)
@@ -295,7 +320,9 @@
              data-collaborate=false>
         </div>
     {:else}
-        {@html enrichedContent}
+        <div class=editor-enriched>
+            {@html enrichedContent}
+        </div>
     {/if}
 </div>
 
@@ -320,10 +347,15 @@
 
     .editor-content {
         overflow: var(--tjs-editor-content-overflow, auto);
+        padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
     }
 
     .editor-edit {
         right: var(--tjs-editor-edit-right, 5px);
         top: var(--tjs-editor-edit-top, 0);
+    }
+
+    .editor-enriched {
+        padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
     }
 </style>
