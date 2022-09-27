@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.12 (minor)
+- Had to package up `prosemirror-dev-tooling` in `@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror`.
+
 ## Release 0.0.11 (medium)
 - Refined TJSProseMirror component.
 - Added developer mode for TJSProseMirror imported from `@typhonjs-fvtt/svelte-standard/component/dev`.
