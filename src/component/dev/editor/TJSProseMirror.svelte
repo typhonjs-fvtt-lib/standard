@@ -35,7 +35,8 @@
     * Events: There are three events fired when the editor is canceled, saved, and started.
     * ---------------------------------
     * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
-    * `editor:save` - Fired when editing is saved. You can access the content from `event.detail.content`.
+    * `editor:enrichedContent` - Fired when content is enriched. Access data from `event.detail.enrichedContent`.
+    * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
     * `editor:start` - Fired when editing is started.
     *
     *
@@ -175,7 +176,14 @@
     typeof content === 'string' ? content : '';
 
    // Enrich content when it changes.
-   $: if (content) { TextEditor.enrichHTML(content, { async: true }).then((enriched) => enrichedContent = enriched); }
+   $: if (content)
+   {
+      TextEditor.enrichHTML(content, { async: true }).then((enriched) =>
+      {
+         enrichedContent = enriched
+         dispatch('editor:enrichedContent', { enrichedContent });
+      });
+   }
 
    onDestroy(() =>
    {
