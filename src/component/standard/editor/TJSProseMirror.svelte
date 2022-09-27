@@ -169,17 +169,30 @@
    }
 
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
-   $: content = $doc !== void 0 ? foundry.utils.getProperty($doc, options.fieldName) :
-    typeof content === 'string' ? content : '';
-
-   // Enrich content when it changes.
-   $: if (content)
+   $:
    {
-      TextEditor.enrichHTML(content, { async: true }).then((enriched) =>
+      content = $doc !== void 0 ? foundry.utils.getProperty($doc, options.fieldName) :
+       typeof content === 'string' ? content : '';
+
+      // Avoid double trigger of reactive statement as enriching content is async.
+      onContentChanged(content);
+   }
+
+   /**
+    * Separated into a standalone method so applying async value to enriched content doesn't double trigger a reactive
+    * statement twice.
+    *
+    * @param {string}   content - Content prop.
+    *
+    * @returns {Promise<void>}
+    */
+   async function onContentChanged(content)
+   {
+      if (content)
       {
-         enrichedContent = enriched
+         enrichedContent = await TextEditor.enrichHTML(content, { async: true });
          dispatch('editor:enrichedContent', { enrichedContent });
-      });
+      }
    }
 
    onDestroy(() =>
