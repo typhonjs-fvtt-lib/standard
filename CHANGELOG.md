@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.14 (minor)
+- Made small mistake; rebuild. No new changes.
+
 ## Release 0.0.12 (minor)
 - Had to package up `prosemirror-dev-tooling` in `@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror`.
 
