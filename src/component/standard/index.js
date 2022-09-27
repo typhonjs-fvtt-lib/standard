@@ -2,13 +2,13 @@ import {
    cssVariables,
    FoundryStyles }   from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
-export *             from './button';
-export *             from './editor';
-export *             from './folder';
-export *             from './form';
-export *             from './label';
-export *             from './layers';
-export *             from './menu';
+export *             from './button/index.js';
+export *             from './editor/index.js';
+export *             from './folder/index.js';
+export *             from './form/index.js';
+export *             from './label/index.js';
+export *             from './layers/index.js';
+export *             from './menu/index.js';
 
 /**
  * Assign all TyphonJS CSS variables to Foundry defaults.

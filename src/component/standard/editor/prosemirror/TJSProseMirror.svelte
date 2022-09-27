@@ -78,7 +78,7 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
-   import * as Plugins      from './plugins';
+   import * as Plugins      from './plugins/index.js';
 
    /** @type {string} */
    export let content = '';
