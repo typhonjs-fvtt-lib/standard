@@ -1,4 +1,5 @@
 import alias               from '@rollup/plugin-alias';
+import commonjs            from '@rollup/plugin-commonjs';
 import resolve             from '@rollup/plugin-node-resolve';
 import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
 import { getFileList }     from '@typhonjs-utils/file-util';
@@ -49,6 +50,27 @@ const rollupConfigs = [
       output: {
          output: {
             file: '_dist/action/index.js',
+            format: 'es',
+            plugins: outputPlugins,
+            preferConst: true,
+            sourcemap
+        }
+      }
+   },
+   {
+      input: {
+         input: 'src/dev-tools/prosemirror/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/action'] }),
+            resolve(),
+            commonjs(),
+            sourcemaps()
+         ]
+      },
+      output: {
+         output: {
+            file: '_dist/dev-tools/prosemirror/index.js',
             format: 'es',
             plugins: outputPlugins,
             preferConst: true,
