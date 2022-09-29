@@ -23,6 +23,9 @@
     *
     * `options.fieldName` - [string] A field name to load and save to / from associated document. IE `a.b.c`.
     *
+    * `options.styles` - [object] An object of CSS styles used by `applyStyles` on `.editor` element; useful for
+    *                    setting supported CSS variables.
+    *
     * Notable options passed onto Foundry ProseMirror support.
     * ---------------------------------
     *
@@ -67,6 +70,13 @@
     * ---------------------------------
     * --tjs-editor-edit-right - 5px
     * --tjs-editor-edit-top - 0
+    *
+    * .editor-menu; Defines the toolbar / menu.
+    * ---------------------------------
+    * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
+    * --tjs-editor-toolbar-border-radius - 6px
+    * --tjs-editor-toolbar-padding - 2px 0
+    * --tjs-editor-toolbar-width - 100%
     */
 
    import {
@@ -75,6 +85,8 @@
       onMount,
       tick
    }                        from 'svelte';
+
+   import { applyStyles }   from '@typhonjs-svelte/lib/action';
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
@@ -89,7 +101,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string }}
+    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, styles: object }}
     */
    export let options = {};
 
@@ -328,8 +340,9 @@
 </script>
 
 <div bind:this={editorEl}
-     class="editor prosemirror"
+     class="editor prosemirror tjs-editor"
      class:editor-active={editorActive}
+     use:applyStyles={options.styles}
      on:keydown={onKeydown}>
     {#if editorButton}
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
@@ -377,5 +390,13 @@
 
     .editor-enriched {
         padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
+    }
+
+    /* Provides global styles scoped to `.tjs-editor` for dynamic `.editor-menu` element */
+    .tjs-editor :global(.editor-menu) {
+        background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
+        border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
+        padding: var(--tjs-editor-toolbar-padding, 2px 0);
+        width: var(--tjs-editor-toolbar-width, 100%);
     }
 </style>

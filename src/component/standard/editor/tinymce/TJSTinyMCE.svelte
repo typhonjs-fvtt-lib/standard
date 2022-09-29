@@ -63,6 +63,13 @@
     * ---------------------------------
     * --tjs-editor-edit-right - 5px
     * --tjs-editor-edit-top - 0
+    *
+    * Various TinyMCE `tox` toolbar elements; Defines the toolbar / menu.
+    * ---------------------------------
+    * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
+    * --tjs-editor-toolbar-border-radius - 6px
+    * --tjs-editor-toolbar-padding - 0 2px
+    * --tjs-editor-toolbar-width - 100%
     */
 
    import {
@@ -71,6 +78,8 @@
       onMount,
       tick
    }                        from 'svelte';
+
+   import { applyStyles }   from '@typhonjs-svelte/lib/action';
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
@@ -83,7 +92,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object }}
+    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, styles: object }}
     */
    export let options = {};
 
@@ -214,7 +223,6 @@
    {
       if (editor)
       {
-console.log(`! TJSTinyMCE - destroyEditor - 0`)
          setTimeout(() =>
          {
             editor.destroy();
@@ -222,17 +230,10 @@ console.log(`! TJSTinyMCE - destroyEditor - 0`)
 
             editor = void 0;
 
-            console.log(`! TJSTinyMCE - destroyEditor - 1`)
             // Post on next micro-task to allow any event propagation for `Escape` key to trigger first.
-            setTimeout(() =>
-            {
-               editorActive = false;
-               console.log(`! TJSTinyMCE - destroyEditor - next micro-task - editorFalse`)
-            }, 0);
+            setTimeout(() => editorActive = false, 0);
 
             if (fireCancel) { dispatch('editor:cancel'); }
-
-            console.log(`! TJSTinyMCE - destroyEditor - 2`)
          }, 0);
       }
    }
@@ -244,9 +245,6 @@ console.log(`! TJSTinyMCE - destroyEditor - 0`)
     */
    async function initEditor()
    {
-      // If editor button is enabled then remove the menu / editing interface on save.
-      const remove = editorButton;
-
       const mceConfig = {
          ...(options.mceConfig ?? {}),
          engine: 'tinymce',
@@ -273,38 +271,6 @@ console.log(`! TJSTinyMCE - destroyEditor - 0`)
          }
       }));
 
-      // const mceToxEl = editorEl.querySelector('.tox-tinymce');
-      // if (mceToxEl)
-      // {
-      //    mceToxEl.style.borderRadius = '0'
-      // }
-      //
-      // const mceEditorHeaderEl = editorEl.querySelector('.tox-editor-header');
-      // if (mceEditorHeaderEl)
-      // {
-      //    mceEditorHeaderEl.style = 'background: none; padding: 0; width: var(--tjs-editor-toolbar-width, 100%)';
-      //    // mceEditorHeaderEl.style.background = 'none'
-      //    // mceEditorHeaderEl.style.padding = '0';
-      //    // mceEditorHeaderEl.style.width = 'var(tjs-editor-toolbar-width, 100%)';
-      // }
-      //
-      // const mceToolbarOverlordEl = editorEl.querySelector('.tox-toolbar-overlord')
-      // if (mceToolbarOverlordEl)
-      // {
-      //    mceToolbarOverlordEl.style.background = 'none';
-      //
-      //    const mceToolbarPrimaryEl = mceToolbarOverlordEl.querySelector('.tox-toolbar__primary');
-      //    if (mceToolbarPrimaryEl)
-      //    {
-      //       mceToolbarPrimaryEl.style = 'background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1)); ' +
-      //        'border-radius: var(--tjs-editor-toolbar-border-radius, 6px)';
-      //
-      //       // mceToolbarPrimaryEl.style.background = 'var(tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1))';
-      //       // mceToolbarPrimaryEl.style.borderRadius = 'var(tjs-editor-toolbar-border-radius, 6px)';
-      //    }
-      // }
-
-
       dispatch('editor:start');
    }
 
@@ -329,13 +295,11 @@ console.log(`! TJSTinyMCE - destroyEditor - 0`)
       // Remove the editor
       if (editor)
       {
-console.log(`! TJSTinyMCE - saveEditor - 0`)
          let data = editor.getContent();
 
          // editor.isDirty() doesn't appear to work as desired.
          if (data !== content)
          {
-console.log(`! TJSTinyMCE - saveEditor - 1`)
             let data = editor.getContent();
 
             // Perform client side sanitization if DOMPurify is available in options.
@@ -356,8 +320,6 @@ console.log(`! TJSTinyMCE - saveEditor - 1`)
                content = data;
             }
 
-console.log(`! TJSTinyMCE - saveEditor - 2`)
-
             dispatch('editor:save', { content: data });
          }
 
@@ -369,6 +331,7 @@ console.log(`! TJSTinyMCE - saveEditor - 2`)
 <div bind:this={editorEl}
      class="editor tinymce tjs-editor"
      class:editor-active={editorActive}
+     use:applyStyles={options.styles}
      on:keydown={onKeydown}>
     {#if editorButton}
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
@@ -432,7 +395,7 @@ console.log(`! TJSTinyMCE - saveEditor - 2`)
 
     .tjs-editor :global(.tox .tox-toolbar__group) {
         width: auto;
-        padding: 0 2px;
+        padding: var(--tjs-editor-toolbar-padding, 0 2px);
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
