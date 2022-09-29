@@ -304,9 +304,15 @@
       }
    }
 
+   /**
+    * Saves the editor contents to the associated document or updates content directly.
+    *
+    * @param {object}   [opts] - Optional parameters.
+    *
+    * @param {boolean}  [opts.remove=true] - Removes the editor.
+    */
    function saveEditor({ remove = true } = {})
    {
-      // Remove the editor
       if (editor)
       {
          if (editor.isDirty())
@@ -334,6 +340,7 @@
             dispatch('editor:save', { content: data });
          }
 
+         // Remove the editor
          if (remove) { destroyEditor(false); }
       }
    }
@@ -365,6 +372,9 @@
         margin: var(--tjs-editor-margin, 0);
         overflow: var(--tjs-editor-overflow, auto);
         width: var(--tjs-editor-width, 100%);
+
+        /* For Firefox. */
+        scrollbar-width: thin;
     }
 
     /**

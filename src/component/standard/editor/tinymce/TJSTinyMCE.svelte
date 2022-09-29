@@ -106,7 +106,7 @@
    /** @type {HTMLDivElement} */
    let editorContentEl;
 
-   /** @type {Editor} TinyMCE Editor */
+   /** @type {TinyMCE.Editor} TinyMCE Editor */
    let editor;
 
    /** @type {boolean} */
@@ -226,7 +226,7 @@
          setTimeout(() =>
          {
             editor.destroy();
-            editorContentEl.innerText = '';
+            if (editorContentEl) { editorContentEl.innerText = ''; }
 
             editor = void 0;
 
@@ -290,6 +290,13 @@
       }
    }
 
+   /**
+    * Saves the editor contents to the associated document or updates content directly.
+    *
+    * @param {object}   [opts] - Optional parameters.
+    *
+    * @param {boolean}  [opts.remove] - Removes the editor.
+    */
    function saveEditor({ remove = typeof options.button === 'boolean' ? options.button : true } = {})
    {
       // Remove the editor
