@@ -251,7 +251,8 @@ console.log(`! TJSTinyMCE - destroyEditor - 0`)
          ...(options.mceConfig ?? {}),
          engine: 'tinymce',
          target: editorContentEl,
-         save_onsavecallback: () => saveEditor()
+         save_onsavecallback: () => saveEditor(),
+         height: '100%'
       }
 
       editorActive = true;
@@ -271,6 +272,38 @@ console.log(`! TJSTinyMCE - destroyEditor - 0`)
             setTimeout(() => saveEditor(), 0);
          }
       }));
+
+      // const mceToxEl = editorEl.querySelector('.tox-tinymce');
+      // if (mceToxEl)
+      // {
+      //    mceToxEl.style.borderRadius = '0'
+      // }
+      //
+      // const mceEditorHeaderEl = editorEl.querySelector('.tox-editor-header');
+      // if (mceEditorHeaderEl)
+      // {
+      //    mceEditorHeaderEl.style = 'background: none; padding: 0; width: var(--tjs-editor-toolbar-width, 100%)';
+      //    // mceEditorHeaderEl.style.background = 'none'
+      //    // mceEditorHeaderEl.style.padding = '0';
+      //    // mceEditorHeaderEl.style.width = 'var(tjs-editor-toolbar-width, 100%)';
+      // }
+      //
+      // const mceToolbarOverlordEl = editorEl.querySelector('.tox-toolbar-overlord')
+      // if (mceToolbarOverlordEl)
+      // {
+      //    mceToolbarOverlordEl.style.background = 'none';
+      //
+      //    const mceToolbarPrimaryEl = mceToolbarOverlordEl.querySelector('.tox-toolbar__primary');
+      //    if (mceToolbarPrimaryEl)
+      //    {
+      //       mceToolbarPrimaryEl.style = 'background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1)); ' +
+      //        'border-radius: var(--tjs-editor-toolbar-border-radius, 6px)';
+      //
+      //       // mceToolbarPrimaryEl.style.background = 'var(tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1))';
+      //       // mceToolbarPrimaryEl.style.borderRadius = 'var(tjs-editor-toolbar-border-radius, 6px)';
+      //    }
+      // }
+
 
       dispatch('editor:start');
    }
@@ -334,7 +367,7 @@ console.log(`! TJSTinyMCE - saveEditor - 2`)
 </script>
 
 <div bind:this={editorEl}
-     class="editor tinymce"
+     class="editor tinymce tjs-editor"
      class:editor-active={editorActive}
      on:keydown={onKeydown}>
     {#if editorButton}
@@ -349,17 +382,19 @@ console.log(`! TJSTinyMCE - saveEditor - 2`)
 </div>
 
 <style>
-    .editor {
+    .tjs-editor {
         background: var(--tjs-editor-background, none);
         border: var(--tjs-editor-border, none);
         border-radius: var(--tjs-editor-border-radius, 0);
         height: var(--tjs-editor-height, 100%);
         margin: var(--tjs-editor-margin, 0);
         width: var(--tjs-editor-width, 100%);
+
+        /* For Firefox. */
+        scrollbar-width: thin;
     }
 
     .editor-content {
-        /*overflow: var(--tjs-editor-content-overflow, auto);*/
         padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
     }
 
@@ -368,7 +403,7 @@ console.log(`! TJSTinyMCE - saveEditor - 2`)
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
-        overflow: var(--tjs-editor-active-overflow, unset);
+        overflow: var(--tjs-editor-active-overflow, hidden);
     }
 
     .editor-edit {
@@ -376,7 +411,38 @@ console.log(`! TJSTinyMCE - saveEditor - 2`)
         top: var(--tjs-editor-edit-top, 0);
     }
 
-    /*.editor-enriched {*/
-    /*    padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);*/
-    /*}*/
+    .tjs-editor :global(.tox-tinymce) {
+        border-radius: 0;
+    }
+
+    .tjs-editor :global(.tox:not(.tox-tinymce-inline) .tox-editor-header) {
+        background: none;
+        padding: 0;
+        width: var(--tjs-editor-toolbar-width, 100%);
+    }
+
+    .tjs-editor :global(.tox-toolbar-overlord) {
+        background: none;
+    }
+
+    .tjs-editor :global(.tox-toolbar__primary) {
+        background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
+        border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
+    }
+
+    .tjs-editor :global(.tox .tox-toolbar__group) {
+        width: auto;
+        padding: 0 2px;
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
+        padding: 0;
+        margin: 2px 0;
+        min-width: 34px;
+        width: fit-content;
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--select) {
+        font-size: 14px;
+    }
 </style>
