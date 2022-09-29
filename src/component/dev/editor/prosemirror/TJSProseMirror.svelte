@@ -384,6 +384,9 @@
     .editor-content {
         overflow: var(--tjs-editor-content-overflow, auto);
         padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
+
+        /* For Firefox. */
+        scrollbar-width: thin;
     }
 
     .editor-edit {
