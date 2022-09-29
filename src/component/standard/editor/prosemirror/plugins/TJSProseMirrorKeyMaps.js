@@ -1,7 +1,10 @@
+// Protect for absent global `ProseMirror` on Foundry v9.
+const ProseMirrorKeyMaps = globalThis.ProseMirror ? ProseMirror.ProseMirrorKeyMaps : class {};
+
 /**
  * Provides an additional key mapping to `Escape` to destroy / cancel the active editor.
  */
-export class TJSProseMirrorKeyMaps extends ProseMirror.ProseMirrorKeyMaps
+export class TJSProseMirrorKeyMaps extends ProseMirrorKeyMaps
 {
    #onQuit;
 
