@@ -74,6 +74,7 @@
 
    import {
       createEventDispatcher,
+      getContext,
       onDestroy,
       onMount,
       tick
@@ -82,6 +83,10 @@
    import { applyStyles }   from '@typhonjs-svelte/lib/action';
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
+
+   import { TinyMCEHelper } from './TinyMCEHelper.js';
+
+   import { FVTTVersion }   from '../../../internal/FVTTVersion';
 
    /** @type {string} */
    export let content = '';
@@ -95,6 +100,8 @@
     * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, styles: object }}
     */
    export let options = {};
+
+   const positionStore = getContext('external').application.position;
 
    const dispatch = createEventDispatcher();
 
@@ -117,6 +124,20 @@
 
    /** @type {HTMLDivElement} */
    let editorEl;
+
+   /**
+    * TinyMCE doesn't properly close auxiliary dropdown menus. Manually force a click on toolbar buttons that has
+    * an associated auxiliary control when the editor is open and the app position changes.
+    */
+   $: if (editorActive && editorEl && $positionStore)
+   {
+      // Auxiliary aria selector is different for TinyMCE v5 & v6.
+      const ariaSelector = FVTTVersion.isV10 ? `.tox-tbtn[aria-controls^='aria-controls_']` :
+       `.tox-tbtn[aria-owns^='aria-owns_']`;
+
+      const mceActiveAuxButtonEl = editorEl.querySelector(ariaSelector);
+      if (mceActiveAuxButtonEl) { mceActiveAuxButtonEl.click(); }
+   }
 
    /**
     * Respond to changes in `options.editable`.
@@ -246,6 +267,7 @@
    async function initEditor()
    {
       const mceConfig = {
+         ...TinyMCEHelper.configBasic(),
          ...(options.mceConfig ?? {}),
          engine: 'tinymce',
          target: editorContentEl,
@@ -259,6 +281,17 @@
       await tick();
 
       editor = await TextEditor.create(mceConfig, content);
+
+      /**
+       * Load core fonts into TinyMCE IFrame.
+       *
+       * @type {HTMLIFrameElement}
+       */
+      const editorIFrameEl = editorEl.querySelector('.tox-edit-area__iframe');
+      if (editorIFrameEl)
+      {
+         await TinyMCEHelper.loadFonts({ document: editorIFrameEl.contentDocument })
+      }
 
       // Close the editor on 'esc' key pressed; reset content; invoke the registered Foundry save callback with
       // a deferral via setTimeout.
@@ -365,6 +398,10 @@
     }
 
     .editor-content {
+        color: #000;
+        font-family: "Signika", sans-serif;
+        font-size: 10.5pt;
+        line-height: 1.2;
         padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
     }
 
@@ -412,7 +449,23 @@
         width: fit-content;
     }
 
-    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--select) {
-        font-size: 14px;
+    /* Explicit size for fonts select button */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select[title="Fonts"]) {
+        width: 7em;
+    }
+
+    /* Handles this components toolbar select button width */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--bespoke .tox-tbtn__select-label) {
+        max-width: 7em;
+        width: fit-content;
+    }
+
+    /**
+     * Handles the "global" TinyMCE auxiliary toolbar select button width; this is displayed separately in the DOM
+     * and this CSS will affect all TinyMCE auxiliary toolbar select buttons, but it is better.
+     */
+    :global(.tox.tox-tinymce-aux .tox-tbtn--bespoke .tox-tbtn__select-label) {
+        max-width: 7em;
+        width: fit-content;
     }
 </style>
