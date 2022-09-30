@@ -29,7 +29,7 @@ export class TinyMCEHelper
          content_style: this.#s_DEFAULT_CONTENT_STYLE,
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
          style_formats: this.#getStyleFormats(stripStyleFormat),
-         toolbar: `${FVTTVersion.isV10 ? 'styles' : 'styleselect'} | ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} bullist | numlist | image | table | hr | link | removeformat | code | save`,
+         toolbar: `${FVTTVersion.isV10 ? 'styles' : 'styleselect'} | ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | code | save`,
       };
    }
 

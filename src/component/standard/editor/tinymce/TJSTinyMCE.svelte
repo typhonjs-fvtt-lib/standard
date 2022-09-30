@@ -66,9 +66,13 @@
     *
     * Various TinyMCE `tox` toolbar elements; Defines the toolbar / menu.
     * ---------------------------------
+    * --tjs-editor-menu-item-background-active - #dee0e2
     * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
     * --tjs-editor-toolbar-border-radius - 6px
+    * --tjs-editor-toolbar-button-background - none
+    * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
     * --tjs-editor-toolbar-padding - 0 2px
+    * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
     * --tjs-editor-toolbar-width - 100%
     */
 
@@ -443,15 +447,47 @@
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
+        background: var(--tjs-editor-toolbar-button-background, none);
+        /*color: var(--tjs-editor-toolbar-button-color, red);*/
         padding: 0;
         margin: 2px 0;
         min-width: 34px;
         width: fit-content;
     }
 
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn svg) {
+        /*fill: var(--tjs-editor-toolbar-button-color, red);*/
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
+        background: var(--tjs-editor-toolbar-button-background-hover, var(--color-hover-bg, #f0f0e0));
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {
+        background: var(--tjs-editor-toolbar-button-background-hover, var(--color-hover-bg, #f0f0e0));
+    }
+
+/*
+.tox .tox-tbtn:hover svg
+.tox .tox-tbtn__select-chevron svg
+ */
+
     /* Explicit size for fonts select button */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select[title="Fonts"]) {
         width: 7em;
+    }
+
+    /* Handles select TMCE select button styles */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select) {
+        background: var(--tjs-editor-toolbar-select-background, var(--color-control-bg, #d9d8c8));
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select:hover:not(.tox-tbtn--disabled)) {
+        background: var(--tjs-editor-toolbar-select-background-hover, var(--color-hover-bg, #f0f0e0));
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select.tox-tbtn--active:not(.tox-tbtn--disabled)) {
+        background: var(--tjs-editor-toolbar-select-background-hover, var(--color-hover-bg, #f0f0e0));
     }
 
     /* Handles this components toolbar select button width */
@@ -460,6 +496,8 @@
         width: fit-content;
     }
 
+    /* The following styles affect the global / all modules TinyMCE auxiliary menus --------------------------------*/
+
     /**
      * Handles the "global" TinyMCE auxiliary toolbar select button width; this is displayed separately in the DOM
      * and this CSS will affect all TinyMCE auxiliary toolbar select buttons, but it is better.
@@ -467,5 +505,9 @@
     :global(.tox.tox-tinymce-aux .tox-tbtn--bespoke .tox-tbtn__select-label) {
         max-width: 7em;
         width: fit-content;
+    }
+
+    :global(.tox.tox-tinymce-aux .tox-collection--list .tox-collection__item--active) {
+        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
     }
 </style>
