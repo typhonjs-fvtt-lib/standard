@@ -66,11 +66,14 @@
     *
     * Various TinyMCE `tox` toolbar elements; Defines the toolbar / menu.
     * ---------------------------------
-    * --tjs-editor-menu-item-background-active - #dee0e2
+    * --tjs-editor-menu-item-background-active - #dee0e2 - This targets the auxiliary TMCE menus.
     * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
     * --tjs-editor-toolbar-border-radius - 6px
     * --tjs-editor-toolbar-button-background - none
     * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
+    * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
+    * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813));
+    * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888));
     * --tjs-editor-toolbar-padding - 0 2px
     * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
     * --tjs-editor-toolbar-width - 100%
@@ -448,7 +451,7 @@
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
         background: var(--tjs-editor-toolbar-button-background, none);
-        /*color: var(--tjs-editor-toolbar-button-color, red);*/
+        color: var(--tjs-editor-toolbar-button-color, var(--color-text-dark-primary, #191813));
         padding: 0;
         margin: 2px 0;
         min-width: 34px;
@@ -456,7 +459,8 @@
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn svg) {
-        /*fill: var(--tjs-editor-toolbar-button-color, red);*/
+        fill: var(--tjs-editor-toolbar-button-color, var(--color-text-dark-primary, #191813));
+        margin-right: auto;
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
@@ -467,33 +471,56 @@
         background: var(--tjs-editor-toolbar-button-background-hover, var(--color-hover-bg, #f0f0e0));
     }
 
-/*
-.tox .tox-tbtn:hover svg
-.tox .tox-tbtn__select-chevron svg
- */
+    /* Max width for all select buttons */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select) {
+        max-width: 7em;
+    }
 
     /* Explicit size for fonts select button */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select[title="Fonts"]) {
         width: 7em;
     }
 
-    /* Handles select TMCE select button styles */
+    /* Handles TMCE select button non-active background */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select) {
         background: var(--tjs-editor-toolbar-select-background, var(--color-control-bg, #d9d8c8));
     }
 
+    /* Handles TMCE select button hovered background */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select:hover:not(.tox-tbtn--disabled)) {
         background: var(--tjs-editor-toolbar-select-background-hover, var(--color-hover-bg, #f0f0e0));
     }
 
+    /* Handles TMCE select button active background */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select.tox-tbtn--active:not(.tox-tbtn--disabled)) {
         background: var(--tjs-editor-toolbar-select-background-hover, var(--color-hover-bg, #f0f0e0));
     }
 
+    /* Handles the TMCE select svg container giving a width that works with margin-right: auto for consistent space */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn .tox-tbtn__select-chevron) {
+        max-width: 13px;
+    }
+
+    /* Handles the select chevron inactive color */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn .tox-tbtn__select-chevron svg) {
+        fill: var(--tjs-editor-toolbar-chevron-inactive, var(--color-text-light-7, #888));
+    }
+
+    /* Handles the select chevron active hover color */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:not(.tox-tbtn--disabled):hover .tox-tbtn__select-chevron svg) {
+        fill: var(--tjs-editor-toolbar-chevron-active, var(--color-text-dark-primary, #191813));
+    }
+
+    /* Handles the select chevron menu active color */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--active:not(.tox-tbtn--disabled) .tox-tbtn__select-chevron svg) {
+        fill: var(--tjs-editor-toolbar-chevron-active, var(--color-text-dark-primary, #191813));
+    }
+
     /* Handles this components toolbar select button width */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--bespoke .tox-tbtn__select-label) {
+        margin-right: auto;
         max-width: 7em;
-        width: fit-content;
+        width: 7em;
     }
 
     /* The following styles affect the global / all modules TinyMCE auxiliary menus --------------------------------*/
@@ -508,6 +535,19 @@
     }
 
     :global(.tox.tox-tinymce-aux .tox-collection--list .tox-collection__item--active) {
+        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+    }
+
+    /* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button */
+    :global(.tox.tox-tinymce-aux .tox-tbtn:focus) {
+        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+    }
+
+    :global(.tox.tox-tinymce-aux .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
+        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+    }
+
+    :global(.tox.tox-tinymce-aux .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {
         background: var(--tjs-editor-menu-item-background-active, #dee0e2);
     }
 </style>
