@@ -21,16 +21,23 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configBasic({ contentCSS, fontFormat = true, stripStyleFormat = true } = {})
+   static configBasic({ contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
+    toolbar = true } = {})
    {
-      return {
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} | removeformat | save${help ? ' | help' : ''}`;
+
+      const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#s_DEFAULT_CONTENT_STYLE,
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
-         style_formats: this.#getStyleFormats(stripStyleFormat),
-         toolbar: `${FVTTVersion.isV10 ? 'styles' : 'styleselect'} | ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | code | save`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} save help`,
+         style_formats: this.#getStyleFormats(stripStyleFormat)
       };
+
+      config.toolbar = toolbar ? toolbarData : false;
+
+      return config;
    }
 
    /**
@@ -47,13 +54,48 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configTJS({ contentCSS, fontFormat = true, stripStyleFormat = true } = {})
+   static configStandard({ contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
+    toolbar = true } = {})
+   {
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | save | code${help ? ' | help' : ''}`;
+
+      const config = {
+         content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
+          CONFIG.TinyMCE.content_css,
+         content_style: this.#s_DEFAULT_CONTENT_STYLE,
+         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table code save help`,
+         style_formats: this.#getStyleFormats(stripStyleFormat),
+      };
+
+      config.toolbar = toolbar ? toolbarData : false;
+
+      return config;
+   }
+
+   /**
+    * Provides the TJS super cool TinyMCE configuration options. These options are selected for increased media
+    * embedding and styling flexibility.
+    *
+    * @param {object}   [opts] - Optional parameters.
+    *
+    * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
+    *
+    * @param {true}     [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
+    *
+    * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
+    *
+    * @returns {object} TinyMCE options
+    */
+   static configTJS({ contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
+    toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(stripStyleFormat, this.#s_DEFAULT_STYLE_FORMATS);
 
-      return {
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | table | bulletgroup | save | code${help ? ' | help' : ''}`;
+
+      const config = {
          plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table code save help`,
-         toolbar: `${FVTTVersion.isV10 ? 'styles' : 'styleselect'} | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | table | bulletgroup | code | save | help`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
@@ -96,6 +138,10 @@ export class TinyMCEHelper
          // oembed API to get the embed URL. Additionally, DOMPurify is configured to only accept iframes from YouTube.
          extended_valid_elements: 'iframe[allow|allowfullscreen|frameborder|scrolling|class|style|src|width|height]',
       };
+
+      config.toolbar = toolbar ? toolbarData : false;
+
+      return config;
    }
 
    /**

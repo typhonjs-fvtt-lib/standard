@@ -274,7 +274,7 @@
    async function initEditor()
    {
       const mceConfig = {
-         ...TinyMCEHelper.configBasic(),
+         ...TinyMCEHelper.configStandard(),
          ...(options.mceConfig ?? {}),
          engine: 'tinymce',
          target: editorContentEl,
