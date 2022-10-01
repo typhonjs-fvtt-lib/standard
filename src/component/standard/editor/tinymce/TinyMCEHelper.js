@@ -116,6 +116,7 @@ export class TinyMCEHelper
 
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
+         content_style: this.#s_DEFAULT_CONTENT_STYLE,
          contextmenu: false,  // Prefer default browser context menu
          [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          file_picker_types: 'image media',
@@ -314,7 +315,7 @@ export class TinyMCEHelper
 
   // Static data for `configTJS` -------------------------------------------------------------------------------------
 
-   static #s_DEFAULT_CONTENT_STYLE = 'body { font-family: Signika; font-size: 10.5pt; line-height: 1.2; color: #000 }';
+   static #s_DEFAULT_CONTENT_STYLE = 'body { color: #000; font-family: Signika; font-size: 10.5pt; line-height: 1.2; padding: 0; } p:first-of-type { margin-top: 0; }';
 
    /**
     * Defines the font sizes available in the toolbar options.

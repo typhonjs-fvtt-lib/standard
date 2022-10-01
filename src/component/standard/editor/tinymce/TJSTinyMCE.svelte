@@ -104,7 +104,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, styles: object }}
+    * @type {{ button: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, saveOnBlur: boolean, styles: object }}
     */
    export let options = {};
 
@@ -226,6 +226,9 @@
       }
    }
 
+   /**
+    * When the component is destroyed if the editor is active then save editor content otherwise destroy editor.
+    */
    onDestroy(() =>
    {
       // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
@@ -302,16 +305,31 @@
 
       // Close the editor on 'esc' key pressed; reset content; invoke the registered Foundry save callback with
       // a deferral via setTimeout.
-      editor.on('keydown', ((e) =>
+      editor.on('keydown', (e) =>
       {
          if (e.keyCode === 27)
          {
             editor.resetContent(content);
             setTimeout(() => saveEditor(), 0);
          }
-      }));
+      });
+
+      editor.on('blur', (e) => onBlur(e));
 
       dispatch('editor:start');
+   }
+
+   /**
+    * Potentially handles saving editor on content blur if `options.saveOnBlur` is true.
+    *
+    * @param {FocusEvent} event -
+    */
+   function onBlur(event)
+   {
+      if (editorActive && typeof options.saveOnBlur === 'boolean' && options.saveOnBlur)
+      {
+         saveEditor();
+      }
    }
 
    /**
@@ -425,8 +443,15 @@
         top: var(--tjs-editor-edit-top, 0);
     }
 
-    .tjs-editor :global(.tox-tinymce) {
+    /* Don't add an initial margin top to first paragraph element in `.editor-content`. */
+    .tjs-editor .editor-content :global(p:first-of-type) {
+        margin-top: 0;
+    }
+
+    .tjs-editor :global(div.tox-tinymce) {
         border-radius: 0;
+        font-size: 10.5pt;
+        padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
     }
 
     .tjs-editor :global(.tox:not(.tox-tinymce-inline) .tox-editor-header) {
