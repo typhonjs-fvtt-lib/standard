@@ -8,16 +8,22 @@ import { FVTTVersion } from '../../../internal/FVTTVersion.js';
 export class TinyMCEHelper
 {
    /**
-    * Provides the TJS super cool TinyMCE configuration options. These options are selected for increased media
-    * embedding and styling flexibility.
+    * Provides a very basic / limited TinyMCE config that limits the ability to apply many styles from the toolbar
+    * or with key commands.
     *
     * @param {object}   [opts] - Optional parameters.
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {true}     [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
+    * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
+    *
+    * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
     *
     * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
+    *
+    * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
+    *
+    * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
     * @returns {object} TinyMCE options
     */
@@ -31,7 +37,7 @@ export class TinyMCEHelper
           CONFIG.TinyMCE.content_css,
          content_style: this.#s_DEFAULT_CONTENT_STYLE,
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} save help`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} save ${help ? 'help' : ''}`,
          style_formats: this.#getStyleFormats(stripStyleFormat)
       };
 
@@ -46,25 +52,33 @@ export class TinyMCEHelper
     *
     * @param {object}   [opts] - Optional parameters.
     *
+    * @param {boolean}  [opts.code=true] - When true include source code editing option.
+    *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {true}     [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
+    * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
+    *
+    * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
     *
     * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
     *
+    * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
+    *
+    * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
+    *
     * @returns {object} TinyMCE options
     */
-   static configStandard({ contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
+   static configStandard({ code = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
     toolbar = true } = {})
    {
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | save | code${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#s_DEFAULT_CONTENT_STYLE,
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table code save help`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
          style_formats: this.#getStyleFormats(stripStyleFormat),
       };
 
@@ -79,23 +93,31 @@ export class TinyMCEHelper
     *
     * @param {object}   [opts] - Optional parameters.
     *
+    * @param {boolean}  [opts.code=true] - When true include source code editing option.
+    *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {true}     [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
+    * @param {boolean}  [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
+    *
+    * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
     *
     * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
     *
+    * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
+    *
+    * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
+    *
     * @returns {object} TinyMCE options
     */
-   static configTJS({ contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
+   static configTJS({ code = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
     toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(stripStyleFormat, this.#s_DEFAULT_STYLE_FORMATS);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | table | bulletgroup | save | code${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | table | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table code save help`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
