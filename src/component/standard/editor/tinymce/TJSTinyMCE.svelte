@@ -93,6 +93,7 @@
 
    import { TinyMCEHelper } from './TinyMCEHelper.js';
 
+   import { FontManager }   from '../../../internal/FontManager.js';
    import { FVTTVersion }   from '../../../internal/FVTTVersion';
 
    /** @type {string} */
@@ -299,7 +300,7 @@
       const editorIFrameEl = editorEl.querySelector('.tox-edit-area__iframe');
       if (editorIFrameEl)
       {
-         await TinyMCEHelper.loadFonts({ document: editorIFrameEl.contentDocument })
+         await FontManager.loadFonts({ document: editorIFrameEl.contentDocument })
       }
 
       // Close the editor on 'esc' key pressed; reset content; invoke the registered Foundry save callback with
