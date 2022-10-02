@@ -221,7 +221,7 @@
    {
       if (content)
       {
-         enrichedContent = await TextEditor.enrichHTML(content, { async: true });
+         enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
          dispatch('editor:enrichedContent', { enrichedContent });
       }
    }
@@ -277,8 +277,7 @@
    async function initEditor()
    {
       const mceConfig = {
-         ...TinyMCEHelper.configStandard(),
-         ...(options.mceConfig ?? {}),
+         ...(options.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),

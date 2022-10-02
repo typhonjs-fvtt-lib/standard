@@ -13,6 +13,8 @@ export class TinyMCEHelper
     *
     * @param {object}   [opts] - Optional parameters.
     *
+    * @param {boolean}  [opts.basicFormats=true] - When true, only basic style formats are allowed.
+    *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
@@ -27,9 +29,10 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configBasic({ contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
-    toolbar = true } = {})
+   static configBasic({ basicFormats = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true,
+    styleFormat = true, toolbar = true } = {})
    {
+      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat);
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} | removeformat | save${help ? ' | help' : ''}`;
 
       const config = {
@@ -38,8 +41,11 @@ export class TinyMCEHelper
          content_style: this.#s_DEFAULT_CONTENT_STYLE,
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
          plugins: `${FVTTVersion.isV10 ? '' : 'hr'} save ${help ? 'help' : ''}`,
-         style_formats: this.#getStyleFormats(stripStyleFormat)
+         style_formats,
+         style_formats_merge: false
       };
+
+      if (basicFormats) { config.formats = this.#s_BASIC_FORMATS; }
 
       config.toolbar = toolbar ? toolbarData : false;
 
@@ -47,10 +53,12 @@ export class TinyMCEHelper
    }
 
    /**
-    * Provides the TJS super cool TinyMCE configuration options. These options are selected for increased media
-    * embedding and styling flexibility.
+    * Provides the standard TinyMCE configuration options. This is similar to standard core configuration and the
+    * ProseMirror editor.
     *
     * @param {object}   [opts] - Optional parameters.
+    *
+    * @param {boolean}  [opts.basicFormats=false] - When true, only basic style formats are allowed.
     *
     * @param {boolean}  [opts.code=true] - When true include source code editing option.
     *
@@ -68,9 +76,10 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configStandard({ code = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
-    toolbar = true } = {})
+   static configStandard({ basicFormats = false, code = true, contentCSS, fontFormat = true, help = false,
+    stripStyleFormat = true, styleFormat = true, toolbar = true } = {})
    {
+      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat);
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
@@ -79,7 +88,8 @@ export class TinyMCEHelper
          content_style: this.#s_DEFAULT_CONTENT_STYLE,
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: this.#getFontFormats(),
          plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
-         style_formats: this.#getStyleFormats(stripStyleFormat),
+         style_formats,
+         style_formats_merge: false
       };
 
       config.toolbar = toolbar ? toolbarData : false;
@@ -92,6 +102,8 @@ export class TinyMCEHelper
     * embedding and styling flexibility.
     *
     * @param {object}   [opts] - Optional parameters.
+    *
+    * @param {boolean}  [opts.basicFormats=false] - When true, only basic style formats are allowed.
     *
     * @param {boolean}  [opts.code=true] - When true include source code editing option.
     *
@@ -109,12 +121,12 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configTJS({ code = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true, styleFormat = true,
-    toolbar = true } = {})
+   static configTJS({ basicFormats = false, code = true, contentCSS, fontFormat = true, help = false,
+    stripStyleFormat = true, styleFormat = true, toolbar = true } = {})
    {
-      const style_formats = this.#getStyleFormats(stripStyleFormat, this.#s_DEFAULT_STYLE_FORMATS);
+      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat, this.#s_TJS_STYLE_FORMATS);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | table | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
          plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
@@ -152,6 +164,7 @@ export class TinyMCEHelper
          oembed_disable_file_source: true,
 
          style_formats,
+         style_formats_merge: false,
          table_class_list: this.#s_DEFAULT_TABLE_CLASS_LIST,
 
          // This allows the manual addition of a style tag in the code editor.
@@ -182,34 +195,42 @@ export class TinyMCEHelper
    }
 
    /**
+    * @param {boolean}  [basicFormats=false] - When true limits core formats to basic style formats.
+    *
     * @param {boolean}  [stripStyleFormat=true] - Strips any non-core items added to the style format select group.
     *
     * @param {object[]} [additionalStyleFormats=[]] - Add additional style formats.
     *
     * @returns {{title: string, items: [{classes: string, block: string, wrapper: boolean, title: string}]}[]}
     */
-   static #getStyleFormats(stripStyleFormat = true, additionalStyleFormats = [])
+   static #getStyleFormats(basicFormats = false, stripStyleFormat = true, additionalStyleFormats = [])
    {
-      let style_formats;
+      // Clone the static style formats data.
+      const style_formats = JSON.parse(JSON.stringify(basicFormats ? this.#s_BASIC_STYLE_FORMATS :
+       this.#s_ALL_STYLE_FORMATS));
+
+      const customIndex = basicFormats ? 0 : 1;
 
       if (stripStyleFormat)
       {
-         // Strip out any unwanted custom items from other modules; currently Monk's Extended Journals.
-         const foundryBaseItems = CONFIG.TinyMCE.style_formats[0].items.filter((e) => e.title === 'Secret');
-
          // Only add custom / secret if user is GM.
-         style_formats = game.user.isGM ? [
-            {
-               title: 'Custom',
-               items: foundryBaseItems
-            }
-         ] : [];
+         if (game.user.isGM)
+         {
+            style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
+         }
       }
       else
       {
+         // Save any top level format categories added by external modules.
+         const notCoreFormats = CONFIG.TinyMCE.style_formats.filter((e) => e.title !== 'Custom');
+
+         style_formats.push(...notCoreFormats);
+
          // Only add custom / secret if user is GM.
-         style_formats = game.user.isGM ? CONFIG.TinyMCE.style_formats :
-          CONFIG.TinyMCE.style_formats.filter((e) => e.title !== 'Custom');
+         if (game.user.isGM)
+         {
+            style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
+         }
       }
 
       return style_formats.concat(additionalStyleFormats);
@@ -340,6 +361,111 @@ export class TinyMCEHelper
 
   // Static data for `configTJS` -------------------------------------------------------------------------------------
 
+   /**
+    * Defines the standard all style formats menu for style formats.
+    *
+    * @type {object[]}
+    */
+   static #s_ALL_STYLE_FORMATS = [
+      {
+         title: 'Headings', items: [
+            { title: 'Heading 1', format: 'h1' },
+            { title: 'Heading 2', format: 'h2' },
+            { title: 'Heading 3', format: 'h3' },
+            { title: 'Heading 4', format: 'h4' },
+            { title: 'Heading 5', format: 'h5' },
+            { title: 'Heading 6', format: 'h6' }
+         ]
+      },
+      {
+         title: 'Blocks', items: [
+            { title: 'Paragraph', format: 'p' },
+            { title: 'Blockquote', format: 'blockquote' },
+            { title: 'Pre', format: 'pre' }
+         ]
+      },
+      {
+         title: 'Inline', items: [
+            { title: 'Bold', format: 'bold' },
+            { title: 'Italic', format: 'italic' },
+            { title: 'Code', format: 'code' },
+            { title: 'Underline', format: 'underline' },
+            { title: 'Strikethrough', format: 'strikethrough' },
+            { title: 'Superscript', format: 'superscript' },
+            { title: 'Subscript', format: 'subscript' }
+         ]
+      },
+      {
+         title: 'Align', items: [
+            { title: 'Left', format: 'alignleft' },
+            { title: 'Center', format: 'aligncenter' },
+            { title: 'Right', format: 'alignright' },
+            { title: 'Justify', format: 'alignjustify' }
+         ]
+      }
+   ];
+
+   /**
+    * Removes the core format options that are not considered basic / essential formats when `basicFormats` is true.
+    *
+    * @type {object}
+    */
+   static #s_BASIC_FORMATS = {
+      blockquote: {},
+      div: {},
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      h6: {},
+      pre: {}
+   };
+
+   /**
+    * Defines the limited style formats options when `basicFormats` is true.
+    *
+    * @type {object[]}
+    */
+   static #s_BASIC_STYLE_FORMATS = [
+      {
+         title: 'Blocks', items: [
+            { title: 'Paragraph', format: 'p' }
+         ]
+      },
+      {
+         title: 'Inline', items: [
+            { title: 'Bold', format: 'bold' },
+            { title: 'Italic', format: 'italic' },
+            { title: 'Underline', format: 'underline' },
+            { title: 'Strikethrough', format: 'strikethrough' },
+            { title: 'Superscript', format: 'superscript' },
+            { title: 'Subscript', format: 'subscript' },
+            { title: 'Code', format: 'code' }
+         ]
+      },
+      {
+         title: 'Align', items: [
+            { title: 'Left', format: 'alignleft' },
+            { title: 'Center', format: 'aligncenter' },
+            { title: 'Right', format: 'alignright' },
+            { title: 'Justify', format: 'alignjustify' }
+         ]
+      }
+   ];
+
+   /**
+    * Defines the secret FVTT core format item.
+    *
+    * @type {object}
+    */
+   static #s_CUSTOM_SECRET_FORMAT_ITEM = {
+      title: "Secret",
+      block: "section",
+      classes: "secret",
+      wrapper: true
+   };
+
    static #s_DEFAULT_CONTENT_STYLE = 'body { color: #000; font-family: Signika; font-size: 10.5pt; line-height: 1.2; padding: 0; } p:first-of-type { margin-top: 0; }';
 
    /**
@@ -371,7 +497,7 @@ export class TinyMCEHelper
     *
     * @type {object[]}
     */
-   static #s_DEFAULT_STYLE_FORMATS = [{
+   static #s_TJS_STYLE_FORMATS = [{
       title: 'Styles',
       items: [
          {
