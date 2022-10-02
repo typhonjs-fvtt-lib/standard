@@ -456,6 +456,7 @@
 
     .tjs-editor :global(.tox:not(.tox-tinymce-inline) .tox-editor-header) {
         background: none;
+        margin-bottom: 0.5em;
         padding: 0;
         width: var(--tjs-editor-toolbar-width, 100%);
     }
