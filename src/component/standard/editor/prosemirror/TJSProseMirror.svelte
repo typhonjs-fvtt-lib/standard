@@ -101,7 +101,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, editoble: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, styles: object }}
+    * @type {{ button: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, styles: object }}
     */
    export let options = {};
 
@@ -202,7 +202,7 @@
    {
       if (content)
       {
-         enrichedContent = await TextEditor.enrichHTML(content, { async: true });
+         enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
          dispatch('editor:enrichedContent', { enrichedContent });
       }
    }
