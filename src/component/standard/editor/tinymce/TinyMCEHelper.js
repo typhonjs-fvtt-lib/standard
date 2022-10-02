@@ -197,16 +197,19 @@ export class TinyMCEHelper
          // Strip out any unwanted custom items from other modules; currently Monk's Extended Journals.
          const foundryBaseItems = CONFIG.TinyMCE.style_formats[0].items.filter((e) => e.title === 'Secret');
 
-         style_formats = [
+         // Only add custom / secret if user is GM.
+         style_formats = game.user.isGM ? [
             {
                title: 'Custom',
                items: foundryBaseItems
             }
-         ];
+         ] : [];
       }
       else
       {
-         style_formats = CONFIG.TinyMCE.style_formats;
+         // Only add custom / secret if user is GM.
+         style_formats = game.user.isGM ? CONFIG.TinyMCE.style_formats :
+          CONFIG.TinyMCE.style_formats.filter((e) => e.title !== 'Custom');
       }
 
       return style_formats.concat(additionalStyleFormats);
