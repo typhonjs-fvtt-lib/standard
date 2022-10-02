@@ -26,14 +26,18 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
+    * @param {boolean}  [opts.tjsStyles=false] - Includes extensive "TJS" styling options.
+    *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
     * @returns {object} TinyMCE options
     */
    static configBasic({ basicFormats = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true,
-    styleFormat = true, toolbar = true } = {})
+    styleFormat = true, tjsStyles = false, toolbar = true } = {})
    {
-      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat);
+      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
+       tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
+
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} | removeformat | save${help ? ' | help' : ''}`;
 
       const config = {
@@ -73,14 +77,18 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
+    * @param {boolean}  [opts.tjsStyles=false] - Includes extensive "TJS" styling options.
+    *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
     * @returns {object} TinyMCE options
     */
    static configStandard({ basicFormats = false, code = true, contentCSS, fontFormat = true, help = false,
-    stripStyleFormat = true, styleFormat = true, toolbar = true } = {})
+    stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
    {
-      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat);
+      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
+       tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
+
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
@@ -118,14 +126,17 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
+    * @param {boolean}  [opts.tjsStyles=true] - Includes extensive "TJS" styling options.
+    *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
     * @returns {object} TinyMCE options
     */
    static configTJS({ basicFormats = false, code = true, contentCSS, fontFormat = true, help = false,
-    stripStyleFormat = true, styleFormat = true, toolbar = true } = {})
+    stripStyleFormat = true, styleFormat = true, tjsStyles = true, toolbar = true } = {})
    {
-      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat, this.#s_TJS_STYLE_FORMATS);
+      const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
+       tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
