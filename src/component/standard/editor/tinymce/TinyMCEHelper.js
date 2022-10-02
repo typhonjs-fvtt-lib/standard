@@ -47,12 +47,13 @@ export class TinyMCEHelper
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} save ${help ? 'help' : ''}`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} save ${help ? 'help' : ''}`,
          style_formats,
          style_formats_merge: false
       };
 
-      if (basicFormats) { config.formats = this.#s_BASIC_FORMATS; }
+      if (basicFormats)
+      { config.formats = this.#s_BASIC_FORMATS; }
 
       config.toolbar = toolbar ? toolbarData : false;
 
@@ -100,7 +101,7 @@ export class TinyMCEHelper
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
          style_formats,
          style_formats_merge: false
       };
@@ -147,7 +148,7 @@ export class TinyMCEHelper
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
@@ -197,6 +198,40 @@ export class TinyMCEHelper
       config.toolbar = toolbar ? toolbarData : false;
 
       return config;
+   }
+
+   /**
+    * Provides a combined `mceConfig` and other default options to create a single line editor that prevents pasting,
+    * prevents enter key / new lines, saves on editor blur, and doesn't show the toolbar. This is useful as a shortcut
+    * to enable TJSTinyMCE to act as a content editable text entry for a single line text field.
+    *
+    * Note: Since this function returns an object w/ mceConfig and other options you must use it like in TJSTinyMCE
+    * options; where `font-size` in contentStyleBody and any other styles match the editor CSS variables:
+    *
+    * ...TinyMCEHelper.configSingleLine({ contentStyleBody: { 'font-size': '22pt' }})
+    *
+    * @param {object}   [opts] - Optional parameters.
+    *
+    * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
+    *
+    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    *
+    * @returns {object} TinyMCE options
+    */
+   static configSingleLine({ contentCSS, contentStyleBody } = {})
+   {
+      const mceConfig = {
+         ...this.configBasic({ contentCSS, contentStyleBody, toolbar: false }),
+         save_enablewhendirty: false
+      };
+
+      return {
+         mceConfig,
+         preventPaste: true,
+         preventEnterKey: true,
+         saveOnEnterKey: true,
+         saveOnBlur: true
+      };
    }
 
    /**

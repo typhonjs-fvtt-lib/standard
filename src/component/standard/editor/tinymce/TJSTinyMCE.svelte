@@ -109,7 +109,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, saveOnBlur: boolean, styles: object }}
+    * @type {{ button: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, preventEnterKey: boolean, preventPaste: boolean, saveOnBlur: boolean, saveOnEnterKey: boolean, styles: object }}
     */
    export let options = {};
 
@@ -224,7 +224,7 @@
     */
    async function onContentChanged(content)
    {
-      if (content)
+      if (typeof content === 'string')
       {
          enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
          dispatch('editor:enrichedContent', { enrichedContent });
@@ -281,12 +281,49 @@
     */
    async function initEditor()
    {
+      // Store any existing setup function.
+      const existingSetupFn = options?.mceConfig?.setup;
+
       const mceConfig = {
          ...(options.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%'
+      }
+
+      // Handle `preventEnterKey` / `saveOnEnterKey`.
+      if ((typeof options.preventEnterKey === 'boolean' && options.preventEnterKey) ||
+       (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey))
+      {
+         mceConfig.setup = (editor) =>
+         {
+            // Add prevent enter key handler here as this will be able to stop the event from triggering TMCE.
+               editor.on('keydown', (e) =>
+               {
+                  if (e.keyCode === 13)
+                  {
+                     e.preventDefault();
+                     e.stopPropagation();
+
+                     if (options.saveOnEnterKey) { saveEditor(); }
+                     return false;
+                  }
+               });
+
+            // Invoke any existing setup function in the config object provided.
+            if (typeof existingSetupFn === 'function') { existingSetupFn(editor); }
+         };
+      }
+
+      // Handle `preventPaste`.
+      if (typeof options.preventPaste === 'boolean' && options.preventPaste)
+      {
+         mceConfig.paste_preprocess = (editor, args) => {
+            args.stopImmediatePropagation();
+            args.stopPropagation();
+            args.preventDefault();
+         };
       }
 
       editorActive = true;
@@ -311,10 +348,13 @@
       // a deferral via setTimeout.
       editor.on('keydown', (e) =>
       {
-         if (e.keyCode === 27)
+         switch (e.keyCode)
          {
-            editor.resetContent(content);
-            setTimeout(() => saveEditor(), 0);
+            // Escape key
+            case 27:
+               editor.resetContent(content);
+               setTimeout(() => saveEditor(), 0);
+               break;
          }
       });
 
@@ -366,11 +406,11 @@
       {
          let data = editor.getContent();
 
-         // editor.isDirty() doesn't appear to work as desired.
-         if (data !== content)
-         {
-            let data = editor.getContent();
+         const saving = data !== content;
 
+         // editor.isDirty() doesn't appear to work as desired.
+         if (saving)
+         {
             // Perform client side sanitization if DOMPurify is available in options.
             // ProseMirror does essential `<script>` based sanitization, so this is just an extra option to provide
             // specific sanitization.
@@ -382,7 +422,7 @@
             // Save to document if available
             if ($doc && options.fieldName)
             {
-               $doc.update({ [options.fieldName]: data })
+               $doc.update({ [options.fieldName]: data });
             }
             else // Otherwise save to content.
             {
@@ -392,7 +432,7 @@
             dispatch('editor:save', { content: data });
          }
 
-         if (remove) { destroyEditor(false); }
+         if (remove) { destroyEditor(!saving); }
       }
    }
 </script>
