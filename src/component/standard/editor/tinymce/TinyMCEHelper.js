@@ -18,6 +18,8 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
+    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
     *
     * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
@@ -32,8 +34,8 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configBasic({ basicFormats = true, contentCSS, fontFormat = true, help = false, stripStyleFormat = true,
-    styleFormat = true, tjsStyles = false, toolbar = true } = {})
+   static configBasic({ basicFormats = true, contentCSS, contentStyleBody, fontFormat = true, help = false,
+    stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
@@ -43,7 +45,7 @@ export class TinyMCEHelper
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
-         content_style: this.#s_DEFAULT_CONTENT_STYLE,
+         content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
          plugins: `${FVTTVersion.isV10 ? '' : 'hr'} save ${help ? 'help' : ''}`,
          style_formats,
@@ -69,6 +71,8 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
+    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
     *
     * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
@@ -83,8 +87,8 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configStandard({ basicFormats = false, code = true, contentCSS, fontFormat = true, help = false,
-    stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
+   static configStandard({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true,
+    help = false, stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
@@ -94,7 +98,7 @@ export class TinyMCEHelper
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
-         content_style: this.#s_DEFAULT_CONTENT_STYLE,
+         content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
          plugins: `${FVTTVersion.isV10 ? '' : 'hr'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
          style_formats,
@@ -118,6 +122,8 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
+    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    *
     * @param {boolean}  [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
     *
     * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
@@ -132,7 +138,7 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configTJS({ basicFormats = false, code = true, contentCSS, fontFormat = true, help = false,
+   static configTJS({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true, help = false,
     stripStyleFormat = true, styleFormat = true, tjsStyles = true, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
@@ -162,7 +168,7 @@ export class TinyMCEHelper
 
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
-         content_style: this.#s_DEFAULT_CONTENT_STYLE,
+         content_style: this.#getContentStyle(contentStyleBody),
          contextmenu: false,  // Prefer default browser context menu
          [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          file_picker_types: 'image media',
@@ -191,6 +197,29 @@ export class TinyMCEHelper
       config.toolbar = toolbar ? toolbarData : false;
 
       return config;
+   }
+
+   /**
+    * Allows the `body` portion of the default content styles to be modified via `contentStyleBody`.
+    *
+    * @param {object}   contentStyleBody - CSS styles to modify / add to TinyMCE IFrame body element.
+    *
+    * @returns {string} TinyMCE content styles CSS.
+    */
+   static #getContentStyle(contentStyleBody = {})
+   {
+      const body = {
+         color: '#000',
+         'font-family': 'Signika',
+         'font-size': '10.5pt',
+         'line-height': '1.2',
+         padding: '0',
+         ...contentStyleBody
+      };
+
+      const bodyString = Object.entries(body).map((array) => `${array[0]}: ${array[1]};`).join(';');
+
+      return `body { ${bodyString} } p:first-of-type { margin-top: 0; }`;
    }
 
    /**
@@ -282,7 +311,8 @@ export class TinyMCEHelper
    ];
 
    /**
-    * Removes the core format options that are not considered basic / essential formats when `basicFormats` is true.
+    * Removes the TMCE core format options that are not considered basic / essential formats when `basicFormats`
+    * is true.
     *
     * @type {object}
     */
@@ -341,8 +371,6 @@ export class TinyMCEHelper
       classes: "secret",
       wrapper: true
    };
-
-   static #s_DEFAULT_CONTENT_STYLE = 'body { color: #000; font-family: Signika; font-size: 10.5pt; line-height: 1.2; padding: 0; } p:first-of-type { margin-top: 0; }';
 
    /**
     * Defines the font sizes available in the toolbar options.

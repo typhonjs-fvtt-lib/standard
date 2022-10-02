@@ -52,8 +52,12 @@
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
+    * --tjs-editor-content-color - #000
+    * --tjs-editor-content-font-family - "Signika"
+    * --tjs-editor-content-font-size - 10.5pt
+    * --tjs-editor-content-line-height - 1.2
     * --tjs-editor-content-overflow - auto
-    * --tjs-editor-content-padding - 0 0 0 0.25em
+    * --tjs-editor-content-padding - 0
     *
     * `.editor-container` HTMLDivElement; when editing - removes default margins.
     * ---------------------------------
@@ -423,11 +427,11 @@
     }
 
     .editor-content {
-        color: #000;
-        font-family: "Signika", sans-serif;
-        font-size: 10.5pt;
-        line-height: 1.2;
-        padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
+        color: var(--tjs-editor-content-color, #000);
+        font-family: var(--tjs-editor-content-font-family, "Signika");
+        font-size: var(--tjs-editor-content-font-size, 10.5pt);
+        line-height: var(--tjs-editor-content-line-height, 1.2);
+        padding: var(--tjs-editor-content-padding, 0);
     }
 
     /**
@@ -451,26 +455,30 @@
     .tjs-editor :global(div.tox-tinymce) {
         border-radius: 0;
         font-size: 10.5pt;
-        padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
+        padding: var(--tjs-editor-content-padding, 0);
     }
 
     .tjs-editor :global(.tox:not(.tox-tinymce-inline) .tox-editor-header) {
         background: none;
-        margin-bottom: 0.5em;
+        box-shadow: unset;
+        transition: unset;
         padding: 0;
         width: var(--tjs-editor-toolbar-width, 100%);
     }
 
-    .tjs-editor :global(.tox-toolbar-overlord) {
+    .tjs-editor :global(.tox.tox-tinymce .tox-toolbar-overlord) {
         background: none;
+        box-shadow: 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%);
+        margin-bottom: 0.5em;
+        transition: box-shadow .5s;
     }
 
-    .tjs-editor :global(.tox-toolbar__primary) {
+    .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
         background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
         border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
     }
 
-    .tjs-editor :global(.tox .tox-toolbar__group) {
+    .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__group) {
         width: auto;
         padding: var(--tjs-editor-toolbar-padding, 0 2px);
     }
