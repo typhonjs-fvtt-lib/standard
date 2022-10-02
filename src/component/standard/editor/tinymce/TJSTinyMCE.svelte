@@ -109,7 +109,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, preventEnterKey: boolean, preventPaste: boolean, saveOnBlur: boolean, saveOnEnterKey: boolean, styles: object }}
+    * @type {{ button: boolean, clickToEdit: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, preventEnterKey: boolean, preventPaste: boolean, saveOnBlur: boolean, saveOnEnterKey: boolean, styles: object }}
     */
    export let options = {};
 
@@ -137,6 +137,9 @@
    /** @type {HTMLDivElement} */
    let editorEl;
 
+   /** @type {boolean} */
+   let clickToEdit;
+
    /**
     * TinyMCE doesn't properly close auxiliary dropdown menus. Manually force a click on toolbar buttons that has
     * an associated auxiliary control when the editor is open and the app position changes.
@@ -161,9 +164,17 @@
    }
 
    /**
-    * When `options.button` & `options.editable` is true and the editor is not enable the edit button.
+    * When `options.editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
     */
-   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true);
+   $: clickToEdit = !editorActive && editable &&
+       (typeof options.clickToEdit === 'boolean' ? options.clickToEdit : false);
+
+   /**
+    * When `options.button` & `options.editable` is true and the editor is not active and `clickToEdit` is false
+    * enable the edit button.
+    */
+   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
+       !clickToEdit;
 
    /**
     * Respond to changes in `options.document`
@@ -250,7 +261,7 @@
    /**
     * If `options.editable` is true and `options.button` is false then start the editor on mount.
     */
-   onMount(() => { if (editable && !editorButton) { initEditor(); } });
+   onMount(() => { if (editable && !editorButton && !clickToEdit) { initEditor(); } });
 
    /**
     * Destroys any active editor.
@@ -292,7 +303,8 @@
          height: '100%'
       }
 
-      // Handle `preventEnterKey` / `saveOnEnterKey`.
+      // Handle `preventEnterKey` / `saveOnEnterKey`. It's necessary to set this is up in the config / setup hook as
+      // this event handler will be invoked before any other event handler is set up.
       if ((typeof options.preventEnterKey === 'boolean' && options.preventEnterKey) ||
        (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey))
       {
@@ -319,7 +331,8 @@
       // Handle `preventPaste`.
       if (typeof options.preventPaste === 'boolean' && options.preventPaste)
       {
-         mceConfig.paste_preprocess = (editor, args) => {
+         mceConfig.paste_preprocess = (editor, args) =>
+         {
             args.stopImmediatePropagation();
             args.stopPropagation();
             args.preventDefault();
@@ -373,6 +386,19 @@
       if (editorActive && typeof options.saveOnBlur === 'boolean' && options.saveOnBlur)
       {
          saveEditor();
+      }
+   }
+
+   /**
+    * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
+    *
+    * @param {MouseEvent}   event -
+    */
+   function onClick(event)
+   {
+      if (!editorActive && clickToEdit)
+      {
+         initEditor();
       }
    }
 
@@ -446,7 +472,8 @@
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
     {/if}
     <div bind:this={editorContentEl}
-         class=editor-content>
+         class=editor-content
+         on:click={onClick}>
         {#if !editorActive}
             {@html enrichedContent}
         {/if}
