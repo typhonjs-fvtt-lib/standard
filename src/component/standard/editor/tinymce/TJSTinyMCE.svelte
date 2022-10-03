@@ -96,6 +96,7 @@
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
    import { TinyMCEHelper } from './TinyMCEHelper.js';
+   import { TinyMCEImpl }   from './TinyMCEImpl.js';
 
    import { FontManager }   from '../../../internal/FontManager.js';
    import { FVTTVersion }   from '../../../internal/FVTTVersion';
@@ -109,7 +110,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, clickToEdit: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, mceConfig: object, preventEnterKey: boolean, preventPaste: boolean, saveOnBlur: boolean, saveOnEnterKey: boolean, styles: object }}
+    * @type {{ button: boolean, clickToEdit: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, maxCharacterLength: number, mceConfig: object, preventEnterKey: boolean, preventPaste: boolean, saveOnBlur: boolean, saveOnEnterKey: boolean, styles: object }}
     */
    export let options = {};
 
@@ -120,10 +121,11 @@
    // Provides reactive updates for any associated Foundry document.
    const doc = new TJSDocument();
 
-   let editable = true;
+   /** @type {boolean} */
+   let clickToEdit;
 
-   /** @type {HTMLDivElement} */
-   let editorContentEl;
+   /** @type {boolean} */
+   let editable = true;
 
    /** @type {TinyMCE.Editor} TinyMCE Editor */
    let editor;
@@ -135,10 +137,13 @@
    let editorButton;
 
    /** @type {HTMLDivElement} */
+   let editorContentEl;
+
+   /** @type {HTMLDivElement} */
    let editorEl;
 
-   /** @type {boolean} */
-   let clickToEdit;
+   /** @type {number} */
+   let maxCharacterLength;
 
    /**
     * TinyMCE doesn't properly close auxiliary dropdown menus. Manually force a click on toolbar buttons that has
@@ -175,6 +180,15 @@
     */
    $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
        !clickToEdit;
+
+   /**
+    * Updates maxCharacterLength; this does not reactively alter content or the active editor content.
+    *
+    * TODO: It would be nice to provide reactive updates to content when maxCharacterLength changes, but that is
+    * problematic w/ mixed text & HTML content without a lot of potential work.
+    */
+   $: maxCharacterLength = Number.isInteger(options.maxCharacterLength) && options.maxCharacterLength >= 0 ?
+       options.maxCharacterLength : void 0;
 
    /**
     * Respond to changes in `options.document`
@@ -300,44 +314,29 @@
          engine: 'tinymce',
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
-         height: '100%'
+         height: '100%',
+         paste_as_text: maxCharacterLength >= 0       // Pasted content must be text when limiting to a max length;
+                                                    // requires `paste` plugin on TinyMCE v5.
       }
 
       // Handle `preventEnterKey` / `saveOnEnterKey`. It's necessary to set this is up in the config / setup hook as
       // this event handler will be invoked before any other event handler is set up.
-      if ((typeof options.preventEnterKey === 'boolean' && options.preventEnterKey) ||
-       (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey))
-      {
-         mceConfig.setup = (editor) =>
-         {
-            // Add prevent enter key handler here as this will be able to stop the event from triggering TMCE.
-               editor.on('keydown', (e) =>
-               {
-                  if (e.keyCode === 13)
-                  {
-                     e.preventDefault();
-                     e.stopPropagation();
+     mceConfig.setup = (editor) =>
+     {
+        editor.on('beforeinput', (event) => TinyMCEImpl.beforeInputHandler(editor, event, options, maxCharacterLength));
+        editor.on('keydown', (event) => TinyMCEImpl.keydownHandler(editor, event, options, saveEditor, content));
 
-                     if (options.saveOnEnterKey) { saveEditor(); }
-                     return false;
-                  }
-               });
+        // Invoke any existing setup function in the config object provided.
+        if (typeof existingSetupFn === 'function') { existingSetupFn(editor); }
+     };
 
-            // Invoke any existing setup function in the config object provided.
-            if (typeof existingSetupFn === 'function') { existingSetupFn(editor); }
-         };
-      }
-
-      // Handle `preventPaste`.
-      if (typeof options.preventPaste === 'boolean' && options.preventPaste)
-      {
-         mceConfig.paste_preprocess = (editor, args) =>
-         {
-            args.stopImmediatePropagation();
-            args.stopPropagation();
-            args.preventDefault();
-         };
-      }
+      /**
+       * Handle `preventPaste` option and `maxCharacterLength` limitation on paste.
+       * Note: paste_preprocess requires `paste` MCE plugin on TinyMCE v5.
+       * Note: first parameter is supposed to be editor, but it is undefined on TinyMCE v5; pass in actual editor.
+       */
+      mceConfig.paste_preprocess = (unused, args) => TinyMCEImpl.pastePreprocess(editor, args, options,
+       maxCharacterLength);
 
       editorActive = true;
 
@@ -356,20 +355,6 @@
       {
          await FontManager.loadFonts({ document: editorIFrameEl.contentDocument })
       }
-
-      // Close the editor on 'esc' key pressed; reset content; invoke the registered Foundry save callback with
-      // a deferral via setTimeout.
-      editor.on('keydown', (e) =>
-      {
-         switch (e.keyCode)
-         {
-            // Escape key
-            case 27:
-               editor.resetContent(content);
-               setTimeout(() => saveEditor(), 0);
-               break;
-         }
-      });
 
       editor.on('blur', (e) => onBlur(e));
 
@@ -438,7 +423,7 @@
          if (saving)
          {
             // Perform client side sanitization if DOMPurify is available in options.
-            // ProseMirror does essential `<script>` based sanitization, so this is just an extra option to provide
+            // TinyMCE does essential `<script>` based sanitization, so this is just an extra option to provide
             // specific sanitization.
             if (options?.DOMPurify && typeof options?.DOMPurify?.sanitizeWithVideo === 'function')
             {

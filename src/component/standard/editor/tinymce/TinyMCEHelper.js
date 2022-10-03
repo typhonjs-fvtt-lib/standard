@@ -47,7 +47,7 @@ export class TinyMCEHelper
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} save ${help ? 'help' : ''}`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false
       };
@@ -101,7 +101,7 @@ export class TinyMCEHelper
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false
       };
@@ -148,7 +148,7 @@ export class TinyMCEHelper
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''}`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
@@ -218,7 +218,7 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configSingleLine({ contentCSS, contentStyleBody } = {})
+   static optionsSingleLine({ contentCSS, contentStyleBody } = {})
    {
       const mceConfig = {
          ...this.configBasic({ contentCSS, contentStyleBody, toolbar: false }),
@@ -227,7 +227,6 @@ export class TinyMCEHelper
 
       return {
          mceConfig,
-         preventPaste: true,
          preventEnterKey: true,
          saveOnEnterKey: true,
          saveOnBlur: true
