@@ -76,9 +76,10 @@
     * --tjs-editor-toolbar-button-background - none
     * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
     * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
-    * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813));
-    * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888));
+    * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813))
+    * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888))
     * --tjs-editor-toolbar-padding - 0 2px
+    * --tjs-editor-toolbar-separator-border - 1px solid var(--color-text-light-3, #ccc)
     * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
     * --tjs-editor-toolbar-width - 100%
     */
@@ -533,6 +534,14 @@
     .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__group) {
         width: auto;
         padding: var(--tjs-editor-toolbar-padding, 0 2px);
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce:not([dir=rtl]) .tox-toolbar__group:not(:last-of-type):not(:first-of-type)) {
+        border-right: var(--tjs-editor-toolbar-separator-border, 1px solid var(--color-text-light-3, #ccc));
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce:not([dir=ltr]) .tox-toolbar__group:not(:last-of-type):not(:first-of-type)) {
+        border-left: var(--tjs-editor-toolbar-separator-border, 1px solid var(--color-text-light-3, #ccc));
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
