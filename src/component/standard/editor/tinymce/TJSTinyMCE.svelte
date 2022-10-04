@@ -536,12 +536,8 @@
         padding: var(--tjs-editor-toolbar-padding, 0 2px);
     }
 
-    .tjs-editor :global(.tox.tox-tinymce:not([dir=rtl]) .tox-toolbar__group:not(:last-of-type):not(:first-of-type)) {
+    .tjs-editor :global(.tox.tox-tinymce:not([dir=rtl]) .tox-toolbar__group:not(:last-of-type)) {
         border-right: var(--tjs-editor-toolbar-separator-border, 1px solid var(--color-text-light-3, #ccc));
-    }
-
-    .tjs-editor :global(.tox.tox-tinymce:not([dir=ltr]) .tox-toolbar__group:not(:last-of-type):not(:first-of-type)) {
-        border-left: var(--tjs-editor-toolbar-separator-border, 1px solid var(--color-text-light-3, #ccc));
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
