@@ -1,4 +1,5 @@
 import { striptags } from '@typhonjs-svelte/lib/util';
+import {FVTTVersion} from "../../../internal/FVTTVersion.js";
 
 export class TinyMCEImpl
 {
@@ -61,6 +62,20 @@ export class TinyMCEImpl
             setTimeout(() => saveEditor(), 0);
             break;
       }
+   }
+
+   /**
+    * Retrieves Foundry default fonts on v10+ and appends any custom fonts into the TinyMCE format.
+    *
+    * @returns {string} TinyMCE formatted font family string.
+    */
+   static getFontFormats()
+   {
+      let fvttFonts = FVTTVersion.isV10 ? FontConfig.getAvailableFonts() : CONFIG.fontFamilies;
+
+      fvttFonts = fvttFonts.map((family) =>`${family}=${family}`);
+
+      return fvttFonts.sort().join(';');
    }
 
    /**

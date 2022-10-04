@@ -1,4 +1,3 @@
-import { FontManager } from '../../../internal/FontManager.js';
 import { FVTTVersion } from '../../../internal/FVTTVersion.js';
 
 /**
@@ -46,7 +45,6 @@ export class TinyMCEHelper
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
-         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
          plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false
@@ -103,7 +101,6 @@ export class TinyMCEHelper
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
-         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
          plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false
@@ -178,7 +175,6 @@ export class TinyMCEHelper
          contextmenu: false,  // Prefer default browser context menu
          [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          file_picker_types: 'image media',
-         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
          image_advtab: true,
          [`${FVTTVersion.isV10 ? 'line_height_formats' : 'lineheight_formats'}`]: this.#s_DEFAULT_LINE_HEIGHT,
 

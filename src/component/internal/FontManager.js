@@ -40,35 +40,6 @@ export class FontManager
    }
 
    /**
-    * Create FontFace object from a FontDefinition.
-    *
-    * @param {string} family        The font family name.
-    *
-    * @param {FontDefinition} font  The font definition.
-    *
-    * @returns {FontFace}
-    */
-   static #createFontFace(family, font)
-   {
-      const urls = font.urls.map(url => `url("${url}")`).join(', ');
-      return new FontFace(family, urls, font);
-   }
-
-   /**
-    * Retrieves Foundry default fonts on v10+ and appends any custom fonts into the TinyMCE format.
-    *
-    * @returns {string} TinyMCE formatted font family string.
-    */
-   static getFontFormats()
-   {
-      let fvttFonts = FVTTVersion.isV10 ? FontConfig.getAvailableFonts() : CONFIG.fontFamilies;
-
-      fvttFonts = fvttFonts.map((family) =>`${family}=${family}`);
-
-      return fvttFonts.sort().join(';');
-   }
-
-   /**
     * Load a font definition.
     *
     * @param {string}               family - The font family name (case-sensitive).
@@ -82,14 +53,20 @@ export class FontManager
    static async #loadFont(family, definition, document)
    {
       const font = `1rem "${family}"`;
+
       try
       {
          for (const font of definition.fonts)
          {
-            const fontFace = this.#createFontFace(family, font);
+            // Collect URLs from FontDefinition.
+            const urls = font.urls.map(url => `url("${url}")`).join(', ');
+
+            const fontFace = new FontFace(family, urls);
             await fontFace.load();
+
             document.fonts.add(fontFace);
          }
+
          await document.fonts.load(font);
       }
       catch (err)
@@ -97,6 +74,7 @@ export class FontManager
          console.warn(`Font family "${family}" failed to load: `, err);
          return false;
       }
+
       if (!document.fonts.check(font))
       {
          console.warn(`Font family "${family}" failed to load.`);
@@ -117,9 +95,11 @@ export class FontManager
     *
     * @param {Document} [opts.document] - The target document to load the fonts into.
     *
+    * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of {@link FontFamilyDefinition}.
+    *
     * @returns {Promise<void>}
     */
-   static async loadFonts({ ms = 4500, document = document } = {})
+   static async loadFonts({ ms = 4500, document = document, editor = true } = {})
    {
       const allFonts = this.#collectDefinitions();
       const promises = [];
@@ -127,14 +107,19 @@ export class FontManager
       {
          if (typeof definitions === 'object')
          {
+            // Don't load a font that is not marked to be used in the editor.
+            if (editor && (typeof definitions.editor !== 'boolean' || !definitions.editor)) { continue; }
+
             for (const [family, definition] of Object.entries(definitions))
             {
                promises.push(this.#loadFont(family, definition, document));
             }
          }
       }
+
       const timeout = new Promise(resolve => setTimeout(resolve, ms));
       const ready = Promise.all(promises).then(() => document.fonts.ready);
+
       return Promise.race([ready, timeout]);
    }
 }

@@ -313,6 +313,7 @@
       const mceConfig = {
          ...(options.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
+         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: TinyMCEImpl.getFontFormats(),
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%',
