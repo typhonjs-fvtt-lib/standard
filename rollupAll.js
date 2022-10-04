@@ -5,7 +5,6 @@ import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
 import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
-import sourcemaps          from 'rollup-plugin-sourcemaps';
 import { terser }          from 'rollup-plugin-terser';
 import upath               from 'upath';
 
@@ -43,8 +42,7 @@ const rollupConfigs = [
                ]
             }),
             typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/action'] }),
-            resolve(),
-            sourcemaps()
+            resolve()
          ]
       },
       output: {
@@ -64,8 +62,7 @@ const rollupConfigs = [
          plugins: [
             typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/action'] }),
             resolve(),
-            commonjs(),
-            sourcemaps()
+            commonjs()
          ]
       },
       output: {
@@ -84,8 +81,7 @@ const rollupConfigs = [
          external: s_LOCAL_EXTERNAL,
          plugins: [
             typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/store'] }),
-            resolve(),
-            sourcemaps()
+            resolve()
          ]
       },
       output: {
@@ -97,7 +93,7 @@ const rollupConfigs = [
             sourcemap
          }
       }
-   },
+   }
 ];
 
 for (const config of rollupConfigs)
