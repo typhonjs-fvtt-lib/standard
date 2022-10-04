@@ -82,6 +82,8 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
+    * @param {boolean}  [opts.tjsOembed=false] - Includes custom oEmbed plugin to include video from YouTube / Vimeo.
+    *
     * @param {boolean}  [opts.tjsStyles=false] - Includes extensive "TJS" styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
@@ -89,19 +91,20 @@ export class TinyMCEHelper
     * @returns {object} TinyMCE options
     */
    static configStandard({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true,
-    help = false, stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
+    help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = false, tjsStyles = false,
+     toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image | hr | link | removeformat | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image ${tjsOembed ? '| typhonjs-oembed' : ''} | hr | link | removeformat | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
          [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: FontManager.getFontFormats(),
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false
       };
@@ -133,6 +136,8 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
+    * @param {boolean}  [opts.tjsOembed=true] - Includes custom oEmbed plugin to include video from YouTube / Vimeo.
+    *
     * @param {boolean}  [opts.tjsStyles=true] - Includes extensive "TJS" styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
@@ -140,7 +145,7 @@ export class TinyMCEHelper
     * @returns {object} TinyMCE options
     */
    static configTJS({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true, help = false,
-    stripStyleFormat = true, styleFormat = true, tjsStyles = true, toolbar = true } = {})
+    stripStyleFormat = true, styleFormat = true, tjsOembed = true, tjsStyles = true, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
@@ -148,7 +153,7 @@ export class TinyMCEHelper
       const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists typhonjs-oembed charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
+         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists ${tjsOembed ? 'typhonjs-oembed' : ''} charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
@@ -163,7 +168,7 @@ export class TinyMCEHelper
             insertgroup: {
                icon: 'plus',
                tooltip: 'Insert',
-               items: 'link image typhonjs-oembed emoticons charmap hr'
+               items: `link image ${tjsOembed ? 'typhonjs-oembed' : ''} emoticons charmap hr`
             }
          },
 

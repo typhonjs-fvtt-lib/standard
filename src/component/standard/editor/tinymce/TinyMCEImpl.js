@@ -1,4 +1,4 @@
-import { stripHtml } from '@typhonjs-fvtt/svelte-standard/util';
+import { striptags } from '@typhonjs-svelte/lib/util';
 
 export class TinyMCEImpl
 {
@@ -87,7 +87,7 @@ export class TinyMCEImpl
       else if (maxCharacterLength >= 0)
       {
          // First strip any latent HTML tags.
-         let content = stripHtml(args.content);
+         let content = striptags(args.content);
 
          // In the case of if `preventEnterKey` or `saveOnEnterKey` we assume single line content / entry, so strip
          // all newlines.
