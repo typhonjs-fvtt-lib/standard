@@ -5,27 +5,17 @@
     *
     * There are no required props, but the following are available to set.
     * `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
-    *             updates when `content` changes.
+    *             updates when `content` changes. Two way binding.
     *
-    * `options` - Defines the options object for this component and is passed on to the Foundry ProseMirror support.
+    * `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
+    *             You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
+    *             recommended to change `enrichedContent` externally. One way binding.
     *
-    * `options.button` - [default: true] Provides an edit button to start editing. When button is false editing is
-    *                    always enabled.
-    *
-    * `options.editable` - [default: true] Prevents editing and hides button. When set to false any active editor is
-    *                     cancelled.
-    *
-    * `options.document` - Set to a Foundry document to load and save content from it. Requires `fieldName` to be set.
-    *
-    * `options.DOMPurify` - The DOMPurify export from `@typhonjs-fvtt/runtime/dompurify`. Sanitizes content client side.
-    *                       Note: ProseMirror already does essential `<script>` sanitization, so this is just an extra
-    *                       option that is available as an extra precaution.
-    *
-    * `options.fieldName` - [string] A field name to load and save to / from associated document. IE `a.b.c`.
+    * `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
+    *             Please review all of the options defined below {@link TJSTinyMCEOptions}.
     *
     * Notable options passed onto TinyMCE instance.
     * ---------------------------------
-    *
     * `options.mceConfig` - [object] TinyMCE configuration object.
     *
     * Events: There are three events fired when the editor is canceled, saved, and started.
@@ -84,6 +74,55 @@
     * --tjs-editor-toolbar-width - 100%
     */
 
+   /**
+    * @typedef {object} TJSTinyMCEOptions
+    *
+    * @property {boolean}   [button=true] - Provides an edit button to start editing. When button is false editing is
+    *           always enabled.
+    *
+    * @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
+    *           content initializes the editor.
+    *
+    * @property {boolean}   [editable=true] - Prevents editing and hides button. When set to false any active editor
+    *           is cancelled.
+    *
+    * @property {foundry.abstract.Document}   [document] - Set to a Foundry document to load and save content from it.
+    *           Requires `fieldName` to be set.
+    *
+    * @property {{ sanitizeWithVideo: function }}   [DOMPurify] - The DOMPurify export from
+    *           `@typhonjs-fvtt/runtime/dompurify`. Sanitizes content client side. Note: TinyMCE already does essential
+    *           `<script>` sanitization, so this is just an extra option that is available as an extra precaution.
+    *
+    * @property {string}    [fieldName] - A field name to load and save to / from associated document. IE `a.b.c`.
+    *
+    * @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to load
+    *           specific to this editor.
+    *
+    * @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
+    *           characters that can be entered.
+    *
+    * @property {object}    [mceConfig] - User defined TinyMCE config object. Please see TinyMCE documentation and also
+    *           take into consideration that there are differences between Foundry v9 (TinyMCE v5) and
+    *           Foundry v10+ (TinyMCE v6). Note: There are several pre-made configurations available in
+    *           {@link TinyMCEHelper}. If not defined {@link TinyMCEHelper.configStandard} is used.
+    *
+    * @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
+    *           paragraph.
+    *
+    * @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
+    *
+    * @property {boolean}   [saveOnBlur=false] - When true any loss of focus / blur from the editor saves the editor
+    *           state.
+    *
+    * @property {boolean}   [saveOnEnterKey=false] - When true saves the editor state when the enter key is pressed.
+    *           This is useful when configuring the editor for single line entry. For an automatic setup for single
+    *           line entry refer to {@link TinyMCEHelper.optionsSingleLine}.
+    *
+    * @property {Object<string, string>}   [styles] - Additional CSS property names and values to set as inline styles.
+    *           This is useful for dynamically overriding any built in styles and in particular setting CSS variables
+    *           supported.
+    */
+
    import {
       createEventDispatcher,
       getContext,
@@ -111,7 +150,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {{ button: boolean, clickToEdit: boolean, editable: boolean, document: foundry.abstract.Document, DOMPurify: { sanitizeWithVideo: function }, fieldName: string, maxCharacterLength: number, mceConfig: object, preventEnterKey: boolean, preventPaste: boolean, saveOnBlur: boolean, saveOnEnterKey: boolean, styles: object }}
+    * @type {TJSTinyMCEOptions}
     */
    export let options = {};
 
