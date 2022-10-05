@@ -135,11 +135,9 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
-   import { TinyMCEHelper } from './TinyMCEHelper.js';
-   import { TinyMCEImpl }   from './TinyMCEImpl.js';
-
    import { FontManager }   from '../../../internal/FontManager.js';
-   import { FVTTVersion }   from '../../../internal/FVTTVersion';
+   import { TinyMCEHelper } from './TinyMCEHelper.js';
+   import { MCEImpl }       from './MCEImpl.js';
 
    /** @type {string} */
    export let content = '';
@@ -192,7 +190,7 @@
    $: if (editorActive && editorEl && $positionStore)
    {
       // Auxiliary aria selector is different for TinyMCE v5 & v6.
-      const ariaSelector = FVTTVersion.isV10 ? `.tox-tbtn[aria-controls^='aria-controls_']` :
+      const ariaSelector = MCEImpl.isV6 ? `.tox-tbtn[aria-controls^='aria-controls_']` :
        `.tox-tbtn[aria-owns^='aria-owns_']`;
 
       const mceActiveAuxButtonEl = editorEl.querySelector(ariaSelector);
@@ -358,12 +356,12 @@
       // Store any existing setup function.
       const existingSetupFn = options?.mceConfig?.setup;
 
-      const { fonts, fontFormats } = TinyMCEImpl.getFontData(options.fonts);
+      const { fonts, fontFormats } = MCEImpl.getFontData(options.fonts);
 
       const mceConfig = {
          ...(options.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
-         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: fontFormats,
+         [`${MCEImpl.isV6 ? 'font_family_formats' : 'font_formats'}`]: fontFormats,
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%',
@@ -375,8 +373,8 @@
       // this event handler will be invoked before any other event handler is set up.
      mceConfig.setup = (editor) =>
      {
-        editor.on('beforeinput', (event) => TinyMCEImpl.beforeInputHandler(editor, event, options, maxCharacterLength));
-        editor.on('keydown', (event) => TinyMCEImpl.keydownHandler(editor, event, options, saveEditor, content));
+        editor.on('beforeinput', (event) => MCEImpl.beforeInputHandler(editor, event, options, maxCharacterLength));
+        editor.on('keydown', (event) => MCEImpl.keydownHandler(editor, event, options, saveEditor, content));
 
         // Invoke any existing setup function in the config object provided.
         if (typeof existingSetupFn === 'function') { existingSetupFn(editor); }
@@ -387,7 +385,7 @@
        * Note: paste_preprocess requires `paste` MCE plugin on TinyMCE v5.
        * Note: first parameter is supposed to be editor, but it is undefined on TinyMCE v5; pass in actual editor.
        */
-      mceConfig.paste_preprocess = (unused, args) => TinyMCEImpl.pastePreprocess(editor, args, options,
+      mceConfig.paste_preprocess = (unused, args) => MCEImpl.pastePreprocess(editor, args, options,
        maxCharacterLength);
 
       editorActive = true;

@@ -1,4 +1,4 @@
-import { FVTTVersion } from '../../../internal/FVTTVersion.js';
+import { MCEImpl }     from './MCEImpl.js';
 
 /**
  * Provides custom options for TinyMCE.
@@ -41,19 +41,26 @@ export class TinyMCEHelper
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${
-       fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
-        fontSize ? `${FVTTVersion.isV10 ? 'fontsize |' : 'fontsizeselect |'}` : ''} removeformat | save${
+      const toolbarData = `${styleFormat ? `${MCEImpl.isV6 ? 'styles |' : 'styleselect |'}` : ''} ${
+       fontFormat ? `${MCEImpl.isV6 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
+        fontSize ? `${MCEImpl.isV6 ? 'fontsize |' : 'fontsizeselect |'}` : ''} removeformat | save${
          help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
-         [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
+         [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
+         plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
          style_formats,
-         style_formats_merge: false
+         style_formats_merge: false,
+
+         // This allows the manual addition of a style tag in the code editor.
+         valid_children: '+body[style]',
+
+         // Note we can include all internal tags as we prefilter the URL to make sure it is for YouTube then use the
+         // oembed API to get the embed URL. Additionally, DOMPurify is configured to only accept iframes from YouTube.
+         extended_valid_elements: 'iframe[allow|allowfullscreen|frameborder|scrolling|class|style|src|width|height]',
       };
 
       if (basicFormats)
@@ -103,9 +110,9 @@ export class TinyMCEHelper
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${
-       fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
-        fontSize ? `${FVTTVersion.isV10 ? 'fontsize |' : 'fontsizeselect |'}` : ''} table | bullist | numlist | image ${
+      const toolbarData = `${styleFormat ? `${MCEImpl.isV6 ? 'styles |' : 'styleselect |'}` : ''} ${
+       fontFormat ? `${MCEImpl.isV6 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
+        fontSize ? `${MCEImpl.isV6 ? 'fontsize |' : 'fontsizeselect |'}` : ''} table | bullist | numlist | image ${
          tjsOembed ? '| typhonjs-oembed' : ''} | hr | link | removeformat | save${code ? ' | code' : ''}${
           help ? ' | help' : ''}`;
 
@@ -113,8 +120,8 @@ export class TinyMCEHelper
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
-         [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
+         [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
+         plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false,
 
@@ -170,10 +177,10 @@ export class TinyMCEHelper
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${MCEImpl.isV6 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
-         plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists ${tjsOembed ? 'typhonjs-oembed' : ''} charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
+         plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} emoticons image link lists ${tjsOembed ? 'typhonjs-oembed' : ''} charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
@@ -183,7 +190,7 @@ export class TinyMCEHelper
             formatgroup: {
                icon: 'format',
                tooltip: 'Fonts',
-               items: `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'} ${fontSize ? `${FVTTVersion.isV10 ? 'fontsize |' : 'fontsizeselect |'}` : ''} lineheight | forecolor backcolor`
+               items: `${MCEImpl.isV6 ? 'fontfamily |' : 'fontselect |'} ${fontSize ? `${MCEImpl.isV6 ? 'fontsize |' : 'fontsizeselect |'}` : ''} lineheight | forecolor backcolor`
             },
             insertgroup: {
                icon: 'plus',
@@ -196,10 +203,10 @@ export class TinyMCEHelper
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
          contextmenu: false,  // Prefer default browser context menu
-         [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
+         [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          file_picker_types: 'image media',
          image_advtab: true,
-         [`${FVTTVersion.isV10 ? 'line_height_formats' : 'lineheight_formats'}`]: this.#s_DEFAULT_LINE_HEIGHT,
+         [`${MCEImpl.isV6 ? 'line_height_formats' : 'lineheight_formats'}`]: this.#s_DEFAULT_LINE_HEIGHT,
 
          // For typhonjs-oembed plugin when loaded.
          oembed_live_embeds: false,
@@ -256,6 +263,8 @@ export class TinyMCEHelper
          saveOnBlur: true
       };
    }
+
+   // Internal methods -----------------------------------------------------------------------------------------------
 
    /**
     * Allows the `body` portion of the default content styles to be modified via `contentStyleBody`.
@@ -322,7 +331,7 @@ export class TinyMCEHelper
       return style_formats.concat(additionalStyleFormats);
    }
 
-  // Static data for `configTJS` -------------------------------------------------------------------------------------
+  // Static data -----------------------------------------------------------------------------------------------------
 
    /**
     * Defines the standard all style formats menu for style formats.
