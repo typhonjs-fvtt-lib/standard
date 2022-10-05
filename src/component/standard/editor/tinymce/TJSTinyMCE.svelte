@@ -618,9 +618,14 @@
         max-width: 7em;
     }
 
-    /* Explicit size for fonts select button */
+    /* Explicit size for font format select button */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select[title="Fonts"]) {
         width: 7em;
+    }
+
+    /* Explicit size for font size select button */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select[title="Font sizes"]) {
+        width: 4.5em;
     }
 
     /* Handles TMCE select button non-active background */
@@ -641,6 +646,8 @@
     /* Handles the TMCE select svg container giving a width that works with margin-right: auto for consistent space */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn .tox-tbtn__select-chevron) {
         max-width: 13px;
+        margin-right: 2px;
+        width: fit-content;
     }
 
     /* Handles the select chevron inactive color */

@@ -9,44 +9,6 @@ import { FVTTVersion } from './FVTTVersion.js';
 export class FontManager
 {
    /**
-    * Removes duplicate font definitions.
-    *
-    * @param {Object<FontFamilyDefinition>[]}   fonts -
-    *
-    * @returns {Object<FontFamilyDefinition>[]} Filtered font definitions.
-    */
-   static removeDuplicateDefinitions(fonts)
-   {
-      const familySet = new Set();
-
-      for (const definitions of fonts)
-      {
-         if (typeof definitions === 'object')
-         {
-            for (const family of Object.keys(definitions))
-            {
-               // Remove duplicate from current definitions set.
-               if (familySet.has(family))
-               {
-                  delete definitions[family];
-               }
-               else
-               {
-                  familySet.add(family);
-               }
-               // TODO consider removing duplicates.
-            }
-         }
-         else
-         {
-            // TODO throw error.
-         }
-      }
-
-      return fonts;
-   }
-
-   /**
     * Collect all the font definitions and combine them.
     *
     * @returns {Object<FontFamilyDefinition>[]}
@@ -173,7 +135,6 @@ export class FontManager
                // Early out if the font is already loaded.
                if (document.fonts.check(fontSpecification)) { continue; }
 
-
                promises.push(this.#loadFont(fontSpecification, family, definition, document));
             }
          }
@@ -183,5 +144,42 @@ export class FontManager
       const ready = Promise.all(promises).then(() => document.fonts.ready);
 
       return Promise.race([ready, timeout]);
+   }
+
+   /**
+    * Removes duplicate font definitions.
+    *
+    * @param {Object<FontFamilyDefinition>[]}   fonts -
+    *
+    * @returns {Object<FontFamilyDefinition>[]} Filtered font definitions.
+    */
+   static removeDuplicateDefinitions(fonts)
+   {
+      const familySet = new Set();
+
+      for (const definitions of fonts)
+      {
+         if (typeof definitions === 'object')
+         {
+            for (const family of Object.keys(definitions))
+            {
+               // Remove duplicate from current definitions set.
+               if (familySet.has(family))
+               {
+                  delete definitions[family];
+               }
+               else
+               {
+                  familySet.add(family);
+               }
+            }
+         }
+         else
+         {
+            // TODO throw error.
+         }
+      }
+
+      return fonts;
    }
 }

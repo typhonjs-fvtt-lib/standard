@@ -21,6 +21,8 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
     *
+    * @param {boolean}  [opts.fontSize=false] - Includes font size select box.
+    *
     * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
     *
     * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
@@ -33,18 +35,22 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configBasic({ basicFormats = true, contentCSS, contentStyleBody, fontFormat = true, help = false,
-    stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
+   static configBasic({ basicFormats = true, contentCSS, contentStyleBody, fontFormat = true, fontSize = false,
+    help = false, stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} | removeformat | save${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${
+       fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
+        fontSize ? `${FVTTVersion.isV10 ? 'fontsize |' : 'fontsizeselect |'}` : ''} removeformat | save${
+         help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
+         [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false
@@ -74,6 +80,8 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
     *
+    * @param {boolean}  [opts.fontSize=false] - Includes font size select box.
+    *
     * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
     *
     * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
@@ -89,21 +97,33 @@ export class TinyMCEHelper
     * @returns {object} TinyMCE options
     */
    static configStandard({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true,
-    help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = false, tjsStyles = false,
+    fontSize = false, help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = false, tjsStyles = false,
      toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} table | bullist | numlist | image ${tjsOembed ? '| typhonjs-oembed' : ''} | hr | link | removeformat | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? `${FVTTVersion.isV10 ? 'styles |' : 'styleselect |'}` : ''} ${
+       fontFormat ? `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
+        fontSize ? `${FVTTVersion.isV10 ? 'fontsize |' : 'fontsizeselect |'}` : ''} table | bullist | numlist | image ${
+         tjsOembed ? '| typhonjs-oembed' : ''} | hr | link | removeformat | save${code ? ' | code' : ''}${
+          help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
          content_style: this.#getContentStyle(contentStyleBody),
+         [`${FVTTVersion.isV10 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          plugins: `${FVTTVersion.isV10 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
-         style_formats_merge: false
+         style_formats_merge: false,
+
+         // This allows the manual addition of a style tag in the code editor.
+         valid_children: '+body[style]',
+
+         // Note we can include all internal tags as we prefilter the URL to make sure it is for YouTube then use the
+         // oembed API to get the embed URL. Additionally, DOMPurify is configured to only accept iframes from YouTube.
+         extended_valid_elements: 'iframe[allow|allowfullscreen|frameborder|scrolling|class|style|src|width|height]',
       };
 
       config.toolbar = toolbar ? toolbarData : false;
@@ -127,6 +147,8 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
     *
+    * @param {boolean}  [opts.fontSize=true] - Includes font size options.
+    *
     * @param {boolean}  [opts.help=false] - When true include help plugin / toolbar button.
     *
     * @param {boolean}  [opts.stripStyleFormat=true] - Strips any additional style formats added by other modules.
@@ -141,8 +163,9 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configTJS({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true, help = false,
-    stripStyleFormat = true, styleFormat = true, tjsOembed = true, tjsStyles = true, toolbar = true } = {})
+   static configTJS({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true,
+    fontSize = true, help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = true, tjsStyles = true,
+     toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
@@ -160,7 +183,7 @@ export class TinyMCEHelper
             formatgroup: {
                icon: 'format',
                tooltip: 'Fonts',
-               items: `${FVTTVersion.isV10 ? 'fontfamily | fontsize' : 'fontselect | fontsizeselect'} | lineheight | forecolor backcolor`
+               items: `${FVTTVersion.isV10 ? 'fontfamily |' : 'fontselect |'} ${fontSize ? `${FVTTVersion.isV10 ? 'fontsize |' : 'fontsizeselect |'}` : ''} lineheight | forecolor backcolor`
             },
             insertgroup: {
                icon: 'plus',
