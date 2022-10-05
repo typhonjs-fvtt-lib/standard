@@ -231,6 +231,15 @@
        options.maxCharacterLength : void 0;
 
    /**
+    * Loads any additional fonts specified. Note that FontManager.loadFonts verifies that a font is already loaded,
+    * so it is OK to load additional fonts per component.
+    */
+   $: if (options.fonts)
+   {
+      FontManager.loadFonts({ fonts: options.fonts });
+   }
+
+   /**
     * Respond to changes in `options.document`
     */
    $: if (options.document !== void 0)
@@ -349,10 +358,12 @@
       // Store any existing setup function.
       const existingSetupFn = options?.mceConfig?.setup;
 
+      const { fonts, fontFormats } = TinyMCEImpl.getFontData(options.fonts);
+
       const mceConfig = {
          ...(options.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
-         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: TinyMCEImpl.getFontFormats(),
+         [`${FVTTVersion.isV10 ? 'font_family_formats' : 'font_formats'}`]: fontFormats,
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%',
@@ -394,7 +405,7 @@
       const editorIFrameEl = editorEl.querySelector('.tox-edit-area__iframe');
       if (editorIFrameEl)
       {
-         await FontManager.loadFonts({ document: editorIFrameEl.contentDocument })
+         await FontManager.loadFonts({ document: editorIFrameEl.contentDocument, fonts });
       }
 
       editor.on('blur', (e) => onBlur(e));

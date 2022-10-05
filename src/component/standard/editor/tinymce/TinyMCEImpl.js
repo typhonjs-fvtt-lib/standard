@@ -1,5 +1,6 @@
 import { striptags } from '@typhonjs-svelte/lib/util';
 import {FVTTVersion} from "../../../internal/FVTTVersion.js";
+import {FontManager} from "../../../internal/FontManager.js";
 
 export class TinyMCEImpl
 {
@@ -62,6 +63,47 @@ export class TinyMCEImpl
             setTimeout(() => saveEditor(), 0);
             break;
       }
+   }
+
+   /**
+    * Provides a mechanism to load core Foundry fonts and any additional font family definitions. The returned data
+    * includes the parsed font family definitions and the configuration data TinyMCE needs for loading the font formats.
+    *
+    * @param {Object<FontFamilyDefinition>}  [extraFonts] - Extra user defined fonts to load.
+    *
+    * @returns {{ fonts: Object<FontFamilyDefinition>[], fontFormats: string}} Font formats for MCE & all fonts to load.
+    */
+   static getFontData(extraFonts = {})
+   {
+      if (typeof extraFonts !== 'object') { throw new TypeError(`'extraFonts' is not an object.`); }
+
+      // TODO Sanitize / confirm extraFonts data / add `editor` field if missing.
+
+      /**
+       * @type {Object<FontFamilyDefinition>[]}
+       */
+      const fonts = [
+         ...FontManager.getCoreDefinitions(),
+         extraFonts
+      ];
+
+      // Process font font family definitions to create the font format string for TinyMCE. Remove duplicates.
+
+      /** @type {Set<string>} */
+      const fontFormatSet = new Set();
+
+      for (const definitions of fonts)
+      {
+         if (typeof definitions === 'object')
+         {
+            for (const family of Object.keys(definitions))
+            {
+               fontFormatSet.add(`${family}=${family};`);
+            }
+         }
+      }
+
+      return { fonts, fontFormats: [...fontFormatSet].sort().join('') };
    }
 
    /**

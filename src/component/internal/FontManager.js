@@ -3,17 +3,58 @@ import { FVTTVersion } from './FVTTVersion.js';
 /**
  * Loads FVTT core fonts supporting `FontConfig` on Foundry v10+.
  *
- * Note: This class contains code directly taken from Foundry VTT core client code.
+ * Note: This class contains code modified from Foundry VTT core client code. There are only so many ways to process
+ * core Foundry data structures correctly.
  */
 export class FontManager
 {
+   /**
+    * Removes duplicate font definitions.
+    *
+    * @param {Object<FontFamilyDefinition>[]}   fonts -
+    *
+    * @returns {Object<FontFamilyDefinition>[]} Filtered font definitions.
+    */
+   static removeDuplicateDefinitions(fonts)
+   {
+      const familySet = new Set();
+
+      for (const definitions of fonts)
+      {
+         if (typeof definitions === 'object')
+         {
+            for (const family of Object.keys(definitions))
+            {
+               // Remove duplicate from current definitions set.
+               if (familySet.has(family))
+               {
+                  delete definitions[family];
+               }
+               else
+               {
+                  familySet.add(family);
+               }
+               // TODO consider removing duplicates.
+            }
+         }
+         else
+         {
+            // TODO throw error.
+         }
+      }
+
+      return fonts;
+   }
+
    /**
     * Collect all the font definitions and combine them.
     *
     * @returns {Object<FontFamilyDefinition>[]}
     */
-   static #collectDefinitions()
+   static getCoreDefinitions()
    {
+      const fonts = [];
+
       if (FVTTVersion.isV10)
       {
          /**
@@ -25,7 +66,9 @@ export class FontManager
             return obj;
          }, {});
 
-         return [CONFIG.fontDefinitions, game.settings.get('core', 'fonts'), legacyFamilies];
+         fonts.push(foundry.utils.duplicate(CONFIG.fontDefinitions));
+         fonts.push(foundry.utils.duplicate(game.settings.get('core', 'fonts')));
+         fonts.push(legacyFamilies);
       }
       else
       {
@@ -35,12 +78,18 @@ export class FontManager
             return obj;
          }, {});
 
-         return [legacyFamilies];
+         fonts.push(legacyFamilies);
       }
+
+      FontManager.removeDuplicateDefinitions(fonts);
+
+      return fonts;
    }
 
    /**
     * Load a font definition.
+    *
+    * @param {string}               fontSpecification - The font specification.
     *
     * @param {string}               family - The font family name (case-sensitive).
     *
@@ -50,24 +99,23 @@ export class FontManager
     *
     * @returns {Promise<boolean>} Returns true if the font was successfully loaded.
     */
-   static async #loadFont(family, definition, document)
+   static async #loadFont(fontSpecification, family, definition, document)
    {
-      const font = `1rem "${family}"`;
-
       try
       {
-         for (const font of definition.fonts)
+         for (const fontEntry of definition.fonts)
          {
             // Collect URLs from FontDefinition.
-            const urls = font.urls.map(url => `url("${url}")`).join(', ');
+            const urls = fontEntry.urls.map(url => `url("${url}")`).join(', ');
 
-            const fontFace = new FontFace(family, urls);
+            // Note: 'font' contains 'FontFaceDescriptors' data.
+            const fontFace = new FontFace(family, urls, fontEntry);
             await fontFace.load();
 
             document.fonts.add(fontFace);
          }
 
-         await document.fonts.load(font);
+         await document.fonts.load(fontSpecification);
       }
       catch (err)
       {
@@ -75,7 +123,7 @@ export class FontManager
          return false;
       }
 
-      if (!document.fonts.check(font))
+      if (!document.fonts.check(fontSpecification))
       {
          console.warn(`Font family "${family}" failed to load.`);
          return false;
@@ -97,22 +145,36 @@ export class FontManager
     *
     * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of {@link FontFamilyDefinition}.
     *
+    * @param {Object<FontFamilyDefinition>[]|Object<FontFamilyDefinition>} [opts.fonts] - A custom set of font family
+    *        definitions to load. If not defined the core font family definitions are loaded.
+    *
     * @returns {Promise<void>}
     */
-   static async loadFonts({ ms = 4500, document = document, editor = true } = {})
+   static async loadFonts({ ms = 4500, document = globalThis.document, editor = true, fonts } = {})
    {
-      const allFonts = this.#collectDefinitions();
+      // TODO sanity checks
+
+      const allFonts = fonts ? Array.isArray(fonts) ? fonts : [fonts]
+       : this.getCoreDefinitions();
+
       const promises = [];
+
       for (const definitions of allFonts)
       {
          if (typeof definitions === 'object')
          {
-            // Don't load a font that is not marked to be used in the editor.
-            if (editor && (typeof definitions.editor !== 'boolean' || !definitions.editor)) { continue; }
-
             for (const [family, definition] of Object.entries(definitions))
             {
-               promises.push(this.#loadFont(family, definition, document));
+               // Don't load a font that is not marked to be used in the editor.
+               if (editor && (typeof definition.editor !== 'boolean' || !definition.editor)) { continue; }
+
+               const fontSpecification = `1rem "${family}"`;
+
+               // Early out if the font is already loaded.
+               if (document.fonts.check(fontSpecification)) { continue; }
+
+
+               promises.push(this.#loadFont(fontSpecification, family, definition, document));
             }
          }
       }
