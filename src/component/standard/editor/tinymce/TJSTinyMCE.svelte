@@ -1,6 +1,6 @@
 <script>
    /**
-    * Provides a reactive wrapper for Foundry ProseMirror editor support. Allows editing Foundry document data or
+    * Provides a reactive wrapper for Foundry TinyMCE editor support. Allows editing Foundry document data or
     * directly from content prop. Automatic HTML enrichment occurs for the content when saved.
     *
     * There are no required props, but the following are available to set.
@@ -244,13 +244,13 @@
    {
       if (!(options.document instanceof foundry.abstract.Document))
       {
-         throw new TypeError(`TJSProseMirror error: 'options.document' is not a Foundry document.`);
+         throw new TypeError(`TJSTinyMCE error: 'options.document' is not a Foundry document.`);
       }
 
       if (typeof options.fieldName !== 'string')
       {
          throw new TypeError(
-          `TJSProseMirror error: 'options.document' is defined, but 'options.fieldName' is not a string.`);
+          `TJSTinyMCE error: 'options.document' is defined, but 'options.fieldName' is not a string.`);
       }
 
       // Remove any existing editor if document changes.
