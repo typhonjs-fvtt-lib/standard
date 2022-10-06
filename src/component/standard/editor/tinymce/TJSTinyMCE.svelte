@@ -66,6 +66,7 @@
     * --tjs-editor-toolbar-button-background - none
     * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
     * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
+    * --tjs-editor-toolbar-button-disabled-color - rgba(34, 47, 62, .5)
     * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813))
     * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888))
     * --tjs-editor-toolbar-padding - 0 2px
@@ -602,6 +603,14 @@
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn svg) {
         fill: var(--tjs-editor-toolbar-button-color, var(--color-text-dark-primary, #191813));
         margin-right: auto;
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--disabled) {
+        color: var(--tjs-editor-toolbar-button-disabled-color, rgba(34, 47, 62, .5));
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--disabled svg) {
+        fill: var(--tjs-editor-toolbar-button-disabled-color, rgba(34, 47, 62, .5));
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
