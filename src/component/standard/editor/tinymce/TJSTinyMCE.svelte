@@ -395,6 +395,11 @@
       mceConfig.paste_preprocess = (unused, args) => MCEImpl.pastePreprocess(editor, args, options,
        maxCharacterLength);
 
+      // Prepends the CSS variable editor content styles to any existing user defined styles to the `content_style`
+      // MCE config parameter. This automatically makes sure the properties are the same between the `.editor-content`
+      // and the body of the MCE IFrame.
+      mceConfig.content_style = `${MCEImpl.setMCEConfigContentStyle(editorContentEl)} ${mceConfig.content_style}`;
+
       editorActive = true;
 
       // Editor is now active; wait until the template updates w/ new bound `editorContentEl`.
@@ -540,7 +545,7 @@
         font-family: var(--tjs-editor-content-font-family, "Signika");
         font-size: var(--tjs-editor-content-font-size, 10.5pt);
         line-height: var(--tjs-editor-content-line-height, 1.2);
-        padding: var(--tjs-editor-content-padding, 0);
+        padding: var(--tjs-editor-content-padding, 3px 0 0 0);
     }
 
     /**

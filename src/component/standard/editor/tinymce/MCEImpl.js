@@ -3,6 +3,20 @@ import { FontManager }  from '../../../internal/FontManager.js';
 
 export class MCEImpl
 {
+   /**
+    * Stores the CSS variable data that is inspected on the `.editor-content` div before the editor is active and
+    * copies these values if set or the default values to the body element of the TinyMCE IFrame.
+    *
+    * @type {object[]}
+    */
+   static #s_CSS_VARS_EDITOR = [
+      { variable: '--tjs-editor-content-color', property: 'color', default: '#000' },
+      { variable: '--tjs-editor-content-font-family', property: 'font-family', default: 'Signika' },
+      { variable: '--tjs-editor-content-font-size', property: 'font-size', default: '10.5pt' },
+      { variable: '--tjs-editor-content-line-height', property: 'line-height', default: '1.2' },
+      { variable: '--tjs-editor-content-padding', property: 'padding', default: '3px 0 0 0' }
+   ];
+
    static beforeInputHandler(editor, event, options, maxCharacterLength)
    {
       // Early out as `maxCharacterLength` is not defined and `wordcount` MCE plugin not installed.
@@ -166,4 +180,29 @@ export class MCEImpl
          args.content = content;
       }
    };
+
+   /**
+    * Copies over the CSS variable data that is inspected on the `.editor-content` div before the editor is active if
+    * set or the default values to the body element of the TinyMCE IFrame.
+    *
+    * @param editorContentEl
+    *
+    * @return {string} TinyMCE config `content_style` parameter for .
+    */
+   static setMCEConfigContentStyle(editorContentEl)
+   {
+      const cssBodyInlineStyles = {};
+
+      // Get current CSS variables for editor content and set it to inline styles for the MCE editor iFrame.
+      const styles = globalThis.getComputedStyle(editorContentEl);
+
+      for (const entry of this.#s_CSS_VARS_EDITOR)
+      {
+         const currentPropertyValue = styles.getPropertyValue(entry.variable);
+         cssBodyInlineStyles[entry.property] = currentPropertyValue !== '' ? currentPropertyValue : entry.default;
+      }
+
+      return `body { ${Object.entries(cssBodyInlineStyles).map(
+       (array) => `${array[0]}: ${array[1]};`).join(';')} } p:first-of-type { margin-top: 0; }`;
+   }
 }

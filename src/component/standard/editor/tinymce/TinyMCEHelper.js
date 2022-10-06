@@ -1,4 +1,4 @@
-import { MCEImpl }     from './MCEImpl.js';
+import { MCEImpl }   from './MCEImpl.js';
 
 /**
  * Provides custom options for TinyMCE.
@@ -17,7 +17,7 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    * @param {string}   [opts.contentStyle=''] - The same content style string for TinyMCE options.
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
     *
@@ -35,7 +35,7 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configBasic({ basicFormats = true, contentCSS, contentStyleBody, fontFormat = true, fontSize = false,
+   static configBasic({ basicFormats = true, contentCSS, contentStyle = '', fontFormat = true, fontSize = false,
     help = false, stripStyleFormat = true, styleFormat = true, tjsStyles = false, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
@@ -49,7 +49,7 @@ export class TinyMCEHelper
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
-         content_style: this.#getContentStyle(contentStyleBody),
+         content_style: contentStyle,
          [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
          style_formats,
@@ -83,7 +83,7 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    * @param {string}   [opts.contentStyle=''] - The same content style string for TinyMCE options.
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font select box.
     *
@@ -103,7 +103,7 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configStandard({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true,
+   static configStandard({ basicFormats = false, code = true, contentCSS, contentStyle = '', fontFormat = true,
     fontSize = false, help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = false, tjsStyles = false,
      toolbar = true } = {})
    {
@@ -119,7 +119,7 @@ export class TinyMCEHelper
       const config = {
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
-         content_style: this.#getContentStyle(contentStyleBody),
+         content_style: contentStyle,
          [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
@@ -156,7 +156,7 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    * @param {string}   [opts.contentStyle=''] - The same content style string for TinyMCE options.
     *
     * @param {boolean}  [opts.fontFormat=true] - Includes font formats, size, line spacing and color options.
     *
@@ -176,7 +176,7 @@ export class TinyMCEHelper
     *
     * @returns {object} TinyMCE options
     */
-   static configTJS({ basicFormats = false, code = true, contentCSS, contentStyleBody, fontFormat = true,
+   static configTJS({ basicFormats = false, code = true, contentCSS, contentStyle = '', fontFormat = true,
     fontSize = true, help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = true, tjsStyles = true,
      toolbar = true } = {})
    {
@@ -207,7 +207,7 @@ export class TinyMCEHelper
 
          content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
           CONFIG.TinyMCE.content_css,
-         content_style: this.#getContentStyle(contentStyleBody),
+         content_style: contentStyle,
          contextmenu: false,  // Prefer default browser context menu
          [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          file_picker_types: 'image media',
@@ -251,14 +251,14 @@ export class TinyMCEHelper
     *
     * @param {string[]} [opts.contentCSS] - An array of CSS paths to load. `getRoute` will be applied to them.
     *
-    * @param {object}   [opts.contentStyleBody] - An object w/ CSS to add to TinyMCE editor IFrame body.
+    * @param {string}   [opts.contentStyle=''] - The same content style string for TinyMCE options.
     *
     * @returns {object} TinyMCE options
     */
-   static optionsSingleLine({ contentCSS, contentStyleBody } = {})
+   static optionsSingleLine({ contentCSS, contentStyle = '' } = {})
    {
       const mceConfig = {
-         ...this.configBasic({ contentCSS, contentStyleBody, toolbar: false }),
+         ...this.configBasic({ contentCSS, contentStyle, toolbar: false }),
          save_enablewhendirty: false
       };
 
@@ -271,29 +271,6 @@ export class TinyMCEHelper
    }
 
    // Internal methods -----------------------------------------------------------------------------------------------
-
-   /**
-    * Allows the `body` portion of the default content styles to be modified via `contentStyleBody`.
-    *
-    * @param {object}   contentStyleBody - CSS styles to modify / add to TinyMCE IFrame body element.
-    *
-    * @returns {string} TinyMCE content styles CSS.
-    */
-   static #getContentStyle(contentStyleBody = {})
-   {
-      const body = {
-         color: '#000',
-         'font-family': 'Signika',
-         'font-size': '10.5pt',
-         'line-height': '1.2',
-         padding: '0',
-         ...contentStyleBody
-      };
-
-      const bodyString = Object.entries(body).map((array) => `${array[0]}: ${array[1]};`).join(';');
-
-      return `body { ${bodyString} } p:first-of-type { margin-top: 0; }`;
-   }
 
    /**
     * @param {boolean}  [basicFormats=false] - When true limits core formats to basic style formats.
