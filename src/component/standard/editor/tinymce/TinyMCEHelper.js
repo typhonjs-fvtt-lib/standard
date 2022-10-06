@@ -125,6 +125,12 @@ export class TinyMCEHelper
          style_formats,
          style_formats_merge: false,
 
+         // For typhonjs-oembed plugin when loaded.
+         oembed_live_embeds: false,
+         oembed_default_width: 424,
+         oembed_default_height: 238,
+         oembed_disable_file_source: true,
+
          // This allows the manual addition of a style tag in the code editor.
          valid_children: '+body[style]',
 
