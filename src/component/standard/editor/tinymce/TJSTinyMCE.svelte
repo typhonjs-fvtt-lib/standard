@@ -366,9 +366,14 @@
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%',
-         paste_filter_drop: false,                  // Turns off TinyMCE v5 drop / paste filtering and insert.
          paste_as_text: maxCharacterLength >= 0,    // Pasted content must be text when limiting to a max length;
                                                     // requires `paste` plugin on TinyMCE v5.
+      }
+
+      // Turns off TinyMCE v5 drop / paste filtering and insert due to using the 'paste' plugin.
+      if (MCEImpl.isV5)
+      {
+         mceConfig.paste_filter_drop = false;
       }
 
       // Handle `preventEnterKey` / `saveOnEnterKey`. It's necessary to set this is up in the config / setup hook as

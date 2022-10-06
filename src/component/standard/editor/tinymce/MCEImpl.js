@@ -37,6 +37,7 @@ export class MCEImpl
        (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
    }
 
+   static get isV5() { return tinymce?.majorVersion === '5'; }
    static get isV6() { return tinymce?.majorVersion === '6'; }
 
    static keydownHandler(editor, event, options, saveEditor, content)
