@@ -365,7 +365,8 @@
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%',
-         paste_as_text: maxCharacterLength >= 0       // Pasted content must be text when limiting to a max length;
+         paste_filter_drop: false,                  // Turns off TinyMCE v5 drop / paste filtering and insert.
+         paste_as_text: maxCharacterLength >= 0,    // Pasted content must be text when limiting to a max length;
                                                     // requires `paste` plugin on TinyMCE v5.
       }
 
