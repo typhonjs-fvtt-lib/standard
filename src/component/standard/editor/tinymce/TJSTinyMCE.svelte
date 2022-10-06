@@ -185,8 +185,9 @@
    let maxCharacterLength;
 
    /**
-    * TinyMCE doesn't properly close auxiliary dropdown menus. Manually force a click on toolbar buttons that has
-    * an associated auxiliary control when the editor is open and the app position changes.
+    * TinyMCE doesn't properly close auxiliary dropdown menus w/ Svelte. Manually force a click on toolbar buttons
+    * that has an associated auxiliary control when the editor is open and the app position changes; this keeps the MCE
+    * toolbar state correct. Then clear out any remaining children of the MCE auxiliary div.
     */
    $: if (editorActive && editorEl && $positionStore)
    {
@@ -194,8 +195,21 @@
       const ariaSelector = MCEImpl.isV6 ? `.tox-tbtn[aria-controls^='aria-controls_']` :
        `.tox-tbtn[aria-owns^='aria-owns_']`;
 
+      // Perform a click on the active toolbar button to close it; this keeps MCE internal state correct.
       const mceActiveAuxButtonEl = editorEl.querySelector(ariaSelector);
       if (mceActiveAuxButtonEl) { mceActiveAuxButtonEl.click(); }
+
+      // Now remove any other children of the MCE auxiliary div. This is for secondary menus in the `TJS` configuration.
+      const auxEl = document.querySelector('.tox.tox-tinymce-aux');
+      if (auxEl)
+      {
+         let child = auxEl.lastElementChild;
+         while (child)
+         {
+            auxEl.removeChild(child);
+            child = auxEl.lastElementChild;
+         }
+      }
    }
 
    /**
