@@ -55,8 +55,11 @@
     * --tjs-editor-overflow - auto
     * --tjs-editor-width - 100%
     *
-    * When not editing editor overflow is set to auto, but when active overflow is unset:
-    * --tjs-editor-active-overflow - unset
+    * `.editor` HTMLDivElement; properties available when activated:
+    * ---------------------------------
+    * --tjs-editor-active-box-shadow, unset; Foundry default: 0 0 5px var(--color-shadow-primary)
+    * --tjs-editor-active-outline - unset
+    * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -401,6 +404,8 @@
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
+        box-shadow: var(--tjs-editor-active-box-shadow, unset);
+        outline: var(--tjs-editor-active-outline, unset);
         overflow: var(--tjs-editor-active-overflow, unset);
     }
 

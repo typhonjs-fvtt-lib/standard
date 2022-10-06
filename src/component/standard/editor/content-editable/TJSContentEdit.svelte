@@ -37,8 +37,11 @@
     * --tjs-editor-overflow - auto
     * --tjs-editor-width - 100%
     *
-    * When not editing editor overflow is set to auto, but when active overflow is unset:
-    * --tjs-editor-active-overflow - unset
+    * `.editor` HTMLDivElement; properties available when activated:
+    * ---------------------------------
+    * --tjs-editor-active-box-shadow, unset; Foundry default: 0 0 5px var(--color-shadow-primary)
+    * --tjs-editor-active-outline - unset
+    * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -484,24 +487,23 @@
         margin: var(--tjs-editor-margin, 0);
         width: var(--tjs-editor-width, 100%);
 
+        color: var(--tjs-editor-content-color, #000);
+        font-family: var(--tjs-editor-content-font-family, "Signika");
+        font-size: var(--tjs-editor-content-font-size, 10.5pt);
+        line-height: var(--tjs-editor-content-line-height, 1.2);
+        padding: var(--tjs-editor-content-padding, 3px 0 0 0);
+
         /* For Firefox. */
         scrollbar-width: thin;
     }
-
-    /*.editor-content {*/
-    /*    color: var(--tjs-editor-content-color, #000);*/
-    /*    font-family: var(--tjs-editor-content-font-family, "Signika");*/
-    /*    font-size: var(--tjs-editor-content-font-size, 10.5pt);*/
-    /*    line-height: var(--tjs-editor-content-line-height, 1.2);*/
-    /*    padding: var(--tjs-editor-content-padding, 0);*/
-    /*}*/
 
     /**
      * This class is added to editor when `editorActive` is true and unsets overflow allowing content to be scrollable
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
-        outline: 0 solid transparent;
+        box-shadow: var(--tjs-editor-active-box-shadow, unset);
+        outline: var(--tjs-editor-active-outline, unset);
         overflow: var(--tjs-editor-active-overflow, auto);
     }
 
