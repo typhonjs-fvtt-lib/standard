@@ -137,6 +137,7 @@
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
    import { CEImpl }        from './CEImpl.js';
+   import {FVTTVersion} from "../../../internal/FVTTVersion";
 
    /** @type {string} */
    export let content = '';
@@ -150,6 +151,13 @@
     * @type {TJSTinyMCEOptions}
     */
    export let options = {};
+
+   /**
+    * Defines a regex to check for the shape of a raw Foundry document UUID.
+    *
+    * @type {RegExp}
+    */
+   const s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
 
    const dispatch = createEventDispatcher();
 
@@ -405,15 +413,33 @@
    }
 
    /**
-    * Inserts any pasted text content at the current cursor position. No rich content is supported.
+    * Inserts any pasted text content at the current cursor position. No rich content is supported / only plain text.
+    *
+    * For Foundry v10 and above the pasted text is examined for the shape of a raw UUID and if detected attempts to
+    * retrieve the document and if found will generate a proper document link from it. You can get the raw UUID by
+    * context-clicking the icon in the app header bar for various documents.
     *
     * @param {ClipboardEvent}   event -
     */
    function onPaste(event)
    {
-      const text = event.clipboardData.getData('text/plain');
+      let text = event.clipboardData.getData('text/plain');
 
-      if (typeof text === 'string') { CEImpl.insertTextAtCursor(text); }
+      if (typeof text === 'string')
+      {
+         // Check if pasted test matches the shape of a UUID. If so do a lookup and if a document is retrieved build
+         // a UUID.
+         if (FVTTVersion.isV10 && s_UUID_REGEX.test(text))
+         {
+            const uuidDoc = globalThis.fromUuidSync(text);
+            if (uuidDoc)
+            {
+                text = `@UUID[${text}]{${uuidDoc.name}}`;
+            }
+         }
+
+         CEImpl.insertTextAtCursor(text);
+      }
 
       event.preventDefault()
    }

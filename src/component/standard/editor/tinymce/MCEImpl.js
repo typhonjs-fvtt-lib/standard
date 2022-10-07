@@ -1,5 +1,7 @@
 import { striptags }    from '@typhonjs-svelte/lib/util';
+
 import { FontManager }  from '../../../internal/FontManager.js';
+import { FVTTVersion }  from "../../../internal/FVTTVersion.js";
 
 export class MCEImpl
 {
@@ -16,6 +18,13 @@ export class MCEImpl
       { variable: '--tjs-editor-content-line-height', property: 'line-height', default: '1.2' },
       { variable: '--tjs-editor-content-padding', property: 'padding', default: '3px 0 0 0' }
    ];
+
+   /**
+    * Defines a regex to check for the shape of a raw Foundry document UUID.
+    *
+    * @type {RegExp}
+    */
+   static #s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
 
    static beforeInputHandler(editor, event, options, maxCharacterLength)
    {
@@ -123,6 +132,13 @@ export class MCEImpl
    }
 
    /**
+    * Handles paste preprocessing. Prevents pasting when `options.preventPaste` is true. Prevents pasting when
+    * `options.maxContentLength` is set and only partially pastes text to fit within the max length.
+    *
+    *
+    * For Foundry v10 and above when `options.maxContentLength` is not defined pasted text is examined for the shape
+    * of a raw UUID and if detected attempts to retrieve the document and if found will generate a proper document link
+    * from it. You can get the raw UUID by context-clicking the icon in the app header bar for various documents.
     *
     * @param {TinyMCE.Editor} editor -
     *
@@ -134,16 +150,16 @@ export class MCEImpl
     */
    static pastePreprocess(editor, args, options, maxCharacterLength)
    {
-      const contentIsString = typeof args.content === 'string';
-
       // Prevent paste if content is not a string or `preventPaste` option is active.
-      if (!contentIsString || (typeof options.preventPaste === 'boolean' && options.preventPaste))
+      if (typeof args.content !== 'string' || (typeof options.preventPaste === 'boolean' && options.preventPaste))
       {
          args.stopImmediatePropagation();
          args.stopPropagation();
          args.preventDefault();
       }
-      else if (maxCharacterLength >= 0)
+
+      // Must handle pasted text as plain text for max content length. No automatic conversion of raw UUIDs.
+      if (maxCharacterLength >= 0)
       {
          // First strip any latent HTML tags.
          let content = striptags(args.content);
@@ -151,7 +167,6 @@ export class MCEImpl
          // In the case of if `preventEnterKey` or `saveOnEnterKey` we assume single line content / entry, so strip
          // all newlines.
          if (this.hasEnterKeyHandler(options)) { content = content.replace(/[\n\r]+/g, ''); }
-
 
          const bodyLength = editor.plugins.wordcount.body.getCharacterCount();
          const selectionLength = editor.plugins.wordcount.selection.getCharacterCount();
@@ -178,6 +193,23 @@ export class MCEImpl
          }
 
          args.content = content;
+      }
+      else // Evaluate pasted text that is a raw UUID and convert it to a document link.
+      {
+         let text = args.content;
+
+         // Check if pasted test matches the shape of a UUID. If so do a lookup and if a document is retrieved build
+         // a UUID.
+         if (FVTTVersion.isV10 && this.#s_UUID_REGEX.test(text))
+         {
+            const uuidDoc = globalThis.fromUuidSync(text);
+            if (uuidDoc)
+            {
+               text = `@UUID[${text}]{${uuidDoc.name}}`;
+            }
+         }
+
+         args.content = text;
       }
    };
 
