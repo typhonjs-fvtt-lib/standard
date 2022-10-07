@@ -5,18 +5,14 @@
     *
     * There are no required props, but the following are available to set.
     * `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
-    *             updates when `content` changes. Two way binding.
+    *             updates when `content` changes. Two-way binding.
     *
     * `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
     *             You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
-    *             recommended to change `enrichedContent` externally. One way binding.
+    *             recommended to change `enrichedContent` externally. One-way binding.
     *
-    * `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
-    *             Please review all the options defined below {@link TJSTinyMCEOptions}.
-    *
-    * Notable options passed onto TinyMCE instance.
-    * ---------------------------------
-    * `options.mceConfig` - [object] TinyMCE configuration object.
+    * `options` - Defines the options object for this component. Please review all the options defined below
+    *             {@link TJSContentEditOptions}.
     *
     * Events: There are three events fired when the editor is canceled, saved, and started.
     * ---------------------------------
@@ -78,10 +74,13 @@
     */
 
    /**
-    * @typedef {object} TJSTinyMCEOptions
+    * @typedef {object} TJSContentEditOptions
     *
     * @property {boolean}   [button=true] - Provides an edit button to start editing. When button is false editing is
     *           always enabled.
+    *
+    * @property {string[]}  [classes] - An array of strings to add to the `.editor` element classes. This allows easier
+    *           setting of CSS variables across a range of various editor components.
     *
     * @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
     *           content initializes the editor.
@@ -98,22 +97,14 @@
     *
     * @property {string}    [fieldName] - A field name to load and save to / from associated document. IE `a.b.c`.
     *
-    * @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to load
-    *           specific to this editor.
+    * // @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
+    * //          characters that can be entered.
     *
-    * @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
-    *           characters that can be entered.
+    * // @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
+    * //          paragraph.
     *
-    * @property {object}    [mceConfig] - User defined TinyMCE config object. Please see TinyMCE documentation and also
-    *           take into consideration that there are differences between Foundry v9 (TinyMCE v5) and
-    *           Foundry v10+ (TinyMCE v6). Note: There are several pre-made configurations available in
-    *           {@link TinyMCEHelper}. If not defined {@link TinyMCEHelper.configStandard} is used.
-    *
-    * @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
-    *           paragraph.
-    *
-    * @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
-    *
+    * // @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
+    * //
     * @property {boolean}   [saveOnBlur=false] - When true any loss of focus / blur from the editor saves the editor
     *           state.
     *
@@ -148,7 +139,7 @@
    /**
     * Provides the options object that can be reactively updated. See documentation above.
     *
-    * @type {TJSTinyMCEOptions}
+    * @type {TJSContentEditOptions}
     */
    export let options = {};
 
@@ -484,7 +475,7 @@
 
 {#if editorActive}
     <div bind:this={editorEl}
-         class="editor tjs-contenteditable editor-active"
+         class="editor tjs-editor editor-active {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
          contenteditable=true
          use:applyStyles={options.styles}
          on:blur={onBlur}
@@ -495,7 +486,7 @@
     </div>
 {:else}
     <div bind:this={editorEl}
-         class="editor tjs-contenteditable"
+         class="editor tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
          use:applyStyles={options.styles}>
         {@html enrichedContent}
         {#if editorButton}
@@ -505,7 +496,7 @@
 {/if}
 
 <style>
-    .tjs-contenteditable {
+    .tjs-editor {
         background: var(--tjs-editor-background, none);
         border: var(--tjs-editor-border, none);
         border-radius: var(--tjs-editor-border-radius, 0);

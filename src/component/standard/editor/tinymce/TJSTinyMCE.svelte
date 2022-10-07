@@ -5,14 +5,14 @@
     *
     * There are no required props, but the following are available to set.
     * `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
-    *             updates when `content` changes. Two way binding.
+    *             updates when `content` changes. Two-way binding.
     *
     * `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
     *             You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
-    *             recommended to change `enrichedContent` externally. One way binding.
+    *             recommended to change `enrichedContent` externally. One-way binding.
     *
     * `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
-    *             Please review all of the options defined below {@link TJSTinyMCEOptions}.
+    *             Please review all the options defined below {@link TJSTinyMCEOptions}.
     *
     * Notable options passed onto TinyMCE instance.
     * ---------------------------------
@@ -83,6 +83,9 @@
     *
     * @property {boolean}   [button=true] - Provides an edit button to start editing. When button is false editing is
     *           always enabled.
+    *
+    * @property {string[]}  [classes] - An array of strings to add to the `.editor` element classes. This allows easier
+    *           setting of CSS variables across a range of various editor components.
     *
     * @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
     *           content initializes the editor.
@@ -528,7 +531,7 @@
 </script>
 
 <div bind:this={editorEl}
-     class="editor tinymce tjs-editor"
+     class="editor tinymce tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
      class:editor-active={editorActive}
      use:applyStyles={options.styles}
      on:keydown={onKeydown}>
