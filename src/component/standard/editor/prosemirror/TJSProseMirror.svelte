@@ -84,15 +84,18 @@
     * // @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
     * //          content initializes the editor.
     *
-    * @property {boolean}   [editable=true] - Prevents editing and hides button. When set to false any active editor
-    *           is cancelled.
-    *
     * @property {foundry.abstract.Document}   [document] - Set to a Foundry document to load and save content from it.
     *           Requires `fieldName` to be set.
     *
     * @property {{ sanitizeWithVideo: function }}   [DOMPurify] - The DOMPurify export from
     *           `@typhonjs-fvtt/runtime/dompurify`. Sanitizes content client side. Note: TinyMCE already does essential
     *           `<script>` sanitization, so this is just an extra option that is available as an extra precaution.
+    *
+    * @property {boolean}   [editable=true] - Prevents editing and hides button. When set to false any active editor
+    *           is cancelled.
+    *
+    * @property {boolean}   [enrichContent=true] - When set to false content won't be enriched by
+    *           `TextEditor.enrichHTML`.
     *
     * @property {string}    [fieldName] - A field name to load and save to / from associated document. IE `a.b.c`.
     *
@@ -235,7 +238,7 @@
        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
-      onContentChanged(content);
+      onContentChanged(content, typeof options.enrichContent === 'boolean' ? options.enrichContent : true);
    }
 
    /**
@@ -244,15 +247,29 @@
     *
     * @param {string}   content - Content prop.
     *
+    * @param {boolean}  enrichContent - `options.enrichContent` or default of `true.
+    *
     * @returns {Promise<void>}
     */
-   async function onContentChanged(content)
+   async function onContentChanged(content, enrichContent)
    {
-      if (content)
+      if (typeof content === 'string')
       {
-         enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
-         dispatch('editor:enrichedContent', { enrichedContent });
+         if (enrichContent)
+         {
+            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
+         }
+         else
+         {
+            enrichedContent = content;
+         }
       }
+      else
+      {
+         enrichedContent = '';
+      }
+
+      dispatch('editor:enrichedContent', { enrichedContent });
    }
 
    onDestroy(() =>
