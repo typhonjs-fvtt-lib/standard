@@ -67,6 +67,7 @@
     * ---------------------------------
     * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
     * --tjs-editor-toolbar-border-radius - 6px
+    * --tjs-editor-toolbar-box-shadow - 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%)
     * --tjs-editor-toolbar-padding - 2px 0
     * --tjs-editor-toolbar-width - 100%
     */
@@ -456,6 +457,8 @@
         box-shadow: var(--tjs-editor-active-box-shadow, unset);
         outline: var(--tjs-editor-active-outline, unset);
         overflow: var(--tjs-editor-active-overflow, unset);
+
+        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
 
     .editor-content {
@@ -488,7 +491,16 @@
     .tjs-editor :global(.editor-menu) {
         background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
         border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
+        box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
+        margin-bottom: 0.25em;
         padding: var(--tjs-editor-toolbar-padding, 2px 0);
         width: var(--tjs-editor-toolbar-width, 100%);
+
+        transition: box-shadow 500ms ease-in-out;
+    }
+
+    /* Removes the awkward 1rem padding from core */
+    .tjs-editor :global(.prosemirror.editing-source textarea) {
+        padding: 0;
     }
 </style>

@@ -70,6 +70,7 @@
     * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
     * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
     * --tjs-editor-toolbar-button-disabled-color - rgba(34, 47, 62, .5)
+    * --tjs-editor-toolbar-box-shadow - 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%)
     * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813))
     * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888))
     * --tjs-editor-toolbar-padding - 0 2px
@@ -581,6 +582,8 @@
         box-shadow: var(--tjs-editor-active-box-shadow, unset);
         outline: var(--tjs-editor-active-outline, unset);
         overflow: var(--tjs-editor-active-overflow, hidden);
+
+        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
 
     .editor-edit {
@@ -609,9 +612,10 @@
 
     .tjs-editor :global(.tox.tox-tinymce .tox-toolbar-overlord) {
         background: none;
-        box-shadow: 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%);
-        margin-bottom: 0.5em;
-        transition: box-shadow .5s;
+        box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
+        margin-bottom: 0.25em;
+
+        transition: box-shadow 500ms ease-in-out;
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
