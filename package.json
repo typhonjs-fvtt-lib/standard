@@ -51,6 +51,7 @@
     "eslint": "^8",
     "fs-extra": "^10",
     "prosemirror-dev-toolkit": "^1.0.3",
+    "prosemirror-state": "^1.4.1",
     "rollup": "^2",
     "rollup-plugin-svelte": "^7",
     "rollup-plugin-terser": "^7",

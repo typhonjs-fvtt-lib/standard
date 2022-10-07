@@ -131,6 +131,8 @@
 
    import * as Plugins      from './plugins/index.js';
 
+   import { FVTTVersion }   from '../../../internal/FVTTVersion.js';
+
    /** @type {string} */
    export let content = '';
 
@@ -306,6 +308,8 @@
                onSave: () => saveEditor({ remove }),
                onQuit: () => destroyEditor()
             }),
+
+            tjsPasteRawUUID: Plugins.TJSProseMirrorPasteUUID.build(),
 
             ...options.plugins
          }
