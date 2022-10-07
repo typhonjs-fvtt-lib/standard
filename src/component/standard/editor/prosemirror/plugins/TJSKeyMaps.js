@@ -4,7 +4,7 @@ const ProseMirrorKeyMaps = globalThis.ProseMirror ? ProseMirror.ProseMirrorKeyMa
 /**
  * Provides an additional key mapping to `Escape` to destroy / cancel the active editor.
  */
-export class TJSProseMirrorKeyMaps extends ProseMirrorKeyMaps
+export class TJSKeyMaps extends ProseMirrorKeyMaps
 {
    #onQuit;
 

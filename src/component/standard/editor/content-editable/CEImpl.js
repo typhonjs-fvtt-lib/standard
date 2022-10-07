@@ -16,26 +16,55 @@ export class CEImpl
       }
    }
 
-   static selectAll(element)
+   /**
+    * Sets the initial selection based on `options.initialSelection`.
+    *
+    * @param {HTMLDivElement} editorEl - `.editor` element.
+    *
+    * @param {string}   initialSelection - Initial selection option.
+    *
+    * @param {string}   defaultValue - Default value if initialSelection is invalid.
+    */
+   static setInitialSelection(editorEl, initialSelection, defaultValue)
    {
-      if (typeof globalThis.getSelection !== 'function') { return; }
+      const type = initialSelection === 'all' || initialSelection === 'end' || initialSelection === 'start' ?
+       initialSelection : defaultValue;
 
-      const selection = window.getSelection();
+      // Sanity check.
+      if (!editorEl || typeof globalThis.getSelection !== 'function') { return; }
+
+      const selection = document.getSelection();
       const range = document.createRange();
-      range.selectNodeContents(element);
-      selection.removeAllRanges();
-      selection.addRange(range);
-   }
 
-   static setSelectionEnd(element)
-   {
-      if (typeof globalThis.getSelection !== 'function') { return; }
+      switch (type)
+      {
+         case 'all':
+            range.selectNodeContents(editorEl);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            break;
 
-      const selection = globalThis.getSelection();
-      const range = document.createRange();
-      selection.removeAllRanges();
-      range.selectNodeContents(element);
-      range.collapse(false);
-      selection.addRange(range);
+         case 'end':
+            const lastElementChild = editorEl.lastElementChild;
+            if (lastElementChild)
+            {
+               range.setStartAfter(lastElementChild);
+               range.setEndAfter(lastElementChild);
+               selection.removeAllRanges();
+               selection.addRange(range);
+            }
+            break;
+
+         case 'start':
+            const firstElementChild = editorEl.firstElementChild;
+            if (firstElementChild)
+            {
+               range.setStart(firstElementChild, 0);
+               range.setEnd(firstElementChild, 0);
+               selection.removeAllRanges();
+               selection.addRange(range);
+            }
+            break;
+      }
    }
 }

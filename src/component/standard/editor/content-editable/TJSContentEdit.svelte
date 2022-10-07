@@ -97,6 +97,8 @@
     *
     * @property {string}    [fieldName] - A field name to load and save to / from associated document. IE `a.b.c`.
     *
+    * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
+    *
     * // @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
     * //          characters that can be entered.
     *
@@ -109,8 +111,6 @@
     *           state.
     *
     * @property {boolean}   [saveOnEnterKey=false] - When true saves the editor state when the enter key is pressed.
-    *           This is useful when configuring the editor for single line entry. For an automatic setup for single
-    *           line entry refer to {@link TinyMCEHelper.optionsSingleLine}.
     *
     * @property {Object<string, string>}   [styles] - Additional CSS property names and values to set as inline styles.
     *           This is useful for dynamically overriding any built in styles and in particular setting CSS variables
@@ -312,8 +312,8 @@
       // Editor is now active; wait until the template updates w/ new bound `editorEl`.
       await tick();
 
-      // CEImpl.selectAll(editorEl);
-      CEImpl.setSelectionEnd(editorEl);
+      // Set the initial selection; 'all', 'end', 'start'.
+      CEImpl.setInitialSelection(editorEl, options.initialSelection, 'start')
 
       editorEl.focus();
 
@@ -527,5 +527,10 @@
     .editor-edit {
         right: var(--tjs-editor-edit-right, 5px);
         top: var(--tjs-editor-edit-top, 0);
+    }
+
+    /* Don't add an initial margin top to first paragraph element. */
+    .tjs-editor :global(p:first-of-type) {
+        margin-top: 0;
     }
 </style>

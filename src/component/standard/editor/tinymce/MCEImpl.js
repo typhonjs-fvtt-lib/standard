@@ -214,6 +214,48 @@ export class MCEImpl
    };
 
    /**
+    * Sets the initial selection based on `options.initialSelection`.
+    *
+    * @param {TinyMCE.Editor} editor - MCE editor.
+    *
+    * @param {string}   initialSelection - Initial selection option.
+    *
+    * @param {string}   defaultValue - Default value if initialSelection is invalid.
+    */
+   static setInitialSelection(editor, initialSelection, defaultValue)
+   {
+      const type = initialSelection === 'all' || initialSelection === 'end' || initialSelection === 'start' ?
+       initialSelection : defaultValue;
+
+      const selection = editor.selection;
+
+      /** @type {HTMLBodyElement} */
+      const bodyEl = editor.getBody();
+
+      // Sanity check.
+      if (!bodyEl) { return; }
+
+      switch (type)
+      {
+         case 'all':
+            selection.select(bodyEl, true);
+            break;
+
+         case 'end':
+            selection.select(bodyEl, true);
+            selection.collapse(false);
+            break;
+
+         case 'start':
+            selection.select(bodyEl, true);
+            selection.collapse(true);
+            break;
+      }
+
+      editor.focus();
+   }
+
+   /**
     * Copies over the CSS variable data that is inspected on the `.editor-content` div before the editor is active if
     * set or the default values to the body element of the TinyMCE IFrame.
     *

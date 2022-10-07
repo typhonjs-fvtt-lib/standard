@@ -5,7 +5,7 @@ import { Plugin, PluginKey } from 'prosemirror-state';
  * A ProseMirror plugin to transform pasted text that is a raw document UUID into a document link suitable for
  * `TextEditor.enrichHTML`.
  */
-export class TJSProseMirrorPasteUUID
+export class TJSPasteUUID
 {
    /**
     * Defines a regex to check for the shape of a raw Foundry document UUID.
@@ -40,7 +40,7 @@ export class TJSProseMirrorPasteUUID
    {
       if (typeof text === 'string')
       {
-         if (TJSProseMirrorPasteUUID.#s_UUID_REGEX.test(text))
+         if (TJSPasteUUID.#s_UUID_REGEX.test(text))
          {
             const uuidDoc = globalThis.fromUuidSync(text);
             if (uuidDoc)

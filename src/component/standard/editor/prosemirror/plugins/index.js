@@ -1,2 +1,3 @@
-export * from './TJSProseMirrorKeyMaps.js';
-export * from './TJSProseMirrorPasteUUID.js';
+export * from './TJSEditorOptions.js';
+export * from './TJSKeyMaps.js';
+export * from './TJSPasteUUID.js';

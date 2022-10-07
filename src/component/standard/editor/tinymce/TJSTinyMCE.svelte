@@ -105,6 +105,8 @@
     * @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to load
     *           specific to this editor.
     *
+    * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
+    *
     * @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
     *           characters that can be entered.
     *
@@ -426,6 +428,9 @@
       await tick();
 
       editor = await TextEditor.create(mceConfig, content);
+
+      // Set the initial selection; 'all', 'end', 'start'.
+      MCEImpl.setInitialSelection(editor, options.initialSelection, 'start')
 
       /**
        * Load core fonts into TinyMCE IFrame.

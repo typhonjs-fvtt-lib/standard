@@ -95,6 +95,8 @@
     *
     * @property {string}    [fieldName] - A field name to load and save to / from associated document. IE `a.b.c`.
     *
+    * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
+    *
     * // @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to load
     * //          specific to this editor.
     *
@@ -118,6 +120,12 @@
     *           supported.
     */
 
+   /**
+    * @typedef {object} PMEditorExtra - Defines extra data passed to TJSEditorOptions ProseMirror plugin.
+    *
+    * @property {string} initialSelectionDefault - The default value if `options.initialSelection is not defined.
+    */
+
    import {
       createEventDispatcher,
       onDestroy,
@@ -132,8 +140,6 @@
    import { applyDevTools } from '@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror';
 
    import * as Plugins      from '../../../standard/editor/prosemirror/plugins/index.js';
-
-   import { FVTTVersion }   from "../../../internal/FVTTVersion.js";
 
    /** @type {string} */
    export let content = '';
@@ -320,14 +326,18 @@
                onSave: () => saveEditor({ remove })
             }),
 
-            keyMaps: Plugins.TJSProseMirrorKeyMaps.build(ProseMirror.defaultSchema, {
+            keyMaps: Plugins.TJSKeyMaps.build(ProseMirror.defaultSchema, {
                onSave: () => saveEditor({ remove }),
                onQuit: () => destroyEditor()
             }),
 
-            tjsPasteRawUUID: Plugins.TJSProseMirrorPasteUUID.build(),
+            tjsPasteRawUUID: Plugins.TJSPasteUUID.build(),
 
-            ...options.plugins
+            ...(typeof options.plugins === 'object' ? options.plugins : {}),
+
+            tjsEditorOptions: Plugins.TJSEditorOptions.build(options, {
+               initialSelectionDefault: 'start'
+            })
          }
       };
 
@@ -463,6 +473,15 @@
 
     .editor-enriched {
         padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
+    }
+
+    /* Don't add an initial margin top to first paragraph element in `.editor-content`. */
+    .tjs-editor .editor-container .editor-content :global(p:first-of-type) {
+        margin-top: 0;
+    }
+
+    .tjs-editor .editor-enriched :global(p:first-of-type) {
+        margin-top: 0;
     }
 
     /* Provides global styles scoped to `.tjs-editor` for dynamic `.editor-menu` element */
