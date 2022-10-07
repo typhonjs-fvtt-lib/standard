@@ -104,6 +104,8 @@ export class TJSEditorOptions
    /**
     * Dispatches all Svelte component options actions on editor initialization.
     *
+    * Note: We aren't creating a PluginView here! Just using the view callback as an initialization source.
+    *
     * @param {EditorView}   view - PM editor view.
     */
    #initialize(view)
@@ -112,6 +114,9 @@ export class TJSEditorOptions
       const doc = tr.doc;
 
       this.#handleInitialSelection(view, tr, doc);
+
+      // Return empty object / PluginView.
+      return {};
    }
 
    #minMax(value = 0, min = 0, max = 0)
