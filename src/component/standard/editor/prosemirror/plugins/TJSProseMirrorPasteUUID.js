@@ -1,3 +1,4 @@
+// TODO: Foundry v10.287 finally added `Plugin`, but is missing `PluginKey` from exports, so include them here.
 import { Plugin, PluginKey } from 'prosemirror-state';
 
 /**
