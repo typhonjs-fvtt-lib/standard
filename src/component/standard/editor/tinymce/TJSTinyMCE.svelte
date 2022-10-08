@@ -43,6 +43,12 @@
     * --tjs-editor-active-outline - unset
     * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
     *
+    * `.editor` HTMLDivElement; properties available when inactive, but hovered:
+    * ---------------------------------
+    * --tjs-editor-inactive-hover-cursor - text
+    * --tjs-editor-inactive-hover-box-shadow - unset
+    * --tjs-editor-inactive-hover-outline - unset
+    *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
     * --tjs-editor-content-color - #000
@@ -361,7 +367,8 @@
    });
 
    /**
-    * If `options.editable` is true and `options.button` is false then start the editor on mount.
+    * If `options.editable` is true and `options.button` && `options.clickToEdit` is false then start the editor on
+    * mount.
     */
    onMount(() => { if (editable && !editorButton && !clickToEdit) { initEditor(); } });
 
@@ -555,15 +562,16 @@
 
 <div bind:this={editorEl}
      class="editor tinymce tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
+     class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
      use:applyStyles={options.styles}
+     on:click={onClick}
      on:keydown={onKeydown}>
     {#if editorButton}
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
     {/if}
     <div bind:this={editorContentEl}
-         class=editor-content
-         on:click={onClick}>
+         class=editor-content>
         {#if !editorActive}
             {@html enrichedContent}
         {/if}
@@ -601,6 +609,24 @@
         overflow: var(--tjs-editor-active-overflow, hidden);
 
         transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    }
+
+    /**
+     * Defines cursor and box-shadow / outline when the editor is inactive and hovered.
+     */
+    .tjs-editor:not(.editor-active):hover {
+        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
+        outline: var(--tjs-editor-inactive-hover-outline, unset);
+
+        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    }
+
+    /**
+     * Defines cursor when the editor is not active, but configured for click to edit. Give the user some indication
+     * via showing the text cursor across the whole editor element.
+     */
+    .tjs-editor.click-to-edit:not(.editor-active):hover {
+        cursor: var(--tjs-editor-inactive-hover-cursor, text);
     }
 
     .editor-edit {

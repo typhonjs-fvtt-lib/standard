@@ -49,6 +49,12 @@
     * --tjs-editor-active-outline - unset
     * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
     *
+    * `.editor` HTMLDivElement; properties available when inactive, but hovered:
+    * ---------------------------------
+    * --tjs-editor-inactive-hover-cursor - text
+    * --tjs-editor-inactive-hover-box-shadow - unset
+    * --tjs-editor-inactive-hover-outline - unset
+    *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
     * --tjs-editor-content-overflow - auto
@@ -81,8 +87,8 @@
     * @property {string[]}  [classes] - An array of strings to add to the `.editor` element classes. This allows easier
     *           setting of CSS variables across a range of various editor components.
     *
-    * // @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
-    * //          content initializes the editor.
+    * @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
+    *           content initializes the editor.
     *
     * @property {foundry.abstract.Document}   [document] - Set to a Foundry document to load and save content from it.
     *           Requires `fieldName` to be set.
@@ -161,6 +167,10 @@
    // Provides reactive updates for any associated Foundry document.
    const doc = new TJSDocument();
 
+   /** @type {boolean} */
+   let clickToEdit;
+
+   /** @type {boolean} */
    let editable = true;
 
    /** @type {HTMLDivElement} */
@@ -188,9 +198,17 @@
    }
 
    /**
-    * When `options.button` & `options.editable` is true and the editor is not enable the edit button.
+    * When `options.editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
     */
-   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true);
+   $: clickToEdit = !editorActive && editable &&
+    (typeof options.clickToEdit === 'boolean' ? options.clickToEdit : false);
+
+   /**
+    * When `options.button` & `options.editable` is true and the editor is not active and `clickToEdit` is false
+    * enable the edit button.
+    */
+   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
+    !clickToEdit;
 
    /**
     * Respond to changes in `options.document`
@@ -286,9 +304,10 @@
    });
 
    /**
-    * If `options.editable` is true and `options.button` is false then start the editor on mount.
+    * If `options.editable` is true and `options.button` && `options.clickToEdit` is false then start the editor on
+    * mount.
     */
-   onMount(() => { if (editable && !editorButton) { initEditor(); } });
+   onMount(() => { if (editable && !editorButton && !clickToEdit) { initEditor(); } });
 
    /**
     * Destroys any active editor.
@@ -315,7 +334,7 @@
    async function initEditor()
    {
       // If editor button is enabled then remove the menu / editing interface on save.
-      const remove = editorButton;
+      const remove = typeof options.button === 'boolean' ? options.button : true;
 
       const editorOptions = {
          ...options,
@@ -357,6 +376,19 @@
       editor.view.focus();
 
       dispatch('editor:start');
+   }
+
+   /**
+    * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
+    *
+    * @param {MouseEvent}   event -
+    */
+   function onClick(event)
+   {
+      if (!editorActive && clickToEdit)
+      {
+         initEditor();
+      }
    }
 
    /**
@@ -419,8 +451,10 @@
 
 <div bind:this={editorEl}
      class="editor prosemirror tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
+     class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
      use:applyStyles={options.styles}
+     on:click={onClick}
      on:keydown={onKeydown}>
     {#if editorButton}
         <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
@@ -458,6 +492,24 @@
         overflow: var(--tjs-editor-active-overflow, unset);
 
         transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    }
+
+    /**
+     * Defines cursor and box-shadow / outline when the editor is inactive and hovered.
+     */
+    .tjs-editor:not(.editor-active):hover {
+        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
+        outline: var(--tjs-editor-inactive-hover-outline, unset);
+
+        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    }
+
+    /**
+     * Defines cursor when the editor is not active, but configured for click to edit. Give the user some indication
+     * via showing the text cursor across the whole editor element.
+     */
+    .tjs-editor.click-to-edit:not(.editor-active):hover {
+        cursor: var(--tjs-editor-inactive-hover-cursor, text);
     }
 
     .editor-content {
