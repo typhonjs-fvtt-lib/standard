@@ -44,6 +44,7 @@
     * --tjs-editor-inactive-hover-cursor - text
     * --tjs-editor-inactive-hover-box-shadow - unset
     * --tjs-editor-inactive-hover-outline - unset
+    * --tjs-editor-inactive-hover-user-select - text
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -555,6 +556,7 @@
     .tjs-editor:not(.editor-active):hover {
         box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
         outline: var(--tjs-editor-inactive-hover-outline, unset);
+        user-select: var(--tjs-editor-inactive-hover-user-select, text);
 
         transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }

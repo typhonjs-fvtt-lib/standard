@@ -54,6 +54,7 @@
     * --tjs-editor-inactive-hover-cursor - text
     * --tjs-editor-inactive-hover-box-shadow - unset
     * --tjs-editor-inactive-hover-outline - unset
+    * --tjs-editor-inactive-hover-user-select - text
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -545,6 +546,11 @@
 
     .editor-enriched {
         padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);
+    }
+
+    /* Controls whether the editor content text is selectable when the editor is inactive. */
+    .tjs-editor:not(.editor-active) .editor-enriched {
+        user-select: var(--tjs-editor-inactive-hover-user-select, text);
     }
 
     /* Don't add an initial margin top to first paragraph element in `.editor-content`. */
