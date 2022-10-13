@@ -1,5 +1,3 @@
-import { TJSGameSettings }       from '@typhonjs-fvtt/svelte/store';
-
 import { CrudArrayObjectStore }  from '../array-object';
 
 /**
@@ -31,11 +29,6 @@ export class WorldSettingArrayStore extends CrudArrayObjectStore
          ...rest,
          extraData: { namespace, key }
       });
-
-      if (gameSettings !== void 0 && !(gameSettings instanceof TJSGameSettings))
-      {
-         throw new TypeError(`'gameSettings' is not an instance of TJSGameSettings.`);
-      }
 
       if (typeof key !== 'string') { throw new TypeError(`'key' is not a string.`); }
       if (typeof namespace !== 'string') { throw new TypeError(`'namespace' is not a string.`); }
