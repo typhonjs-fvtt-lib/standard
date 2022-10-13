@@ -1,3 +1,5 @@
+import { tick }               from 'svelte';
+
 import { subscribeFirstRest } from '@typhonjs-svelte/lib/store';
 
 /**
@@ -30,9 +32,13 @@ export function toggleDetails(details, { store, clickActive = true } = {})
    let open = details.open;
 
    // The store sets initial open state and handles animation on further changes.
-   const unsubscribe = subscribeFirstRest(store, (value) => { open = value; details.open = open }, (value) =>
+   const unsubscribe = subscribeFirstRest(store, (value) => { open = value; details.open = open }, async (value) =>
    {
       open = value;
+
+      // Await `tick` to allow any conditional logic in the template to complete updating before handling animation.
+      await tick();
+
       handleAnimation();
    });
 
