@@ -9,6 +9,7 @@ export *             from './form/index.js';
 export *             from './label/index.js';
 export *             from './layers/index.js';
 export *             from './menu/index.js';
+export *             from './settings/index.js';
 
 /**
  * Assign all TyphonJS CSS variables to Foundry defaults.
