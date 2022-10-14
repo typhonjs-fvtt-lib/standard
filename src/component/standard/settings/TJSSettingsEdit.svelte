@@ -1,6 +1,5 @@
 <script>
    import { applyStyles }   from '@typhonjs-svelte/lib/action';
-   import { localize }      from '@typhonjs-fvtt/svelte/helper';
 
    import { TJSSvgFolder }  from '../folder/index.js';
 
@@ -37,9 +36,6 @@
          {/each}
       </div>
    </div>
-   <footer>
-      <button type=submit><i class="fas fa-save"></i>{localize('Save Changes')}</button>
-   </footer>
 </main>
 
 <style>
@@ -56,22 +52,17 @@
       flex-direction: column;
       flex-wrap: nowrap;
       overflow: hidden auto;
+      padding-bottom: 0.5em;
    }
 
    section {
       background: rgba(199, 199, 199, 0.85);
       border: 2px solid rgba(0, 0, 0, 0.75);
       border-radius: 0.75em;
-      padding: 8px;
+      padding: 0.5em;
    }
 
    section:not(:last-child) {
-      margin-bottom: 12px;
-   }
-
-   footer {
-      margin: 1rem;
-      flex: none;
+      margin-bottom: 0.75em;
    }
 </style>
-
