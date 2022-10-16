@@ -4,23 +4,31 @@
  */
 export class StyleManager
 {
+   #docKey;
    #selector;
    #styleElement;
    #cssRule;
 
    /**
     *
-    * @param selector
-    * @param {string}   docKey
+    * @param {object} opts - Options.
+    *
+    * @param {string} [opts.selector=:root] - Selector element.
+    *
+    * @param {string} docKey - Key
+    *
+    * @param {Document} [document] - Target document to load styles into.
+    *
     */
-   constructor({ selector = ':root', docKey } = {})
+   constructor({selector = ':root', docKey, document = globalThis.document} = {})
    {
       if (typeof selector !== 'string') { throw new TypeError(`StyleManager error: 'selector' is not a string.`); }
       if (typeof docKey !== 'string') { throw new TypeError(`StyleManager error: 'docKey' is not a string.`); }
 
       this.#selector = selector;
+      this.#docKey = docKey;
 
-      if (document[docKey] === void 0)
+      if (document[this.#docKey] === void 0)
       {
          this.#styleElement = document.createElement('style');
 
@@ -37,6 +45,24 @@ export class StyleManager
          this.#styleElement = document[docKey];
          this.#cssRule = this.#styleElement.sheet.cssRules[0];
       }
+   }
+
+   /**
+    * Provides a copy constructor to duplicate an existing StyleManager instance into a new document.
+    *
+    * Note: This is used to support the `PopOut` module.
+    *
+    * @param [document] Target browser document to clone into.
+    *
+    * @returns {StyleManager} New style manager instance.
+    */
+   clone(document = globalThis.document)
+   {
+      const newStyleManager = new StyleManager({ selector: this.#selector, docKey: this.#docKey, document });
+
+      newStyleManager.#cssRule.style.cssText = this.#cssRule.style.cssText;
+
+      return newStyleManager;
    }
 
    /**

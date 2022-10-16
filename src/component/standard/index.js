@@ -1,3 +1,5 @@
+import { SvelteApplication } from '@typhonjs-fvtt/runtime/svelte/application';
+
 import {
    cssVariables,
    FoundryStyles }   from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
@@ -59,4 +61,27 @@ cssVariables.set({
    '--tjs-menu-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
    '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)',
    '--tjs-menu-item-hover-text-shadow-color': 'var(--color-text-hyperlink, red)',
+});
+
+// Handle `PopOut!` module hooks to allow applications to popout to their own browser window -------------------------
+
+Hooks.on('PopOut:loading', (app, node, popout) =>
+{
+   if (app instanceof SvelteApplication)
+   {
+      app.position.enabled = false;
+
+      // Clone and load `svelte-standard` CSS variables into new window document.
+      popout.document.addEventListener('DOMContentLoaded', () => cssVariables.clone(popout.document));
+   }
+});
+
+Hooks.on('PopOut:popin', (app) =>
+{
+   if (app instanceof SvelteApplication) { app.position.enabled = true; }
+});
+
+Hooks.on('PopOut:close', (app) =>
+{
+   if (app instanceof SvelteApplication) { app.position.enabled = true; }
 });
