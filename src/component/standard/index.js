@@ -69,19 +69,7 @@ Hooks.on('PopOut:loading', (app, node, popout) =>
 {
    if (app instanceof SvelteApplication)
    {
-      app.position.enabled = false;
-
       // Clone and load `svelte-standard` CSS variables into new window document.
       popout.document.addEventListener('DOMContentLoaded', () => cssVariables.clone(popout.document));
    }
-});
-
-Hooks.on('PopOut:popin', (app) =>
-{
-   if (app instanceof SvelteApplication) { app.position.enabled = true; }
-});
-
-Hooks.on('PopOut:close', (app) =>
-{
-   if (app instanceof SvelteApplication) { app.position.enabled = true; }
 });
