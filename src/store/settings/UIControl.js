@@ -1,14 +1,71 @@
 import { writable } from 'svelte/store';
 
-import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
+import { localize } from '@typhonjs-fvtt/svelte/helper'
 
-export class TJSSettingsEditImpl
+export class UIControl
 {
-   static parseSettings(gameSettings)
-   {
-      const settings = [];
+   /** @type {TJSGameSettings} */
+   #settings;
 
-      for (const setting of gameSettings)
+   #showSettings = false;
+
+   #stores;
+
+   #current;
+
+   /**
+    * @param {TJSGameSettings}   settings -
+    */
+   constructor(settings)
+   {
+      this.#settings = settings;
+
+      this.#stores = {
+         showSettings: writable(this.#showSettings)
+      };
+
+      Object.freeze(this.#stores);
+   }
+
+   get showSettings()
+   {
+      return this.#showSettings;
+   }
+
+   get stores()
+   {
+      return this.#stores;
+   }
+
+   set showSettings(showSettings)
+   {
+      this.#showSettings = showSettings;
+      this.#stores.showSettings.set(this.#showSettings);
+   }
+
+   create()
+   {
+      this.#current = this.#parseSettings();
+      return this.#current;
+   }
+
+   swapShowSettings()
+   {
+      this.#showSettings = !this.#showSettings;
+      this.#stores.showSettings.set(this.#showSettings);
+      return this.#showSettings;
+   }
+
+   #handleShowState()
+   {
+
+   }
+
+   #parseSettings()
+   {
+      const uiSettings = [];
+
+      for (const setting of this.#settings)
       {
          if (!setting.config) { continue; }
 
@@ -64,7 +121,7 @@ export class TJSSettingsEditImpl
             componentType = typeof setting.range === 'object' ? 'range' : 'number'
          }
 
-         settings.push({
+         uiSettings.push({
             id: `${setting.namespace}.${setting.key}`,
             namespace: setting.namespace,
             folder: setting.folder,
@@ -85,7 +142,7 @@ export class TJSSettingsEditImpl
       const folderData = {};
 
       // Sort into folders
-      for (const setting of settings)
+      for (const setting of uiSettings)
       {
          if (typeof setting.folder === 'string')
          {

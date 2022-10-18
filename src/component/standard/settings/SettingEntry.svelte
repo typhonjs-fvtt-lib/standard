@@ -1,5 +1,18 @@
 <script>
-    /** @type {object} */
+   /**
+    * --tjs-settings-entry-margin - 0 0 1rem 0
+    *
+    * --tjs-settings-entry-label-color - inherit
+    * --tjs-settings-entry-label-font-size - inherit
+    * --tjs-settings-entry-label-line-height - var(--form-field-height) / Foundry variable
+    *
+    * --tjs-settings-entry-hint-color - var(--color-text-dark-secondary) / Foundry variable
+    * --tjs-settings-entry-hint-font-size - var(--font-size-12) / Foundry variable
+    * --tjs-settings-entry-hint-line-height - var(--line-height-16) / Foundry variable
+    * --tjs-settings-entry-hint-margin - 0.5em 0
+    */
+
+   /** @type {object} */
     export let setting = void 0;
 
     const store = setting.store;
@@ -26,9 +39,9 @@
             <input type=text id={setting.id} bind:value={$store} />
         {/if}
     </div>
-    <p class=notes>
-        {setting.hint}
-    </p>
+    {#if setting.hint}
+        <p class=hint>{setting.hint}</p>
+    {/if}
 </section>
 
 <style>
@@ -37,16 +50,20 @@
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        margin: 3px 0;
         align-items: center;
     }
 
+    /*
+     */
+
     section:not(:last-child) {
-        margin-bottom: 1rem;
+        margin: var(--tjs-settings-entry-margin, 0 0 1rem 0);
     }
 
     section label {
-        line-height: var(--form-field-height);
+        color: var(--tjs-settings-entry-label-color, inherit);
+        font-size: var(--tjs-settings-entry-label-font-size, inherit);
+        line-height: var(--tjs-settings-entry-label-line-height, var(--form-field-height));
         flex: 2;
     }
 
@@ -59,12 +76,12 @@
         align-items: center;
     }
 
-    section .notes {
+    section .hint {
         flex: 0 0 100%;
-        font-size: var(--font-size-12);
-        line-height: var(--line-height-16);
-        color: var(--color-text-dark-secondary);
-        margin: 3px 0;
+        color: var(--tjs-settings-entry-hint-color, var(--color-text-dark-secondary));
+        font-size: var(--tjs-settings-entry-hint-font-size, var(--font-size-12));
+        line-height: var(--tjs-settings-entry-hint-line-height, var(--line-height-16));
+        margin: var(--tjs-settings-entry-hint-margin, 0.5em 0);
         min-height: 1rem;
     }
 </style>

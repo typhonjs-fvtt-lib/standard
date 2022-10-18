@@ -65,7 +65,7 @@ cssVariables.set({
 
 // Handle `PopOut!` module hooks to allow applications to popout to their own browser window -------------------------
 
-Hooks.on('PopOut:loading', (app, node, popout) =>
+Hooks.on('PopOut:loading', (app, popout) =>
 {
    if (app instanceof SvelteApplication)
    {
