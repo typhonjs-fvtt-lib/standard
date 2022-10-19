@@ -73,9 +73,11 @@ export class UIControl
    {
       const uiSettings = [];
 
+      const canConfigure = game.user.can('SETTINGS_MODIFY');
+
       for (const setting of this.#settings)
       {
-         if (!setting.config) { continue; }
+         if (!setting.config || (!canConfigure && (setting.scope !== 'client'))) { continue; }
 
          let options;
 

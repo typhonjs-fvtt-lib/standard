@@ -14,15 +14,6 @@ import { UIControl }       from './UIControl.js';
  */
 export class TJSGameSettings
 {
-   /**
-    * When true registration of settings w/ core Foundry always sets config to false, but preserves the config
-    * parameter in stored settings in order to be displayed in the TRL settings component that can be embedded
-    * into the module itself.
-    *
-    * @type {boolean}
-    */
-   #tjsConfig = false;
-
    #settings = [];
 
    /**
@@ -33,9 +24,8 @@ export class TJSGameSettings
    /** @type {UIControl} */
    #uiControl;
 
-   constructor(config = false)
+   constructor()
    {
-      this.#tjsConfig = config ;
       this.#uiControl = new UIControl(this);
    }
 
@@ -145,8 +135,12 @@ export class TJSGameSettings
 
    /**
     * @param {GameSetting} setting - A GameSetting instance to set to Foundry game settings.
+    *
+    * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
+    *                                   registering the setting with Foundry. This allows the settings to be displayed
+    *                                   in the app itself, but removed from the standard Foundry configuration location.
     */
-   register(setting)
+   register(setting, coreConfig = true)
    {
       if (typeof setting !== 'object')
       {
@@ -155,7 +149,12 @@ export class TJSGameSettings
 
       if (typeof setting.options !== 'object')
       {
-         throw new TypeError(`TJSGameSettings - register: 'options' attribute is not an object.`);
+         throw new TypeError(`TJSGameSettings - register: 'setting.options' attribute is not an object.`);
+      }
+
+      if (typeof coreConfig !== 'boolean')
+      {
+         throw new TypeError(`TJSGameSettings - register: 'coreConfig' is not an boolean.`);
       }
 
       if (setting.store !== void 0 && !isWritableStore(setting.store))
@@ -178,7 +177,7 @@ export class TJSGameSettings
       const folder = setting.folder;
 
       // The `config` parameter passed to Foundry core.
-      const coreConfig = this.#tjsConfig ? false : setting.options.config;
+      const foundryConfig = coreConfig ? setting.options.config : false;
 
       if (typeof namespace !== 'string')
       {
@@ -238,7 +237,7 @@ export class TJSGameSettings
          for (const entry of onchangeFunctions) { entry(value); }
       };
 
-      game.settings.register(namespace, key, { ...options, config: coreConfig, onChange });
+      game.settings.register(namespace, key, { ...options, config: foundryConfig, onChange });
 
       // Set new store value with existing setting or default value.
       const targetStore = store ? store : this.#getStore(key, game.settings.get(namespace, key));
@@ -275,8 +274,12 @@ export class TJSGameSettings
     * Registers multiple settings.
     *
     * @param {Iterable<GameSetting>} settings - An iterable list of game setting configurations to register.
+    *
+    * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
+    *                                   registering the setting with Foundry. This allows the settings to be displayed
+    *                                   in the app itself, but removed from the standard Foundry configuration location.
     */
-   registerAll(settings)
+   registerAll(settings, coreConfig)
    {
       if (!isIterable(settings)) { throw new TypeError(`TJSGameSettings - registerAll: settings is not iterable.`); }
 
@@ -303,7 +306,7 @@ export class TJSGameSettings
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'options' attribute.`);
          }
 
-         this.register(entry);
+         this.register(entry, coreConfig);
       }
    }
 }
