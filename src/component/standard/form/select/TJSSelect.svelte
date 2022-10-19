@@ -79,6 +79,7 @@
       border-radius: var(--tjs-select-border-radius, var(--tjs-input-border-radius));
       display: block;
       overflow: hidden;
+      margin: var(--tjs-select-margin, var(--tjs-input-margin));
       height: var(--tjs-select-height, var(--tjs-input-height));
       width: var(--tjs-select-width, var(--tjs-input-width));
       transform-style: preserve-3d;

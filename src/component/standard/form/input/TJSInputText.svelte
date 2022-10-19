@@ -151,6 +151,7 @@
         border-radius: var(--tjs-input-text-border-radius, var(--tjs-input-border-radius));
         display: block;
         overflow: hidden;
+        margin: var(--tjs-input-text-margin, var(--tjs-input-margin));
         height: var(--tjs-input-text-height, var(--tjs-input-height));
         width: var(--tjs-input-text-width, var(--tjs-input-width));
         transform-style: preserve-3d;
