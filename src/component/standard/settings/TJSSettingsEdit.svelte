@@ -17,18 +17,17 @@
    export let styles = void 0;
 
    const uiSettings = settings.control.create();
-
-   // console.log(`! settings: `, settings);
-   // console.log(`! parsedSettings: `, uiSettings);
 </script>
 
 <main class=tjs-settings>
    <div class=scrollable use:applyStyles={styles}>
-      <section>
-         {#each uiSettings.topLevel as setting (setting.key)}
-            <SettingEntry {setting} />
-         {/each}
-      </section>
+      {#if uiSettings.topLevel.length}
+         <section>
+            {#each uiSettings.topLevel as setting (setting.key)}
+               <SettingEntry {setting} />
+            {/each}
+         </section>
+      {/if}
       {#each uiSettings.folders as folder}
       <section>
          <TJSSvgFolder label={folder.name}>

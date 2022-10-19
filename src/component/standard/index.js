@@ -47,6 +47,7 @@ cssVariables.set({
          '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '3px',
          '--tjs-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
          '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
+         '--tjs-input-padding': 'padding' in props ? props['padding'] : '1px 3px',
          '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)'
       });
    }

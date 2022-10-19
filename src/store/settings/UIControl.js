@@ -2,12 +2,17 @@ import { writable } from 'svelte/store';
 
 import { localize } from '@typhonjs-fvtt/svelte/helper'
 
+import {
+   ripple,
+   rippleFocus }    from "@typhonjs-fvtt/svelte-standard/action";
+
 export class UIControl
 {
    /** @type {TJSGameSettings} */
    #settings;
 
    #showSettings = false;
+   #showSettingsSet;
 
    #stores;
 
@@ -20,8 +25,11 @@ export class UIControl
    {
       this.#settings = settings;
 
+      const showSettings = writable(this.#showSettings);
+      this.#showSettingsSet = showSettings.set;
+
       this.#stores = {
-         showSettings: writable(this.#showSettings)
+         showSettings: { subscribe: showSettings.subscribe }
       };
 
       Object.freeze(this.#stores);
@@ -40,7 +48,7 @@ export class UIControl
    set showSettings(showSettings)
    {
       this.#showSettings = showSettings;
-      this.#stores.showSettings.set(this.#showSettings);
+      this.#showSettingsSet(this.#showSettings);
    }
 
    create()
@@ -52,7 +60,7 @@ export class UIControl
    swapShowSettings()
    {
       this.#showSettings = !this.#showSettings;
-      this.#stores.showSettings.set(this.#showSettings);
+      this.#showSettingsSet(this.#showSettings);
       return this.#showSettings;
    }
 
@@ -69,11 +77,11 @@ export class UIControl
       {
          if (!setting.config) { continue; }
 
-         let choices;
+         let options;
 
          if (typeof setting.choices === 'object')
          {
-            choices = Object.entries(setting.choices).map((entry) => ({ value: entry[0], text: localize(entry[1]) }));
+            options = Object.entries(setting.choices).map((entry) => ({ value: entry[0], label: localize(entry[1]) }));
          }
 
          let range;
@@ -95,30 +103,62 @@ export class UIControl
             range.step = setting.range.step ? setting.range.step : 1;
          }
 
-         /*
-            s.type = setting.type instanceof Function ? setting.type.name : "String";
-            s.isCheckbox = setting.type === Boolean;
-            s.isSelect = s.choices !== undefined;
-            s.isRange = (setting.type === Number) && s.range;
-            s.isNumber = setting.type === Number;
-            s.filePickerType = s.filePicker === true ? "any" : s.filePicker;
-
-            filePickerType: setting.filePicker === true ? 'any' : setting.filePicker;
-          */
-
-         // Parse type:
-
          // Default to `String` if no type is provided.
          let type = setting.type instanceof Function ? setting.type.name : 'String';
+
+         // Only configure file picker if setting type is a string.
+         let filePicker;
+         if (type === 'String')
+         {
+            filePicker = setting.filePicker === true ? 'any' : setting.filePicker;
+         }
+
+         let buttonData;
+         if (filePicker)
+         {
+            buttonData = {
+               icon: 'fas fa-file-import fa-fw',
+               efx: ripple(),
+               title: 'FILES.BrowseTooltip',
+               styles: { 'margin-left': '0.25em'}
+            };
+         }
+
+         const store = this.#settings.getStore(setting.key);
+
+         let selectData;
 
          /** @type {string} */
          let componentType = 'text';
 
-         if (setting.type === Boolean) { componentType = 'checkbox'; }
-         if (choices !== void 0) { componentType = 'select'; }
-         if (setting.type === Number)
+         if (setting.type === Boolean)
+         {
+            componentType = 'checkbox';
+         }
+         else if (options !== void 0)
+         {
+            componentType = 'select';
+
+            selectData = {
+               store,
+               efx: rippleFocus(),
+               type: componentType,
+               options
+            }
+         }
+         else if (setting.type === Number)
          {
             componentType = typeof setting.range === 'object' ? 'range' : 'number'
+         }
+
+         let inputData;
+         if (componentType === 'text' || componentType === 'number')
+         {
+            inputData = {
+               store,
+               efx: rippleFocus(),
+               type: componentType
+            };
          }
 
          uiSettings.push({
@@ -130,10 +170,13 @@ export class UIControl
             hint: localize(setting.hint),
             type,
             componentType,
-            filePickerType: setting.filePicker === true ? 'any' : setting.filePicker,
-            choices,
+            filePicker,
             range,
-            store: writable(game.settings.get(setting.namespace, setting.key))
+            store,
+            initialValue: game.settings.get(setting.namespace, setting.key),
+            buttonData,
+            inputData,
+            selectData
          });
       }
 
