@@ -10,6 +10,8 @@
     * --tjs-settings-entry-hint-font-size - var(--font-size-12) / Foundry variable
     * --tjs-settings-entry-hint-line-height - var(--line-height-16) / Foundry variable
     * --tjs-settings-entry-hint-margin - 0.5em 0
+    *
+    * TODO: replace range input support below w/ TJSInputRange when available.
     */
 
    import {
@@ -60,15 +62,9 @@
             <TJSInput input={setting.inputData} />
         {:else if setting.componentType === 'range'}
             <input type=range id={setting.id} min={setting.range.min} max={setting.range.max} step={setting.range.step} bind:value={$store} />
+            <span class=range-value>{$store}</span>
         {:else if setting.componentType === 'select'}
             <TJSSelect select={setting.selectData} />
-<!--            <select id={setting.id} bind:value={$store}>-->
-<!--                {#each setting.choices as choice}-->
-<!--                    <option value={choice.value}>-->
-<!--                        {choice.text}-->
-<!--                    </option>-->
-<!--                {/each}-->
-<!--            </select>-->
         {:else if setting.componentType === 'text'}
             <TJSInput input={setting.inputData} />
         {/if}
@@ -82,6 +78,45 @@
 </section>
 
 <style>
+    div {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        flex: 3;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    label {
+        color: var(--tjs-settings-entry-label-color, inherit);
+        font-size: var(--tjs-settings-entry-label-font-size, inherit);
+        line-height: var(--tjs-settings-entry-label-line-height, var(--form-field-height));
+        flex: 2;
+    }
+
+    input[type=range] {
+        margin-left: 0.25em;
+    }
+
+    span.range-value {
+        display: block;
+        flex: 0 1 fit-content;
+        text-align: center;
+        border: var(--tjs-input-border, 1px solid var(--color-border-light-primary));
+        border-radius: var(--tjs-input-border-radius);
+        padding: 0.25em;
+        margin-left: 0.5em;
+    }
+
+    p {
+        flex: 0 0 100%;
+        color: var(--tjs-settings-entry-hint-color, var(--color-text-dark-secondary));
+        font-size: var(--tjs-settings-entry-hint-font-size, var(--font-size-12));
+        line-height: var(--tjs-settings-entry-hint-line-height, var(--line-height-16));
+        margin: var(--tjs-settings-entry-hint-margin, 0.5em 0);
+        min-height: 1rem;
+    }
+
     section {
         clear: both;
         display: flex;
@@ -92,30 +127,5 @@
 
     section:not(:last-child) {
         margin: var(--tjs-settings-entry-margin, 0 0 1rem 0);
-    }
-
-    label {
-        color: var(--tjs-settings-entry-label-color, inherit);
-        font-size: var(--tjs-settings-entry-label-font-size, inherit);
-        line-height: var(--tjs-settings-entry-label-line-height, var(--form-field-height));
-        flex: 2;
-    }
-
-    div {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        flex: 3;
-        justify-content: flex-end;
-        align-items: center;
-    }
-
-    p {
-        flex: 0 0 100%;
-        color: var(--tjs-settings-entry-hint-color, var(--color-text-dark-secondary));
-        font-size: var(--tjs-settings-entry-hint-font-size, var(--font-size-12));
-        line-height: var(--tjs-settings-entry-hint-line-height, var(--line-height-16));
-        margin: var(--tjs-settings-entry-hint-margin, 0.5em 0);
-        min-height: 1rem;
     }
 </style>
