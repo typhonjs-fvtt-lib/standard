@@ -21,6 +21,7 @@
       switch (type)
       {
          case 'email':
+         case 'number':
          case 'password':
          case 'search':
          case 'text':
@@ -30,7 +31,7 @@
 
          default:
             throw new Error(
-             `'TJSInput currently only supports text input types: 'email', 'password', 'search', 'text', 'url'.`);
+             `'TJSInput' currently only supports text input types: 'email', 'number', 'password', 'search', 'text', 'url'.`);
       }
    }
 </script>
