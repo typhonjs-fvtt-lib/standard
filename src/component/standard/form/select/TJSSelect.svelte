@@ -7,12 +7,12 @@
     * --tjs-input-height
     * --tjs-input-width
     *
-    * --tjs-comp-select-border
-    * --tjs-comp-select-border-radius
-    * --tjs-comp-select-background
-    * --tjs-comp-select-cursor
-    * --tjs-comp-select-height
-    * --tjs-comp-select-width
+    * --tjs-select-border
+    * --tjs-select-border-radius
+    * --tjs-select-background
+    * --tjs-select-cursor
+    * --tjs-select-height
+    * --tjs-select-width
     */
 
    /**
@@ -75,12 +75,12 @@
 <style>
    .tjs-select-container {
       pointer-events: none;
-      background: var(--tjs-comp-select-background, var(--tjs-input-background));
-      border-radius: var(--tjs-comp-select-border-radius, var(--tjs-input-border-radius));
+      background: var(--tjs-select-background, var(--tjs-input-background));
+      border-radius: var(--tjs-select-border-radius, var(--tjs-input-border-radius));
       display: block;
       overflow: hidden;
-      height: var(--tjs-comp-select-height, var(--tjs-input-height));
-      width: var(--tjs-comp-select-width, var(--tjs-input-width));
+      height: var(--tjs-select-height, var(--tjs-input-height));
+      width: var(--tjs-select-width, var(--tjs-input-width));
       transform-style: preserve-3d;
    }
 
@@ -92,24 +92,27 @@
 
       background: transparent;
 
-      border: var(--tjs-comp-select-border, var(--tjs-input-border));
-      border-radius: var(--tjs-comp-select-border-radius, var(--tjs-input-border-radius));
+      border: var(--tjs-select-border, var(--tjs-input-border));
+      border-radius: var(--tjs-select-border-radius, var(--tjs-input-border-radius));
 
       width: 100%;
       height: 100%;
+
+      padding: var(--tjs-select-padding, var(--tjs-input-padding, initial));
 
       color: inherit;
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
+      text-align: var(--tjs-select-text-align, var(--tjs-input-text-align));
 
-      cursor: var(--tjs-comp-select-cursor, var(--tjs-input-cursor));
+      cursor: var(--tjs-select-cursor, var(--tjs-input-cursor));
 
       transform: translateZ(1px);
    }
 
    select option {
-      background: var(--tjs-comp-select-background, var(--tjs-input-background));
+      background: var(--tjs-select-option-background, var(--tjs-select-option-background));
       color: inherit;
    }
 </style>

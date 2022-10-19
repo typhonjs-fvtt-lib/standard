@@ -167,8 +167,6 @@
         border: var(--tjs-input-text-border, var(--tjs-input-border));
         border-radius: var(--tjs-input-text-border-radius, var(--tjs-input-border-radius));
 
-        text-align: var(--tjs-input-text-text-align, var(--tjs-input-text-align));
-
         width: 100%;
         height: 100%;
 
@@ -178,6 +176,7 @@
         font-family: inherit;
         font-size: inherit;
         line-height: inherit;
+        text-align: var(--tjs-input-text-text-align, var(--tjs-input-text-align));
 
         cursor: var(--tjs-input-text-cursor, var(--tjs-input-cursor, text));
 
