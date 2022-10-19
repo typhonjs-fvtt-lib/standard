@@ -53,6 +53,20 @@ cssVariables.set({
    }
 }
 
+{
+   /**
+    * Select options related: TJSSelect,
+    */
+   const props = FoundryStyles.getProperties('option, optgroup');
+
+   if (typeof props === 'object')
+   {
+      cssVariables.set({
+         '--tjs-select-option-background': 'background' in props ? props.background : 'var(--color-bg-option)'
+      });
+   }
+}
+
 cssVariables.set({
    '--tjs-label-transition': 'background 200ms linear'
 });
