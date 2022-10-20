@@ -53,7 +53,7 @@
    }
 </script>
 
-<section>
+<section class=tjs-settings-entry>
     <label for={setting.id}>{setting.name}</label>
     <div>
         {#if setting.componentType === 'checkbox'}
