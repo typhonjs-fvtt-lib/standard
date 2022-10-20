@@ -3,7 +3,7 @@
 
    export let settings = void 0;
 
-   const showSettings = settings.control.stores.showSettings;
+   const showSettings = settings.uiControl.stores.showSettings;
 </script>
 
 {#if $showSettings}

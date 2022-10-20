@@ -7,16 +7,20 @@
     * --tjs-settings-section-margin-bottom
     */
 
-   import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { onDestroy }    from 'svelte';
 
-   import { TJSSvgFolder }  from '../folder/index.js';
+   import { applyStyles }  from '@typhonjs-svelte/lib/action';
 
-   import SettingEntry      from './SettingEntry.svelte';
+   import { TJSSvgFolder } from '../folder/index.js';
+
+   import SettingEntry     from './SettingEntry.svelte';
 
    export let settings = void 0;
    export let styles = void 0;
 
-   const uiSettings = settings.control.create();
+   const uiSettings = settings.uiControl.create();
+
+   onDestroy(() => uiSettings.destroy());
 </script>
 
 <main class=tjs-settings>

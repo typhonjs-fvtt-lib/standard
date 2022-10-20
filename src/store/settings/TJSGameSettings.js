@@ -78,7 +78,7 @@ export class TJSGameSettings
    /**
     * @returns {UIControl}
     */
-   get control()
+   get uiControl()
    {
       return this.#uiControl;
    }

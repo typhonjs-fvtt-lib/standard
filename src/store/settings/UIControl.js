@@ -1,10 +1,12 @@
-import { writable } from 'svelte/store';
+import { writable }  from 'svelte/store';
 
-import { localize } from '@typhonjs-fvtt/svelte/helper'
+import { TJSDialog } from '@typhonjs-fvtt/svelte/application';
+
+import { localize }  from '@typhonjs-fvtt/svelte/helper'
 
 import {
    ripple,
-   rippleFocus }    from "@typhonjs-fvtt/svelte-standard/action";
+   rippleFocus }     from '@typhonjs-fvtt/svelte-standard/action';
 
 export class UIControl
 {
@@ -15,8 +17,6 @@ export class UIControl
    #showSettingsSet;
 
    #stores;
-
-   #current;
 
    /**
     * @param {TJSGameSettings}   settings -
@@ -51,10 +51,92 @@ export class UIControl
       this.#showSettingsSet(this.#showSettings);
    }
 
+   /**
+    * Creates a
+    * @returns {{folders: {settings: *, name: *}[], topLevel: [], destroy: (function(): void)}}
+    */
    create()
    {
-      this.#current = this.#parseSettings();
-      return this.#current;
+      const settings = this.#parseSettings();
+      const destroy = () => this.#destroy(settings);
+
+      return {
+         ...settings,
+         destroy
+      };
+   }
+
+   /**
+    * Callback
+    *
+    * @param {object}   settings
+    */
+   #destroy(settings)
+   {
+      let requiresClientReload = false;
+      let requiresWorldReload = false;
+
+      if (Array.isArray(settings.topLevel))
+      {
+         for (const setting of settings.topLevel)
+         {
+            const current = game.settings.get(setting.namespace, setting.key);
+            if (current === setting.initialValue) { continue; }
+
+            requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
+            requiresWorldReload ||= (setting.scope === 'world') && setting.requiresReload;
+         }
+      }
+
+      if (Array.isArray(settings.folders))
+      {
+         for (const folder of settings.folders)
+         {
+            if (Array.isArray(folder.settings))
+            {
+               for (const setting of folder.settings)
+               {
+                  const current = game.settings.get(setting.namespace, setting.key);
+                  if (current === setting.initialValue) { continue; }
+
+                  requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
+                  requiresWorldReload ||= (setting.scope === 'world') && setting.requiresReload;
+               }
+            }
+         }
+      }
+
+      if ( requiresClientReload || requiresWorldReload ) { this.#reloadConfirm({ world: requiresWorldReload }); }
+
+      this.#showSettings = false;
+      this.#showSettingsSet(this.#showSettings);
+   }
+
+   async #reloadConfirm({ world = false } = {})
+   {
+      let title = game.i18n.localize('SETTINGS.ReloadPromptTitle');
+      let label = game.i18n.localize('SETTINGS.ReloadPromptBody');
+
+      // Foundry v9 doesn't have the reload lang keys, so substitute just for English translation.
+      // TODO: FOUNDRY_V9 - remove when support for v9 is dropped.
+      title = title !== 'SETTINGS.ReloadPromptTitle' ? title : 'Reload Application?';
+      label = label !== 'SETTINGS.ReloadPromptBody' ? label :
+       'Some of the changed settings require a reload of the application to take effect. Would you like to reload now?';
+
+      const reload = await TJSDialog.confirm({
+         modal: true,
+         draggable: false,
+         title,
+         content: `<p>${label}</p>`
+      });
+
+      if (!reload) { return; }
+
+      // Reload all connected clients. Note: Foundry v9 might not support this event.
+      if ( world && game.user.isGM ) { game.socket.emit('reload'); }
+
+      // Reload locally.
+      window.location.reload();
    }
 
    swapShowSettings()
@@ -62,11 +144,6 @@ export class UIControl
       this.#showSettings = !this.#showSettings;
       this.#showSettingsSet(this.#showSettings);
       return this.#showSettings;
-   }
-
-   #handleShowState()
-   {
-
    }
 
    #parseSettings()
@@ -176,6 +253,8 @@ export class UIControl
             range,
             store,
             initialValue: game.settings.get(setting.namespace, setting.key),
+            scope: setting.scope,
+            requiresReload: typeof setting.requiresReload === 'boolean' ? setting.requiresReload : false,
             buttonData,
             inputData,
             selectData
