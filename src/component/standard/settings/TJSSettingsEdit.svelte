@@ -30,6 +30,7 @@
 </script>
 
 <main class=tjs-settings>
+   <slot name=settings-header {settings} {options} {uiSettings} />
    <div class=scrollable use:applyStyles={styles}>
       {#if uiSettings.topLevel.length}
          <section class=tjs-settings-section>
@@ -48,11 +49,13 @@
       </section>
       {/each}
    </div>
+   <slot name=settings-footer {settings} {options} {uiSettings} />
 </main>
 
 <style>
    main {
       display: flex;
+      flex-direction: column;
       height: 100%;
       background: var(--tjs-settings-background, none);
    }

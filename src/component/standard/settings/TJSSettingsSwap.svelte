@@ -11,7 +11,10 @@
 </script>
 
 {#if $showSettings}
-    <TJSSettingsEdit {settings} {options} />
+    <TJSSettingsEdit {settings} {options}>
+        <slot name=settings-header slot=settings-header {settings} {options} {uiSettings} let:uiSettings />
+        <slot name=settings-footer slot=settings-footer {settings} {options} {uiSettings} let:uiSettings />
+    </TJSSettingsEdit>
 {:else}
     <slot/>
 {/if}
