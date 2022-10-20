@@ -9,7 +9,9 @@
 
    import { onDestroy }    from 'svelte';
 
-   import { applyStyles }  from '@typhonjs-svelte/lib/action';
+   import {
+      applyScrolltop,
+      applyStyles }        from '@typhonjs-svelte/lib/action';
 
    import { TJSSvgFolder } from '../folder/index.js';
 
@@ -31,7 +33,7 @@
 
 <main class=tjs-settings>
    <slot name=settings-header {settings} {options} {uiSettings} />
-   <div class=scrollable use:applyStyles={styles}>
+   <div class=scrollable use:applyScrolltop={uiSettings.storeScrollbar} use:applyStyles={styles}>
       {#if uiSettings.topLevel.length}
          <section class=tjs-settings-section>
             {#each uiSettings.topLevel as setting (setting.key)}
@@ -41,7 +43,7 @@
       {/if}
       {#each uiSettings.folders as folder}
       <section class=tjs-settings-section>
-         <TJSSvgFolder label={folder.name}>
+         <TJSSvgFolder label={folder.name} store={folder.store}>
             {#each folder.settings as setting (setting.key)}
                <SettingEntry {setting} />
             {/each}
@@ -68,6 +70,8 @@
       min-height: 0;
       overflow: hidden auto;
       padding: var(--tjs-settings-padding, 0);
+
+      scrollbar-width: thin;  /* For Firefox */
    }
 
    section {

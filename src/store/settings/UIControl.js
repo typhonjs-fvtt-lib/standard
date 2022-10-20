@@ -140,8 +140,18 @@ export class UIControl
     *
     * @returns {{folders: {settings: *, name: *}[], topLevel: *[]}}
     */
-   #parseSettings({ efx = 'ripple' } = {})
+   #parseSettings({ efx = 'ripple', storage } = {})
    {
+      const namespace = this.#settings.namespace;
+
+      if (storage && typeof namespace !== 'string')
+      {
+         console.warn(
+          `TJSGameSettings warning: 'options.storage' defined, but 'namespace' not defined in TJSGameSettings.`);
+      }
+
+      const hasStorage = storage && typeof namespace === 'string';
+
       const uiSettings = [];
 
       const canConfigure = game.user.can('SETTINGS_MODIFY');
@@ -255,6 +265,9 @@ export class UIControl
          });
       }
 
+      // If storage is available then create a key otherwise create a dummy store, so `applyScrolltop` works.
+      const storeScrollbar = hasStorage ? storage.getStore(`${namespace}-settings-scrollbar`) : writable(0);
+
       const topLevel = [];
 
       const folderData = {};
@@ -277,9 +290,17 @@ export class UIControl
       }
 
       // Convert folderData object to array.
-      const folders = Object.entries(folderData).map((entry) => ({ name: entry[0], settings: entry[1] }));
+      const folders = Object.entries(folderData).map((entry) =>
+      {
+         return {
+            name: entry[0],
+            settings: entry[1],
+            store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`) : void 0
+         };
+      });
 
       return {
+         storeScrollbar,
          topLevel,
          folders
       };
@@ -329,4 +350,6 @@ export class UIControl
  * @typedef {object} TJSSettingsCreateOptions
  *
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
+ *
+ * @property {SessionStorage} [storage] - TRL SessionStorage instance to serialize folder state and scrollbar position.
  */

@@ -14,6 +14,11 @@ import { UIControl }       from './UIControl.js';
  */
 export class TJSGameSettings
 {
+   /**
+    * @type {string}
+    */
+   #namespace;
+
    #settings = [];
 
    /**
@@ -24,8 +29,9 @@ export class TJSGameSettings
    /** @type {UIControl} */
    #uiControl;
 
-   constructor()
+   constructor(namespace)
    {
+      this.#namespace = namespace;
       this.#uiControl = new UIControl(this);
    }
 
@@ -39,6 +45,35 @@ export class TJSGameSettings
    static #createStore(initialValue)
    {
       return writable(initialValue);
+   }
+
+   /**
+    * Provides a generator to return stored settings data.
+    *
+    * @returns {Generator<*, void, *>}
+    */
+   *[Symbol.iterator]()
+   {
+      for (const setting of this.#settings)
+      {
+         yield setting;
+      }
+   }
+
+   /**
+    * @returns {string} Returns namespace set in constructor.
+    */
+   get namespace()
+   {
+      return this.#namespace;
+   }
+
+   /**
+    * @returns {UIControl}
+    */
+   get uiControl()
+   {
+      return this.#uiControl;
    }
 
    /**
@@ -60,27 +95,6 @@ export class TJSGameSettings
       }
 
       return store;
-   }
-
-   /**
-    * Provides a generator to return stored settings data.
-    *
-    * @returns {Generator<*, void, *>}
-    */
-   *[Symbol.iterator]()
-   {
-      for (const setting of this.#settings)
-      {
-         yield setting;
-      }
-   }
-
-   /**
-    * @returns {UIControl}
-    */
-   get uiControl()
-   {
-      return this.#uiControl;
    }
 
    /**
