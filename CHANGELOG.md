@@ -1,4 +1,20 @@
 # Changelog
+## Release 0.0.15 (major)
+- Initial release of TJSTinyMCE and TJSContentEdit editor components.
+  - Note: TJSTinyMCE is fully developed and next release will bring as much feature parity to TJSProseMirror and 
+    TJSContentEdit from the "gold standard" MCE editor. 
+
+
+- Added TJSGameSettings in `store` sub-export.
+- Added TJSSettingsEdit / TJSSettingsSwap components
+  - This allows reactive editing of game settings from directly inside apps.
+  - Group settings into logical folders. 
+  - Support for `requireReload`
+  
+
+- Refined TJSSvgFolder & TJSIconFolder to hide slotted components when not visible improving performance for lists of 
+  many instances.
+
 ## Release 0.0.14 (minor)
 - Made small mistake; rebuild. No new changes.
 
