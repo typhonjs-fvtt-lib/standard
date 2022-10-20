@@ -149,6 +149,22 @@
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
 
+   // For performance reasons when the folder is closed the main slot is not rendered.
+   // When the folder is closed `visible` is set to false with a slight delay to allow the closing animation to
+   // complete.
+   let visible = $store;
+   let timeoutId;
+
+   $: if (!$store)
+   {
+      timeoutId = setTimeout(() => visible = false, 500);
+   }
+   else
+   {
+      clearTimeout(timeoutId);
+      visible = true;
+   }
+
    /**
     * Create a CustomEvent with details object containing relevant element and props.
     *
@@ -257,7 +273,9 @@
     </summary>
 
     <div class=contents>
-        <slot></slot>
+        {#if visible}
+            <slot />
+        {/if}
     </div>
 </details>
 
