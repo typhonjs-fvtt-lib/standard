@@ -15,10 +15,16 @@
 
    import SettingEntry     from './SettingEntry.svelte';
 
+   /** @type {TJSGameSettings} */
    export let settings = void 0;
+
+   /** @type {TJSSettingsCreateOptions} */
+   export let options = void 0;
+
+   /** @type {object} */
    export let styles = void 0;
 
-   const uiSettings = settings.uiControl.create();
+   const uiSettings = settings.uiControl.create(options);
 
    onDestroy(() => uiSettings.destroy());
 </script>
@@ -26,14 +32,14 @@
 <main class=tjs-settings>
    <div class=scrollable use:applyStyles={styles}>
       {#if uiSettings.topLevel.length}
-         <section>
+         <section class=tjs-settings-section>
             {#each uiSettings.topLevel as setting (setting.key)}
                <SettingEntry {setting} />
             {/each}
          </section>
       {/if}
       {#each uiSettings.folders as folder}
-      <section>
+      <section class=tjs-settings-section>
          <TJSSvgFolder label={folder.name}>
             {#each folder.settings as setting (setting.key)}
                <SettingEntry {setting} />

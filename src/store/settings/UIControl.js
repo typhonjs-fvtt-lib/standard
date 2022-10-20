@@ -8,14 +8,23 @@ import {
    ripple,
    rippleFocus }     from '@typhonjs-fvtt/svelte-standard/action';
 
+/**
+ * Controls preparation and processing of registered game settings w/ TJSGameSettings. Game settings are parsed
+ * for UI display by TJSSettingsEdit. The store `showSettings` is utilized in TJSSettingsSwap component to provide
+ * an easy way to flip between settings component or any main slotted component.
+ */
 export class UIControl
 {
    /** @type {TJSGameSettings} */
    #settings;
 
+   /** @type {boolean} */
    #showSettings = false;
+
+   /** @type {function} */
    #showSettingsSet;
 
+   /** @type {{showSettings: import('svelte/store').Readable<boolean>}} */
    #stores;
 
    /**
@@ -35,16 +44,27 @@ export class UIControl
       Object.freeze(this.#stores);
    }
 
+   /**
+    * @returns {boolean} Current `showSettings` state.
+    */
    get showSettings()
    {
       return this.#showSettings;
    }
 
+   /**
+    * @returns {{showSettings: import('svelte/store').Readable<boolean>}} Returns the managed stores.
+    */
    get stores()
    {
       return this.#stores;
    }
 
+   /**
+    * Sets current `showSettings` state.
+    *
+    * @param {boolean}  showSettings - New `showSettings` state.
+    */
    set showSettings(showSettings)
    {
       this.#showSettings = showSettings;
@@ -52,12 +72,15 @@ export class UIControl
    }
 
    /**
-    * Creates a
+    * Creates the UISettingsData object by parsing stored settings in
+    *
+    * @param {TJSSettingsCreateOptions} [options] - Optional parameters.
+    *
     * @returns {{folders: {settings: *, name: *}[], topLevel: [], destroy: (function(): void)}}
     */
-   create()
+   create(options)
    {
-      const settings = this.#parseSettings();
+      const settings = this.#parseSettings(options);
       const destroy = () => this.#destroy(settings);
 
       return {
@@ -112,41 +135,12 @@ export class UIControl
       this.#showSettingsSet(this.#showSettings);
    }
 
-   async #reloadConfirm({ world = false } = {})
-   {
-      let title = game.i18n.localize('SETTINGS.ReloadPromptTitle');
-      let label = game.i18n.localize('SETTINGS.ReloadPromptBody');
-
-      // Foundry v9 doesn't have the reload lang keys, so substitute just for English translation.
-      // TODO: FOUNDRY_V9 - remove when support for v9 is dropped.
-      title = title !== 'SETTINGS.ReloadPromptTitle' ? title : 'Reload Application?';
-      label = label !== 'SETTINGS.ReloadPromptBody' ? label :
-       'Some of the changed settings require a reload of the application to take effect. Would you like to reload now?';
-
-      const reload = await TJSDialog.confirm({
-         modal: true,
-         draggable: false,
-         title,
-         content: `<p>${label}</p>`
-      });
-
-      if (!reload) { return; }
-
-      // Reload all connected clients. Note: Foundry v9 might not support this event.
-      if ( world && game.user.isGM ) { game.socket.emit('reload'); }
-
-      // Reload locally.
-      window.location.reload();
-   }
-
-   swapShowSettings()
-   {
-      this.#showSettings = !this.#showSettings;
-      this.#showSettingsSet(this.#showSettings);
-      return this.#showSettings;
-   }
-
-   #parseSettings()
+   /**
+    * @param {TJSSettingsCreateOptions} [options] - Optional parameters.
+    *
+    * @returns {{folders: {settings: *, name: *}[], topLevel: *[]}}
+    */
+   #parseSettings({ efx = 'ripple' } = {})
    {
       const uiSettings = [];
 
@@ -197,7 +191,7 @@ export class UIControl
          {
             buttonData = {
                icon: 'fas fa-file-import fa-fw',
-               efx: ripple(),
+               efx: efx === 'ripple' ? ripple() : void 0,
                title: 'FILES.BrowseTooltip',
                styles: { 'margin-left': '0.25em'}
             };
@@ -220,7 +214,7 @@ export class UIControl
 
             selectData = {
                store,
-               efx: rippleFocus(),
+               efx: efx === 'ripple' ? rippleFocus() : void 0,
                type: componentType,
                options
             }
@@ -235,7 +229,7 @@ export class UIControl
          {
             inputData = {
                store,
-               efx: rippleFocus(),
+               efx: efx === 'ripple' ? rippleFocus() : void 0,
                type: componentType
             };
          }
@@ -290,4 +284,49 @@ export class UIControl
          folders
       };
    }
+
+   async #reloadConfirm({ world = false } = {})
+   {
+      let title = game.i18n.localize('SETTINGS.ReloadPromptTitle');
+      let label = game.i18n.localize('SETTINGS.ReloadPromptBody');
+
+      // Foundry v9 doesn't have the reload lang keys, so substitute just for English translation.
+      // TODO: FOUNDRY_V9 - remove when support for v9 is dropped.
+      title = title !== 'SETTINGS.ReloadPromptTitle' ? title : 'Reload Application?';
+      label = label !== 'SETTINGS.ReloadPromptBody' ? label :
+       'Some of the changed settings require a reload of the application to take effect. Would you like to reload now?';
+
+      const reload = await TJSDialog.confirm({
+         modal: true,
+         draggable: false,
+         title,
+         content: `<p>${label}</p>`
+      });
+
+      if (!reload) { return; }
+
+      // Reload all connected clients. Note: Foundry v9 might not support this event.
+      if ( world && game.user.isGM ) { game.socket.emit('reload'); }
+
+      // Reload locally.
+      window.location.reload();
+   }
+
+   /**
+    * Convenience method to swap `showSettings`.
+    *
+    * @returns {boolean} New `showSettings` state.
+    */
+   swapShowSettings()
+   {
+      this.#showSettings = !this.#showSettings;
+      this.#showSettingsSet(this.#showSettings);
+      return this.#showSettings;
+   }
 }
+
+/**
+ * @typedef {object} TJSSettingsCreateOptions
+ *
+ * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
+ */
