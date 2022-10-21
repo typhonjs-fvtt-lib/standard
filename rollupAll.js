@@ -5,14 +5,10 @@ import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
 import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
-import { terser }          from 'rollup-plugin-terser';
 import upath               from 'upath';
 
 import { typhonjsRuntime } from './.rollup/local/index.js';
 
-import terserConfig        from './terser.config.mjs';
-
-const s_COMPRESS = false;
 const s_SOURCEMAPS = true;
 
 // Defines Svelte and all local exports as external.
@@ -25,7 +21,7 @@ const s_LOCAL_EXTERNAL = [
 
 // Defines potential output plugins to use conditionally if the .env file indicates the bundles should be
 // minified / mangled.
-const outputPlugins = s_COMPRESS ? [terser(terserConfig), typhonjsRuntime()] : [typhonjsRuntime()];
+const outputPlugins = [typhonjsRuntime({ output: true })];
 
 // Defines whether source maps are generated / loaded from the .env file.
 const sourcemap = s_SOURCEMAPS;
@@ -46,13 +42,11 @@ const rollupConfigs = [
          ]
       },
       output: {
-         output: {
-            file: '_dist/action/index.js',
-            format: 'es',
-            plugins: outputPlugins,
-            preferConst: true,
-            sourcemap
-        }
+         file: '_dist/action/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         plugins: outputPlugins,
+         sourcemap
       }
    },
    {
@@ -66,13 +60,11 @@ const rollupConfigs = [
          ]
       },
       output: {
-         output: {
-            file: '_dist/dev-tools/prosemirror/index.js',
-            format: 'es',
-            plugins: outputPlugins,
-            preferConst: true,
-            sourcemap
-        }
+         file: '_dist/dev-tools/prosemirror/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         plugins: outputPlugins,
+         sourcemap
       }
    },
    {
@@ -85,13 +77,11 @@ const rollupConfigs = [
          ]
       },
       output: {
-         output: {
-            file: '_dist/store/index.js',
-            format: 'es',
-            plugins: outputPlugins,
-            preferConst: true,
-            sourcemap
-         }
+         file: '_dist/store/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         plugins: outputPlugins,
+         sourcemap
       }
    }
 ];
@@ -105,11 +95,11 @@ for (const config of rollupConfigs)
    await bundle.close();
 
    await generateTSDef({
-      main: config.output.output.file,
-      output: upath.changeExt(config.output.output.file, '.d.ts')
+      main: config.output.file,
+      output: upath.changeExt(config.output.file, '.d.ts')
    });
 
-   fs.writeJSONSync(`${upath.dirname(config.output.output.file)}/package.json`, {
+   fs.writeJSONSync(`${upath.dirname(config.output.file)}/package.json`, {
       main: './index.js',
       module: './index.js',
       type: 'module',
