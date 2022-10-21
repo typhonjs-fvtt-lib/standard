@@ -1,4 +1,8 @@
 # Changelog
+## Release 0.0.16 (minor)
+- Moved ProseMirror plugins to `@typhonjs-fvtt/svelte-standard/prosemirror/plugins` sub-package to be able to bundle 
+  extra PM resources.
+
 ## Release 0.0.15 (major)
 - Initial release of TJSTinyMCE and TJSContentEdit editor components.
   - Note: TJSTinyMCE is fully developed and next release will bring as much feature parity to TJSProseMirror and 
