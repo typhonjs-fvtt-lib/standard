@@ -148,7 +148,7 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
-   import * as Plugins      from './plugins/index.js';
+   import * as Plugins      from '@typhonjs-fvtt/svelte-standard/prosemirror/plugins';
 
    /** @type {string} */
    export let content = '';

@@ -150,7 +150,7 @@
 
    import { applyDevTools } from '@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror';
 
-   import * as Plugins      from '../../../standard/editor/prosemirror/plugins/index.js';
+   import * as Plugins      from '../../../../prosemirror/plugins/index.js';
 
    /** @type {string} */
    export let content = '';
