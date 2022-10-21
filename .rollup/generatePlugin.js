@@ -1,8 +1,31 @@
-export function generatePlugin(externalPaths, exclude = [])
+export function generatePlugin(externalPaths, exclude = [], output = false)
 {
-   return {
-      name: 'typhonjs-fvtt-runtime-lib',
-      options(opts)
+   const plugin = {
+      name: 'typhonjs-fvtt-runtime-lib'
+   };
+
+   if (output)
+   {
+      // TODO: THIS IS A TEST BELOW of setting output options.
+      plugin.outputOptions = (opts) =>
+      {
+         if (Array.isArray(opts))
+         {
+            for (const outputOpts of opts)
+            {
+               outputOpts.paths = typeof outputOpts.paths === 'object' ? { ...outputOpts.paths, ...externalPaths } :
+                externalPaths;
+            }
+         }
+         else if (typeof opts === 'object')
+         {
+            opts.paths = typeof opts.paths === 'object' ? { ...opts.paths, ...externalPaths } : externalPaths;
+         }
+      };
+   }
+   else
+   {
+      plugin.options = (opts) =>
       {
          // Used in local plugin to filter external opts.
          const externalOpts = Object.keys(externalPaths).filter((entry) => !exclude.includes(entry))
@@ -22,23 +45,8 @@ export function generatePlugin(externalPaths, exclude = [])
             opts.output.paths = typeof opts.output.paths === 'object' ? { ...opts.output.paths, ...externalPaths } :
              externalPaths;
          }
-      },
+      };
+   }
 
-      // TODO: THIS IS A TEST BELOW of setting output options.
-      outputOptions(opts)
-      {
-         if (Array.isArray(opts))
-         {
-            for (const outputOpts of opts)
-            {
-               outputOpts.paths = typeof outputOpts.paths === 'object' ? { ...outputOpts.paths, ...externalPaths } :
-                externalPaths;
-            }
-         }
-         else if (typeof opts === 'object')
-         {
-            opts.paths = typeof opts.paths === 'object' ? { ...opts.paths, ...externalPaths } : externalPaths;
-         }
-      }
-   };
+   return plugin;
 }
