@@ -456,9 +456,10 @@
      class:editor-active={editorActive}
      use:applyStyles={options.styles}
      on:click={onClick}
-     on:keydown={onKeydown}>
+     on:keydown={onKeydown}
+     role=presentation>
     {#if editorButton}
-        <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
+        <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
     {/if}
     {#if editorActive}
         <div bind:this={editorContentEl} class=editor-content />

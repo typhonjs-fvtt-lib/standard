@@ -57,6 +57,7 @@
      class:enabled={$enabled || $selected}
      class:cursor-default={$enabled && !$resizing}
      class:cursor-grab={$selected && !$enabled}
+     role=presentation
 >
     {#if $selected}
        <ResizeControl />

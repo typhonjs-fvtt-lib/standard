@@ -199,23 +199,24 @@
      transition:animate
      use:efx
      on:click|preventDefault|stopPropagation={() => null}
+     on:keydown|preventDefault|stopPropagation={() => null}
      on:wheel|preventDefault|stopPropagation={() => null}>
    <section class=tjs-menu-items>
-      <div on:click|preventDefault|stopPropagation={onClick}>
+      <div on:click|preventDefault|stopPropagation={onClick} role=presentation>
          <slot />
       </div>
       <slot name=before />
       {#each allItems as item}
          {#if item['#type'] === 'class'}
-            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={onClick}>
+            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={onClick} role=presentation>
                <svelte:component this={item.class} />
             </div>
          {:else if item['#type'] === 'icon'}
-            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)}>
+            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)} role=presentation>
                <i class={item.icon}></i>{localize(item.label)}
             </div>
          {:else if item['#type'] === 'image'}
-            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)}>
+            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)} role=presentation>
                <img src={item.image} alt={item.alt}>{localize(item.label)}
             </div>
          {:else if item['#type'] === 'separator-hr'}

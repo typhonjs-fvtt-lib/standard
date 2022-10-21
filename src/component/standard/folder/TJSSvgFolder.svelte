@@ -244,6 +244,7 @@
 <details class=tjs-folder
          bind:this={detailsEl}
          on:click
+         on:keydown
          on:open
          on:close
          on:openAny

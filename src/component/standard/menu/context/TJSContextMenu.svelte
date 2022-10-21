@@ -115,12 +115,14 @@
      transition:animate
      bind:this={menuEl}
      style="z-index: {zIndex}"
-     on:click|preventDefault|stopPropagation={() => null}>
+     on:click|preventDefault|stopPropagation={() => null}
+     on:keydown|preventDefault|stopPropagation={() => null}>
     <ol class=tjs-context-items>
         <slot name="before"/>
         {#each items as item}
             <li class=tjs-context-item
-                on:click|preventDefault|stopPropagation={() => onClick(item.onclick)}>
+                on:click|preventDefault|stopPropagation={() => onClick(item.onclick)}
+                role=presentation>
                    <i class={item.icon}></i>{localize(item.label)}
             </li>
         {/each}

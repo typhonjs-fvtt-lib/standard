@@ -513,10 +513,11 @@
          class="editor tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
          class:click-to-edit={clickToEdit}
          on:click={onClick}
-         use:applyStyles={options.styles}>
+         use:applyStyles={options.styles}
+         role=presentation>
         {@html enrichedContent}
         {#if editorButton}
-            <a class=editor-edit on:click={() => initEditor()}><i class="fas fa-edit"></i></a>
+            <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
         {/if}
     </div>
 {/if}

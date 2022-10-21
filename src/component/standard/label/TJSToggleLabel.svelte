@@ -103,14 +103,15 @@
 <div on:click={onClickDiv}
      on:close={onClose}
      title={localize(titleCurrent)}
-     use:applyStyles={styles}>
+     use:applyStyles={styles}
+     role=presentation>
    <slot name=outer />
-   <span on:click={onClick} use:efx class:selected>
+   <span on:click={onClick} use:efx class:selected role=presentation>
       <slot name=left />
       {#if comp}
          <svelte:component this={comp}/>
       {:else if typeof text === 'string'}
-         <a>{localize(text)}</a>
+         <a role=presentation>{localize(text)}</a>
       {/if}
       <slot name=right />
    </span>

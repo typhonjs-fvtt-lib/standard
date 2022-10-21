@@ -41,8 +41,8 @@
    }
 </script>
 
-<div on:click={onClick} use:applyStyles={styles} title={localize(title)}>
-    <a on:click use:efx>
+<div on:click={onClick} use:applyStyles={styles} title={localize(title)} role=presentation>
+    <a on:click use:efx role=presentation>
         <i class={icon}></i>
     </a>
 </div>

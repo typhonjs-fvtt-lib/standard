@@ -95,8 +95,9 @@
 <div on:click={onClickDiv}
      on:close={onClose}
      title={localize(titleCurrent)}
-     use:applyStyles={styles}>
-   <a on:click={onClick} use:efx class:selected>
+     use:applyStyles={styles}
+     role=presentation>
+   <a on:click={onClick} use:efx class:selected role=presentation>
       <i class={icon} class:selected></i>
    </a>
    {#if selected}

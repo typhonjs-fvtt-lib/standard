@@ -260,6 +260,7 @@
 <details class=tjs-icon-folder
          bind:this={detailsEl}
          on:click
+         on:keydown
          on:open
          on:close
          on:openAny
@@ -269,7 +270,6 @@
          data-id={id}
          data-label={label}
          data-closing='false'>
-
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
