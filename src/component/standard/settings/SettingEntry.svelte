@@ -54,8 +54,9 @@
 </script>
 
 <section class=tjs-settings-entry>
+<!--    <label for={setting.id} class:checkbox={setting.componentType === 'checkbox'}>{setting.name}</label>-->
     <label for={setting.id}>{setting.name}</label>
-    <div>
+    <div class:checkbox={setting.componentType === 'checkbox'}>
         {#if setting.componentType === 'checkbox'}
             <input type=checkbox id={setting.id} bind:checked={$store} />
         {:else if setting.componentType === 'number'}
@@ -85,6 +86,10 @@
         flex: 3;
         justify-content: flex-end;
         align-items: center;
+    }
+
+    div.checkbox {
+        flex: 0
     }
 
     label {
