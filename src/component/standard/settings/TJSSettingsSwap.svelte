@@ -4,6 +4,9 @@
    /** @type {TJSGameSettings} */
    export let settings = void 0;
 
+   /** @type {object[]} */
+   export let sections = [];
+
    /** @type {TJSSettingsCreateOptions} */
    export let options = void 0;
 
@@ -11,7 +14,7 @@
 </script>
 
 {#if $showSettings}
-    <TJSSettingsEdit {settings} {options}>
+    <TJSSettingsEdit {settings} {options} {sections}>
         <slot name=settings-header slot=settings-header {settings} {options} {uiSettings} let:uiSettings />
         <slot name=settings-footer slot=settings-footer {settings} {options} {uiSettings} let:uiSettings />
     </TJSSettingsEdit>

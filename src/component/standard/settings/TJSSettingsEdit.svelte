@@ -13,12 +13,17 @@
       applyScrolltop,
       applyStyles }        from '@typhonjs-svelte/lib/action';
 
+   import { isSvelteComponent } from '@typhonjs-svelte/lib/util';
+
    import { TJSSvgFolder } from '../folder/index.js';
 
    import SettingEntry     from './SettingEntry.svelte';
 
    /** @type {TJSGameSettings} */
    export let settings = void 0;
+
+   /** @type {object[]} */
+   export let sections = [];
 
    /** @type {TJSSettingsCreateOptions} */
    export let options = void 0;
@@ -49,6 +54,19 @@
             {/each}
          </TJSSvgFolder>
       </section>
+      {/each}
+      {#each sections as section}
+         <section class=tjs-settings-section>
+            <TJSSvgFolder label={section.label} store={section.store}>
+               <svelte:component this={section.class} {...(typeof section.props === 'object' ? section.props : {})}/>
+
+               <svelte:fragment slot=summary-end>
+                  {#if isSvelteComponent(section?.summaryEnd?.class)}
+                     <svelte:component this={section.summaryEnd.class} {...(typeof section?.summaryEnd?.props === 'object' ? section.summaryEnd.props : {})}/>
+                  {/if}
+               </svelte:fragment>
+            </TJSSvgFolder>
+         </section>
       {/each}
    </div>
    <slot name=settings-footer {settings} {options} {uiSettings} />

@@ -54,7 +54,6 @@
 </script>
 
 <section class=tjs-settings-entry>
-<!--    <label for={setting.id} class:checkbox={setting.componentType === 'checkbox'}>{setting.name}</label>-->
     <label for={setting.id}>{setting.name}</label>
     <div class:checkbox={setting.componentType === 'checkbox'}>
         {#if setting.componentType === 'checkbox'}
