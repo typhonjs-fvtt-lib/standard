@@ -11,13 +11,13 @@ export class StyleManager
 
    /**
     *
-    * @param {object} opts - Options.
+    * @param {object}   opts - Options.
     *
-    * @param {string} [opts.selector=:root] - Selector element.
+    * @param {string}   [opts.selector=:root] - Selector element.
     *
-    * @param {string} docKey - Key
+    * @param {string}   [opts.docKey] - Key
     *
-    * @param {Document} [document] - Target document to load styles into.
+    * @param {Document} [opts.document] - Target document to load styles into.
     *
     */
    constructor({selector = ':root', docKey, document = globalThis.document} = {})
@@ -70,9 +70,9 @@ export class StyleManager
     *
     * @param {Object<string, string>}  rules - An object with property / value string pairs to load.
     *
-    * @param {boolean}                 [overwrite=false] - When true overwrites any existing values.
+    * @param {boolean}                 [overwrite=true] - When true overwrites any existing values.
     */
-   set(rules, overwrite = false)
+   set(rules, overwrite = true)
    {
       if (overwrite)
       {
@@ -90,6 +90,21 @@ export class StyleManager
             {
                this.#cssRule.style.setProperty(key, value);
             }
+         }
+      }
+   }
+
+   setProperty(key, value, overwrite = true)
+   {
+      if (overwrite)
+      {
+         this.#cssRule.style.setProperty(key, value);
+      }
+      else
+      {
+         if (this.#cssRule.style.getPropertyValue(key) === '')
+         {
+            this.#cssRule.style.setProperty(key, value);
          }
       }
    }
