@@ -13,8 +13,6 @@ export *             from './layers/index.js';
 export *             from './menu/index.js';
 export *             from './settings/index.js';
 
-export *             from '../util/index.js'
-
 /**
  * Assign all TyphonJS CSS variables to Foundry defaults.
  */
