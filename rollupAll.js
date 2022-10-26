@@ -160,6 +160,15 @@ for (const compFile of compFiles)
    fs.writeFileSync(compFile, fileData);
 }
 
+compFiles = await getFileList({ dir: './_dist/component/internal' });
+for (const compFile of compFiles)
+{
+   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
+   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
+   fs.writeFileSync(compFile, fileData);
+}
+
 compFiles = await getFileList({ dir: './_dist/component/standard' });
 for (const compFile of compFiles)
 {
