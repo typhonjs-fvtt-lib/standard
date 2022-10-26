@@ -1,4 +1,4 @@
-import { StyleManager } from './StyleManager.js';
+import { StyleManager } from '../util/index.js';
 
 const s_STYLE_KEY = '#__tjs-root-styles';
 

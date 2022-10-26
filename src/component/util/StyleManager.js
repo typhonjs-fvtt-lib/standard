@@ -1,26 +1,35 @@
+import { isIterable } from '@typhonjs-svelte/lib/util';
+
 /**
  * First pass at a system to create a unique style sheet for the UI library that loads default values for all CSS
  * variables.
  */
 export class StyleManager
 {
+   /** @type {string} */
    #docKey;
+
+   /** @type {string} */
    #selector;
+
+   /** @type {HTMLStyleElement} */
    #styleElement;
+
+   /** @type {CSSStyleRule} */
    #cssRule;
 
    /**
     *
     * @param {object}   opts - Options.
     *
-    * @param {string}   [opts.selector=:root] - Selector element.
+    * @param {string}   opts.docKey - Required key providing a link to a specific style sheet element.
     *
-    * @param {string}   [opts.docKey] - Key
+    * @param {string}   [opts.selector=:root] - Selector element.
     *
     * @param {Document} [opts.document] - Target document to load styles into.
     *
     */
-   constructor({selector = ':root', docKey, document = globalThis.document} = {})
+   constructor({ docKey, selector = ':root', document = globalThis.document } = {})
    {
       if (typeof selector !== 'string') { throw new TypeError(`StyleManager error: 'selector' is not a string.`); }
       if (typeof docKey !== 'string') { throw new TypeError(`StyleManager error: 'docKey' is not a string.`); }
@@ -48,6 +57,16 @@ export class StyleManager
    }
 
    /**
+    * Provides an accessor to get the `cssText` for the style sheet.
+    *
+    * @returns {string}
+    */
+   get cssText()
+   {
+      return this.#cssRule.style.cssText;
+   }
+
+   /**
     * Provides a copy constructor to duplicate an existing StyleManager instance into a new document.
     *
     * Note: This is used to support the `PopOut` module.
@@ -65,6 +84,39 @@ export class StyleManager
       return newStyleManager;
    }
 
+   get()
+   {
+      const cssText = this.#cssRule.style.cssText;
+
+      const result = {};
+
+      if (cssText !== '')
+      {
+         for (const entry of cssText.split(';'))
+         {
+            if (entry !== '')
+            {
+               const values = entry.split(':');
+               result[values[0].trim()] = values[1];
+            }
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * Gets a particular CSS variable.
+    *
+    * @param {string}   key - CSS variable property key.
+    *
+    * @returns {string} Returns CSS variable value.
+    */
+   getProperty(key)
+   {
+      return this.#cssRule.style.getPropertyValue(key);
+   }
+
    /**
     * Set rules by property / value; useful for CSS variables.
     *
@@ -72,7 +124,7 @@ export class StyleManager
     *
     * @param {boolean}                 [overwrite=true] - When true overwrites any existing values.
     */
-   set(rules, overwrite = true)
+   setProperties(rules, overwrite = true)
    {
       if (overwrite)
       {
@@ -94,6 +146,15 @@ export class StyleManager
       }
    }
 
+   /**
+    * Sets a particular property.
+    *
+    * @param {string}   key - CSS variable property key.
+    *
+    * @param {string}   value - CSS variable value.
+    *
+    * @param {boolean}  [overwrite=true] - Overwrite any existing value.
+    */
    setProperty(key, value, overwrite = true)
    {
       if (overwrite)
@@ -115,18 +176,26 @@ export class StyleManager
     *
     * @param {string|Iterable<string>} keys - The property keys to remove.
     */
-   remove(keys)
+   removeProperties(keys)
    {
-      if (Array.isArray(keys))
+      if (isIterable(keys))
       {
          for (const key of keys)
          {
             if (typeof key === 'string') { this.#cssRule.style.removeProperty(key); }
          }
       }
-      else if (typeof keys === 'string')
-      {
-         this.#cssRule.style.removeProperty(keys);
-      }
+   }
+
+   /**
+    * Removes a particular CSS variable.
+    *
+    * @param {string}   key - CSS variable property key.
+    *
+    * @returns {string} CSS variable value when removed.
+    */
+   removeProperty(key)
+   {
+      return this.#cssRule.style.removeProperty(key);
    }
 }

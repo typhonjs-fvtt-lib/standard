@@ -19,13 +19,13 @@ export *             from '../util/index.js'
  * Assign all TyphonJS CSS variables to Foundry defaults.
  */
 
-cssVariables.set({
+cssVariables.setProperties({
    '--tjs-action-ripple-background': 'rgba(0, 0, 0, 0.35)'
 }, false);
 
 // -------------------------------------------------------------------------------------------------------------------
 
-cssVariables.set({
+cssVariables.setProperties({
    '--tjs-icon-button-background': 'none',
    '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
    '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
@@ -43,7 +43,7 @@ cssVariables.set({
 
    if (typeof props === 'object')
    {
-      cssVariables.set({
+      cssVariables.setProperties({
          '--tjs-input-background': 'background' in props ? props.background : 'rgba(0, 0, 0, 0.05)',
          '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--color-border-light-tertiary)',
          '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '3px',
@@ -63,17 +63,17 @@ cssVariables.set({
 
    if (typeof props === 'object')
    {
-      cssVariables.set({
+      cssVariables.setProperties({
          '--tjs-select-option-background': 'background' in props ? props.background : 'var(--color-bg-option)'
       }, false);
    }
 }
 
-cssVariables.set({
+cssVariables.setProperties({
    '--tjs-label-transition': 'background 200ms linear'
 }, false);
 
-cssVariables.set({
+cssVariables.setProperties({
    '--tjs-menu-border': '1px solid var(--color-border-dark, #000)',
    '--tjs-menu-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
    '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)',
