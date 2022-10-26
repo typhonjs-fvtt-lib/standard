@@ -308,8 +308,8 @@ export class UIControl
 
    async #reloadConfirm({ world = false } = {})
    {
-      let title = game.i18n.localize('SETTINGS.ReloadPromptTitle');
-      let label = game.i18n.localize('SETTINGS.ReloadPromptBody');
+      let title = localize('SETTINGS.ReloadPromptTitle');
+      let label = localize('SETTINGS.ReloadPromptBody');
 
       // Foundry v9 doesn't have the reload lang keys, so substitute just for English translation.
       // TODO: FOUNDRY_V9 - remove when support for v9 is dropped.
