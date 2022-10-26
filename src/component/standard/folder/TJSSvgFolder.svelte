@@ -88,6 +88,8 @@
    import { isWritableStore }   from '@typhonjs-svelte/lib/store';
    import { isObject }          from '@typhonjs-svelte/lib/util';
 
+   import { localize }          from '@typhonjs-fvtt/svelte/helper';
+
    import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 
    /** @type {TJSFolderData} */
@@ -268,7 +270,7 @@
             />
         </svg>
 
-        <slot name=label>{label}</slot>
+        <slot name=label>{localize(label)}</slot>
 
         <slot name="summary-end"></slot>
     </summary>
