@@ -148,11 +148,23 @@ export class TJSGameSettings
    }
 
    /**
+    * Registers a setting with TJSGameSettings and Foundry core.
+    *
+    * Note: The specific store subscription handler assigned to the passed in store or store created for the setting
+    * internally is returned from this function. In some cases when setting up custom stores particularly of object
+    * types with several child property stores (`propertyStore`) it is necessary to only update the setting store and
+    * not all subscribers to the custom store as the `propertyStore` instances are also subscribers to the custom store.
+    *
+    * This allows the custom store in the `set` implementation to mainly only trigger the TJSGameSettings subscriber
+    * handler on updates and not all the connected `propertyStore` instances.
+    *
     * @param {GameSetting} setting - A GameSetting instance to set to Foundry game settings.
     *
     * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
     *                                   registering the setting with Foundry. This allows the settings to be displayed
     *                                   in the app itself, but removed from the standard Foundry configuration location.
+    *
+    * @returns {Function} The specific store subscription handler assigned to the passed in store or
     */
    register(setting, coreConfig = true)
    {
@@ -263,9 +275,7 @@ export class TJSGameSettings
          store.set(game.settings.get(namespace, key));
       }
 
-      // Subscribe to self to set associated game setting on updates after verifying that the new value does not match
-      // existing game setting.
-      subscribeIgnoreFirst(targetStore, async (value) =>
+      const storeHandler = async (value) =>
       {
          if (!gateSet && game.settings.get(namespace, key) !== value)
          {
@@ -274,7 +284,11 @@ export class TJSGameSettings
          }
 
          gateSet = false;
-      });
+      }
+
+      // Subscribe to self to set associated game setting on updates after verifying that the new value does not match
+      // existing game setting.
+      subscribeIgnoreFirst(targetStore, storeHandler);
 
       this.#settings.push({
          namespace,
@@ -282,19 +296,29 @@ export class TJSGameSettings
          folder,
          ...options
       });
+
+      return storeHandler;
    }
 
    /**
     * Registers multiple settings.
+    *
+    * Please refer to the note in {@link TJSGameSettings.register} about the returned object of store subscriber handler
+    * functions.
     *
     * @param {Iterable<GameSetting>} settings - An iterable list of game setting configurations to register.
     *
     * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
     *                                   registering the setting with Foundry. This allows the settings to be displayed
     *                                   in the app itself, but removed from the standard Foundry configuration location.
+    *
+    * @returns {Object<string, Function>} An object containing all TJSGameSetting store subscriber handlers for each
+    * setting `key` added.
     */
    registerAll(settings, coreConfig)
    {
+      const storeHandlers = {};
+
       if (!isIterable(settings)) { throw new TypeError(`TJSGameSettings - registerAll: settings is not iterable.`); }
 
       for (const entry of settings)
@@ -320,8 +344,10 @@ export class TJSGameSettings
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'options' attribute.`);
          }
 
-         this.register(entry, coreConfig);
+         storeHandlers[entry.key] = this.register(entry, coreConfig);
       }
+
+      return storeHandlers;
    }
 }
 
