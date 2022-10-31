@@ -1,4 +1,9 @@
 # Changelog
+## Release 0.0.17 (minor)
+- Refined TJSGameSettings / TJSSettingsEdit
+  - Ability to add custom component section; see `TJSGameSettings.addSection`
+  - Documentation added.
+
 ## Release 0.0.16 (minor)
 - Moved ProseMirror plugins to `@typhonjs-fvtt/svelte-standard/prosemirror/plugins` sub-package to be able to bundle 
   extra PM resources.
