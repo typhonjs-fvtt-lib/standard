@@ -14,11 +14,10 @@ import { UIControl }       from './UIControl.js';
  */
 export class TJSGameSettings
 {
-   /**
-    * @type {string}
-    */
+   /** @type {string} */
    #namespace;
 
+   /** @type {GameSetting[]} */
    #settings = [];
 
    /**
@@ -29,8 +28,15 @@ export class TJSGameSettings
    /** @type {UIControl} */
    #uiControl;
 
+   /**
+    * Creates the TJSGameSettings instance.
+    *
+    * @param {string}   namespace - The namespace for all settings.
+    */
    constructor(namespace)
    {
+      if (typeof namespace !== 'string') { throw new TypeError(`'namespace' is not a string.`); }
+
       this.#namespace = namespace;
       this.#uiControl = new UIControl(this);
    }

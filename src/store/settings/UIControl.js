@@ -1,12 +1,16 @@
-import { writable }  from 'svelte/store';
+import { writable }     from 'svelte/store';
 
-import { TJSDialog } from '@typhonjs-fvtt/svelte/application';
+import { TJSDialog }    from '@typhonjs-fvtt/svelte/application';
 
-import { localize }  from '@typhonjs-fvtt/svelte/helper'
+import { localize }     from '@typhonjs-fvtt/svelte/helper';
+
+import {
+   isObject,
+   isSvelteComponent }  from '@typhonjs-fvtt/svelte/util';
 
 import {
    ripple,
-   rippleFocus }     from '@typhonjs-fvtt/svelte-standard/action';
+   rippleFocus }        from '@typhonjs-fvtt/svelte-standard/action';
 
 /**
  * Controls preparation and processing of registered game settings w/ TJSGameSettings. Game settings are parsed
@@ -15,6 +19,9 @@ import {
  */
 export class UIControl
 {
+   /** @type {TJSSettingsCustomSection[]} */
+   #sections = [];
+
    /** @type {TJSGameSettings} */
    #settings;
 
@@ -72,11 +79,76 @@ export class UIControl
    }
 
    /**
+    * Adds a custom section / folder defined by the provided TJSSettingsCustomSection options object.
+    *
+    * @param {TJSSettingsCustomSection} options - The configuration object for the custom section.
+    */
+   addSection(options)
+   {
+      if (!isObject(options)) { throw new TypeError(`'options' is not an object.`); }
+
+      if (!isSvelteComponent(options.class)) { throw new TypeError(`'options.class' is not a Svelte component.`); }
+
+      if (options.props !== void 0 && !isObject(options.props))
+      {
+         throw new TypeError(`'options.props' is not an object.`)
+      }
+
+      if (options.folder !== void 0)
+      {
+         const folder = options.folder;
+
+         if (typeof folder !== 'string' && !isObject(folder))
+         {
+            throw new TypeError(`'options.folder' is not a string or object.`);
+         }
+
+         if (isObject(folder))
+         {
+            if (typeof folder.label !== 'string') { throw new TypeError(`'options.folder.label' is not a string.`); }
+
+            // Validate custom component set as folder summary end.
+            if (folder.summaryEnd !== void 0)
+            {
+               if (!isObject(folder.summaryEnd))
+               {
+                  throw new TypeError(`'options.folder.summaryEnd' is not an object.`);
+               }
+
+               if (!isSvelteComponent(folder.summaryEnd.class))
+               {
+                  throw new TypeError(`'options.folder.summaryEnd.class' is not a Svelte component.`);
+               }
+
+               if (folder.summaryEnd.props !== void 0 && !isObject(folder.summaryEnd.props))
+               {
+                  throw new TypeError(`'options.folder.summaryEnd.props' is not an object.`);
+               }
+            }
+
+            // Validate that folder inline styles is an object.
+            if (folder.styles !== void 0 && !isObject(folder.styles))
+            {
+               throw new TypeError(`'options.folder.styles' is not an object.`);
+            }
+         }
+      }
+
+      // Validate that section inline styles is an object.
+      if (options.styles !== void 0 && !isObject(options.styles))
+      {
+         throw new TypeError(`'options.styles' is not an object.`);
+      }
+
+      this.#sections.push(options);
+   }
+
+   /**
     * Creates the UISettingsData object by parsing stored settings in
     *
     * @param {TJSSettingsCreateOptions} [options] - Optional parameters.
     *
-    * @returns {{folders: {settings: *, name: *}[], topLevel: [], destroy: (function(): void)}}
+    * @returns {TJSSettingsUIData} Parsed UI settings data.
     */
    create(options)
    {
@@ -90,9 +162,11 @@ export class UIControl
    }
 
    /**
-    * Callback
+    * Destroy callback. Checks for any `requiresReload` parameter in each setting comparing against initial value
+    * when `settings` is created and current value. If there is a difference then show a modal dialog asking the user
+    * if they want to reload for those settings to take effect.
     *
-    * @param {object}   settings
+    * @param {TJSSettingsUIData}   settings - The UI data object initiated w/ `create`.
     */
    #destroy(settings)
    {
@@ -129,7 +203,7 @@ export class UIControl
          }
       }
 
-      if ( requiresClientReload || requiresWorldReload ) { this.#reloadConfirm({ world: requiresWorldReload }); }
+      if (requiresClientReload || requiresWorldReload) { this.#reloadConfirm({ world: requiresWorldReload }); }
 
       this.#showSettings = false;
       this.#showSettingsSet(this.#showSettings);
@@ -138,7 +212,7 @@ export class UIControl
    /**
     * @param {TJSSettingsCreateOptions} [options] - Optional parameters.
     *
-    * @returns {{folders: {settings: *, name: *}[], topLevel: *[]}}
+    * @returns {TJSSettingsUIData} Parsed UI settings data.
     */
    #parseSettings({ efx = 'ripple', storage } = {})
    {
@@ -293,16 +367,52 @@ export class UIControl
       const folders = Object.entries(folderData).map((entry) =>
       {
          return {
-            name: entry[0],
+            label: entry[0],
+            store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`) : void 0,
             settings: entry[1],
-            store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`) : void 0
          };
       });
+
+      const sections = [];
+
+      // Parse custom component sections
+      for (const section of this.#sections)
+      {
+         const parsedSection = {
+            class: section.class,
+            props: section.props,
+            styles: section.styles
+         };
+
+         if (typeof section.folder === 'string')
+         {
+            const label = localize(section.folder);
+
+            parsedSection.folder = {
+               label,
+               store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0
+            }
+         }
+         else if (isObject(section.folder))
+         {
+            const label = localize(section.folder.label);
+
+            parsedSection.folder = {
+               label,
+               store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0,
+               summaryEnd: section.folder.summaryEnd,
+               styles: section.folder.styles
+            }
+         }
+
+         sections.push(parsedSection);
+      }
 
       return {
          storeScrollbar,
          topLevel,
-         folders
+         folders,
+         sections
       };
    }
 
@@ -352,4 +462,41 @@ export class UIControl
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
  *
  * @property {SessionStorage} [storage] - TRL SessionStorage instance to serialize folder state and scrollbar position.
+ */
+
+/**
+ * @typedef {object} TJSSettingsCustomSection
+ *
+ * @property {Function} class - Svelte component constructor function for custom section.
+ *
+ * @property {Function} [props] - Svelte component constructor function for custom section.
+ *
+ * @property {object} [styles] - Inline styles for the section element.
+ *
+ * @property {string|TJSSettingsCustomSectionFolder} [folder] - A folder label or TJSSettingsCustomSectionFolder object.
+ */
+
+/**
+ * @typedef {object} TJSSettingsCustomSectionFolder
+ *
+ * @property {string} label - The folder label.
+ *
+ * @property {object} [summaryEnd] - A Svelte component config object defining TJSSvgFolder summary end component.
+ *
+ * @property {object} [styles] - Inline styles for the `TJSSvgFolder`; useful for setting CSS variables.
+ *
+ */
+
+/**
+ * @typedef {object} TJSSettingsUIData
+ *
+ * @property {{label: string, settings: object[]}[]} folders - Sorted folders with associated settings and label.
+ *
+ * @property {object[]} topLevel - Top level settings data.
+ *
+ * @property {object[]} sections - Custom sections.
+ *
+ * @property {import('svelte/store').Writable<number>} storeScrollbar - The store for `applyScrolltop`.
+ *
+ * @property {Function} [destroy] - The bound destroy callback function for received of TJSSettingsUIData.
  */
