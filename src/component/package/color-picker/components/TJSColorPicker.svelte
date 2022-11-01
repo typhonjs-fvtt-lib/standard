@@ -1,12 +1,8 @@
 <script>
    // import type { RgbaColor, HsvaColor, Colord } from 'colord';
-   // import type { A11yColor, Components } from '../type/types';
+   // import type { Components } from '../type/types';
 
-   import {
-	   colord,
-	   extend } 			from '@typhonjs-fvtt/runtime/color/colord';
-
-   import { a11yPlugin }    from '@typhonjs-fvtt/runtime/color/colord-plugins';
+   import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
 
    import Picker            from './Picker.svelte';
    import Slider            from './Slider.svelte';
@@ -19,11 +15,6 @@
    import SliderWrapper     from './variant/default/SliderWrapper.svelte';
    import Input             from './variant/default/Input.svelte';
    import Wrapper           from './variant/default/Wrapper.svelte';
-   import A11yNotice        from './variant/default/A11yNotice.svelte';
-   import A11ySingleNotice  from './variant/default/A11ySingleNotice.svelte';
-   import A11ySummary       from './variant/default/A11ySummary.svelte';
-
-   extend([a11yPlugin]);
 
    /**
     * TODO: DEFINE TYPE
@@ -47,26 +38,6 @@
 
    /** @type {boolean} */
    export let isTextInput = true;
-
-   /** @type {boolean} */
-   export let isA11y = false;
-
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {Array<A11yColor>}
-    */
-   export let a11yColors = [{hex: '#ffffff'}];
-
-   /** @type {string} */
-   export let a11yGuidelines =
-    '<p style="margin: 0; font-size: 12px;">Learn more at <a href="https://webaim.org/articles/contrast/" target="_blank">WebAIM contrast guide</a></p>';
-
-   /** @type {boolean} */
-   export let isA11yOpen = false;
-
-   /** @type {boolean} */
-   export let isA11yClosable = true;
 
    /** @type {boolean} */
    export let isPopup = isInput;
@@ -143,9 +114,6 @@
       sliderWrapper: SliderWrapper,
       alphaWrapper: SliderWrapper,
       textInput: TextInput,
-      a11yNotice: A11yNotice,
-      a11ySingleNotice: A11ySingleNotice,
-      a11ySummary: A11ySummary,
       input: Input,
       wrapper: Wrapper
    };
@@ -299,18 +267,6 @@
 		{/if}
         {#if isTextInput}
 			<svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv {isAlpha}/>
-		{/if}
-        {#if isA11y}
-			<svelte:component
-                    this={getComponents().a11yNotice}
-                    components={getComponents()}
-                    {a11yColors}
-                    {color}
-                    {hex}
-                    {a11yGuidelines}
-                    {isA11yOpen}
-                    {isA11yClosable}
-            />
 		{/if}
 	</svelte:component>
 </span>
