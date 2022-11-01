@@ -1,7 +1,7 @@
 <script>
    // import type { SupportedKeys } from '../util/store';
 
-   import { keyPressed } from '../util/store.js';
+   import { keyPressed } from './util/store.js';
 
    /**
     * Note: e.key as SupportedKeys

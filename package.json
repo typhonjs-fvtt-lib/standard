@@ -22,8 +22,10 @@
       "import": "./_dist/component/standard/index.js"
     },
     "./component/color-picker": {
-      "types": "./_dist/component/package/color-picker/index.d.ts",
       "import": "./_dist/component/package/color-picker/index.js"
+    },
+    "./component/color-picker/chrome": {
+      "import": "./_dist/component/package/color-picker/variant/chrome/index.js"
     },
     "./component/dev": {
       "types": "./_dist/component/dev/index.d.ts",

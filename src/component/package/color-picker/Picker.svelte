@@ -5,9 +5,9 @@
 
    import {
       keyPressed,
-      keyPressedCustom }    from '../util/store.js';
+      keyPressedCustom }    from './util/store.js';
 
-   import { easeInOutSin }  from '../util/transition.js';
+   import { easeInOutSin }  from './util/transition.js';
 
    /**
     * TODO: DEFINE TYPE

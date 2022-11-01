@@ -7,14 +7,14 @@
    import Picker            from './Picker.svelte';
    import Slider            from './Slider.svelte';
    import Alpha             from './Alpha.svelte';
-   import TextInput         from './variant/default/TextInput.svelte';
-   import SliderIndicator   from './variant/default/SliderIndicator.svelte';
-   import PickerIndicator   from './variant/default/PickerIndicator.svelte';
+   import TextInput         from './default/TextInput.svelte';
+   import SliderIndicator   from './default/SliderIndicator.svelte';
+   import PickerIndicator   from './default/PickerIndicator.svelte';
    import ArrowKeyHandler   from './ArrowKeyHandler.svelte';
-   import PickerWrapper     from './variant/default/PickerWrapper.svelte';
-   import SliderWrapper     from './variant/default/SliderWrapper.svelte';
-   import Input             from './variant/default/Input.svelte';
-   import Wrapper           from './variant/default/Wrapper.svelte';
+   import PickerWrapper     from './default/PickerWrapper.svelte';
+   import SliderWrapper     from './default/SliderWrapper.svelte';
+   import Input             from './default/Input.svelte';
+   import Wrapper           from './default/Wrapper.svelte';
 
    /**
     * TODO: DEFINE TYPE
