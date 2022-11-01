@@ -21,6 +21,10 @@
       "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
     },
+    "./component/color-picker": {
+      "types": "./_dist/component/package/color-picker/index.d.ts",
+      "import": "./_dist/component/package/color-picker/index.js"
+    },
     "./component/dev": {
       "types": "./_dist/component/dev/index.d.ts",
       "import": "./_dist/component/dev/index.js"
