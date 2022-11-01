@@ -38,20 +38,16 @@
    /** @type {number} */
    let focusMovementCounter = void 0;
 
-   $: if (typeof h === 'number' && slider)
-   {
-      pos = (100 * h) / 360;
-   }
+   $: if (typeof h === 'number' && slider) { pos = (100 * h) / 360; }
 
    /**
     * @param {number}    pos -
     */
    function onClick(pos)
    {
-      const size = toRight
-       ? slider.getBoundingClientRect().width
-       : slider.getBoundingClientRect().height;
+      const size = toRight ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
+
       h = (boundedPos / size) * 360;
    }
 
@@ -82,11 +78,8 @@
    {
       if (isMouseDown)
       {
-         onClick(
-          toRight
-           ? e.clientX - slider.getBoundingClientRect().left
-           : e.clientY - slider.getBoundingClientRect().top
-         );
+         onClick(toRight ? e.clientX - slider.getBoundingClientRect().left :
+          e.clientY - slider.getBoundingClientRect().top);
       }
    }
 
@@ -99,6 +92,7 @@
       {
          focused = !!document.activeElement?.isSameNode(slider);
       }
+
       if (!e.repeat && focused)
       {
          move();
@@ -113,10 +107,8 @@
       if (focused && $keyPressedCustom.ArrowVH)
       {
          e.preventDefault();
-         if (!e.repeat)
-         {
-            move();
-         }
+
+         if (!e.repeat) { move(); }
       }
    }
 
@@ -133,9 +125,10 @@
             focusMovementIntervalId = window.setInterval(() =>
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
-               const movement = toRight
-                ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
-                : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
+
+               const movement = toRight ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
+                $keyPressed.ArrowDown - $keyPressed.ArrowUp;
+
                h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
             }, 10);
          }
@@ -153,11 +146,8 @@
    function touch(e)
    {
       e.preventDefault();
-      onClick(
-       toRight
-        ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left
-        : e.changedTouches[0].clientY - slider.getBoundingClientRect().top
-      );
+      onClick(toRight ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
+       e.changedTouches[0].clientY - slider.getBoundingClientRect().top);
    }
 </script>
 
@@ -171,8 +161,8 @@
 <svelte:component this={components.sliderWrapper} {focused} {toRight}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
-            class="slider"
-            tabindex="0"
+            class=slider
+            tabindex=0
             class:to-right={toRight}
             bind:this={slider}
             on:mousedown|preventDefault|stopPropagation={mouseDown}

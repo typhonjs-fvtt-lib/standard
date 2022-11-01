@@ -25,6 +25,8 @@
 
    /**
     * Customization properties
+	*
+	* TODO: Change this to an options object
     */
 
    /** @type {string} */
@@ -57,19 +59,16 @@
     *
     * @type {RgbaColor}
     */
-   export let rgb = {r: 255, g: 0, b: 0, a: 1};
+   export let rgb = { r: 255, g: 0, b: 0, a: 1 };
 
    /** @type {HsvaColor} */
-   export let hsv = {h: 0, s: 1, v: 1, a: 1};
+   export let hsv = { h: 0, s: 1, v: 1, a: 1 };
 
    /** @type {string} */
    export let hex = '#ff0000';
 
    /** @type {Colord | undefined} */
    export let color = void 0;
-
-   /** @type {boolean} */
-   export let isDark = false;
 
    /**
     * Internal old value to trigger color conversion
@@ -80,17 +79,20 @@
     *
     * @type {RgbaColor}
     */
-   let _rgb = {r: 255, g: 0, b: 0, a: 1};
+   let _rgb = { r: 255, g: 0, b: 0, a: 1 };
 
    /**
     * TODO: DEFINE TYPE
     *
     * @type {HsvaColor}
     */
-   let _hsv = {h: 0, s: 1, v: 1, a: 1};
+   let _hsv = { h: 0, s: 1, v: 1, a: 1 };
 
    /** @type {string} */
    let _hex = '#ff0000';
+
+   /** @type {boolean} */
+   let isDark = false;
 
    /** @type {HTMLSpanElement} */
    let span = void 0;
@@ -118,10 +120,7 @@
       wrapper: Wrapper
    };
 
-   $: if (hsv || rgb || hex)
-   {
-      updateColor();
-   }
+   $: if (hsv || rgb || hex) { updateColor(); }
 
    /**
     * @returns {{}}
@@ -139,7 +138,7 @@
     *
     * @param {MouseEvent}    opts.target -
     */
-   function mousedown({target})
+   function mousedown({ target })
    {
       if (isInput)
       {
@@ -159,10 +158,7 @@
     */
    function keyup(e)
    {
-      if (e.key === 'Tab')
-      {
-         isOpen = span?.contains(document.activeElement);
-      }
+      if (e.key === 'Tab') { isOpen = span?.contains(document.activeElement); }
    }
 
    /**
@@ -172,30 +168,15 @@
    function updateColor()
    {
       // reinitialize empty alpha values
-      if (hsv.a === undefined)
-      {
-         hsv.a = 1;
-      }
-      if (_hsv.a === undefined)
-      {
-         _hsv.a = 1;
-      }
-      if (rgb.a === undefined)
-      {
-         rgb.a = 1;
-      }
-      if (_rgb.a === undefined)
-      {
-         _rgb.a = 1;
-      }
-      if (hex?.substring(7) === 'ff')
-      {
-         hex = hex.substring(0, 7);
-      }
-      if (hex?.substring(7) === 'ff')
-      {
-         hex = hex.substring(0, 7);
-      }
+      if (hsv.a === undefined) { hsv.a = 1; }
+      if (_hsv.a === undefined) { _hsv.a = 1; }
+
+      if (rgb.a === undefined) { rgb.a = 1; }
+      if (_rgb.a === undefined) { _rgb.a = 1; }
+
+      // TODO: REVIEW IF DUPLICATED LINE IS NECESSARY
+      if (hex?.substring(7) === 'ff') { hex = hex.substring(0, 7); }
+      if (hex?.substring(7) === 'ff') { hex = hex.substring(0, 7); }
 
       // check which color format changed and updates the others accordingly
       if (hsv.h !== _hsv.h || hsv.s !== _hsv.s || hsv.v !== _hsv.v || hsv.a !== _hsv.a)
@@ -217,10 +198,7 @@
          hsv = color.toHsv();
       }
 
-      if (color)
-      {
-         isDark = color.isDark();
-      }
+      if (color) { isDark = color.isDark(); }
 
       // update old colors
       _hsv = Object.assign({}, hsv);
@@ -244,16 +222,15 @@
 
 <svelte:window on:mousedown={mousedown} on:keydown={keydown} on:keyup={keyup}/>
 
-<span bind:this={span} class="color-picker">
-	{#if isInput}
-		<svelte:component this={getComponents().input} bind:labelWrapper bind:isOpen {hex} {label}/>
-	{:else}
-		<input type="hidden" value={hex}/>
-	{/if}
+<span bind:this={span} class=color-picker>
+    {#if isInput}
+        <svelte:component this={getComponents().input} bind:labelWrapper bind:isOpen {hex} {label}/>
+    {:else}
+        <input type=hidden value={hex}/>
+    {/if}
 
     <svelte:component this={getComponents().wrapper} bind:wrapper {isOpen} {isPopup} {toRight}>
-		<Picker
-                components={getComponents()}
+        <Picker components={getComponents()}
                 h={hsv.h}
                 bind:s={hsv.s}
                 bind:v={hsv.v}
@@ -261,14 +238,14 @@
                 {toRight}
                 {isDark}
         />
-		<Slider components={getComponents()} bind:h={hsv.h} {toRight}/>
+        <Slider components={getComponents()} bind:h={hsv.h} {toRight}/>
         {#if isAlpha}
-			<Alpha components={getComponents()} bind:a={hsv.a} {hex} bind:isOpen {toRight}/>
-		{/if}
+            <Alpha components={getComponents()} bind:a={hsv.a} {hex} bind:isOpen {toRight}/>
+        {/if}
         {#if isTextInput}
-			<svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv {isAlpha}/>
-		{/if}
-	</svelte:component>
+            <svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv {isAlpha}/>
+        {/if}
+    </svelte:component>
 </span>
 
 <style>

@@ -42,6 +42,10 @@
    /** @type {number} */
    let pos = void 0;
 
+   $: if (typeof a === 'number' && alpha) { pos = 100 * a; }
+
+   $: inlineStyle = `--_tjs-color-picker-alpha-color: ${hex?.substring(0, 7)}`;
+
    /**
     * @param {number}    pos -
     */
@@ -49,6 +53,7 @@
    {
       const size = toRight ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
+
       a = boundedPos / size;
    }
 
@@ -145,10 +150,6 @@
       onClick(toRight ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
        : e.changedTouches[0].clientY - alpha.getBoundingClientRect().top);
    }
-
-   $: if (typeof a === 'number' && alpha) { pos = 100 * a; }
-
-   $: inlineStyle = `--_tjs-color-picker-alpha-color: ${hex?.substring(0, 7)}`;
 </script>
 
 <svelte:window

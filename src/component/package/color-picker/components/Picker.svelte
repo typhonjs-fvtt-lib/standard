@@ -54,17 +54,14 @@
    let colorBg = void 0;
 
    /** @type {{ x: number, y: number }} */
-   let pos = {x: 100, y: 0};
+   let pos = { x: 100, y: 0 };
 
    $: if (typeof h === 'number')
    { colorBg = colord({h, s: 100, v: 100, a: 1}).toHex(); }
 
    $: if (typeof s === 'number' && typeof v === 'number' && picker)
    {
-      pos = {
-         x: s,
-         y: 100 - v
-      };
+      pos = { x: s, y: 100 - v };
    }
 
    $: inlineStyle = `--_tjs-color-picker-background: ${colorBg};`;
@@ -122,20 +119,11 @@
       if (isMouseDown)
       {
          onClick({
-            offsetX: Math.max(
-             0,
-             Math.min(
-              picker.getBoundingClientRect().width,
-              e.clientX - picker.getBoundingClientRect().left
-             )
-            ),
-            offsetY: Math.max(
-             0,
-             Math.min(
-              picker.getBoundingClientRect().height,
-              e.clientY - picker.getBoundingClientRect().top
-             )
-            )
+            offsetX: Math.max(0, Math.min(picker.getBoundingClientRect().width,
+              e.clientX - picker.getBoundingClientRect().left)),
+
+            offsetY: Math.max(0, Math.min(picker.getBoundingClientRect().height,
+              e.clientY - picker.getBoundingClientRect().top))
          });
       }
    }
@@ -145,8 +133,7 @@
     */
    function mouseDown(e)
    {
-      if (!e.target.isSameNode(picker))
-      { focused = false; }
+      if (!e.target.isSameNode(picker)) { focused = false; }
    }
 
    /**
@@ -154,11 +141,9 @@
     */
    function keyup(e)
    {
-      if (e.key === 'Tab')
-      { focused = !!document.activeElement?.isSameNode(picker); }
+      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(picker); }
 
-      if (!e.repeat && focused)
-      { move(); }
+      if (!e.repeat && focused) { move(); }
    }
 
    /**
@@ -169,8 +154,7 @@
       if (focused && $keyPressedCustom.ArrowVH)
       {
          e.preventDefault();
-         if (!e.repeat)
-         { move(); }
+         if (!e.repeat) { move(); }
       }
    }
 
@@ -187,20 +171,12 @@
             focusMovementIntervalId = window.setInterval(() =>
             {
                let focusMovementFactor = easeInOutSin(++focusMovementCounter);
-               s = Math.min(
-                100,
-                Math.max(
-                 0,
-                 s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) * focusMovementFactor * 100
-                )
-               );
-               v = Math.min(
-                100,
-                Math.max(
-                 0,
-                 v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) * focusMovementFactor * 100
-                )
-               );
+
+               s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+                focusMovementFactor * 100));
+
+               v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+                focusMovementFactor * 100));
             }, 10);
          }
       }
@@ -217,6 +193,7 @@
    function touch(e)
    {
       e.preventDefault();
+
       onClick({
          offsetX: e.changedTouches[0].clientX - picker.getBoundingClientRect().left,
          offsetY: e.changedTouches[0].clientY - picker.getBoundingClientRect().top
