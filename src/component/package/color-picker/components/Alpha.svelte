@@ -148,7 +148,7 @@
 
    $: if (typeof a === 'number' && alpha) { pos = 100 * a; }
 
-   $: inlineStyle = `--alpha-color: ${hex?.substring(0, 7)}`;
+   $: inlineStyle = `--_tjs-color-picker-alpha-color: ${hex?.substring(0, 7)}`;
 </script>
 
 <svelte:window
@@ -184,12 +184,12 @@
         position: absolute;
         content: '';
         inset: 0;
-        background: linear-gradient(#00000000, var(--alpha-color));
+        background: linear-gradient(#00000000, var(--_tjs-color-picker-alpha-color));
         z-index: 0;
     }
 
     .to-right:after {
-        background: linear-gradient(0.25turn, #00000000, var(--alpha-color));
+        background: linear-gradient(0.25turn, #00000000, var(--_tjs-color-picker-alpha-color));
     }
 
     .alpha {

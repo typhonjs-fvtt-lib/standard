@@ -15,8 +15,8 @@
     div {
         display: inline-block;
         margin-right: 5px;
-        width: var(--slider-width, 14px);
-        height: var(--picker-height, 200px);
+        width: var(--tjs-color-picker-slider-width, 14px);
+        height: var(--tjs-color-picker-picker-height, 200px);
         border-radius: 7px;
         overflow: hidden;
         user-select: none;
@@ -27,6 +27,6 @@
     }
 
     div.focused {
-        outline: 2px solid var(--focus-color, red);
+        outline: 2px solid var(--tjs-color-picker-focus-color, red);
     }
 </style>

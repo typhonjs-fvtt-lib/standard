@@ -201,7 +201,7 @@
 
     :global(.has-been-tabbed) input:focus-visible,
     :global(.has-been-tabbed) button:focus-visible {
-        outline: 2px solid var(--focus-color, red);
+        outline: 2px solid var(--tjs-color-picker-focus-color, red);
         outline-offset: 2px;
     }
 </style>

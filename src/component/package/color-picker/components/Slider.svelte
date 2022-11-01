@@ -190,17 +190,18 @@
 
 <style>
     .slider {
-        --gradient: #ff0000, #ffff00 17.2%, #ffff00 18.2%, #00ff00 33.3%, #00ffff 49.5%, #00ffff 51.5%,
-        #0000ff 67.7%, #ff00ff 83.3%, #ff0000;
         position: relative;
         width: 100%;
         height: 100%;
-        background: linear-gradient(var(--gradient));
+        background: linear-gradient(var(--_tjs-color-picker-slider-gradient));
         outline: none;
         user-select: none;
+
+        --_tjs-color-picker-slider-gradient: #ff0000, #ffff00 17.2%, #ffff00 18.2%, #00ff00 33.3%, #00ffff 49.5%,
+        #00ffff 51.5%, #0000ff 67.7%, #ff00ff 83.3%, #ff0000;
     }
 
     .to-right {
-        background: linear-gradient(0.25turn, var(--gradient));
+        background: linear-gradient(0.25turn, var(--_tjs-color-picker-slider-gradient));
     }
 </style>

@@ -27,6 +27,6 @@
     }
 
     div.focused {
-        outline: 2px solid var(--focus-color, red);
+        outline: 2px solid var(--tjs-color-picker-focus-color, red);
     }
 </style>

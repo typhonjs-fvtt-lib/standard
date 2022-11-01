@@ -67,7 +67,7 @@
       };
    }
 
-   $: inlineStyle = `--color-bg: ${colorBg};`;
+   $: inlineStyle = `--_tjs-color-picker-background: ${colorBg};`;
 
    /**
     * @param {number}    value -
@@ -261,9 +261,10 @@
         position: relative;
         width: 100%;
         height: 100%;
-        background: linear-gradient(#ffffff00, #000000ff),
-        linear-gradient(0.25turn, #ffffffff, #00000000), var(--color-bg);
         outline: none;
         user-select: none;
+
+        background: linear-gradient(#ffffff00, #000000ff), linear-gradient(0.25turn, #ffffffff, #00000000),
+         var(--_tjs-color-picker-background);
     }
 </style>
