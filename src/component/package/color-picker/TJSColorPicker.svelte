@@ -3,6 +3,8 @@
    // import type { Components } from '../type/types';
 
    import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
+   import { applyStyles }   from '@typhonjs-fvtt/runtime/svelte/action';
+   import { isObject }      from '@typhonjs-fvtt/runtime/svelte/util';
 
    import Picker            from './Picker.svelte';
    import Slider            from './Slider.svelte';
@@ -29,8 +31,15 @@
 	* TODO: Change this to an options object
     */
 
+   /**
+    * TODO: DEFINE TYPE
+    *
+    * @type {object}
+    */
+   export let options = void 0;
+
    /** @type {string} */
-   export let label = 'Choose a color';
+   $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
 
    /** @type {boolean} */
    export let isAlpha = true;
@@ -222,9 +231,9 @@
 
 <svelte:window on:mousedown={mousedown} on:keydown={keydown} on:keyup={keyup}/>
 
-<span bind:this={span} class=color-picker>
+<span bind:this={span} class=color-picker use:applyStyles={styles}>
     {#if isInput}
-        <svelte:component this={getComponents().input} bind:labelWrapper bind:isOpen {hex} {label}/>
+        <svelte:component this={getComponents().input} bind:labelWrapper bind:isOpen {hex} />
     {:else}
         <input type=hidden value={hex}/>
     {/if}

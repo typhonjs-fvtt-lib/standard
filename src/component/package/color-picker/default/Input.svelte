@@ -5,9 +5,6 @@
    /** @type {string} */
    export let hex = void 0;
 
-   /** @type {string} */
-   export let label = void 0;
-
    /** @type {boolean} */
    /* svelte-ignore unused-export-let */
    export let isOpen = void 0;
@@ -20,7 +17,6 @@
                on:click|preventDefault={() => {	/**/ }}
                aria-haspopup=dialog />
     </div>
-    {label}
 </label>
 
 <style>
