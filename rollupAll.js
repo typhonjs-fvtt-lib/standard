@@ -151,25 +151,7 @@ fs.writeJSONSync(`./_dist/component/standard/package.json`, {
    type: 'module'
 });
 
-let compFiles = await getFileList({ dir: './_dist/component/dev' });
-for (const compFile of compFiles)
-{
-   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
-   fs.writeFileSync(compFile, fileData);
-}
-
-compFiles = await getFileList({ dir: './_dist/component/internal' });
-for (const compFile of compFiles)
-{
-   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
-   fs.writeFileSync(compFile, fileData);
-}
-
-compFiles = await getFileList({ dir: './_dist/component/standard' });
+let compFiles = await getFileList({ dir: './_dist/component' });
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
