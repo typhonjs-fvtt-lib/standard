@@ -26,10 +26,6 @@
    export let v = void 0;
 
    /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let isOpen = void 0;
-
-   /** @type {boolean} */
    export let toRight = void 0;
 
    /** @type {boolean} */

@@ -11,10 +11,6 @@
     */
    export let components = void 0;
 
-   /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let isOpen = void 0;
-
    /** @type {number} */
    export let a = 1;
 

@@ -2,9 +2,13 @@
    // import type { RgbaColor, HsvaColor, Colord } from 'colord';
    // import type { Components } from '../type/types';
 
+   import { setContext }    from 'svelte';
+
    import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
    import { applyStyles }   from '@typhonjs-fvtt/runtime/svelte/action';
    import { isObject }      from '@typhonjs-fvtt/runtime/svelte/util';
+
+   import { InternalState } from './model/InternalState.js';
 
    import Picker            from './Picker.svelte';
    import Slider            from './Slider.svelte';
@@ -38,23 +42,20 @@
     */
    export let options = void 0;
 
-   /** @type {string} */
+   const internalState = new InternalState(options);
+
+   setContext('#cp-state', internalState);
+
+   /** @type {object} */
    $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
+
+   $: internalState.update(options);
 
    /** @type {boolean} */
    export let isAlpha = true;
 
    /** @type {boolean} */
-   export let isInput = true;
-
-   /** @type {boolean} */
    export let isTextInput = true;
-
-   /** @type {boolean} */
-   export let isPopup = isInput;
-
-   /** @type {boolean} */
-   export let isOpen = !isInput;
 
    /** @type {boolean} */
    export let toRight = false;
@@ -106,11 +107,7 @@
    /** @type {HTMLSpanElement} */
    let span = void 0;
 
-   /** @type {HTMLLabelElement} */
-   let labelWrapper = void 0;
-
-   /** @type {HTMLElement} */
-   let wrapper = void 0;
+   const storeIsPopout = internalState.stores.isPopup;
 
    /**
     * TODO: DEFINE TYPE
@@ -125,7 +122,6 @@
       sliderWrapper: SliderWrapper,
       alphaWrapper: SliderWrapper,
       textInput: TextInput,
-      input: Input,
       wrapper: Wrapper
    };
 
@@ -143,31 +139,11 @@
    }
 
    /**
-    * @param {object} opts - Required parameters
-    *
-    * @param {MouseEvent}    opts.target -
-    */
-   function mousedown({ target })
-   {
-      if (isInput)
-      {
-         if (labelWrapper.contains(target) || labelWrapper.isSameNode(target))
-         {
-            isOpen = !isOpen;
-         }
-         else if (isOpen && !wrapper.contains(target))
-         {
-            isOpen = false;
-         }
-      }
-   }
-
-   /**
     * @param {KeyboardEvent}    e -
     */
    function keyup(e)
    {
-      if (e.key === 'Tab') { isOpen = span?.contains(document.activeElement); }
+      if (e.key === 'Tab') { internalState.isOpen = span?.contains(document.activeElement); }
    }
 
    /**
@@ -229,27 +205,24 @@
 
 <ArrowKeyHandler/>
 
-<svelte:window on:mousedown={mousedown} on:keydown={keydown} on:keyup={keyup}/>
+<svelte:window on:keydown={keydown} on:keyup={keyup}/>
 
 <span bind:this={span} class=color-picker use:applyStyles={styles}>
-    {#if isInput}
-        <svelte:component this={getComponents().input} bind:labelWrapper bind:isOpen {hex} />
-    {:else}
-        <input type=hidden value={hex}/>
+    <input type=hidden value={hex}/>
+    {#if $storeIsPopout}
+        <Input {hex} />
     {/if}
-
-    <svelte:component this={getComponents().wrapper} bind:wrapper {isOpen} {isPopup} {toRight}>
+    <svelte:component this={getComponents().wrapper}>
         <Picker components={getComponents()}
                 h={hsv.h}
                 bind:s={hsv.s}
                 bind:v={hsv.v}
-                bind:isOpen
                 {toRight}
                 {isDark}
         />
         <Slider components={getComponents()} bind:h={hsv.h} {toRight}/>
         {#if isAlpha}
-            <Alpha components={getComponents()} bind:a={hsv.a} {hex} bind:isOpen {toRight}/>
+            <Alpha components={getComponents()} bind:a={hsv.a} {hex} {toRight}/>
         {/if}
         {#if isTextInput}
             <svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv {isAlpha}/>
