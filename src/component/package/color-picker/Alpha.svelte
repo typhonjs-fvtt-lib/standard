@@ -1,6 +1,8 @@
 <script>
    // import type { Components } from '$lib/type/types';
 
+   import { getContext }    from 'svelte';
+
    import { keyPressed, keyPressedCustom }  from './util/store.js';
    import { easeInOutSin }                  from './util/transition.js';
 
@@ -17,8 +19,7 @@
    /** @type {string | undefined} */
    export let hex = void 0;
 
-   /** @type {boolean} */
-   export let toRight = void 0;
+   const { toRight } = getContext('#cp-state').stores;
 
    /** @type {HTMLDivElement} */
    let alpha = void 0;
@@ -47,7 +48,7 @@
     */
    function onClick(pos)
    {
-      const size = toRight ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
+      const size = $toRight ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       a = boundedPos / size;
@@ -61,7 +62,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick(toRight ? e.offsetX : e.offsetY);
+         onClick($toRight ? e.offsetX : e.offsetY);
       }
    }
 
@@ -80,7 +81,7 @@
    {
       if (isMouseDown)
       {
-         onClick(toRight ? e.clientX - alpha.getBoundingClientRect().left :
+         onClick($toRight ? e.clientX - alpha.getBoundingClientRect().left :
           e.clientY - alpha.getBoundingClientRect().top);
       }
    }
@@ -122,7 +123,7 @@
             focusMovementIntervalId = window.setInterval(() =>
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
-               const movement = toRight
+               const movement = $toRight
                 ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
                 : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
                a = Math.min(1, Math.max(0, a + movement * focusMovementFactor));
@@ -143,7 +144,7 @@
    {
       e.preventDefault();
 
-      onClick(toRight ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
+      onClick($toRight ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
        : e.changedTouches[0].clientY - alpha.getBoundingClientRect().top);
    }
 </script>
@@ -155,11 +156,11 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={components.alphaWrapper} {focused} {toRight}>
+<svelte:component this={components.alphaWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=alpha
          tabindex=0
-         class:to-right={toRight}
+         class:to-right={$toRight}
          style={inlineStyle}
          bind:this={alpha}
          on:mousedown|preventDefault|stopPropagation={mouseDown}
@@ -172,7 +173,7 @@
          aria-valuenow={Math.round(pos)}
          aria-valuetext="{pos?.toFixed()}%"
     >
-        <svelte:component this={components.alphaIndicator} {pos} {toRight}/>
+        <svelte:component this={components.alphaIndicator} {pos} />
     </div>
 </svelte:component>
 

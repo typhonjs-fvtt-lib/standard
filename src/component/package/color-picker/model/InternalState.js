@@ -8,6 +8,8 @@ export class InternalState
    #externalData = {};
    #internalData = {};
 
+   #lastIsPopup;
+
    #stores;
 
    constructor(options)
@@ -16,13 +18,17 @@ export class InternalState
 
       this.#externalData.isAlpha = typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true;
 
-      this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
+      this.#lastIsPopup = this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#externalData.isTextInput = typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true;
 
-      this.#externalData.toRight = typeof opts.toRight === 'boolean' ? opts.toRight : false;
+      // Set in updateColor
+      this.#internalData.isDark = false;
 
       this.#internalData.isOpen = typeof opts.isOpen === 'boolean' ? opts.isOpen : !this.#externalData.isPopup;
+
+      // Set by the respective wrapper; the Chrome wrapper will set this to true.
+      this.#internalData.toRight = false;
 
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
@@ -31,9 +37,10 @@ export class InternalState
          isAlpha: propertyStore(externalData, 'isAlpha'),
          isTextInput: propertyStore(externalData, 'isTextInput'),
          isPopup: propertyStore(externalData, 'isPopup'),
-         toRight: propertyStore(externalData, 'toRight'),
 
+         isDark: propertyStore(internalData, 'isDark'),
          isOpen: propertyStore(internalData, 'isOpen'),
+         toRight: propertyStore(internalData, 'toRight')
       }
 
 console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
@@ -70,12 +77,20 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       this.#stores.isAlpha.set(typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true);
 
-      this.#stores.isPopup.set(typeof opts.isPopup === 'boolean' ? opts.isPopup : true);
+      const newIsPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
+
+      this.#stores.isPopup.set(newIsPopup);
 
       this.#stores.isTextInput.set(typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true);
 
-      this.#stores.toRight.set(typeof opts.toRight === 'boolean' ? opts.toRight : false);
+      // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
+      if (newIsPopup !== this.#lastIsPopup)
+      {
+         this.#stores.isOpen.set(!this.#externalData.isPopup);
+         this.#lastIsPopup = newIsPopup;
+      }
 
-      this.#stores.isOpen.set(!this.#externalData.isPopup);
+console.log(`!! InternalState - update - this.#externalData: `, this.#externalData)
+console.log(`!! InternalState - update - this.#internalData: `, this.#internalData)
    }
 }

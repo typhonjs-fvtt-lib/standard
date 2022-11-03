@@ -1,5 +1,6 @@
 <script>
    // import type { Components } from '$lib/type/types';
+   import { getContext }    from 'svelte';
 
    import {
       keyPressed,
@@ -14,11 +15,10 @@
     */
    export let components = void 0;
 
-   /** @type {boolean} */
-   export let toRight = void 0;
-
    /** @type {number} */
    export let h = void 0;
+
+   const { toRight } = getContext('#cp-state').stores;
 
    /** @type {HTMLDivElement} */
    let slider = void 0;
@@ -45,7 +45,7 @@
     */
    function onClick(pos)
    {
-      const size = toRight ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
+      const size = $toRight ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       h = (boundedPos / size) * 360;
@@ -59,7 +59,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick(toRight ? e.offsetX : e.offsetY);
+         onClick($toRight ? e.offsetX : e.offsetY);
       }
    }
 
@@ -78,7 +78,7 @@
    {
       if (isMouseDown)
       {
-         onClick(toRight ? e.clientX - slider.getBoundingClientRect().left :
+         onClick($toRight ? e.clientX - slider.getBoundingClientRect().left :
           e.clientY - slider.getBoundingClientRect().top);
       }
    }
@@ -126,7 +126,7 @@
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               const movement = toRight ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
+               const movement = $toRight ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
                h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
@@ -146,7 +146,7 @@
    function touch(e)
    {
       e.preventDefault();
-      onClick(toRight ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
+      onClick($toRight ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
        e.changedTouches[0].clientY - slider.getBoundingClientRect().top);
    }
 </script>
@@ -158,12 +158,12 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={components.sliderWrapper} {focused} {toRight}>
+<svelte:component this={components.sliderWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
             class=slider
             tabindex=0
-            class:to-right={toRight}
+            class:to-right={$toRight}
             bind:this={slider}
             on:mousedown|preventDefault|stopPropagation={mouseDown}
             on:touchstart={touch}
@@ -174,7 +174,7 @@
             aria-valuemax={360}
             aria-valuenow={Math.round(h)}
     >
-        <svelte:component this={components.sliderIndicator} {pos} {toRight}/>
+        <svelte:component this={components.sliderIndicator} {pos} />
     </div>
 </svelte:component>
 

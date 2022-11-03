@@ -37,10 +37,11 @@
     div {
         background: var(--tjs-color-picker-wrapper-background, white);
         padding: var(--tjs-color-picker-wrapper-padding, 8px 5px 5px 8px);
-        margin: var(--tjs-color-picker-wrapper-margin, 0 10px 10px);
+        margin: var(--tjs-color-picker-wrapper-margin, 0);
         border: var(--tjs-color-picker-wrapper-border, 1px solid black);
         border-radius: var(--tjs-color-picker-wrapper-border-radius, 12px);
         display: none;
+        height: var(--tjs-color-picker-wrapper-height, max-content);
         width: var(--tjs-color-picker-wrapper-width, max-content);
     }
 

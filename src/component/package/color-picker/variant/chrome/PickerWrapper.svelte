@@ -1,10 +1,6 @@
 <script>
    /** @type {boolean} */
    export let focused = void 0;
-
-   /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let toRight = void 0;
 </script>
 
 <div class=picker-wrapper class:focused>

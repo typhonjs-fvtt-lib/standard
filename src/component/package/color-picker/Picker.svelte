@@ -1,6 +1,5 @@
 <script>
    // import type { Components } from '$lib/type/types';
-
    import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
 
    import {
@@ -24,12 +23,6 @@
 
    /** @type {number} */
    export let v = void 0;
-
-   /** @type {boolean} */
-   export let toRight = void 0;
-
-   /** @type {boolean} */
-   export let isDark = void 0;
 
    /** @type {HTMLDivElement} */
    let picker = void 0;
@@ -205,7 +198,7 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={components.pickerWrapper} {focused} {toRight}>
+<svelte:component this={components.pickerWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=picker
          tabindex=0
@@ -223,7 +216,6 @@
         <svelte:component
                 this={components.pickerIndicator}
                 {pos}
-                {isDark}
                 hex={colord({ h, s, v, a: 1 }).toHex()}
         />
     </div>

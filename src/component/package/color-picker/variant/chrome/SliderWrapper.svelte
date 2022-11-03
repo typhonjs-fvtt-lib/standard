@@ -1,10 +1,6 @@
 <script>
    /** @type {boolean} */
    export let focused;
-
-   /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let toRight;
 </script>
 
 <div class=slider-wrapper class:focused>
@@ -14,9 +10,9 @@
 <style>
     div {
         display: inline-block;
-        margin: 4px;
+        margin: var(--tjs-color-picker-slider-margin, 4px);
         width: var(--tjs-color-picker-slider-width, 250px);
-        height: var(--tjs-color-picker-picker-height, 10px);
+        height: var(--tjs-color-picker-slider-height, 10px);
         border-radius: 7px;
         overflow: hidden;
 

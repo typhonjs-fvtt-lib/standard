@@ -1,8 +1,8 @@
 <script>
    // import type { RgbaColor, HsvaColor } from 'colord';
+   import { getContext }    from 'svelte';
 
-   /** @type {boolean} */
-   export let isAlpha = void 0;
+   const { isAlpha } = getContext('#cp-state').stores;
 
    /**
     * TODO: DEFINE TYPE
@@ -69,7 +69,7 @@
     {#if mode === 0}
         <div class=input-container>
             <input value={hex} on:input={updateHex} style="flex: 3"/>
-            {#if isAlpha}
+            {#if $isAlpha}
                 <input aria-label="hexadecimal color"
                        value={a}
                        type=number
@@ -103,7 +103,7 @@
                    max=255
                    on:input={updateRgb('b')}
             />
-            {#if isAlpha}
+            {#if $isAlpha}
                 <input aria-label="transparency chanel color"
                        value={a}
                        type=number
@@ -137,7 +137,7 @@
                    max=100
                    on:input={updateHsv('v')}
             />
-            {#if isAlpha}
+            {#if $isAlpha}
                 <input aria-label="transparency chanel color"
                        value={a}
                        type=number

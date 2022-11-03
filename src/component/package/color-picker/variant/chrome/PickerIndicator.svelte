@@ -1,16 +1,14 @@
 <script>
+   import { getContext } from 'svelte';
+
    /** @type {{ x: number; y: number }} */
    export let pos = void 0;
 
+   const { isDark } = getContext('#cp-state').stores;
+
    /** @type {string} */
-   /* svelte-ignore unused-export-let */
-   export let hex = void 0;
-
-   /** @type {boolean} */
-   export let isDark = void 0;
-
    $: pickerStyle = `left: calc(${(pos.x / 260) * 246}% + 2px); top: calc(${
-    (pos.y / 160) * 149}% + 2px); box-shadow: 0 0 4px ${isDark ? 'white' : 'black'};`;
+    (pos.y / 160) * 149}% + 2px); box-shadow: 0 0 4px ${$isDark ? 'white' : 'black'};`;
 </script>
 
 <div class=picker-indicator style={pickerStyle} />

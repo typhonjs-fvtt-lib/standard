@@ -1,35 +1,49 @@
 <script>
-   /** @type {HTMLElement} */
-   export let wrapper;
+   import { getContext }    from 'svelte';
 
-   /** @type {boolean} */
-   export let isOpen;
+   const { isOpen, isPopup, toRight } = getContext('#cp-state').stores;
 
-   /** @type {boolean} */
-   export let isPopup;
+   toRight.set(true);
 
-   /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let toRight;
+   let wrapperEl;
+
+   $: if ($isPopup && $isOpen && wrapperEl) { document.body.addEventListener('pointerdown', onPointerDown); }
+
+   function onPointerDown(event)
+   {
+      // Early out if pointer down on wrapper element or child element of wrapper.
+      if (event.target === wrapperEl || wrapperEl.contains(event.target)) { return; }
+
+      // Remove listener.
+      document.body.removeEventListener('pointerdown', onPointerDown);
+
+      // Close picker / popup.
+      $isOpen = false;
+   }
+
+   // Sanity case to remove listener when `options.isPopup` state changes externally.
+   $: if (!$isPopup) { document.body.removeEventListener('pointerdown', onPointerDown); }
 </script>
 
 <div class=wrapper
-     bind:this={wrapper}
-     class:isOpen
-     class:isPopup
-     role={isPopup ? 'dialog' : void 0}
+     bind:this={wrapperEl}
+     class:isOpen={$isOpen}
+     class:isPopup={$isPopup}
+     role={$isPopup ? 'dialog' : void 0}
      aria-label="color picker">
     <slot />
 </div>
 
 <style>
     div {
-        background-color: white;
-        margin: 0 10px 15px;
-        padding-bottom: 3px;
-        border: 1px solid black;
-        border-radius: 8px;
+        background: var(--tjs-color-picker-wrapper-background, white);
+        margin: var(--tjs-color-picker-wrapper-margin, 0);
+        padding: var(--tjs-color-picker-wrapper-padding, 0 0 3px 0);
+        border: var(--tjs-color-picker-wrapper-border, 1px solid black);
+        border-radius: var(--tjs-color-picker-wrapper-border-radius, 8px);
         display: none;
+        height: var(--tjs-color-picker-wrapper-height, max-content);
+        width: var(--tjs-color-picker-wrapper-width, max-content);
     }
 
     .isOpen {

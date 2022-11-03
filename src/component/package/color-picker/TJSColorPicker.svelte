@@ -2,7 +2,7 @@
    // import type { RgbaColor, HsvaColor, Colord } from 'colord';
    // import type { Components } from '../type/types';
 
-   import { setContext }    from 'svelte';
+   import { setContext}     from 'svelte';
 
    import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
    import { applyStyles }   from '@typhonjs-fvtt/runtime/svelte/action';
@@ -31,8 +31,8 @@
 
    /**
     * Customization properties
-	*
-	* TODO: Change this to an options object
+    *
+    * TODO: Change this to an options object
     */
 
    /**
@@ -44,21 +44,17 @@
 
    const internalState = new InternalState(options);
 
+   const isAlpha = internalState.stores.isAlpha;
+   const isDark = internalState.stores.isDark;
+   const isPopup = internalState.stores.isPopup;
+   const isTextInput = internalState.stores.isTextInput;
+
    setContext('#cp-state', internalState);
 
    /** @type {object} */
    $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
 
    $: internalState.update(options);
-
-   /** @type {boolean} */
-   export let isAlpha = true;
-
-   /** @type {boolean} */
-   export let isTextInput = true;
-
-   /** @type {boolean} */
-   export let toRight = false;
 
    /**
     * color properties
@@ -72,7 +68,7 @@
    export let rgb = { r: 255, g: 0, b: 0, a: 1 };
 
    /** @type {HsvaColor} */
-   export let hsv = { h: 0, s: 1, v: 1, a: 1 };
+   export let hsv = { h: 0, s: 100, v: 100, a: 1 };
 
    /** @type {string} */
    export let hex = '#ff0000';
@@ -96,18 +92,13 @@
     *
     * @type {HsvaColor}
     */
-   let _hsv = { h: 0, s: 1, v: 1, a: 1 };
+   let _hsv = { h: 0, s: 100, v: 100, a: 1 };
 
    /** @type {string} */
    let _hex = '#ff0000';
 
-   /** @type {boolean} */
-   let isDark = false;
-
    /** @type {HTMLSpanElement} */
    let span = void 0;
-
-   const storeIsPopout = internalState.stores.isPopup;
 
    /**
     * TODO: DEFINE TYPE
@@ -127,6 +118,9 @@
 
    $: if (hsv || rgb || hex) { updateColor(); }
 
+   // When alpha is set to false externally ensure local state is correct.
+   $: if (!$isAlpha) { hsv.a = 1; }
+
    /**
     * @returns {{}}
     */
@@ -141,9 +135,23 @@
    /**
     * @param {KeyboardEvent}    e -
     */
+   function keydown(e)
+   {
+      if (e.key === 'Tab')
+      {
+         span.classList.add('has-been-tabbed');
+      }
+   }
+
+   /**
+    * @param {KeyboardEvent}    e -
+    */
    function keyup(e)
    {
-      if (e.key === 'Tab') { internalState.isOpen = span?.contains(document.activeElement); }
+      if (e.key === 'Tab' && $isPopup)
+      {
+         internalState.isOpen = span?.contains(document.activeElement);
+      }
    }
 
    /**
@@ -183,23 +191,12 @@
          hsv = color.toHsv();
       }
 
-      if (color) { isDark = color.isDark(); }
+      if (color) { $isDark = color.isDark(); }
 
       // update old colors
       _hsv = Object.assign({}, hsv);
       _rgb = Object.assign({}, rgb);
       _hex = hex;
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keydown(e)
-   {
-      if (e.key === 'Tab')
-      {
-         span.classList.add('has-been-tabbed');
-      }
    }
 </script>
 
@@ -209,7 +206,7 @@
 
 <span bind:this={span} class=color-picker use:applyStyles={styles}>
     <input type=hidden value={hex}/>
-    {#if $storeIsPopout}
+    {#if $isPopup}
         <Input {hex} />
     {/if}
     <svelte:component this={getComponents().wrapper}>
@@ -217,15 +214,13 @@
                 h={hsv.h}
                 bind:s={hsv.s}
                 bind:v={hsv.v}
-                {toRight}
-                {isDark}
         />
-        <Slider components={getComponents()} bind:h={hsv.h} {toRight}/>
-        {#if isAlpha}
-            <Alpha components={getComponents()} bind:a={hsv.a} {hex} {toRight}/>
+        <Slider components={getComponents()} bind:h={hsv.h} />
+        {#if $isAlpha}
+            <Alpha components={getComponents()} bind:a={hsv.a} {hex} />
         {/if}
-        {#if isTextInput}
-            <svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv {isAlpha}/>
+        {#if $isTextInput}
+            <svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv />
         {/if}
     </svelte:component>
 </span>

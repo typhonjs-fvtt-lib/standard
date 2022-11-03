@@ -2,10 +2,6 @@
    /** @type {number} */
    export let pos = void 0;
 
-   /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let toRight = void 0;
-
    /** @type {string} */
    $: sliderStyle = `left: calc(${(pos / 200) * 192}% + 2px);`;
 </script>

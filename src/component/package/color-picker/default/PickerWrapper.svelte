@@ -1,10 +1,6 @@
 <script>
    /** @type {boolean} */
    export let focused = void 0;
-
-   /** @type {boolean} */
-   /* svelte-ignore unused-export-let */
-   export let toRight = void 0;
 </script>
 
 <div class=picker-wrapper class:focused>
@@ -14,10 +10,10 @@
 <style>
     div {
         display: inline-block;
-        margin-right: 5px;
-        height: 200px;
-        width: 200px;
-        border-radius: 8px;
+        margin: var(--tjs-color-picker-picker-margin, 0 5px 0 0);
+        height: var(--tjs-color-picker-picker-height, 200px);
+        width: var(--tjs-color-picker-picker-width, 200px);
+        border-radius: var(--tjs-color-picker-picker-border-radius, 8px);
         overflow: hidden;
 
         outline: 2px solid transparent;
