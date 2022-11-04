@@ -1,19 +1,14 @@
 <script>
    // import type { Components } from '$lib/type/types';
+   import { getContext }    from 'svelte';
+
    import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
 
    import {
       keyPressed,
-      keyPressedCustom }    from './util/store.js';
+      keyPressedCustom }    from '../util/store.js';
 
-   import { easeInOutSin }  from './util/transition.js';
-
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {Components}
-    */
-   export let components = void 0;
+   import { easeInOutSin }  from '../util/transition.js';
 
    /** @type {number} */
    export let h = void 0;
@@ -23,6 +18,8 @@
 
    /** @type {number} */
    export let v = void 0;
+
+   const { components } = getContext('#cp-state').stores;
 
    /** @type {HTMLDivElement} */
    let picker = void 0;
@@ -198,7 +195,7 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={components.pickerWrapper} {focused}>
+<svelte:component this={$components.pickerWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=picker
          tabindex=0
@@ -214,7 +211,7 @@
          aria-valuetext="saturation {pos.x?.toFixed()}%, brightness {pos.y?.toFixed()}%"
     >
         <svelte:component
-                this={components.pickerIndicator}
+                this={$components.pickerIndicator}
                 {pos}
                 hex={colord({ h, s, v, a: 1 }).toHex()}
         />

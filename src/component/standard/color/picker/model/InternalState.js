@@ -3,12 +3,19 @@ import { writable }        from 'svelte/store';
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 import { isObject }        from '@typhonjs-svelte/lib/util';
 
+import { variant }         from '../component/variant/index.js'
+
 export class InternalState
 {
    #externalData = {};
    #internalData = {};
 
    #lastIsPopup;
+
+   /**
+    * @type {string|undefined}
+    */
+   #lastVariant = void 0;
 
    #stores;
 
@@ -34,6 +41,8 @@ export class InternalState
       const internalData = writable(this.#internalData);
 
       this.#stores = {
+         components: writable(this.#prepareComponents(opts)),
+
          isAlpha: propertyStore(externalData, 'isAlpha'),
          isTextInput: propertyStore(externalData, 'isTextInput'),
          isPopup: propertyStore(externalData, 'isPopup'),
@@ -62,6 +71,33 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       this.#stores.isOpen.set(isOpen);
    }
 
+   #prepareComponents(opts)
+   {
+      if (opts.variant !== void 0 && typeof opts.variant !== 'string')
+      {
+         throw new TypeError(`'options.variant' is not a string or undefined.`);
+      }
+
+      let selectedVariant = {};
+
+      switch(opts.variant)
+      {
+         case 'chrome':
+            this.#lastVariant = 'chrome';
+            selectedVariant = variant.chrome;
+            break;
+
+         default:
+            this.#lastVariant = void 0;
+            break;
+      }
+
+      return {
+         ...variant.default,
+         ...(isObject(opts.components) ? opts.components : selectedVariant)
+      }
+   }
+
    swapIsOpen()
    {
       const result = !this.#internalData.isOpen;
@@ -74,6 +110,8 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
    update(options)
    {
       const opts = isObject(options) ? options : {};
+
+      if (this.#lastVariant !== opts.variant) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
       this.#stores.isAlpha.set(typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true);
 

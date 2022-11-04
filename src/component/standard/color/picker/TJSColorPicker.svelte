@@ -8,53 +8,16 @@
    import { applyStyles }   from '@typhonjs-fvtt/runtime/svelte/action';
    import { isObject }      from '@typhonjs-fvtt/runtime/svelte/util';
 
+   import { HSVColorState } from "./model/HSVColorState.js";
    import { InternalState } from './model/InternalState.js';
 
-   import Picker            from './Picker.svelte';
-   import Slider            from './Slider.svelte';
-   import Alpha             from './Alpha.svelte';
-   import TextInput         from './default/TextInput.svelte';
-   import SliderIndicator   from './default/SliderIndicator.svelte';
-   import PickerIndicator   from './default/PickerIndicator.svelte';
-   import ArrowKeyHandler   from './ArrowKeyHandler.svelte';
-   import PickerWrapper     from './default/PickerWrapper.svelte';
-   import SliderWrapper     from './default/SliderWrapper.svelte';
-   import Input             from './default/Input.svelte';
-   import Wrapper           from './default/Wrapper.svelte';
-
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {Partial<Components>}
-    */
-   export let components = {};
-
-   /**
-    * Customization properties
-    *
-    * TODO: Change this to an options object
-    */
-
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {object}
-    */
-   export let options = void 0;
-
-   const internalState = new InternalState(options);
-
-   const isAlpha = internalState.stores.isAlpha;
-   const isDark = internalState.stores.isDark;
-   const isPopup = internalState.stores.isPopup;
-   const isTextInput = internalState.stores.isTextInput;
-
-   setContext('#cp-state', internalState);
-
-   /** @type {object} */
-   $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
-
-   $: internalState.update(options);
+   import {
+      Alpha,
+      ArrowKeyHandler,
+      Input,
+      Picker,
+      Slider,
+   } from './component/index.js'
 
    /**
     * color properties
@@ -75,6 +38,37 @@
 
    /** @type {Colord | undefined} */
    export let color = void 0;
+
+   /**
+    * Customization properties
+    *
+    * TODO: DEFINE TYPE
+    *
+    * @type {object}
+    */
+   export let options = void 0;
+
+   const internalState = new InternalState(options);
+
+   const components = internalState.stores.components;
+
+   const isAlpha = internalState.stores.isAlpha;
+   const isDark = internalState.stores.isDark;
+   const isPopup = internalState.stores.isPopup;
+   const isTextInput = internalState.stores.isTextInput;
+
+   setContext('#cp-state', internalState);
+
+   /**
+    * Internal color state
+    */
+   const colorState = new HSVColorState();
+
+   /** @type {object} */
+   $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
+
+   $: internalState.update(options);
+
 
    /**
     * Internal old value to trigger color conversion
@@ -100,36 +94,15 @@
    /** @type {HTMLSpanElement} */
    let span = void 0;
 
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {Components}
-    */
-   const default_components = {
-      sliderIndicator: SliderIndicator,
-      pickerIndicator: PickerIndicator,
-      alphaIndicator: SliderIndicator,
-      pickerWrapper: PickerWrapper,
-      sliderWrapper: SliderWrapper,
-      alphaWrapper: SliderWrapper,
-      textInput: TextInput,
-      wrapper: Wrapper
-   };
-
-   $: if (hsv || rgb || hex) { updateColor(); }
+   $: if (hsv || rgb || hex)
+   {
+      updateColor();
+   }
 
    // When alpha is set to false externally ensure local state is correct.
-   $: if (!$isAlpha) { hsv.a = 1; }
-
-   /**
-    * @returns {{}}
-    */
-   function getComponents()
+   $: if (!$isAlpha)
    {
-      return {
-         ...default_components,
-         ...components
-      };
+      hsv.a = 1;
    }
 
    /**
@@ -209,18 +182,17 @@
     {#if $isPopup}
         <Input {hex} />
     {/if}
-    <svelte:component this={getComponents().wrapper}>
-        <Picker components={getComponents()}
-                h={hsv.h}
+    <svelte:component this={$components.wrapper}>
+        <Picker h={hsv.h}
                 bind:s={hsv.s}
                 bind:v={hsv.v}
         />
-        <Slider components={getComponents()} bind:h={hsv.h} />
+        <Slider bind:h={hsv.h} />
         {#if $isAlpha}
-            <Alpha components={getComponents()} bind:a={hsv.a} {hex} />
+            <Alpha bind:a={hsv.a} {hex} />
         {/if}
         {#if $isTextInput}
-            <svelte:component this={getComponents().textInput} bind:hex bind:rgb bind:hsv />
+            <svelte:component this={$components.textInput} bind:hex bind:rgb bind:hsv />
         {/if}
     </svelte:component>
 </span>

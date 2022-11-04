@@ -1,7 +1,9 @@
 <script>
    import { getContext }    from 'svelte';
 
-   const { isOpen, isPopup } = getContext('#cp-state').stores;
+   const { isOpen, isPopup, toRight } = getContext('#cp-state').stores;
+
+   toRight.set(false);
 
    let wrapperEl;
 

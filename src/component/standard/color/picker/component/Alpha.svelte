@@ -3,15 +3,8 @@
 
    import { getContext }    from 'svelte';
 
-   import { keyPressed, keyPressedCustom }  from './util/store.js';
-   import { easeInOutSin }                  from './util/transition.js';
-
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {Components}
-    */
-   export let components = void 0;
+   import { keyPressed, keyPressedCustom }  from '../util/store.js';
+   import { easeInOutSin }                  from '../util/transition.js';
 
    /** @type {number} */
    export let a = 1;
@@ -19,7 +12,7 @@
    /** @type {string | undefined} */
    export let hex = void 0;
 
-   const { toRight } = getContext('#cp-state').stores;
+   const { components, toRight } = getContext('#cp-state').stores;
 
    /** @type {HTMLDivElement} */
    let alpha = void 0;
@@ -156,7 +149,7 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={components.alphaWrapper} {focused}>
+<svelte:component this={$components.alphaWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=alpha
          tabindex=0
@@ -173,7 +166,7 @@
          aria-valuenow={Math.round(pos)}
          aria-valuetext="{pos?.toFixed()}%"
     >
-        <svelte:component this={components.alphaIndicator} {pos} />
+        <svelte:component this={$components.alphaIndicator} {pos} />
     </div>
 </svelte:component>
 

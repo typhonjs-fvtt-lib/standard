@@ -4,21 +4,14 @@
 
    import {
       keyPressed,
-      keyPressedCustom }   from './util/store.js';
+      keyPressedCustom }   from '../util/store.js';
 
-   import { easeInOutSin } from './util/transition.js';
-
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {Components}
-    */
-   export let components = void 0;
+   import { easeInOutSin } from '../util/transition.js';
 
    /** @type {number} */
    export let h = void 0;
 
-   const { toRight } = getContext('#cp-state').stores;
+   const { components, toRight } = getContext('#cp-state').stores;
 
    /** @type {HTMLDivElement} */
    let slider = void 0;
@@ -158,7 +151,7 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={components.sliderWrapper} {focused}>
+<svelte:component this={$components.sliderWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
             class=slider
@@ -174,7 +167,7 @@
             aria-valuemax={360}
             aria-valuenow={Math.round(h)}
     >
-        <svelte:component this={components.sliderIndicator} {pos} />
+        <svelte:component this={$components.sliderIndicator} {pos} />
     </div>
 </svelte:component>
 
