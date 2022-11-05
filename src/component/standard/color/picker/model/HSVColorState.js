@@ -13,7 +13,7 @@ export class HSVColorState
 
    #rgb = { r: 255, g: 0, b: 0, a: 1 }
 
-   #hex = '#ff0000ff';
+   #hex = '#ff0000';
 
    #color = colord(this.#hex);
 

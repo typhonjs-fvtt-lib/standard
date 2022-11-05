@@ -3,7 +3,7 @@ import { writable }        from 'svelte/store';
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 import { isObject }        from '@typhonjs-svelte/lib/util';
 
-import { variant }         from '../component/variant/index.js'
+import { variant }         from '../base/variant/index.js'
 
 export class InternalState
 {

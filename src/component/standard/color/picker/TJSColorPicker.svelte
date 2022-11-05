@@ -17,7 +17,7 @@
       Input,
       Picker,
       Slider,
-   } from './component/index.js'
+   } from './base/index.js'
 
    /**
     * color properties
@@ -106,28 +106,6 @@
    }
 
    /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keydown(e)
-   {
-      if (e.key === 'Tab')
-      {
-         span.classList.add('has-been-tabbed');
-      }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keyup(e)
-   {
-      if (e.key === 'Tab' && $isPopup)
-      {
-         internalState.isOpen = span?.contains(document.activeElement);
-      }
-   }
-
-   /**
     * using a function seems to trigger the exported value change only once when all of them has been updated
     * and not just after the hsv change
     */
@@ -170,6 +148,28 @@
       _hsv = Object.assign({}, hsv);
       _rgb = Object.assign({}, rgb);
       _hex = hex;
+   }
+
+   /**
+    * @param {KeyboardEvent}    e -
+    */
+   function keydown(e)
+   {
+      if (e.key === 'Tab')
+      {
+         span.classList.add('has-been-tabbed');
+      }
+   }
+
+   /**
+    * @param {KeyboardEvent}    e -
+    */
+   function keyup(e)
+   {
+      if (e.key === 'Tab' && $isPopup)
+      {
+         internalState.isOpen = span?.contains(document.activeElement);
+      }
    }
 </script>
 
