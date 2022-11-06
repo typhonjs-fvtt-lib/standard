@@ -3,7 +3,7 @@ import { writable }        from 'svelte/store';
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 import { isObject }        from '@typhonjs-svelte/lib/util';
 
-import { variant }         from '../base/variant/index.js'
+import { layout }          from '../base/layout/index.js'
 
 export class InternalState
 {
@@ -59,7 +59,7 @@ export class InternalState
       const internalData = writable(this.#internalData);
 
       this.#stores = {
-         components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.variant
+         components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.layout
 
          isAlpha: propertyStore(externalData, 'isAlpha'),
          isPopup: propertyStore(externalData, 'isPopup'),
@@ -109,20 +109,20 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
    {
       let selectedVariant = {};
 
-      switch(opts.variant)
+      switch(opts.layout)
       {
          case 'chrome':
-            this.#externalData.variant = 'chrome';
-            selectedVariant = variant.chrome;
+            this.#externalData.layout = 'chrome';
+            selectedVariant = layout.chrome;
             break;
 
          default:
-            this.#externalData.variant = void 0;
+            this.#externalData.layout = void 0;
             break;
       }
 
       return {
-         ...variant.default,
+         ...layout.default,
          ...(isObject(opts.components) ? opts.components : selectedVariant)
       }
    }
@@ -164,7 +164,7 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       this.#stores.isTextInput.set(typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true);
 
-      if (opts.variant !== this.#externalData.variant) { this.#stores.components.set(this.#prepareComponents(opts)); }
+      if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
       // Internal data -----------------------------------------------------------------------------------------------
 
@@ -202,14 +202,14 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
          throw new TypeError(`'options.isTextInput' is not a boolean.`);
       }
 
-      if (opts.variant !== void 0 && typeof opts.variant !== 'string')
+      if (opts.layout !== void 0 && typeof opts.layout !== 'string')
       {
-         throw new TypeError(`'options.variant' is not a string or undefined.`);
+         throw new TypeError(`'options.layout' is not a string or undefined.`);
       }
 
-      if (typeof opts.variant === 'string' && opts.variant !== 'chrome')
+      if (typeof opts.layout === 'string' && opts.layout !== 'chrome')
       {
-         throw new Error(`Unknown 'options.variant': ${opts.variant}; must be undefined or 'chrome'.`)
+         throw new Error(`Unknown 'options.layout': ${opts.layout}; must be undefined or 'chrome'.`)
       }
    }
 
@@ -235,7 +235,7 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {boolean} [isTextInput=true] - Is the picker configured with text input components.
  *
- * @property {'chrome'|undefined} [variant=undefined] - Picker layout variant. TODO: consider changing to 'layout'
+ * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant. TODO: consider changing to 'layout'
  */
 
 /**
