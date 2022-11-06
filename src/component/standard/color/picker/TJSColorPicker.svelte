@@ -73,7 +73,7 @@ console.log(`!! TJSColorPicker - ctor - $$props: `, $$props)
     */
 
    /** @type {Colord | undefined} */
-   let color = void 0;
+   let colordInstance = void 0;
 
    /**
     * TODO: DEFINE TYPE
@@ -126,24 +126,24 @@ console.log(`!! TJSColorPicker - ctor - $$props: `, $$props)
       // check which color format changed and updates the others accordingly
       if (hsv.h !== _hsv.h || hsv.s !== _hsv.s || hsv.v !== _hsv.v || hsv.a !== _hsv.a)
       {
-         color = colord(hsv);
-         rgb = color.toRgb();
-         hex = color.toHex();
+         colordInstance = colord(hsv);
+         rgb = colordInstance.toRgb();
+         hex = colordInstance.toHex();
       }
       else if (rgb.r !== _rgb.r || rgb.g !== _rgb.g || rgb.b !== _rgb.b || rgb.a !== _rgb.a)
       {
-         color = colord(rgb);
-         hex = color.toHex();
-         hsv = color.toHsv();
+         colordInstance = colord(rgb);
+         hex = colordInstance.toHex();
+         hsv = colordInstance.toHsv();
       }
       else if (hex !== _hex)
       {
-         color = colord(hex);
-         rgb = color.toRgb();
-         hsv = color.toHsv();
+         colordInstance = colord(hex);
+         rgb = colordInstance.toRgb();
+         hsv = colordInstance.toHsv();
       }
 
-      if (color) { $isDark = color.isDark(); }
+      if (colordInstance) { $isDark = colordInstance.isDark(); }
 
       // update old colors
       _hsv = Object.assign({}, hsv);
