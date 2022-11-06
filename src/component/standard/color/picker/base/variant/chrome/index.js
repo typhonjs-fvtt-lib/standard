@@ -4,12 +4,17 @@ import { default as ChromeSliderIndicator }  from './SliderIndicator.svelte';
 import { default as ChromeSliderWrapper }    from './SliderWrapper.svelte';
 import { default as ChromeWrapper }          from './Wrapper.svelte';
 
+/**
+ * The `chrome` style layout components.
+ *
+ * @type {PickerComponents}
+ */
 export const components = {
-   sliderIndicator: ChromeSliderIndicator,
-   pickerIndicator: ChromePickerIndicator,
    alphaIndicator: ChromeSliderIndicator,
-   pickerWrapper: ChromePickerWrapper,
-   sliderWrapper: ChromeSliderWrapper,
    alphaWrapper: ChromeSliderWrapper,
+   pickerIndicator: ChromePickerIndicator,
+   pickerWrapper: ChromePickerWrapper,
+   sliderIndicator: ChromeSliderIndicator,
+   sliderWrapper: ChromeSliderWrapper,
    wrapper: ChromeWrapper
 };

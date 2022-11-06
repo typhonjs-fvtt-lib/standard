@@ -5,13 +5,18 @@ import { default as SliderWrapper }    from './SliderWrapper.svelte';
 import { default as TextInput }        from './TextInput.svelte';
 import { default as Wrapper }          from './Wrapper.svelte';
 
+/**
+ * The default layout components.
+ *
+ * @type {PickerComponents}
+ */
 export const components = {
-   sliderIndicator: SliderIndicator,
-   pickerIndicator: PickerIndicator,
    alphaIndicator: SliderIndicator,
-   pickerWrapper: PickerWrapper,
-   sliderWrapper: SliderWrapper,
    alphaWrapper: SliderWrapper,
+   pickerIndicator: PickerIndicator,
+   pickerWrapper: PickerWrapper,
+   sliderIndicator: SliderIndicator,
+   sliderWrapper: SliderWrapper,
    textInput: TextInput,
    wrapper: Wrapper
 };

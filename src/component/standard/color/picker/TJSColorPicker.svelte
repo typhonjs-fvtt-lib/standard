@@ -8,7 +8,7 @@
    import { applyStyles }   from '@typhonjs-fvtt/runtime/svelte/action';
    import { isObject }      from '@typhonjs-fvtt/runtime/svelte/util';
 
-   import { HSVColorState } from "./model/HSVColorState.js";
+   import { HSVColorState } from './model/HSVColorState.js';
    import { InternalState } from './model/InternalState.js';
 
    import {
@@ -16,8 +16,7 @@
       ArrowKeyHandler,
       Input,
       Picker,
-      Slider,
-   } from './base/index.js'
+      Slider }              from './base/index.js'
 
    /**
     * color properties
@@ -28,27 +27,26 @@
     *
     * @type {RgbaColor}
     */
-   export let rgb = { r: 255, g: 0, b: 0, a: 1 };
+   export let rgb = void 0;
 
    /** @type {HsvaColor} */
-   export let hsv = { h: 0, s: 100, v: 100, a: 1 };
+   export let hsv = void 0;
 
    /** @type {string} */
-   export let hex = '#ff0000';
+   export let hex = void 0;
 
-   /** @type {Colord | undefined} */
-   export let color = void 0;
+   if (rgb === void 0) { rgb = { r: 255, g: 0, b: 0, a: 1 }; }
+   if (hsv === void 0) { hsv = { h: 0, s: 100, v: 100, a: 1 }; }
+   if (hex === void 0) { hex = '#ff0000'; }
 
    /**
-    * Customization properties
+    * User settable options / customization properties.
     *
-    * TODO: DEFINE TYPE
-    *
-    * @type {object}
+    * @type {TJSColorPickerOptions}
     */
    export let options = void 0;
 
-   const internalState = new InternalState(options);
+   const internalState = new InternalState($$props, options);
 
    const components = internalState.stores.components;
 
@@ -69,10 +67,13 @@
 
    $: internalState.update(options);
 
-
+console.log(`!! TJSColorPicker - ctor - $$props: `, $$props)
    /**
     * Internal old value to trigger color conversion
     */
+
+   /** @type {Colord | undefined} */
+   let color = void 0;
 
    /**
     * TODO: DEFINE TYPE
