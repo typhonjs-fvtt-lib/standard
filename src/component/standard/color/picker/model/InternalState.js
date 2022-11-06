@@ -52,8 +52,8 @@ export class InternalState
 
       this.#internalData.isOpen = typeof opts.isOpen === 'boolean' ? opts.isOpen : !this.#externalData.isPopup;
 
-      // Set by the respective wrapper; the Chrome wrapper will set this to true.
-      this.#internalData.toRight = false;
+      // Set by the respective wrapper; default wrapper sets to true & the Chrome wrapper to false.
+      this.#internalData.sliderVertical = false;
 
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
@@ -67,7 +67,7 @@ export class InternalState
 
          isDark: propertyStore(internalData, 'isDark'),
          isOpen: propertyStore(internalData, 'isOpen'),
-         toRight: propertyStore(internalData, 'toRight')
+         sliderVertical: propertyStore(internalData, 'sliderVertical')
       }
 
 console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
@@ -235,7 +235,7 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {boolean} [isTextInput=true] - Is the picker configured with text input components.
  *
- * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant. TODO: consider changing to 'layout'
+ * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
  */
 
 /**
@@ -247,7 +247,7 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {boolean} isOpen - Is the color picker in the open state.
  *
- * @property {boolean} toRight - Are the sliders oriented vertically; TODO: consider changing to `sliderVertical`
+ * @property {boolean} sliderVertical - Are the sliders oriented vertically.
  */
 
 /**
@@ -286,5 +286,5 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link InternalData.isOpen}
  *
- * @property {import('svelte/store').Writable<boolean>} toRight - See {@link InternalData.toRight}
+ * @property {import('svelte/store').Writable<boolean>} sliderVertical - See {@link InternalData.sliderVertical}
  */

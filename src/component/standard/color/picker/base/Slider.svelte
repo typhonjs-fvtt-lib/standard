@@ -11,7 +11,7 @@
    /** @type {number} */
    export let h = void 0;
 
-   const { components, toRight } = getContext('#cp-state').stores;
+   const { components, sliderVertical } = getContext('#cp-state').stores;
 
    /** @type {HTMLDivElement} */
    let slider = void 0;
@@ -38,7 +38,7 @@
     */
    function onClick(pos)
    {
-      const size = $toRight ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
+      const size = $sliderVertical ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       h = (boundedPos / size) * 360;
@@ -52,7 +52,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick($toRight ? e.offsetX : e.offsetY);
+         onClick($sliderVertical ? e.offsetX : e.offsetY);
       }
    }
 
@@ -71,7 +71,7 @@
    {
       if (isMouseDown)
       {
-         onClick($toRight ? e.clientX - slider.getBoundingClientRect().left :
+         onClick($sliderVertical ? e.clientX - slider.getBoundingClientRect().left :
           e.clientY - slider.getBoundingClientRect().top);
       }
    }
@@ -119,7 +119,7 @@
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               const movement = $toRight ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
+               const movement = $sliderVertical ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
                h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
@@ -139,7 +139,7 @@
    function touch(e)
    {
       e.preventDefault();
-      onClick($toRight ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
+      onClick($sliderVertical ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
        e.changedTouches[0].clientY - slider.getBoundingClientRect().top);
    }
 </script>
@@ -156,7 +156,7 @@
     <div
             class=slider
             tabindex=0
-            class:to-right={$toRight}
+            class:vertical={$sliderVertical}
             bind:this={slider}
             on:mousedown|preventDefault|stopPropagation={mouseDown}
             on:touchstart={touch}
@@ -184,7 +184,7 @@
         #00ffff 51.5%, #0000ff 67.7%, #ff00ff 83.3%, #ff0000;
     }
 
-    .to-right {
+    .vertical {
         background: linear-gradient(0.25turn, var(--_tjs-color-picker-slider-gradient));
     }
 </style>
