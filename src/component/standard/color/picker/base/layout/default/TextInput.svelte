@@ -1,25 +1,13 @@
 <script>
    // import type { RgbaColor, HsvaColor } from 'colord';
-   import { getContext }    from 'svelte';
+   import { getContext }   from 'svelte';
 
-   const { isAlpha } = getContext('#cp-state').stores;
+   import { colord }       from '@typhonjs-fvtt/runtime/color/colord';
 
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {RgbaColor}
-    */
-   export let rgb = void 0;
+   const internalState = getContext('#cp-state');
 
-   /**
-    * TODO: DEFINE TYPE
-    *
-    * @type {HsvaColor}
-    */
-   export let hsv = void 0;
-
-   /** @type {string} */
-   export let hex = void 0;
+   const { isAlpha } = internalState.stores;
+   const { hsv } = internalState.colorState.stores;
 
    /** @type {RegExp} */
    const HEX_COLOR_REGEX = /^#?([A-F0-9]{6}|[A-F0-9]{8})$/i;
@@ -30,10 +18,18 @@
    /** @type {number} */
    let mode = 0;
 
-   $: h = Math.round(hsv.h);
-   $: s = Math.round(hsv.s);
-   $: v = Math.round(hsv.v);
-   $: a = hsv.a === undefined ? 1 : Math.round(hsv.a * 100) / 100;
+   $: h = Math.round($hsv.h);
+   $: s = Math.round($hsv.s);
+   $: v = Math.round($hsv.v);
+   $: a = $hsv.a === undefined ? 1 : Math.round($hsv.a * 100) / 100;
+
+   let hex, rgb;
+
+   $: {
+      const colordInstance = colord($hsv);
+      hex = colordInstance.toHex();
+      rgb = colordInstance.toRgb();
+   }
 
    /**
     * @param {InputEvent} e -
@@ -41,7 +37,11 @@
    function updateHex(e)
    {
       const target = e.target;
-      if (HEX_COLOR_REGEX.test(target.value)) { hex = target.value; }
+      if (HEX_COLOR_REGEX.test(target.value))
+      {
+         hex = target.value;
+         $hsv = colord(hex).toHsv();
+      }
    }
 
    /**
@@ -51,7 +51,11 @@
     */
    function updateRgb(property)
    {
-      return function (e) { rgb = {...rgb, [property]: parseFloat(e.target.value)}; };
+      return function (e)
+      {
+         rgb = {...rgb, [property]: parseFloat(e.target.value)};
+         $hsv = colord(rgb).toHsv();
+      };
    }
 
    /**
@@ -61,7 +65,10 @@
     */
    function updateHsv(property)
    {
-      return function (e) { hsv = {...hsv, [property]: parseFloat(e.target.value)}; };
+      return function (e)
+      {
+         $hsv = {...$hsv, [property]: parseFloat(e.target.value)};
+      };
    }
 </script>
 

@@ -8,10 +8,13 @@
 
    import { easeInOutSin } from '../util/transition.js';
 
-   /** @type {number} */
-   export let h = void 0;
+   const internalState = getContext('#cp-state');
 
-   const { components, sliderVertical } = getContext('#cp-state').stores;
+   const hsv = internalState.colorState.stores.hsv;
+
+   $: h = $hsv.h;
+
+   const { components, sliderVertical } = internalState.stores;
 
    /** @type {HTMLDivElement} */
    let slider = void 0;
@@ -41,7 +44,8 @@
       const size = $sliderVertical ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
-      h = (boundedPos / size) * 360;
+      $hsv.h = (boundedPos / size) * 360;
+      // h = (boundedPos / size) * 360;
    }
 
    /**
@@ -122,7 +126,8 @@
                const movement = $sliderVertical ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
-               h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
+               $hsv.h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
+               // h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
             }, 10);
          }
       }

@@ -3,10 +3,17 @@ import { writable }        from 'svelte/store';
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 import { isObject }        from '@typhonjs-svelte/lib/util';
 
+import { ColorState }      from './ColorState.js';
+
 import { layout }          from '../base/layout/index.js'
 
 export class InternalState
 {
+   /**
+    * @type {ColorState}
+    */
+   #colorState = new ColorState();
+
    /**
     * Stores external user configurable settings.
     *
@@ -72,6 +79,14 @@ export class InternalState
 
 console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
 console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData)
+   }
+
+   /**
+    * @returns {ColorState}
+    */
+   get colorState()
+   {
+      return this.#colorState;
    }
 
    /**

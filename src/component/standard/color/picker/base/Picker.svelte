@@ -10,16 +10,14 @@
 
    import { easeInOutSin }  from '../util/transition.js';
 
-   /** @type {number} */
-   export let h = void 0;
+   const internalState = getContext('#cp-state');
 
-   /** @type {number} */
-   export let s = void 0;
+   const { components } = internalState.stores;
+   const { hsv } = internalState.colorState.stores;
 
-   /** @type {number} */
-   export let v = void 0;
-
-   const { components } = getContext('#cp-state').stores;
+   $: h = $hsv.h;
+   $: s = $hsv.s;
+   $: v = $hsv.v;
 
    /** @type {HTMLDivElement} */
    let picker = void 0;
@@ -36,21 +34,20 @@
    /** @type {number} */
    let focusMovementCounter = void 0;
 
-   /** @type {string} */
-   let colorBg = void 0;
-
    /** @type {{ x: number, y: number }} */
    let pos = { x: 100, y: 0 };
 
+   let inlineStyle;
+
    $: if (typeof h === 'number')
-   { colorBg = colord({h, s: 100, v: 100, a: 1}).toHex(); }
+   {
+      inlineStyle = `--_tjs-color-picker-background: ${colord({h, s: 100, v: 100, a: 1}).toHex()};`;
+   }
 
    $: if (typeof s === 'number' && typeof v === 'number' && picker)
    {
       pos = { x: s, y: 100 - v };
    }
-
-   $: inlineStyle = `--_tjs-color-picker-background: ${colorBg};`;
 
    /**
     * @param {number}    value -
@@ -73,8 +70,10 @@
       let width = picker.getBoundingClientRect().width;
       let height = picker.getBoundingClientRect().height;
 
-      s = clamp(mouse.x / width, 0, 1) * 100;
-      v = clamp((height - mouse.y) / height, 0, 1) * 100;
+      $hsv.s = clamp(mouse.x / width, 0, 1) * 100;
+      $hsv.v = clamp((height - mouse.y) / height, 0, 1) * 100;
+      // s = clamp(mouse.x / width, 0, 1) * 100;
+      // v = clamp((height - mouse.y) / height, 0, 1) * 100;
    }
 
    /**
@@ -158,11 +157,17 @@
             {
                let focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+               $hsv.s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
                 focusMovementFactor * 100));
 
-               v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+               $hsv.v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
                 focusMovementFactor * 100));
+
+               // s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+               //  focusMovementFactor * 100));
+               //
+               // v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+               //  focusMovementFactor * 100));
             }, 10);
          }
       }

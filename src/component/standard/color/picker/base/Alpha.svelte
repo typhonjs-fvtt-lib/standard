@@ -6,13 +6,12 @@
    import { keyPressed, keyPressedCustom }  from '../util/store.js';
    import { easeInOutSin }                  from '../util/transition.js';
 
-   /** @type {number} */
-   export let a = 1;
+   const internalState = getContext('#cp-state');
 
-   /** @type {string | undefined} */
-   export let hex = void 0;
+   const { components, sliderVertical } = internalState.stores;
+   const { hexNoAlpha, hsv } = internalState.colorState.stores;
 
-   const { components, sliderVertical } = getContext('#cp-state').stores;
+   $: a = $hsv.a;
 
    /** @type {HTMLDivElement} */
    let alpha = void 0;
@@ -34,8 +33,6 @@
 
    $: if (typeof a === 'number' && alpha) { pos = 100 * a; }
 
-   $: inlineStyle = `--_tjs-color-picker-alpha-color: ${hex?.substring(0, 7)}`;
-
    /**
     * @param {number}    pos -
     */
@@ -44,7 +41,7 @@
       const size = $sliderVertical ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
-      a = boundedPos / size;
+      $hsv.a = boundedPos / size;
    }
 
    /**
@@ -119,7 +116,7 @@
                const movement = $sliderVertical
                 ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
                 : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
-               a = Math.min(1, Math.max(0, a + movement * focusMovementFactor));
+               $hsv.a = Math.min(1, Math.max(0, a + movement * focusMovementFactor));
             }, 10);
          }
       }
@@ -151,11 +148,11 @@
 
 <svelte:component this={$components.alphaWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-    <div class=alpha
+    <div bind:this={alpha}
+         class=alpha
          tabindex=0
          class:vertical={$sliderVertical}
-         style={inlineStyle}
-         bind:this={alpha}
+         style:--_tjs-color-picker-alpha-color={$hexNoAlpha}
          on:mousedown|preventDefault|stopPropagation={mouseDown}
          on:touchstart={touch}
          on:touchmove|preventDefault|stopPropagation={touch}
