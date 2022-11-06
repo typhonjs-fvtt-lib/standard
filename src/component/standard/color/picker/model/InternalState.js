@@ -22,20 +22,6 @@ export class InternalState
    #internalData = {};
 
    /**
-    * Tracks the last user defined `options.isPopUp` setting.
-    *
-    * @type {boolean}
-    */
-   #lastIsPopup;
-
-   /**
-    * Tracks the last user defined variant selected by `options.variant`.
-    *
-    * @type {string|undefined}
-    */
-   #lastVariant = void 0;
-
-   /**
     * @type {PickerStores}
     */
    #stores;
@@ -53,7 +39,7 @@ export class InternalState
 
       this.#externalData.isAlpha = typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true;
 
-      this.#lastIsPopup = this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
+      this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#externalData.isTextInput = typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true;
 
@@ -73,7 +59,7 @@ export class InternalState
       const internalData = writable(this.#internalData);
 
       this.#stores = {
-         components: writable(this.#prepareComponents(opts)),
+         components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.variant
 
          isAlpha: propertyStore(externalData, 'isAlpha'),
          isPopup: propertyStore(externalData, 'isPopup'),
@@ -112,6 +98,13 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       this.#stores.isOpen.set(isOpen);
    }
 
+   /**
+    * Prepares layout components based on any user provided `options.layout`
+    *
+    * @param {TJSColorPickerOptions} opts -
+    *
+    * @returns {PickerComponents} Configured layout components.
+    */
    #prepareComponents(opts)
    {
       let selectedVariant = {};
@@ -119,12 +112,12 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       switch(opts.variant)
       {
          case 'chrome':
-            this.#lastVariant = 'chrome';
+            this.#externalData.variant = 'chrome';
             selectedVariant = variant.chrome;
             break;
 
          default:
-            this.#lastVariant = void 0;
+            this.#externalData.variant = void 0;
             break;
       }
 
@@ -148,11 +141,18 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       return result;
    }
 
+   /**
+    * Updates external & internal data on changes to the `options` prop.
+    *
+    * @param {TJSColorPickerOptions} options -
+    */
    update(options)
    {
       const opts = isObject(options) ? options : {};
 
       this.#validateOptions(opts);
+
+      const currentIsPopup = this.#externalData.isPopup;
 
       // External data -----------------------------------------------------------------------------------------------
 
@@ -164,16 +164,12 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       this.#stores.isTextInput.set(typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true);
 
+      if (opts.variant !== this.#externalData.variant) { this.#stores.components.set(this.#prepareComponents(opts)); }
+
       // Internal data -----------------------------------------------------------------------------------------------
 
-      if (this.#lastVariant !== opts.variant) { this.#stores.components.set(this.#prepareComponents(opts)); }
-
       // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
-      if (newIsPopup !== this.#lastIsPopup)
-      {
-         this.#stores.isOpen.set(!this.#externalData.isPopup);
-         this.#lastIsPopup = newIsPopup;
-      }
+      if (newIsPopup !== currentIsPopup) { this.#stores.isOpen.set(!newIsPopup); }
 
 console.log(`!! InternalState - update - this.#externalData: `, this.#externalData)
 console.log(`!! InternalState - update - this.#internalData: `, this.#internalData)
@@ -191,9 +187,29 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
          throw new TypeError(`'options.format' is not a string.`);
       }
 
+      if (opts.isAlpha !== void 0 && typeof opts.isAlpha !== 'boolean')
+      {
+         throw new TypeError(`'options.isAlpha' is not a boolean.`);
+      }
+
+      if (opts.isPopup !== void 0 && typeof opts.isPopup !== 'boolean')
+      {
+         throw new TypeError(`'options.isPopup' is not a boolean.`);
+      }
+
+      if (opts.isTextInput !== void 0 && typeof opts.isTextInput !== 'boolean')
+      {
+         throw new TypeError(`'options.isTextInput' is not a boolean.`);
+      }
+
       if (opts.variant !== void 0 && typeof opts.variant !== 'string')
       {
          throw new TypeError(`'options.variant' is not a string or undefined.`);
+      }
+
+      if (typeof opts.variant === 'string' && opts.variant !== 'chrome')
+      {
+         throw new Error(`Unknown 'options.variant': ${opts.variant}; must be undefined or 'chrome'.`)
       }
    }
 
@@ -211,11 +227,15 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
 /**
  * @typedef {object} TJSColorPickerOptions
  *
- * @property {boolean} isAlpha - Is alpha / opacity color selection and output enabled.
+ * @property {PickerComponents} [components] - User defined picker component overrides.
  *
- * @property {boolean} isPopup - Is the picker configured as a pop-up.
+ * @property {boolean} [isAlpha=true] - Is alpha / opacity color selection and output enabled.
  *
- * @property {boolean} isTextInput - Is the picker configured with text input components.
+ * @property {boolean} [isPopup=true] - Is the picker configured as a pop-up.
+ *
+ * @property {boolean} [isTextInput=true] - Is the picker configured with text input components.
+ *
+ * @property {'chrome'|undefined} [variant=undefined] - Picker layout variant. TODO: consider changing to 'layout'
  */
 
 /**
