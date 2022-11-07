@@ -1,3 +1,5 @@
+import { writable }        from 'svelte/store';
+
 import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
 import { propertyStore }   from '@typhonjs-fvtt/runtime/svelte/store';
 
@@ -11,14 +13,20 @@ export class ColorState
    static #delta = 250; //
 
    #data = {
-      hex: '#ff0000',
-      hexNoAlpha: '#ff0000',
       hsv: { h: 0, s: 100, v: 100, a: 1 },
+      rgbString: 'rgb(255, 0, 0)',
+      rgbHueString: 'rgb(255, 0, 0)',
+      rgbaString: 'rgba(255, 0, 0, 1)'
    };
 
    #lastTime = 0;
 
-   #stores
+   #outputColor;
+
+   /** @type {ColorStateStores} */
+   #stores;
+
+   #storeSet;
 
    /**
     * Stores the subscribers.
@@ -31,41 +39,22 @@ export class ColorState
    {
       this.#validateProps($$props);
 
-      this.#stores = {
-         hex: propertyStore(this, 'hex'),
-         hexNoAlpha: propertyStore(this, 'hexNoAlpha'),
-         hsv: propertyStore(this, 'hsv'),
+      const tempStoreRGBString = writable(this.#data.rgbString);
+      const tempStoreRGBHueString = writable(this.#data.rgbHueString);
+      const tempStoreRGBAString = writable(this.#data.rgbaString);
+
+      this.#storeSet = {
+         rgbString: tempStoreRGBString.set,
+         rgbHueString: tempStoreRGBHueString.set,
+         rgbaString: tempStoreRGBAString.set
       }
-   }
 
-   /**
-    * @returns {object} hsv(a) object.
-    */
-   get hex() { return this.#data.hex; }
-
-   set hex(hex)
-   {
-      this.#stores.hex.set(hex);
-   }
-
-   /**
-    * @returns {object} hsv(a) object.
-    */
-   get hexNoAlpha() { return this.#data.hexNoAlpha; }
-
-   set hexNoAlpha(hexNoAlpha)
-   {
-      this.#stores.hexNoAlpha.set(hexNoAlpha);
-   }
-
-   /**
-    * @returns {object} hsv(a) object.
-    */
-   get hsv() { return this.#data.hsv; }
-
-   set hsv(hsv)
-   {
-      this.#stores.hsv.set(hsv);
+      this.#stores = {
+         hsv: propertyStore(this, 'hsv'),
+         rgbString: { subscribe: tempStoreRGBString.subscribe },
+         rgbHueString: { subscribe: tempStoreRGBHueString.subscribe },
+         rgbaString: { subscribe: tempStoreRGBAString.subscribe },
+      }
    }
 
    get stores()
@@ -75,10 +64,10 @@ export class ColorState
 
    getExternalColor()
    {
-      return this.#data.hsv;
+      return this.#outputColor;
    }
 
-   isExternalUpdate()
+   #isExternalUpdate()
    {
       const result = (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
 
@@ -96,8 +85,16 @@ console.log(`!! ColorState - set - data: `, data);
       const colordInstance = colord(data.hsv);
 
       this.#data.hsv = data.hsv;
-      this.#data.hex = colordInstance.toHex();
-      this.#data.hexNoAlpha = this.#data.hex.substring(0, 7);
+
+      this.#data.rgbString = colordInstance.alpha(1).toRgbString();
+      this.#data.rgbHueString = colord({ h: this.#data.hsv.h, s: 100, v: 100, a: 1 }).toRgbString();
+      this.#data.rgbaString = colordInstance.toRgbString();
+
+      this.#storeSet.rgbString(this.#data.rgbString);
+      this.#storeSet.rgbHueString(this.#data.rgbHueString);
+      this.#storeSet.rgbaString(this.#data.rgbaString);
+
+      this.#outputColor = this.#data.hsv;
 
       this.#lastTime = globalThis.performance.now();
 
@@ -106,7 +103,7 @@ console.log(`!! ColorState - set - data: `, data);
 
    updateExternal(extColor)
    {
-      if (!this.isExternalUpdate()) { return; }
+      if (!this.#isExternalUpdate()) { return; }
 
 console.log(`!! ColorState - updateExternal - data: `, extColor);
 
@@ -165,9 +162,9 @@ console.log(`!! ColorState - updateExternal - data: `, extColor);
 /**
  * @typedef {object} ColorStateStores
  *
- * @property {import('svelte/store').Writable<string>} hex - The hex color.
+ * @property {import('svelte/store').Readable<string>} hex - The hex color.
+ *
+ * @property {import('svelte/store').Readable<string>} hexNoAlpha - The hex color without alpha.
  *
  * @property {import('svelte/store').Writable<{ h: number, s: number, v: number, a: number }>} hsv - The HSVA color
- *
- * @property {import('svelte/store').Writable<{ r: number, g: number, b: number, a: number }>} rgb - The RGBA color
  */

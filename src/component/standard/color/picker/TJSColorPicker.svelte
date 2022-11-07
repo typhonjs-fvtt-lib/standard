@@ -41,6 +41,12 @@
 
    const colorState = internalState.colorState;
 
+   const {
+      rgbString,
+      rgbHueString,
+      rgbaString
+   } = colorState.stores;
+
    // When alpha is set to false externally ensure local state is correct.
    // TODO: REFACTOR GENERIC COLOR STATE
    const { hsv } = colorState.stores;
@@ -92,7 +98,12 @@
 
 <svelte:window on:keydown={keydown} on:keyup={keyup}/>
 
-<span bind:this={span} class=color-picker use:applyStyles={styles}>
+<span bind:this={span}
+      class=color-picker
+      style:--_tjs-color-picker-current-color-rgb={$rgbString}
+      style:--_tjs-color-picker-current-color-rgb-hue={$rgbHueString}
+      style:--_tjs-color-picker-current-color-rgba={$rgbaString}
+      use:applyStyles={styles}>
 <!--    <input type=hidden value={hex}/>-->
     {#if $isPopup}
         <Input />

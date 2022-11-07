@@ -1,6 +1,4 @@
 <script>
-   // import type { Components } from '$lib/type/types';
-
    import { getContext }    from 'svelte';
 
    import { keyPressed, keyPressedCustom }  from '../util/store.js';
@@ -9,7 +7,7 @@
    const internalState = getContext('#cp-state');
 
    const { components, sliderHorizontal } = internalState.stores;
-   const { hexNoAlpha, hsv } = internalState.colorState.stores;
+   const { hsv } = internalState.colorState.stores;
 
    $: a = $hsv.a;
 
@@ -137,6 +135,9 @@
       onClick($sliderHorizontal ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
        : e.changedTouches[0].clientY - alpha.getBoundingClientRect().top);
    }
+
+   //          style:--_tjs-color-picker-alpha-color={$hexNoAlpha}
+
 </script>
 
 <svelte:window
@@ -151,8 +152,7 @@
     <div bind:this={alpha}
          class=alpha
          tabindex=0
-         class:vertical={$sliderHorizontal}
-         style:--_tjs-color-picker-alpha-color={$hexNoAlpha}
+         class:horizontal={$sliderHorizontal}
          on:mousedown|preventDefault|stopPropagation={mouseDown}
          on:touchstart={touch}
          on:touchmove|preventDefault|stopPropagation={touch}
@@ -172,12 +172,12 @@
         position: absolute;
         content: '';
         inset: 0;
-        background: linear-gradient(#00000000, var(--_tjs-color-picker-alpha-color));
+        background: linear-gradient(#00000000, var(--_tjs-color-picker-current-color-rgb));
         z-index: 0;
     }
 
-    .vertical:after {
-        background: linear-gradient(0.25turn, #00000000, var(--_tjs-color-picker-alpha-color));
+    .horizontal:after {
+        background: linear-gradient(0.25turn, #00000000, var(--_tjs-color-picker-current-color-rgb));
     }
 
     .alpha {

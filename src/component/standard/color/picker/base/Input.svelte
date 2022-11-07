@@ -1,28 +1,21 @@
 <script>
    import { getContext } from 'svelte';
 
-   // /** @type {string} */
-   // export let hex = void 0;
-
    const internalState = getContext('#cp-state');
-
-   const hex = internalState.colorState.stores.hex;
-
-   $: console.log(`!! Input - $hex: `, $hex);
 </script>
 
 <div class=outer
      on:click={() => internalState.swapIsOpen()}
      on:keypress={() => internalState.swapIsOpen()}
      role=button>
-<!--    <div class=inner style="background: {hex}" />-->
-    <div class=inner style="background: {$hex}" />
+    <div class=inner />
 </div>
 
 <style>
     .inner {
         width: 100%;
         height: 100%;
+        background: var(--_tjs-color-picker-current-color-rgba);
     }
 
     .outer {

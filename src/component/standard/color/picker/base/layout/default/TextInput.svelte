@@ -1,5 +1,4 @@
 <script>
-   // import type { RgbaColor, HsvaColor } from 'colord';
    import { getContext }   from 'svelte';
 
    import { colord }       from '@typhonjs-fvtt/runtime/color/colord';

@@ -1,8 +1,5 @@
 <script>
-   // import type { Components } from '$lib/type/types';
    import { getContext }    from 'svelte';
-
-   import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
 
    import {
       keyPressed,
@@ -36,13 +33,6 @@
 
    /** @type {{ x: number, y: number }} */
    let pos = { x: 100, y: 0 };
-
-   let inlineStyle;
-
-   $: if (typeof h === 'number')
-   {
-      inlineStyle = `--_tjs-color-picker-background: ${colord({h, s: 100, v: 100, a: 1}).toHex()};`;
-   }
 
    $: if (typeof s === 'number' && typeof v === 'number' && picker)
    {
@@ -162,12 +152,6 @@
 
                $hsv.v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
                 focusMovementFactor * 100));
-
-               // s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
-               //  focusMovementFactor * 100));
-               //
-               // v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
-               //  focusMovementFactor * 100));
             }, 10);
          }
       }
@@ -209,7 +193,7 @@
          on:touchstart={touch}
          on:touchmove|preventDefault|stopPropagation={touch}
          on:touchend={touch}
-         style={inlineStyle}
+
          aria-label="saturation and brightness picker (arrow keyboard navigation)"
          aria-valuemin={0}
          aria-valuemax={100}
@@ -218,7 +202,6 @@
         <svelte:component
                 this={$components.pickerIndicator}
                 {pos}
-                hex={colord({ h, s, v, a: 1 }).toHex()}
         />
     </div>
 </svelte:component>
@@ -232,6 +215,6 @@
         user-select: none;
 
         background: linear-gradient(#ffffff00, #000000ff), linear-gradient(0.25turn, #ffffffff, #00000000),
-         var(--_tjs-color-picker-background);
+         var(--_tjs-color-picker-current-color-rgb-hue);
     }
 </style>
