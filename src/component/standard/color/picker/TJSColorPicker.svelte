@@ -1,19 +1,21 @@
 <script>
    // import type { RgbaColor, HsvaColor, Colord } from 'colord';
 
-   import { setContext}     from 'svelte';
+   import {
+      onDestroy,
+      setContext }                  from 'svelte';
 
-   import { applyStyles }   from '@typhonjs-fvtt/runtime/svelte/action';
-   import { isObject }      from '@typhonjs-fvtt/runtime/svelte/util';
+   import { applyStyles }           from '@typhonjs-fvtt/runtime/svelte/action';
+   import { isObject }              from '@typhonjs-fvtt/runtime/svelte/util';
 
-   import { InternalState } from './model/InternalState.js';
+   import { InternalState }         from './model/InternalState.js';
 
    import {
       Alpha,
       ArrowKeyHandler,
       Input,
       Picker,
-      Slider }              from './base/index.js'
+      Slider }                      from './base/index.js'
 
    /**
     * color properties
@@ -44,13 +46,16 @@
    const {
       rgbString,
       rgbHueString,
-      rgbaString
+      rgbaString,
+      outputColor
    } = colorState.stores;
+
+   onDestroy(() => internalState.destroy());
 
    // When alpha is set to false externally ensure local state is correct.
    // TODO: REFACTOR GENERIC COLOR STATE
-   const { hsv } = colorState.stores;
-   $: if (!$isAlpha) { $hsv.a = 1; }
+   // const { hsv } = colorState.stores;
+   // $: if (!$isAlpha) { $hsv.a = 1; }
 
    /** @type {object} */
    $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
@@ -58,15 +63,24 @@
    // When options changes update internal state.
    $: internalState.update(options);
 
-   // When internal color state changes update `color` prop.
-   $: if ($colorState)
-   {
-      color = colorState.getExternalColor();
-// console.log(`!! TJSColorPicker - $colorState - 0 - color: `, color);
+//    // When internal color state changes update `color` prop.
+//    $: if ($colorState)
+//    {
+//       color = colorState.getExternalColor();
+// // console.log(`!! TJSColorPicker - $colorState - 0 - color: `, color);
+//    }
+
+   $: {
+      color = $outputColor;
+console.log(`!! TJSColorPicker - $outputColor: `, $outputColor)
    }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
-   $: if (color) { colorState.updateExternal(color); }
+   $: if (color)
+   {
+console.log(`!! TJSColorPicker - $:color: `, color)
+      colorState.updateExternal(color);
+   }
 
    /** @type {HTMLSpanElement} */
    let span = void 0;

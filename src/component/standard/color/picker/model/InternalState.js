@@ -12,7 +12,7 @@ export class InternalState
    /**
     * @type {ColorState}
     */
-   #colorState = new ColorState();
+   #colorState;
 
    /**
     * Stores external user configurable settings.
@@ -111,6 +111,11 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
    set isOpen(isOpen)
    {
       this.#stores.isOpen.set(isOpen);
+   }
+
+   destroy()
+   {
+      this.#colorState.destroy();
    }
 
    /**

@@ -1,5 +1,4 @@
 <script>
-   // import type { Components } from '$lib/type/types';
    import { getContext }    from 'svelte';
 
    import {
@@ -10,9 +9,7 @@
 
    const internalState = getContext('#cp-state');
 
-   const hsv = internalState.colorState.stores.hsv;
-
-   $: h = $hsv.h;
+   const hue = internalState.colorState.stores.hue;
 
    const { components, sliderHorizontal } = internalState.stores;
 
@@ -34,18 +31,19 @@
    /** @type {number} */
    let focusMovementCounter = void 0;
 
-   $: if (typeof h === 'number' && slider) { pos = (100 * h) / 360; }
+   $: if (typeof $hue === 'number' && slider) { pos = (100 * $hue) / 360; }
 
    /**
     * @param {number}    pos -
     */
    function onClick(pos)
    {
+console.log(`!! Slider - onClick`);
+console.trace();
       const size = $sliderHorizontal ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
-      $hsv.h = (boundedPos / size) * 360;
-      // h = (boundedPos / size) * 360;
+      $hue = (boundedPos / size) * 360;
    }
 
    /**
@@ -126,7 +124,7 @@
                const movement = $sliderHorizontal ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
-               $hsv.h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
+               $hue = Math.min(360, Math.max(0, internalState.colorState.hue + movement * 360 * focusMovementFactor));
                // h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
             }, 10);
          }
@@ -170,7 +168,7 @@
             aria-label="hue picker (arrow keyboard navigation)"
             aria-valuemin={0}
             aria-valuemax={360}
-            aria-valuenow={Math.round(h)}
+            aria-valuenow={Math.round($hue)}
     >
         <svelte:component this={$components.sliderIndicator} {pos} />
     </div>

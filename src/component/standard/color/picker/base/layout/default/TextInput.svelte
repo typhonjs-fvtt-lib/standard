@@ -6,7 +6,11 @@
    const internalState = getContext('#cp-state');
 
    const { isAlpha } = internalState.stores;
-   const { hsv } = internalState.colorState.stores;
+
+   const {
+      hue,
+      sv,
+      alpha } = internalState.colorState.stores;
 
    /** @type {RegExp} */
    const HEX_COLOR_REGEX = /^#?([A-F0-9]{6}|[A-F0-9]{8})$/i;
@@ -17,15 +21,15 @@
    /** @type {number} */
    let mode = 0;
 
-   $: h = Math.round($hsv.h);
-   $: s = Math.round($hsv.s);
-   $: v = Math.round($hsv.v);
-   $: a = $hsv.a === undefined ? 1 : Math.round($hsv.a * 100) / 100;
+   $: h = Math.round($hue);
+   $: s = Math.round($sv.s);
+   $: v = Math.round($sv.v);
+   $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
    let hex, rgb;
 
    $: {
-      const colordInstance = colord($hsv);
+      const colordInstance = colord({ h, s, v, a });
       hex = colordInstance.toHex();
       rgb = colordInstance.toRgb();
    }
@@ -39,7 +43,13 @@
       if (HEX_COLOR_REGEX.test(target.value))
       {
          hex = target.value;
-         $hsv = colord(hex).toHsv();
+         const newHSV = colord(hex).toHsv()
+
+         $hue = newHSV.h;
+         $sv = { s: newHSV.s, v: newHSV.v };
+         $alpha = newHSV.a
+
+         // $hsv = colord(hex).toHsv();
       }
    }
 
@@ -53,7 +63,14 @@
       return function (e)
       {
          rgb = {...rgb, [property]: parseFloat(e.target.value)};
-         $hsv = colord(rgb).toHsv();
+
+         const newHSV = colord(rgb).toHsv()
+
+         $hue = newHSV.h;
+         $sv = { s: newHSV.s, v: newHSV.v };
+         $alpha = newHSV.a
+
+         // $hsv = colord(rgb).toHsv();
       };
    }
 
@@ -66,7 +83,14 @@
    {
       return function (e)
       {
-         $hsv = {...$hsv, [property]: parseFloat(e.target.value)};
+         const newHSV = { h, s, v, a, [property]: parseFloat(e.target.value) };
+
+         $hue = newHSV.h;
+         $sv = { s: newHSV.s, v: newHSV.v };
+         $alpha = newHSV.a
+
+         // const newHSV = colord(rgb).toHsv()
+         // $hsv = {h, s, v, a, [property]: parseFloat(e.target.value)};
       };
    }
 </script>

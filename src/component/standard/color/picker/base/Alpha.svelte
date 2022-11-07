@@ -7,12 +7,10 @@
    const internalState = getContext('#cp-state');
 
    const { components, sliderHorizontal } = internalState.stores;
-   const { hsv } = internalState.colorState.stores;
-
-   $: a = $hsv.a;
+   const { alpha } = internalState.colorState.stores;
 
    /** @type {HTMLDivElement} */
-   let alpha = void 0;
+   let alphaEl = void 0;
 
    /** @type {boolean} */
    let isMouseDown = false;
@@ -29,17 +27,17 @@
    /** @type {number} */
    let pos = void 0;
 
-   $: if (typeof a === 'number' && alpha) { pos = 100 * a; }
+   $: if (typeof $alpha === 'number' && alphaEl) { pos = 100 * $alpha; }
 
    /**
     * @param {number}    pos -
     */
    function onClick(pos)
    {
-      const size = $sliderHorizontal ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
+      const size = $sliderHorizontal ? alphaEl.getBoundingClientRect().width : alphaEl.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
-      $hsv.a = boundedPos / size;
+      $alpha = boundedPos / size;
    }
 
    /**
@@ -69,8 +67,8 @@
    {
       if (isMouseDown)
       {
-         onClick($sliderHorizontal ? e.clientX - alpha.getBoundingClientRect().left :
-          e.clientY - alpha.getBoundingClientRect().top);
+         onClick($sliderHorizontal ? e.clientX - alphaEl.getBoundingClientRect().left :
+          e.clientY - alphaEl.getBoundingClientRect().top);
       }
    }
 
@@ -79,7 +77,7 @@
     */
    function keyup(e)
    {
-      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(alpha); }
+      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(alphaEl); }
 
       if (!e.repeat && focused) { move(); }
    }
@@ -114,7 +112,7 @@
                const movement = $sliderHorizontal
                 ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
                 : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
-               $hsv.a = Math.min(1, Math.max(0, a + movement * focusMovementFactor));
+               $alpha = Math.min(1, Math.max(0, internalState.colorState.alpha + movement * focusMovementFactor));
             }, 10);
          }
       }
@@ -132,8 +130,8 @@
    {
       e.preventDefault();
 
-      onClick($sliderHorizontal ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
-       : e.changedTouches[0].clientY - alpha.getBoundingClientRect().top);
+      onClick($sliderHorizontal ? e.changedTouches[0].clientX - alphaEl.getBoundingClientRect().left
+       : e.changedTouches[0].clientY - alphaEl.getBoundingClientRect().top);
    }
 
    //          style:--_tjs-color-picker-alpha-color={$hexNoAlpha}
@@ -149,7 +147,7 @@
 
 <svelte:component this={$components.alphaWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-    <div bind:this={alpha}
+    <div bind:this={alphaEl}
          class=alpha
          tabindex=0
          class:horizontal={$sliderHorizontal}

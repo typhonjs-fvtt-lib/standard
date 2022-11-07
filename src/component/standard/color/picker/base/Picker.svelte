@@ -10,14 +10,10 @@
    const internalState = getContext('#cp-state');
 
    const { components } = internalState.stores;
-   const { hsv } = internalState.colorState.stores;
-
-   $: h = $hsv.h;
-   $: s = $hsv.s;
-   $: v = $hsv.v;
+   const { sv } = internalState.colorState.stores;
 
    /** @type {HTMLDivElement} */
-   let picker = void 0;
+   let pickerEl = void 0;
 
    /** @type {boolean} */
    let isMouseDown = false;
@@ -34,9 +30,9 @@
    /** @type {{ x: number, y: number }} */
    let pos = { x: 100, y: 0 };
 
-   $: if (typeof s === 'number' && typeof v === 'number' && picker)
+   $: if (typeof $sv.s === 'number' && typeof $sv.v === 'number' && pickerEl)
    {
-      pos = { x: s, y: 100 - v };
+      pos = { x: $sv.s, y: 100 - $sv.v };
    }
 
    /**
@@ -57,11 +53,14 @@
    function onClick(e)
    {
       let mouse = {x: e.offsetX, y: e.offsetY};
-      let width = picker.getBoundingClientRect().width;
-      let height = picker.getBoundingClientRect().height;
+      let width = pickerEl.getBoundingClientRect().width;
+      let height = pickerEl.getBoundingClientRect().height;
 
-      $hsv.s = clamp(mouse.x / width, 0, 1) * 100;
-      $hsv.v = clamp((height - mouse.y) / height, 0, 1) * 100;
+      $sv = {
+         s: clamp(mouse.x / width, 0, 1) * 100,
+         v: clamp((height - mouse.y) / height, 0, 1) * 100
+      };
+
       // s = clamp(mouse.x / width, 0, 1) * 100;
       // v = clamp((height - mouse.y) / height, 0, 1) * 100;
    }
@@ -94,11 +93,11 @@
       if (isMouseDown)
       {
          onClick({
-            offsetX: Math.max(0, Math.min(picker.getBoundingClientRect().width,
-              e.clientX - picker.getBoundingClientRect().left)),
+            offsetX: Math.max(0, Math.min(pickerEl.getBoundingClientRect().width,
+              e.clientX - pickerEl.getBoundingClientRect().left)),
 
-            offsetY: Math.max(0, Math.min(picker.getBoundingClientRect().height,
-              e.clientY - picker.getBoundingClientRect().top))
+            offsetY: Math.max(0, Math.min(pickerEl.getBoundingClientRect().height,
+              e.clientY - pickerEl.getBoundingClientRect().top))
          });
       }
    }
@@ -108,7 +107,7 @@
     */
    function mouseDown(e)
    {
-      if (!e.target.isSameNode(picker)) { focused = false; }
+      if (!e.target.isSameNode(pickerEl)) { focused = false; }
    }
 
    /**
@@ -116,7 +115,7 @@
     */
    function keyup(e)
    {
-      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(picker); }
+      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(pickerEl); }
 
       if (!e.repeat && focused) { move(); }
    }
@@ -147,11 +146,19 @@
             {
                let focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               $hsv.s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
-                focusMovementFactor * 100));
+               $sv = {
+                  s: Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+                   focusMovementFactor * 100)),
 
-               $hsv.v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
-                focusMovementFactor * 100));
+                  v: Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+                   focusMovementFactor * 100))
+               };
+
+               // $hsv.s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+               //  focusMovementFactor * 100));
+               //
+               // $hsv.v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+               //  focusMovementFactor * 100));
             }, 10);
          }
       }
@@ -170,8 +177,8 @@
       e.preventDefault();
 
       onClick({
-         offsetX: e.changedTouches[0].clientX - picker.getBoundingClientRect().left,
-         offsetY: e.changedTouches[0].clientY - picker.getBoundingClientRect().top
+         offsetX: e.changedTouches[0].clientX - pickerEl.getBoundingClientRect().left,
+         offsetY: e.changedTouches[0].clientY - pickerEl.getBoundingClientRect().top
       });
    }
 </script>
@@ -188,7 +195,7 @@
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=picker
          tabindex=0
-         bind:this={picker}
+         bind:this={pickerEl}
          on:mousedown|preventDefault|stopPropagation={pickerMouseDown}
          on:touchstart={touch}
          on:touchmove|preventDefault|stopPropagation={touch}
