@@ -1,9 +1,9 @@
 <script>
    import { getContext }    from 'svelte';
 
-   const { isOpen, isPopup, sliderVertical } = getContext('#cp-state').stores;
+   const { isOpen, isPopup, sliderHorizontal } = getContext('#cp-state').stores;
 
-   sliderVertical.set(true);
+   sliderHorizontal.set(true);
 
    let wrapperEl;
 

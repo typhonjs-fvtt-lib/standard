@@ -14,7 +14,7 @@
 
    $: h = $hsv.h;
 
-   const { components, sliderVertical } = internalState.stores;
+   const { components, sliderHorizontal } = internalState.stores;
 
    /** @type {HTMLDivElement} */
    let slider = void 0;
@@ -41,7 +41,7 @@
     */
    function onClick(pos)
    {
-      const size = $sliderVertical ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
+      const size = $sliderHorizontal ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       $hsv.h = (boundedPos / size) * 360;
@@ -56,7 +56,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick($sliderVertical ? e.offsetX : e.offsetY);
+         onClick($sliderHorizontal ? e.offsetX : e.offsetY);
       }
    }
 
@@ -75,7 +75,7 @@
    {
       if (isMouseDown)
       {
-         onClick($sliderVertical ? e.clientX - slider.getBoundingClientRect().left :
+         onClick($sliderHorizontal ? e.clientX - slider.getBoundingClientRect().left :
           e.clientY - slider.getBoundingClientRect().top);
       }
    }
@@ -123,7 +123,7 @@
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               const movement = $sliderVertical ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
+               const movement = $sliderHorizontal ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
                $hsv.h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
@@ -144,7 +144,7 @@
    function touch(e)
    {
       e.preventDefault();
-      onClick($sliderVertical ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
+      onClick($sliderHorizontal ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
        e.changedTouches[0].clientY - slider.getBoundingClientRect().top);
    }
 </script>
@@ -161,7 +161,7 @@
     <div
             class=slider
             tabindex=0
-            class:vertical={$sliderVertical}
+            class:horizontal={$sliderHorizontal}
             bind:this={slider}
             on:mousedown|preventDefault|stopPropagation={mouseDown}
             on:touchstart={touch}
@@ -189,7 +189,7 @@
         #00ffff 51.5%, #0000ff 67.7%, #ff00ff 83.3%, #ff0000;
     }
 
-    .vertical {
+    .horizontal {
         background: linear-gradient(0.25turn, var(--_tjs-color-picker-slider-gradient));
     }
 </style>

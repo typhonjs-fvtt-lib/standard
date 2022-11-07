@@ -35,11 +35,11 @@ export class InternalState
 
    constructor($$props, options)
    {
-      // TODO determine color output format from initial props bound or otherwise; object or string.
+      this.#colorState = new ColorState($$props);
 
+      // TODO determine color output format from initial props bound or otherwise; object or string.
       const opts = isObject(options) ? options : {};
 
-      this.#validateProps($$props);
       this.#validateOptions(opts);
 
       // External data -----------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ export class InternalState
       this.#internalData.isOpen = typeof opts.isOpen === 'boolean' ? opts.isOpen : !this.#externalData.isPopup;
 
       // Set by the respective wrapper; default wrapper sets to true & the Chrome wrapper to false.
-      this.#internalData.sliderVertical = false;
+      // this.#internalData.sliderHorizontal = false;
 
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
@@ -74,7 +74,7 @@ export class InternalState
 
          isDark: propertyStore(internalData, 'isDark'),
          isOpen: propertyStore(internalData, 'isOpen'),
-         sliderVertical: propertyStore(internalData, 'sliderVertical')
+         sliderHorizontal: propertyStore(internalData, 'sliderHorizontal')
       }
 
 console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
@@ -227,16 +227,6 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
          throw new Error(`Unknown 'options.layout': ${opts.layout}; must be undefined or 'chrome'.`)
       }
    }
-
-   /**
-    * Validates all props ensuring that only one color prop is bound.
-    *
-    * @param {object}   $$props -
-    */
-   #validateProps($$props)
-   {
-
-   }
 }
 
 /**
@@ -262,7 +252,7 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {boolean} isOpen - Is the color picker in the open state.
  *
- * @property {boolean} sliderVertical - Are the sliders oriented vertically.
+ * @property {boolean} sliderHorizontal - Are the sliders oriented horizontally.
  */
 
 /**
@@ -301,5 +291,5 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link InternalData.isOpen}
  *
- * @property {import('svelte/store').Writable<boolean>} sliderVertical - See {@link InternalData.sliderVertical}
+ * @property {import('svelte/store').Writable<boolean>} sliderHorizontal - See {@link InternalData.sliderHorizontal}
  */

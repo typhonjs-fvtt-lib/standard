@@ -27,8 +27,10 @@ export class ColorState
     */
    #subscriptions = [];
 
-   constructor()
+   constructor($$props)
    {
+      this.#validateProps($$props);
+
       this.#stores = {
          hex: propertyStore(this, 'hex'),
          hexNoAlpha: propertyStore(this, 'hexNoAlpha'),
@@ -147,6 +149,16 @@ console.log(`!! ColorState - updateExternal - data: `, extColor);
    {
       const data = this.#data;
       for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](data); }
+   }
+
+   /**
+    * Validates all props ensuring that only one color prop is bound.
+    *
+    * @param {object}   $$props -
+    */
+   #validateProps($$props)
+   {
+      console.log(`!! ColorState - #validateProps - $$props: `, $$props)
    }
 }
 

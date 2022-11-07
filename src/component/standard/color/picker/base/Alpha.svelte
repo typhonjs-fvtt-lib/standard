@@ -8,7 +8,7 @@
 
    const internalState = getContext('#cp-state');
 
-   const { components, sliderVertical } = internalState.stores;
+   const { components, sliderHorizontal } = internalState.stores;
    const { hexNoAlpha, hsv } = internalState.colorState.stores;
 
    $: a = $hsv.a;
@@ -38,7 +38,7 @@
     */
    function onClick(pos)
    {
-      const size = $sliderVertical ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
+      const size = $sliderHorizontal ? alpha.getBoundingClientRect().width : alpha.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       $hsv.a = boundedPos / size;
@@ -52,7 +52,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick($sliderVertical ? e.offsetX : e.offsetY);
+         onClick($sliderHorizontal ? e.offsetX : e.offsetY);
       }
    }
 
@@ -71,7 +71,7 @@
    {
       if (isMouseDown)
       {
-         onClick($sliderVertical ? e.clientX - alpha.getBoundingClientRect().left :
+         onClick($sliderHorizontal ? e.clientX - alpha.getBoundingClientRect().left :
           e.clientY - alpha.getBoundingClientRect().top);
       }
    }
@@ -113,7 +113,7 @@
             focusMovementIntervalId = window.setInterval(() =>
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
-               const movement = $sliderVertical
+               const movement = $sliderHorizontal
                 ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
                 : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
                $hsv.a = Math.min(1, Math.max(0, a + movement * focusMovementFactor));
@@ -134,7 +134,7 @@
    {
       e.preventDefault();
 
-      onClick($sliderVertical ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
+      onClick($sliderHorizontal ? e.changedTouches[0].clientX - alpha.getBoundingClientRect().left
        : e.changedTouches[0].clientY - alpha.getBoundingClientRect().top);
    }
 </script>
@@ -151,7 +151,7 @@
     <div bind:this={alpha}
          class=alpha
          tabindex=0
-         class:vertical={$sliderVertical}
+         class:vertical={$sliderHorizontal}
          style:--_tjs-color-picker-alpha-color={$hexNoAlpha}
          on:mousedown|preventDefault|stopPropagation={mouseDown}
          on:touchstart={touch}
