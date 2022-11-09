@@ -27,32 +27,22 @@
    $: v = Math.round($sv.v);
    $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
-   let rgb;
+   $: rgb = $rgbInt.rgb;
 
-   $: {
-      rgb = $rgbInt.rgb;
-// console.log(`!! TextInput - $: rgbInt - rgb: `, rgb)
-   }
-
-   // let hex, rgb;
    let hex;
 
    $: {
       // const colordInstance = colord({ h, s, v, a });
       const colordInstance = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha });
       hex = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha }).toHex();
-
-      // const newRGB = $outputColord.toRgb();
-      // rgb = { r: Math.round(newRGB.r), g: Math.round(newRGB.g), b: Math.round(newRGB.b) }
-
-// console.log(`!! TextInput - $:rgb: `, rgb)
-      // rgb = colord({ h: $hue, s: $sv.s, v: $sv.v }).toRgb();
    }
 
    function updateAlpha(e)
    {
       const newAlpha = parseFloat(e.target.value);
-      if (newAlpha >= 0 && newAlpha <= 1) { $alpha = newAlpha; }
+      const isValid = newAlpha >= 0 && newAlpha <= 1;
+
+      if (isValid) { $alpha = newAlpha; }
    }
 
    /**
@@ -64,11 +54,11 @@
 
       if (HEX_COLOR_REGEX.test(value))
       {
-         const newHSV = colord(value).toHsv();
+         const newHsv = colord(value).toHsv();
 
-         $hue = newHSV.h;
-         $sv = { s: newHSV.s, v: newHSV.v };
-         $alpha = newHSV.a
+         $hue = newHsv.h;
+         $sv = { s: newHsv.s, v: newHsv.v };
+         $alpha = newHsv.a
       }
    }
 
@@ -81,32 +71,8 @@
    {
       return function (e)
       {
-         const value = parseFloat(e.target.value);
-
-         // console.log(`!! TextInput - updateRgb - 0 - value: `,  value);
-
-         rgbInt[property] = value;
-
-//          if (value >= 0 && value <= 255)
-//          {
-// console.log(`!! TextInput - updateRgb - 0 - value: `,  value);
-// console.log(`!! TextInput - updateRgb - 1 - rgb: `,  rgb);
-//             const newRGB = {...rgb, [property]: value};
-// console.log(`!! TextInput - updateRgb - 2 - newRGB: `,  newRGB);
-//
-//             rgb
-//
-//             // const newHSV = colord(newRGB).toHsv()
-//
-// // console.log(`!! TextInput - updateRgb - 3 - newHSV: `,  newHSV);
-// // console.log(`!! TextInput - updateRgb - 4 - reverse RGB: `,  colord(newHSV).toRgb());
-//
-//             // $hue = newHSV.h;
-//             // $sv = { s: newHSV.s, v: newHSV.v };
-//             // $alpha = newHSV.a
-//          }
-
-         // $hsv = colord(rgb).toHsv();
+         const isValid = rgbInt.isValidRgbComponent(e.target.value);
+         if (isValid) { rgbInt[property] = e.target.value; }
       };
    }
 
@@ -119,26 +85,19 @@
    {
       return function (e)
       {
-         const newHSV = { h, s, v, a, [property]: parseFloat(e.target.value) };
+         const newHsv = { h, s, v, a, [property]: parseFloat(e.target.value) };
 
          switch (property)
          {
             case 'h':
-               $hue = newHSV.h
+               $hue = newHsv.h
                break;
 
             case 's':
             case 'v':
-               $sv = { s: newHSV.s, v: newHSV.v };
+               $sv = { s: newHsv.s, v: newHsv.v };
                break;
          }
-
-         // $hue = newHSV.h;
-         // $sv = { s: newHSV.s, v: newHSV.v };
-         // $alpha = newHSV.a
-
-         // const newHSV = colord(rgb).toHsv()
-         // $hsv = {h, s, v, a, [property]: parseFloat(e.target.value)};
       };
    }
 </script>
@@ -233,6 +192,15 @@
 </div>
 
 <style>
+    input[type="number"] {
+        appearance: auto;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: inner-spin-button;
+        opacity: 1
+    }
+
     .text-input {
         display: flex;
         flex-direction: column;

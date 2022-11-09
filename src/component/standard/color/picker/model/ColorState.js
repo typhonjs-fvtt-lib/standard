@@ -23,8 +23,7 @@ export class ColorState
       rgbHueString: 'rgb(255, 0, 0)',
       rgbaString: 'rgba(255, 0, 0, 1)',
       sv: { s: 100, v: 100 },
-      outputColor: { h: 0, s: 100, v: 100, a: 1 },
-      outputColord: colord({ h: 0, s: 100, v: 100, a: 1 })
+      outputColor: { h: 0, s: 100, v: 100, a: 1 }
    };
 
    #lastTime = 0;
@@ -35,17 +34,17 @@ export class ColorState
    #storeSet;
 
    /**
-    * Stores the subscribers.
+    * Store unsubscribe functions for alpha, hue, sv stores.
     *
-    * @type {(function(object): void)[]}
+    * @type {Function[]}
     */
-   #subscriptions = [];
-
    #unsubscribe = [];
 
    /**
     * The separated store updates for alpha, hue, sv are debounced with a next tick update and this object
     * collates the values for any store update in the same tick. It is reset in #updaateOutputColorDebounce.
+    *
+    * `rpgInt` determines if the update came from RgbInt and is handled differently in #updateColor.
     *
     * @type {{a: number, sv: {s: number, v: number}, h: number, rgbInt: boolean}}
     */
@@ -56,6 +55,12 @@ export class ColorState
       rgbInt: false
    };
 
+   /**
+    * Debounces {@link ColorState.##updateOutputColor} with a 0ms delay. This is invoked by the independent alpha, hue,
+    * sv stores on the internal handlers to
+    *
+    * @type {Function}
+    */
    #updateOutputColorDebounce;
 
    constructor($$props)
@@ -76,14 +81,12 @@ export class ColorState
       const tempStoreRGBHueString = writable(this.#data.rgbHueString);
       const tempStoreRGBAString = writable(this.#data.rgbaString);
       const tempStoreOutputColor = writable(this.#data.outputColor);
-      const tempStoreOutputColord = writable(this.#data.outputColord);
 
       this.#storeSet = {
          rgbString: tempStoreRGBString.set,
          rgbHueString: tempStoreRGBHueString.set,
          rgbaString: tempStoreRGBAString.set,
-         outputColor: tempStoreOutputColor.set,
-         outputColord: tempStoreOutputColord.set
+         outputColor: tempStoreOutputColor.set
       }
 
       this.#stores = {
@@ -97,8 +100,7 @@ export class ColorState
          rgbString: { subscribe: tempStoreRGBString.subscribe },
          rgbHueString: { subscribe: tempStoreRGBHueString.subscribe },
          rgbaString: { subscribe: tempStoreRGBAString.subscribe },
-         outputColor: { subscribe: tempStoreOutputColor.subscribe },
-         outputColord: { subscribe: tempStoreOutputColord.subscribe }
+         outputColor: { subscribe: tempStoreOutputColor.subscribe }
       }
 
       setTimeout(() =>
@@ -125,22 +127,6 @@ export class ColorState
             this.#internalUpdate.sv = sv;
             this.#updateOutputColorDebounce();
          }));
-
-//          this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.rgbInt, (rgbInt) =>
-//          {
-// // console.log(`!! ColorState - stores.rgbInt change`);
-//
-//             const newHSV = rgbInt.hsv;
-//
-//             // this.#internalUpdate.h = newHSV.h;
-//             // this.#internalUpdate.sv = { s: newHSV.s, v: newHSV.v };
-//             this.#internalUpdate.rgbInt = true;
-//
-//             this.#stores.hue.set(newHSV.h);
-//             this.#stores.sv.set({ s: newHSV.s, v: newHSV.v });
-//
-//             // this.#updateOutputColorDebounce();
-//          }));
       }, 0);
    }
 
@@ -151,34 +137,27 @@ export class ColorState
 
    #updateOutputColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, rgbInt = false })
    {
-      const newHSV = { h, s: sv.s, v: sv.v, a };
+      const newHsv = { h, s: sv.s, v: sv.v, a };
 
-// console.log(`!! Color - #updateOutputColor - 0 - newHSV: `, newHSV);
+// console.log(`!! Color - #updateOutputColor - 0 - newHsv: `, newHsv);
 // console.trace();
 
-      const colordInstance = colord(newHSV);
+      const colordInstance = colord(newHsv);
 
       this.#data.hue = h;
       this.#data.sv = sv;
       this.#data.alpha = a;
-      this.#data.outputColor = newHSV;
-      this.#data.outputColord = colord(newHSV);
+      this.#data.outputColor = newHsv;
 
       this.#data.rgbString = colordInstance.alpha(1).toRgbString();
       this.#data.rgbHueString = colord({ h, s: 100, v: 100, a: 1 }).toRgbString();
       this.#data.rgbaString = colordInstance.toRgbString();
 
-      // Update RgbInt store if the update didn't come from RgbInt. Round current RGB values.
-      if (!rgbInt)
-      {
-// console.log(`!! Color - #updateOutputColor - B - updating rgbInt`);
-         const rgb = colordInstance.toRgb();
-         this.#stores.rgbInt.setRgb(Math.round(rgb.r), Math.round(rgb.g), Math.round(rgb.b));
-      }
+      // Update RgbInt store if the update didn't come from RgbInt.
+      if (!rgbInt) { this.#stores.rgbInt.updateColor(newHsv); }
 
       this.#lastTime = globalThis.performance.now();
       this.#storeSet.outputColor(this.#data.outputColor);
-      this.#storeSet.outputColord(this.#data.outputColord);
 
       this.#storeSet.rgbString(this.#data.rgbString);
       this.#storeSet.rgbHueString(this.#data.rgbHueString);
@@ -241,51 +220,22 @@ export class ColorState
          return;
       }
 
-      const newHSV = colordInstance.toHsv();
+      const newHsv = colordInstance.toHsv();
 
-      if (typeof newHSV.h === 'number')
+      if (typeof newHsv.h === 'number')
       {
-         this.#stores.hue.set(newHSV.h);
+         this.#stores.hue.set(newHsv.h);
       }
 
-      if (typeof newHSV.s === 'number' && typeof newHSV.v === 'number')
+      if (typeof newHsv.s === 'number' && typeof newHsv.v === 'number')
       {
-         this.#stores.sv.set({ s: newHSV.s, v: newHSV.v });
+         this.#stores.sv.set({ s: newHsv.s, v: newHsv.v });
       }
 
-      if (typeof newHSV.a === 'number')
+      if (typeof newHsv.a === 'number')
       {
-         this.#stores.alpha.set(newHSV.a);
+         this.#stores.alpha.set(newHsv.a);
       }
-   }
-
-   // Store subscriber implementation --------------------------------------------------------------------------------
-
-   /**
-    * @param {function(object): void} handler - Callback function that is invoked on update / changes.
-    *
-    * @returns {(function(): void)} Unsubscribe function.
-    */
-   subscribe(handler)
-   {
-      this.#subscriptions.push(handler); // add handler to the array of subscribers
-
-      handler(this.#data);                     // call handler with current value
-
-      // Return unsubscribe function.
-      return () =>
-      {
-         const index = this.#subscriptions.findIndex((sub) => sub === handler);
-         if (index >= 0) { this.#subscriptions.splice(index, 1); }
-      };
-   }
-
-   /**
-    * Updates subscribers.
-    */
-   #updateSubscribers()
-   {
-      // for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this.#outputColor); }
    }
 
    /**
@@ -303,29 +253,29 @@ console.log(`!! ColorState - #validateProps - 0 - $$props: `, $$props)
 
          if (colordInstance.isValid())
          {
-            const newHSV = colordInstance.toHsv();
+            const newHsv = colordInstance.toHsv();
 
-console.log(`!! ColorState - #validateProps - 1 - newHSV: `, newHSV)
+console.log(`!! ColorState - #validateProps - 1 - newHsv: `, newHsv)
 
-            if (typeof newHSV.h === 'number')
+            if (typeof newHsv.h === 'number')
             {
-               this.#data.hue = newHSV.h;
+               this.#data.hue = newHsv.h;
             }
 
-            if (typeof newHSV.s === 'number' && typeof newHSV.v === 'number')
+            if (typeof newHsv.s === 'number' && typeof newHsv.v === 'number')
             {
-               this.#data.sv = { s: newHSV.s, v: newHSV.v };
+               this.#data.sv = { s: newHsv.s, v: newHsv.v };
             }
 
-            if (typeof newHSV.a === 'number')
+            if (typeof newHsv.a === 'number')
             {
-               this.#data.alpha = newHSV.a
+               this.#data.alpha = newHsv.a
             }
 
-            this.#data.outputColor = newHSV;
+            this.#data.outputColor = newHsv;
 
             this.#data.rgbString = colordInstance.alpha(1).toRgbString();
-            this.#data.rgbHueString = colord({ h: newHSV.h, s: 100, v: 100, a: 1 }).toRgbString();
+            this.#data.rgbHueString = colord({ h: newHsv.h, s: 100, v: 100, a: 1 }).toRgbString();
             this.#data.rgbaString = colordInstance.toRgbString();
 
 console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
@@ -340,27 +290,13 @@ console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
 }
 
 /**
- * @typedef {object} ColorStateStores
- *
- * @property {import('svelte/store').Writable<number>} alpha - The current alpha value (0 - 1).
- *
- * @property {import('svelte/store').Writable<number>} hue - The current hue value (0 - 360).
- *
- * @property {import('svelte/store').Readable<string|object>} outputColor - The current color.
- *
- * @property {import('svelte/store').Readable<Colord>} outputColord - The current color / colord instance.
- *
- * @property {RgbInt} rgbInt - The integer based tracking for rgb / hex text input avoiding floating point calculation.
- *
- * @property {import('svelte/store').Readable<string>} rgbString - The current color / RGB only string.
- *
- * @property {import('svelte/store').Readable<string>} rgbHueString - The current color hue / RGB only string.
- *
- * @property {import('svelte/store').Readable<string>} rgbaString - The current color / RGBA only string.
- *
- * @property {import('svelte/store').Writable<{ s: number, v: number }>} sv - The saturation / value pair for HSV components.
+ * Manages RGB component based representations such as `rgb` and `hex` formats. The internal storage format is HSV and
+ * the conversions between floating point and integer representation in the text input GUI is lossy. RgbInt provides a
+ * store that tracks the `rgb` component values (0 - 255) and hex representations. Changes from the text input
+ * component are converted into internal HSV representation and set the `hue` and `sv` stores setting the #interalUpdate
+ * rgbInt flag so that {@link ColorState.#updateOutputColor} on updates RgbInt isn't updated. This makes it possible to
+ * support a single internal color representation in HSV and not have independent variables for each type.
  */
-
 class RgbInt
 {
    /** @type {{ r: number, g: number, b: number}} */
@@ -409,46 +345,106 @@ class RgbInt
       return colord(this.#data).toHsv();
    }
 
-   set r(r)
+   set r(value)
    {
-// console.log(`!! RgbInt - set r - r: `, r);
-      this.#data.r = r;
+      const typeofValue = typeof value;
+
+      if (typeofValue !== 'string' && typeofValue !== 'number')
+      {
+         throw new TypeError(`RgbInt 'set r' error: 'value' is not a string or number.`);
+      }
+
+      if (!this.isValidRgbComponent(value)) { return; }
+
+      let parsedValue = value;
+
+      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
+
+      this.#data.r = parsedValue;
 
       this.#internalUpdate.rgbInt = true;
 
-      const newHSV = this.hsv;
-      this.#colorState.stores.hue.set(newHSV.h);
-      this.#colorState.stores.sv.set({ s: newHSV.s, v: newHSV.v });
+      // Update hue and sv component stores w/ parsed data.
+      const newHsv = this.hsv;
+      this.#colorState.stores.hue.set(newHsv.h);
+      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
 
-      // this.#updateSubscribers();
+      this.#updateSubscribers();
    }
 
-   set g(g)
+   set g(value)
    {
-// console.log(`!! RgbInt - set g - g: `, g);
-      this.#data.g = g;
+      const typeofValue = typeof value;
+
+      if (typeofValue !== 'string' && typeofValue !== 'number')
+      {
+         throw new TypeError(`RgbInt 'set g' error: 'value' is not a string or number.`);
+      }
+
+      if (!this.isValidRgbComponent(value)) { return; }
+
+      let parsedValue = value;
+
+      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
+
+      this.#data.g = parsedValue;
 
       this.#internalUpdate.rgbInt = true;
 
-      const newHSV = this.hsv;
-      this.#colorState.stores.hue.set(newHSV.h);
-      this.#colorState.stores.sv.set({ s: newHSV.s, v: newHSV.v });
+      // Update hue and sv component stores w/ parsed data.
+      const newHsv = this.hsv;
+      this.#colorState.stores.hue.set(newHsv.h);
+      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
 
-      // this.#updateSubscribers();
+      this.#updateSubscribers();
    }
 
-   set b(b)
+   set b(value)
    {
-// console.log(`!! RgbInt - set b - b: `, b);
-      this.#data.b = b;
+      const typeofValue = typeof value;
+
+      if (typeofValue !== 'string' && typeofValue !== 'number')
+      {
+         throw new TypeError(`RgbInt 'set b' error: 'value' is not a string or number.`);
+      }
+
+      if (!this.isValidRgbComponent(value)) { return; }
+
+      let parsedValue = value;
+
+      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
+
+      this.#data.b = parsedValue;
 
       this.#internalUpdate.rgbInt = true;
 
-      const newHSV = this.hsv;
-      this.#colorState.stores.hue.set(newHSV.h);
-      this.#colorState.stores.sv.set({ s: newHSV.s, v: newHSV.v });
+      // Update hue and sv component stores w/ parsed data.
+      const newHsv = this.hsv;
+      this.#colorState.stores.hue.set(newHsv.h);
+      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
 
-      // this.#updateSubscribers();
+      this.#updateSubscribers();
+   }
+
+   /**
+    * Determines if the given value is a valid RGB component from 0-255 either as a number or string.
+    *
+    * @param value
+    * @returns {boolean}
+    */
+   isValidRgbComponent(value)
+   {
+      const typeofValue = typeof value;
+
+      if (typeofValue !== 'string' && typeofValue !== 'number') { return false; }
+
+      let parsedValue = value;
+
+      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
+
+      if (parsedValue === Number.NaN) { return false; }
+
+      return parsedValue >= 0 && parsedValue <= 255;
    }
 
    setHex(hex)
@@ -456,11 +452,17 @@ class RgbInt
 
    }
 
-   setRgb(r, g, b)
+   updateColor(color)
    {
-      this.#data.r = r;
-      this.#data.g = g;
-      this.#data.b = b;
+      const colordInstance = colord(color)
+
+      if (!colordInstance.isValid()) { throw new Error(`RgbInt updateColor error: 'color' is not valid'.`); }
+
+      const rgb = colordInstance.toRgb();
+
+      this.#data.r = Math.round(rgb.r);
+      this.#data.g = Math.round(rgb.g);
+      this.#data.b = Math.round(rgb.b);
 
       this.#updateSubscribers();
    }
@@ -494,3 +496,24 @@ class RgbInt
       for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
    }
 }
+
+/**
+ * @typedef {object} ColorStateStores
+ *
+ * @property {import('svelte/store').Writable<number>} alpha - The current alpha value (0 - 1).
+ *
+ * @property {import('svelte/store').Writable<number>} hue - The current hue value (0 - 360).
+ *
+ * @property {import('svelte/store').Readable<string|object>} outputColor - The current color.
+ *
+ * @property {RgbInt} rgbInt - The integer based tracking for rgb / hex text input avoiding floating point calculation.
+ *
+ * @property {import('svelte/store').Readable<string>} rgbString - The current color / RGB only string.
+ *
+ * @property {import('svelte/store').Readable<string>} rgbHueString - The current color hue / RGB only string.
+ *
+ * @property {import('svelte/store').Readable<string>} rgbaString - The current color / RGBA only string.
+ *
+ * @property {import('svelte/store').Writable<{ s: number, v: number }>} sv - The saturation / value pair for HSV components.
+ */
+
