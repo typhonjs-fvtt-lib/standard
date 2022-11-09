@@ -72,13 +72,13 @@
 
    $: {
       color = $outputColor;
-console.log(`!! TJSColorPicker - $outputColor: `, $outputColor)
+// console.log(`!! TJSColorPicker - $outputColor: `, $outputColor)
    }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
    $: if (color)
    {
-console.log(`!! TJSColorPicker - $:color: `, color)
+// console.log(`!! TJSColorPicker - $:color: `, color)
       colorState.updateExternal(color);
    }
 

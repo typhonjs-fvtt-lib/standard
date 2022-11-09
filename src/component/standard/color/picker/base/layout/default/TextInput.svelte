@@ -10,7 +10,8 @@
    const {
       hue,
       sv,
-      alpha } = internalState.colorState.stores;
+      alpha,
+      rgbInt } = internalState.colorState.stores;
 
    /** @type {RegExp} */
    const HEX_COLOR_REGEX = /^#?([A-F0-9]{6}|[A-F0-9]{8})$/i;
@@ -26,12 +27,32 @@
    $: v = Math.round($sv.v);
    $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
-   let hex, rgb;
+   let rgb;
 
    $: {
-      const colordInstance = colord({ h, s, v, a });
-      hex = colordInstance.toHex();
-      rgb = colordInstance.toRgb();
+      rgb = $rgbInt.rgb;
+// console.log(`!! TextInput - $: rgbInt - rgb: `, rgb)
+   }
+
+   // let hex, rgb;
+   let hex;
+
+   $: {
+      // const colordInstance = colord({ h, s, v, a });
+      const colordInstance = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha });
+      hex = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha }).toHex();
+
+      // const newRGB = $outputColord.toRgb();
+      // rgb = { r: Math.round(newRGB.r), g: Math.round(newRGB.g), b: Math.round(newRGB.b) }
+
+// console.log(`!! TextInput - $:rgb: `, rgb)
+      // rgb = colord({ h: $hue, s: $sv.s, v: $sv.v }).toRgb();
+   }
+
+   function updateAlpha(e)
+   {
+      const newAlpha = parseFloat(e.target.value);
+      if (newAlpha >= 0 && newAlpha <= 1) { $alpha = newAlpha; }
    }
 
    /**
@@ -39,17 +60,15 @@
     */
    function updateHex(e)
    {
-      const target = e.target;
-      if (HEX_COLOR_REGEX.test(target.value))
+      const value = e.target.value;
+
+      if (HEX_COLOR_REGEX.test(value))
       {
-         hex = target.value;
-         const newHSV = colord(hex).toHsv()
+         const newHSV = colord(value).toHsv();
 
          $hue = newHSV.h;
          $sv = { s: newHSV.s, v: newHSV.v };
          $alpha = newHSV.a
-
-         // $hsv = colord(hex).toHsv();
       }
    }
 
@@ -62,13 +81,30 @@
    {
       return function (e)
       {
-         rgb = {...rgb, [property]: parseFloat(e.target.value)};
+         const value = parseFloat(e.target.value);
 
-         const newHSV = colord(rgb).toHsv()
+         // console.log(`!! TextInput - updateRgb - 0 - value: `,  value);
 
-         $hue = newHSV.h;
-         $sv = { s: newHSV.s, v: newHSV.v };
-         $alpha = newHSV.a
+         rgbInt[property] = value;
+
+//          if (value >= 0 && value <= 255)
+//          {
+// console.log(`!! TextInput - updateRgb - 0 - value: `,  value);
+// console.log(`!! TextInput - updateRgb - 1 - rgb: `,  rgb);
+//             const newRGB = {...rgb, [property]: value};
+// console.log(`!! TextInput - updateRgb - 2 - newRGB: `,  newRGB);
+//
+//             rgb
+//
+//             // const newHSV = colord(newRGB).toHsv()
+//
+// // console.log(`!! TextInput - updateRgb - 3 - newHSV: `,  newHSV);
+// // console.log(`!! TextInput - updateRgb - 4 - reverse RGB: `,  colord(newHSV).toRgb());
+//
+//             // $hue = newHSV.h;
+//             // $sv = { s: newHSV.s, v: newHSV.v };
+//             // $alpha = newHSV.a
+//          }
 
          // $hsv = colord(rgb).toHsv();
       };
@@ -85,9 +121,21 @@
       {
          const newHSV = { h, s, v, a, [property]: parseFloat(e.target.value) };
 
-         $hue = newHSV.h;
-         $sv = { s: newHSV.s, v: newHSV.v };
-         $alpha = newHSV.a
+         switch (property)
+         {
+            case 'h':
+               $hue = newHSV.h
+               break;
+
+            case 's':
+            case 'v':
+               $sv = { s: newHSV.s, v: newHSV.v };
+               break;
+         }
+
+         // $hue = newHSV.h;
+         // $sv = { s: newHSV.s, v: newHSV.v };
+         // $alpha = newHSV.a
 
          // const newHSV = colord(rgb).toHsv()
          // $hsv = {h, s, v, a, [property]: parseFloat(e.target.value)};
@@ -101,12 +149,12 @@
             <input value={hex} on:input={updateHex} style="flex: 3"/>
             {#if $isAlpha}
                 <input aria-label="hexadecimal color"
-                       value={a}
+                       bind:value={a}
                        type=number
                        min=0
                        max=1
                        step=0.01
-                       on:input={updateRgb('a')}
+                       on:input={updateAlpha}
                 />
             {/if}
         </div>
@@ -140,7 +188,7 @@
                        min=0
                        max=1
                        step=0.01
-                       on:input={updateRgb('a')}
+                       on:input={updateAlpha}
                 />
             {/if}
         </div>
@@ -174,7 +222,7 @@
                        min=0
                        max=1
                        step=0.01
-                       on:input={updateHsv('a')}
+                       on:input={updateAlpha}
                 />
             {/if}
         </div>

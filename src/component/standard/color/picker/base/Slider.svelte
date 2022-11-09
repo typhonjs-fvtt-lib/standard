@@ -38,8 +38,6 @@
     */
    function onClick(pos)
    {
-console.log(`!! Slider - onClick`);
-console.trace();
       const size = $sliderHorizontal ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 

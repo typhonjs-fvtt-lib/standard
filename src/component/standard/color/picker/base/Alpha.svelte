@@ -133,9 +133,6 @@
       onClick($sliderHorizontal ? e.changedTouches[0].clientX - alphaEl.getBoundingClientRect().left
        : e.changedTouches[0].clientY - alphaEl.getBoundingClientRect().top);
    }
-
-   //          style:--_tjs-color-picker-alpha-color={$hexNoAlpha}
-
 </script>
 
 <svelte:window
