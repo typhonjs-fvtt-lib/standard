@@ -1,8 +1,6 @@
-import { colord } from '@typhonjs-fvtt/runtime/color/colord';
-
-export class RgbState
+export class HsvState
 {
-   /** @type {{ r: number, g: number, b: number}} */
+   /** @type {{ h: number, s: number, v: number}} */
    #data;
 
    #colorState;
@@ -11,7 +9,7 @@ export class RgbState
 
    constructor(colorState, internalUpdate, updateSubscribers)
    {
-      this.#data = { r: 255, g: 0, b: 0 };
+      this.#data = { h: 0, s: 100, v: 100 };
 
       this.#colorState = colorState;
       this.#internalUpdate = internalUpdate;
@@ -19,7 +17,7 @@ export class RgbState
    }
 
    /**
-    * @returns {{r: number, g: number, b: number}}
+    * @returns {{ h: number, s: number, v: number}}
     */
    get data()
    {
@@ -29,130 +27,119 @@ export class RgbState
    /**
     * @returns {number}
     */
-   get r()
+   get h()
    {
-      return this.#data.r;
+      return this.#data.h;
    }
 
    /**
     * @returns {number}
     */
-   get g()
+   get s()
    {
-      return this.#data.g;
+      return this.#data.s;
    }
 
    /**
     * @returns {number}
     */
-   get b()
+   get v()
    {
-      return this.#data.b;
-   }
-
-   get #hsv()
-   {
-      return colord(this.#data).toHsv();
+      return this.#data.v;
    }
 
    /**
-    * @param {string|number}   value - new red component.
+    * @param {string|number}  value - New hue component.
     */
-   set r(value)
+   set h(value)
    {
       const typeofValue = typeof value;
 
       if (typeofValue !== 'string' && typeofValue !== 'number')
       {
-         throw new TypeError(`RgbState 'set r' error: 'value' is not a string or number.`);
+         throw new TypeError(`HsvState 'set h' error: 'value' is not a string or number.`);
       }
 
-      if (!this.isValidComponent(value)) { return; }
+      if (!this.isValidHue(value)) { return; }
 
       let parsedValue = value;
 
       if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
 
-      this.#data.r = parsedValue;
+      this.#data.h = parsedValue;
 
       this.#internalUpdate.textUpdate = true;
 
       // Update hue and sv component stores w/ parsed data.
-      const newHsv = this.#hsv;
-      this.#colorState.stores.hue.set(newHsv.h);
-      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
+      this.#colorState.stores.hue.set(this.#data.h);
 
       this.#updateSubscribers();
    }
 
    /**
-    * @param {string|number}   value - new green component.
+    * @param {string|number}  value - New saturation component.
     */
-   set g(value)
+   set s(value)
    {
       const typeofValue = typeof value;
 
       if (typeofValue !== 'string' && typeofValue !== 'number')
       {
-         throw new TypeError(`RgbState 'set g' error: 'value' is not a string or number.`);
+         throw new TypeError(`HsvState 'set s' error: 'value' is not a string or number.`);
       }
 
-      if (!this.isValidComponent(value)) { return; }
+      if (!this.isValidSV(value)) { return; }
 
       let parsedValue = value;
 
       if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
 
-      this.#data.g = parsedValue;
+      this.#data.s = parsedValue;
 
       this.#internalUpdate.textUpdate = true;
 
       // Update hue and sv component stores w/ parsed data.
-      const newHsv = this.#hsv;
-      this.#colorState.stores.hue.set(newHsv.h);
-      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
+      this.#colorState.stores.sv.set({ s: this.#data.s, v: this.#data.v });
 
       this.#updateSubscribers();
    }
 
    /**
-    * @param {string|number}   value - new blue component.
+    * @param {string|number}  value - New value component.
     */
-   set b(value)
+   set v(value)
    {
       const typeofValue = typeof value;
 
       if (typeofValue !== 'string' && typeofValue !== 'number')
       {
-         throw new TypeError(`RgbState 'set b' error: 'value' is not a string or number.`);
+         throw new TypeError(`HsvState 'set v' error: 'value' is not a string or number.`);
       }
 
-      if (!this.isValidComponent(value)) { return; }
+      if (!this.isValidSV(value)) { return; }
 
       let parsedValue = value;
 
       if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
 
-      this.#data.b = parsedValue;
+      this.#data.v = parsedValue;
 
       this.#internalUpdate.textUpdate = true;
 
       // Update hue and sv component stores w/ parsed data.
-      const newHsv = this.#hsv;
-      this.#colorState.stores.hue.set(newHsv.h);
-      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
+      this.#colorState.stores.sv.set({ s: this.#data.s, v: this.#data.v });
 
       this.#updateSubscribers();
    }
 
    /**
-    * Determines if the given value is a valid RGB component from 0-255 either as a number or string.
+    * Determines if the given value is a valid hue component from 0-360 either as a number or string.
     *
     * @param {string|number}  value - value to test.
     *
-    * @returns {boolean} Is a valid RGB component.
+    * @returns {boolean} Is a valid hue value.
     */
-   isValidComponent(value)
+   isValidHue(value)
    {
       const typeofValue = typeof value;
 
@@ -164,7 +151,29 @@ export class RgbState
 
       if (parsedValue === Number.NaN) { return false; }
 
-      return parsedValue >= 0 && parsedValue <= 255;
+      return parsedValue >= 0 && parsedValue <= 360;
+   }
+
+   /**
+    * Determines if the given value is a valid saturation or value component from 0-100 either as a number or string.
+    *
+    * @param {string|number}  value - value to test.
+    *
+    * @returns {boolean} Is a valid saturation / value component.
+    */
+   isValidSV(value)
+   {
+      const typeofValue = typeof value;
+
+      if (typeofValue !== 'string' && typeofValue !== 'number') { return false; }
+
+      let parsedValue = value;
+
+      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
+
+      if (parsedValue === Number.NaN) { return false; }
+
+      return parsedValue >= 0 && parsedValue <= 100;
    }
 
    /**
@@ -176,10 +185,8 @@ export class RgbState
     */
    _updateColor(color)
    {
-      const rgb = colord(color).toRgb();
-
-      this.#data.r = Math.round(rgb.r);
-      this.#data.g = Math.round(rgb.g);
-      this.#data.b = Math.round(rgb.b);
+      this.#data.h = Math.round(color.h);
+      this.#data.s = Math.round(color.s);
+      this.#data.v = Math.round(color.v);
    }
 }

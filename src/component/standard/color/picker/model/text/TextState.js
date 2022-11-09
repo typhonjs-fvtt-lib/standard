@@ -1,5 +1,6 @@
 import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
 
+import { HsvState }  from './HsvState.js';
 import { RgbState }  from './RgbState.js';
 
 /**
@@ -20,6 +21,9 @@ export class TextState
     */
    #subscriptions = [];
 
+   /** @type {HsvState} */
+   #hsv;
+
    /** @type {RgbState} */
    #rgb;
 
@@ -27,7 +31,16 @@ export class TextState
    {
       const updateSubscribers = this.#updateSubscribers.bind(this);
 
+      this.#hsv = new HsvState(colorState, internalUpdate, updateSubscribers);
       this.#rgb = new RgbState(colorState, internalUpdate, updateSubscribers);
+   }
+
+   /**
+    * @returns {HsvState}
+    */
+   get hsv()
+   {
+      return this.#hsv;
    }
 
    /**
@@ -41,15 +54,12 @@ export class TextState
    /**
     * Updates all text state for supported formats from the given color.
     *
-    * @param {object|string}  color - A supported ColorD color format.
+    * @param {{h: number, s: number, v: number}}  color - A supported ColorD color format.
     */
    updateColor(color)
    {
-      const colordInstance = colord(color);
-
-      if (!colordInstance.isValid()) { throw new Error(`TextState updateColor error: 'color' is not valid'.`); }
-
-      this.#rgb._updateColor(colordInstance);
+      this.#hsv._updateColor(color);
+      this.#rgb._updateColor(color);
 
       this.#updateSubscribers();
    }

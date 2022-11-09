@@ -169,8 +169,6 @@ export class ColorState
       this.#storeSet.rgbString(this.#data.rgbString);
       this.#storeSet.rgbHueString(this.#data.rgbHueString);
       this.#storeSet.rgbaString(this.#data.rgbaString);
-
-      // this.#updateSubscribers();
    }
 
    /**

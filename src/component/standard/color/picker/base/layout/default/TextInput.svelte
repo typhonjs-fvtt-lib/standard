@@ -22,11 +22,12 @@
    /** @type {number} */
    let mode = 0;
 
-   $: h = Math.round($hue);
-   $: s = Math.round($sv.s);
-   $: v = Math.round($sv.v);
+   // $: h = Math.round($hue);
+   // $: s = Math.round($sv.s);
+   // $: v = Math.round($sv.v);
    $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
+   $: hsv = $textState.hsv.data;
    $: rgb = $textState.rgb.data;
 
    let hex;
@@ -85,19 +86,21 @@
    {
       return function (e)
       {
-         const newHsv = { h, s, v, a, [property]: parseFloat(e.target.value) };
+         let isValid = false;
 
          switch (property)
          {
             case 'h':
-               $hue = newHsv.h
+               isValid = textState.hsv.isValidHue(e.target.value);
                break;
 
             case 's':
             case 'v':
-               $sv = { s: newHsv.s, v: newHsv.v };
+               isValid = textState.hsv.isValidSV(e.target.value);
                break;
          }
+
+         if (isValid) { textState.hsv[property] = e.target.value; }
       };
    }
 </script>
@@ -154,21 +157,21 @@
     {:else}
         <div class=input-container>
             <input aria-label="hue chanel color"
-                   value={h}
+                   value={hsv.h}
                    type=number
                    min=0
                    max=360
                    on:input={updateHsv('h')}
             />
             <input aria-label="saturation chanel color"
-                   value={s}
+                   value={hsv.s}
                    type=number
                    min=0
                    max=100
                    on:input={updateHsv('s')}
             />
             <input aria-label="brightness chanel color"
-                   value={v}
+                   value={hsv.v}
                    type=number
                    min=0
                    max=100
