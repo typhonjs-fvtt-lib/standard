@@ -47,7 +47,7 @@
       rgbString,
       rgbHueString,
       rgbaString,
-      outputColor
+      currentColor
    } = colorState.stores;
 
    onDestroy(() => internalState.destroy());
@@ -71,8 +71,8 @@
 //    }
 
    $: {
-      color = $outputColor;
-// console.log(`!! TJSColorPicker - $outputColor: `, $outputColor)
+      color = $currentColor;
+// console.log(`!! TJSColorPicker - $currentColor: `, $currentColor)
    }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.

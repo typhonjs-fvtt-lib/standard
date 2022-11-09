@@ -10,11 +10,11 @@ import { subscribeIgnoreFirst }    from '@typhonjs-fvtt/runtime/svelte/store';
 export class ColorState
 {
    /**
-    * Delta time in milliseconds determining
+    * Delta time in milliseconds determining if a change to the color prop in {@link TJSColorPicker} is made externally.
     *
     * @type {number}
     */
-   static #delta = 250; //
+   static #delta = 100; //
 
    #data = {
       alpha: 1,
@@ -23,7 +23,7 @@ export class ColorState
       rgbHueString: 'rgb(255, 0, 0)',
       rgbaString: 'rgba(255, 0, 0, 1)',
       sv: { s: 100, v: 100 },
-      outputColor: { h: 0, s: 100, v: 100, a: 1 }
+      currentColor: { h: 0, s: 100, v: 100, a: 1 }
    };
 
    #lastTime = 0;
@@ -31,10 +31,15 @@ export class ColorState
    /** @type {ColorStateStores} */
    #stores;
 
+   /**
+    * Provides access to the externally "readable" stores set methods.
+    *
+    * @type {Record<string, Function>}
+    */
    #storeSet;
 
    /**
-    * Store unsubscribe functions for alpha, hue, sv stores.
+    * Store unsubscribe functions for alpha, hue, sv stores that are subscribed to internally.
     *
     * @type {Function[]}
     */
@@ -42,7 +47,7 @@ export class ColorState
 
    /**
     * The separated store updates for alpha, hue, sv are debounced with a next tick update and this object
-    * collates the values for any store update in the same tick. It is reset in #updaateOutputColorDebounce.
+    * collates the values for each store update in the same tick. It is reset in #updaateOutputColorDebounce.
     *
     * `rpgInt` determines if the update came from RgbInt and is handled differently in #updateColor.
     *
@@ -56,21 +61,21 @@ export class ColorState
    };
 
    /**
-    * Debounces {@link ColorState.##updateOutputColor} with a 0ms delay. This is invoked by the independent alpha, hue,
+    * Debounces {@link ColorState.#updateCurrentColor} with a 0ms delay. This is invoked by the independent alpha, hue,
     * sv stores on the internal handlers to
     *
     * @type {Function}
     */
-   #updateOutputColorDebounce;
+   #updateCurrentColorDebounce;
 
    constructor($$props)
    {
       this.#validateProps($$props);
 
-      this.#updateOutputColorDebounce = debounce(() =>
+      this.#updateCurrentColorDebounce = debounce(() =>
       {
-// console.log(`!! ColorState - #updateOutputColorDebounce - invoked`)
-         this.#updateOutputColor(this.#internalUpdate);
+// console.log(`!! ColorState - #updateCurrentColorDebounce - invoked`)
+         this.#updateCurrentColor(this.#internalUpdate);
          this.#internalUpdate.h = void 0;
          this.#internalUpdate.sv = void 0;
          this.#internalUpdate.a = void 0;
@@ -80,13 +85,13 @@ export class ColorState
       const tempStoreRGBString = writable(this.#data.rgbString);
       const tempStoreRGBHueString = writable(this.#data.rgbHueString);
       const tempStoreRGBAString = writable(this.#data.rgbaString);
-      const tempStoreOutputColor = writable(this.#data.outputColor);
+      const tempStoreOutputColor = writable(this.#data.currentColor);
 
       this.#storeSet = {
          rgbString: tempStoreRGBString.set,
          rgbHueString: tempStoreRGBHueString.set,
          rgbaString: tempStoreRGBAString.set,
-         outputColor: tempStoreOutputColor.set
+         currentColor: tempStoreOutputColor.set
       }
 
       this.#stores = {
@@ -100,7 +105,7 @@ export class ColorState
          rgbString: { subscribe: tempStoreRGBString.subscribe },
          rgbHueString: { subscribe: tempStoreRGBHueString.subscribe },
          rgbaString: { subscribe: tempStoreRGBAString.subscribe },
-         outputColor: { subscribe: tempStoreOutputColor.subscribe }
+         currentColor: { subscribe: tempStoreOutputColor.subscribe }
       }
 
       setTimeout(() =>
@@ -110,14 +115,14 @@ export class ColorState
 // console.log(`!! ColorState - stores.alpha change`);
 
             this.#internalUpdate.a = a;
-            this.#updateOutputColorDebounce();
+            this.#updateCurrentColorDebounce();
          }));
 
          this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.hue, (h) => {
 // console.log(`!! ColorState - stores.hue change`);
 
             this.#internalUpdate.h = h;
-            this.#updateOutputColorDebounce();
+            this.#updateCurrentColorDebounce();
          }));
 
          this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.sv, (sv) =>
@@ -125,7 +130,7 @@ export class ColorState
 // console.log(`!! ColorState - stores.sv change`);
 
             this.#internalUpdate.sv = sv;
-            this.#updateOutputColorDebounce();
+            this.#updateCurrentColorDebounce();
          }));
       }, 0);
    }
@@ -135,11 +140,11 @@ export class ColorState
       for (const unsubscribe of this.#unsubscribe) { unsubscribe(); }
    }
 
-   #updateOutputColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, rgbInt = false })
+   #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, rgbInt = false })
    {
       const newHsv = { h, s: sv.s, v: sv.v, a };
 
-// console.log(`!! Color - #updateOutputColor - 0 - newHsv: `, newHsv);
+// console.log(`!! Color - #updateCurrentColor - 0 - newHsv: `, newHsv);
 // console.trace();
 
       const colordInstance = colord(newHsv);
@@ -147,7 +152,7 @@ export class ColorState
       this.#data.hue = h;
       this.#data.sv = sv;
       this.#data.alpha = a;
-      this.#data.outputColor = newHsv;
+      this.#data.currentColor = newHsv;
 
       this.#data.rgbString = colordInstance.alpha(1).toRgbString();
       this.#data.rgbHueString = colord({ h, s: 100, v: 100, a: 1 }).toRgbString();
@@ -157,7 +162,7 @@ export class ColorState
       if (!rgbInt) { this.#stores.rgbInt.updateColor(newHsv); }
 
       this.#lastTime = globalThis.performance.now();
-      this.#storeSet.outputColor(this.#data.outputColor);
+      this.#storeSet.currentColor(this.#data.currentColor);
 
       this.#storeSet.rgbString(this.#data.rgbString);
       this.#storeSet.rgbHueString(this.#data.rgbHueString);
@@ -272,7 +277,7 @@ console.log(`!! ColorState - #validateProps - 1 - newHsv: `, newHsv)
                this.#data.alpha = newHsv.a
             }
 
-            this.#data.outputColor = newHsv;
+            this.#data.currentColor = newHsv;
 
             this.#data.rgbString = colordInstance.alpha(1).toRgbString();
             this.#data.rgbHueString = colord({ h: newHsv.h, s: 100, v: 100, a: 1 }).toRgbString();
@@ -294,7 +299,7 @@ console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
  * the conversions between floating point and integer representation in the text input GUI is lossy. RgbInt provides a
  * store that tracks the `rgb` component values (0 - 255) and hex representations. Changes from the text input
  * component are converted into internal HSV representation and set the `hue` and `sv` stores setting the #interalUpdate
- * rgbInt flag so that {@link ColorState.#updateOutputColor} on updates RgbInt isn't updated. This makes it possible to
+ * rgbInt flag so that {@link ColorState.#updateCurrentColor} on updates RgbInt isn't updated. This makes it possible to
  * support a single internal color representation in HSV and not have independent variables for each type.
  */
 class RgbInt
@@ -504,7 +509,7 @@ class RgbInt
  *
  * @property {import('svelte/store').Writable<number>} hue - The current hue value (0 - 360).
  *
- * @property {import('svelte/store').Readable<string|object>} outputColor - The current color.
+ * @property {import('svelte/store').Readable<string|object>} currentColor - The current color.
  *
  * @property {RgbInt} rgbInt - The integer based tracking for rgb / hex text input avoiding floating point calculation.
  *
