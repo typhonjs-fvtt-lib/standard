@@ -11,7 +11,7 @@
       hue,
       sv,
       alpha,
-      rgbInt } = internalState.colorState.stores;
+      textState } = internalState.colorState.stores;
 
    /** @type {RegExp} */
    const HEX_COLOR_REGEX = /^#?([A-F0-9]{6}|[A-F0-9]{8})$/i;
@@ -27,7 +27,7 @@
    $: v = Math.round($sv.v);
    $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
-   $: rgb = $rgbInt.rgb;
+   $: rgb = $textState.rgb.data;
 
    let hex;
 
@@ -71,8 +71,8 @@
    {
       return function (e)
       {
-         const isValid = rgbInt.isValidRgbComponent(e.target.value);
-         if (isValid) { rgbInt[property] = e.target.value; }
+         const isValid = textState.rgb.isValidComponent(e.target.value);
+         if (isValid) { textState.rgb[property] = e.target.value; }
       };
    }
 
