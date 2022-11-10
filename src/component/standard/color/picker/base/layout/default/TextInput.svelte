@@ -22,18 +22,15 @@
    /** @type {number} */
    let mode = 0;
 
-   // $: h = Math.round($hue);
-   // $: s = Math.round($sv.s);
-   // $: v = Math.round($sv.v);
    $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
    $: hsv = $textState.hsv.data;
-   $: rgb = $textState.rgb.data;
+
+   const { r, g, b } = textState.rgb.stores;
 
    let hex;
 
    $: {
-      // const colordInstance = colord({ h, s, v, a });
       const colordInstance = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha });
       hex = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha }).toHex();
    }
@@ -61,20 +58,6 @@
          $sv = { s: newHsv.s, v: newHsv.v };
          $alpha = newHsv.a
       }
-   }
-
-   /**
-    * @param {string}    property -
-    *
-    * @returns {(function(InputEvent): void)|*}
-    */
-   function updateRgb(property)
-   {
-      return function (e)
-      {
-         const isValid = textState.rgb.isValidComponent(e.target.value);
-         if (isValid) { textState.rgb[property] = e.target.value; }
-      };
    }
 
    /**
@@ -123,25 +106,22 @@
     {:else if mode === 1}
         <div class=input-container>
             <input aria-label="red chanel color"
-                   value={rgb.r}
+                   bind:value={$r}
                    type=number
                    min=0
                    max=255
-                   on:input={updateRgb('r')}
             />
             <input aria-label="green chanel color"
-                   value={rgb.g}
+                   bind:value={$g}
                    type=number
                    min=0
                    max=255
-                   on:input={updateRgb('g')}
             />
             <input aria-label="blue chanel color"
-                   value={rgb.b}
+                   bind:value={$b}
                    type=number
                    min=0
                    max=255
-                   on:input={updateRgb('b')}
             />
             {#if $isAlpha}
                 <input aria-label="transparency chanel color"

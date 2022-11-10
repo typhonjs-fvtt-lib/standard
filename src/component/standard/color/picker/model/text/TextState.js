@@ -1,5 +1,3 @@
-import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
-
 import { HsvState }  from './HsvState.js';
 import { RgbState }  from './RgbState.js';
 
@@ -21,18 +19,23 @@ export class TextState
     */
    #subscriptions = [];
 
-   /** @type {HsvState} */
-   #hsv;
+   #modes;
 
-   /** @type {RgbState} */
-   #rgb;
-
-   constructor(colorState, internalUpdate)
+   constructor(colorStateInstance, internalUpdate)
    {
-      const updateSubscribers = this.#updateSubscribers.bind(this);
+      const colorState = {
+         stores: colorStateInstance.stores,
+         internalUpdate
+      }
 
-      this.#hsv = new HsvState(colorState, internalUpdate, updateSubscribers);
-      this.#rgb = new RgbState(colorState, internalUpdate, updateSubscribers);
+      const textStateUpdate = {
+         color: this.#updateColorInternal.bind(this)
+      }
+
+      this.#modes = {
+         hsv: new HsvState(colorState, textStateUpdate),
+         rgb: new RgbState(colorState, textStateUpdate)
+      }
    }
 
    /**
@@ -40,7 +43,7 @@ export class TextState
     */
    get hsv()
    {
-      return this.#hsv;
+      return this.#modes.hsv;
    }
 
    /**
@@ -48,7 +51,12 @@ export class TextState
     */
    get rgb()
    {
-      return this.#rgb;
+      return this.#modes.rgb;
+   }
+
+   destroy()
+   {
+
    }
 
    /**
@@ -58,8 +66,20 @@ export class TextState
     */
    updateColor(color)
    {
-      this.#hsv._updateColor(color);
-      this.#rgb._updateColor(color);
+      this.#modes.hsv._updateColor(color);
+      this.#modes.rgb._updateColor(color);
+
+      this.#updateSubscribers();
+   }
+
+   #updateColorInternal(color, skipMode)
+   {
+      for (const key in this.#modes)
+      {
+         if (key === skipMode) { continue; }
+
+         this.#modes[key]._updateColor(color);
+      }
 
       this.#updateSubscribers();
    }

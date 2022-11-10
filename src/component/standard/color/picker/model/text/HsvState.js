@@ -4,16 +4,14 @@ export class HsvState
    #data;
 
    #colorState;
-   #internalUpdate;
-   #updateSubscribers
+   #textStateUpdate
 
-   constructor(colorState, internalUpdate, updateSubscribers)
+   constructor(colorState, textStateUpdate)
    {
       this.#data = { h: 0, s: 100, v: 100 };
 
       this.#colorState = colorState;
-      this.#internalUpdate = internalUpdate;
-      this.#updateSubscribers = updateSubscribers;
+      this.#textStateUpdate = textStateUpdate;
    }
 
    /**
@@ -68,12 +66,12 @@ export class HsvState
 
       this.#data.h = parsedValue;
 
-      this.#internalUpdate.textUpdate = true;
+      this.#colorState.internalUpdate.textUpdate = true;
 
       // Update hue and sv component stores w/ parsed data.
       this.#colorState.stores.hue.set(this.#data.h);
 
-      this.#updateSubscribers();
+      this.#textStateUpdate.color(this.#data, 'hsv');
    }
 
    /**
@@ -96,12 +94,12 @@ export class HsvState
 
       this.#data.s = parsedValue;
 
-      this.#internalUpdate.textUpdate = true;
+      this.#colorState.internalUpdate.textUpdate = true;
 
       // Update hue and sv component stores w/ parsed data.
       this.#colorState.stores.sv.set({ s: this.#data.s, v: this.#data.v });
 
-      this.#updateSubscribers();
+      this.#textStateUpdate.color(this.#data, 'hsv');
    }
 
    /**
@@ -124,12 +122,12 @@ export class HsvState
 
       this.#data.v = parsedValue;
 
-      this.#internalUpdate.textUpdate = true;
+      this.#colorState.internalUpdate.textUpdate = true;
 
       // Update hue and sv component stores w/ parsed data.
       this.#colorState.stores.sv.set({ s: this.#data.s, v: this.#data.v });
 
-      this.#updateSubscribers();
+      this.#textStateUpdate.color(this.#data, 'hsv');
    }
 
    /**

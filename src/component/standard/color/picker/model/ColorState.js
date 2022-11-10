@@ -31,7 +31,7 @@ export class ColorState
    #lastTime = 0;
 
    /** @type {ColorStateStores} */
-   #stores;
+   #stores = {};
 
    /**
     * Provides access to the externally "readable" stores set methods.
@@ -96,19 +96,17 @@ export class ColorState
          currentColor: tempStoreOutputColor.set
       }
 
-      this.#stores = {
-         // Writable stores
-         alpha: writable(this.#data.alpha),
-         hue: writable(this.#data.hue),
-         sv: writable(this.#data.sv),
+      // Writable stores
+      this.#stores.alpha = writable(this.#data.alpha);
+      this.#stores.hue = writable(this.#data.hue);
+      this.#stores.sv = writable(this.#data.sv);
 
-         // Readable stores
-         textState: new TextState(this, this.#internalUpdate),
-         rgbString: { subscribe: tempStoreRGBString.subscribe },
-         rgbHueString: { subscribe: tempStoreRGBHueString.subscribe },
-         rgbaString: { subscribe: tempStoreRGBAString.subscribe },
-         currentColor: { subscribe: tempStoreOutputColor.subscribe }
-      }
+      // Readable stores
+      this.#stores.textState = new TextState(this, this.#internalUpdate);
+      this.#stores.rgbString = { subscribe: tempStoreRGBString.subscribe };
+      this.#stores.rgbHueString = { subscribe: tempStoreRGBHueString.subscribe };
+      this.#stores.rgbaString = { subscribe: tempStoreRGBAString.subscribe };
+      this.#stores.currentColor = { subscribe: tempStoreOutputColor.subscribe };
 
       setTimeout(() =>
       {
@@ -140,6 +138,8 @@ export class ColorState
    destroy()
    {
       for (const unsubscribe of this.#unsubscribe) { unsubscribe(); }
+
+      this.#stores.textState.destroy();
    }
 
    #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, textUpdate = false })
