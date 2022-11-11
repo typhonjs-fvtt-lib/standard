@@ -2,68 +2,69 @@ import { writable }  from 'svelte/store';
 
 import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
 
+/**
+ * Provides a buffered set of stores converting the current color from {@link ColorState} into rounded RGB component
+ * values for display in the {@link TextInput} component. These RGB component stores have an overridden set method that
+ * validate updates from the number inputs they are assigned to keeping number ranges between `0-255` and also handling
+ * the case when the number input is `null` which occurs when the user removes all input values or inputs `-` a minus
+ * character, etc. In that case `0` is substituted for `null`.
+ */
 export class RgbState
 {
    /** @type {{ r: number, g: number, b: number}} */
    #data;
 
-   #colorState;
-   #textStateUpdate;
+   /** @type {ColorStateAccess} */
+   #colorStateAccess;
 
+   /** @type {TextStateAccess} */
+   #textStateAccess;
+
+   /** @type {RgbStateStores} */
    #stores;
+
+   /**
+    * Stores the original writable set methods.
+    *
+    * @type {{r: Function, g: Function, b: Function}}
+    */
    #storeSet = {};
 
-   constructor(colorState, textStateUpdate)
+   /**
+    * @param {ColorStateAccess}  colorStateAccess -
+    *
+    * @param {TextStateAccess}   textStateAccess -
+    */
+   constructor(colorStateAccess, textStateAccess)
    {
       this.#data = { r: 255, g: 0, b: 0 };
 
-      this.#colorState = colorState;
-      this.#textStateUpdate = textStateUpdate;
+      this.#colorStateAccess = colorStateAccess;
+      this.#textStateAccess = textStateAccess;
 
+      // Setup custom stores that swap out the writable set method invoking `#updateComponent` that after
+      // validation of new component data invokes the original set method.
       const r = writable(this.#data.r);
       this.#storeSet.r = r.set;
-      r.set = (value) =>
-      {
-         const parsedValue = this.#setR(value);
-
-         // Hack to have parsed / validated value always take by setting store temporarily to null.
-         this.#storeSet.r(null);
-         this.#storeSet.r(parsedValue);
-      }
+      r.set = (value) => this.#updateComponent(value, 'r');
 
       const g = writable(this.#data.g);
       this.#storeSet.g = g.set;
-      g.set = (value) =>
-      {
-         const parsedValue = this.#setG(value);
-
-         // Hack to have parsed / validated value always take by setting store temporarily to null.
-         this.#storeSet.g(null);
-         this.#storeSet.g(parsedValue);
-      }
+      g.set = (value) => this.#updateComponent(value, 'g');
 
       const b = writable(this.#data.b);
       this.#storeSet.b = b.set;
-      b.set = (value) =>
-      {
-         const parsedValue = this.#setB(value);
-
-         // Hack to have parsed / validated value always take by setting store temporarily to null.
-         this.#storeSet.b(null);
-         this.#storeSet.b(parsedValue);
-      }
+      b.set = (value) => this.#updateComponent(value, 'b');
 
       this.#stores = { r, g, b };
    }
 
+   /**
+    * @returns {RgbStateStores} RGB text state stores.
+    */
    get stores()
    {
       return this.#stores;
-   }
-
-   get #hsv()
-   {
-      return colord(this.#data).toHsv();
    }
 
    /**
@@ -79,105 +80,53 @@ export class RgbState
    }
 
    /**
-    * @param {string|number|null}   value - new red component.
+    * @param {number|null} value - A RGB component value to validate and update.
     *
-    * @returns {number} Validated number or null
+    * @param {string}      index -
     */
-   #setR(value)
+   #updateComponent(value, index)
    {
       // Handle case when all number input is removed or invalid and value is null.
       if (value === null) { value = 0; }
 
-      if (typeof value !== 'number') { throw new TypeError(`RgbState 'set r' error: 'value' is not a number.`); }
+      if (typeof value !== 'number') { throw new TypeError(`RgbState 'set ${index}' error: 'value' is not a number.`); }
 
       // Validate that input values are between `0 - 255`.
       if (value === Number.NaN) { value = 0; }
       if (value < 0) { value = 0; }
       if (value > 255) { value = 255; }
 
-      this.#data.r = value;
+      // Set the `textUpdate` flag to true so when ColorState.#updateCurrentColor executes it does not update
+      // TextState.
+      this.#colorStateAccess.internalUpdate.textUpdate = true;
 
-      this.#colorState.internalUpdate.textUpdate = true;
+      // Update local component value.
+      this.#data[index] = value;
 
-      // Update hue and sv component stores w/ parsed data.
-      const newHsv = this.#hsv;
+      // Update ColorState hue and sv component stores w/ parsed local RGB component data.
+      const newHsv = colord(this.#data).toHsv();
 
-      if (!this.#isRgbEqual()) { this.#colorState.stores.hue.set(newHsv.h); }
-      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
+      // Only change 'hue' when RGB components are not equal as the RGB to HSV conversion loses current hue value when
+      // RGB components aare equal (IE it switches to 0 / red).
+      if (!this.#isRgbEqual()) { this.#colorStateAccess.stores.hue.set(newHsv.h); }
 
-      this.#textStateUpdate.color(newHsv, 'rgb');
+      this.#colorStateAccess.stores.sv.set({ s: newHsv.s, v: newHsv.v });
 
-      return value;
+      // Hack to have parsed / validated value always take by setting store temporarily to null. This handles the edge
+      // case of writable stores not setting the same value. IE when the value is 0 and the user backspaces the number
+      // input and the corrected value is `0` again.
+      this.#storeSet[index](null);
+      this.#storeSet[index](value);
+
+      // Update all other text state modes, but exclude RgbState.
+      this.#textStateAccess.updateColorInternal(newHsv, 'rgb');
    }
 
    /**
-    * @param {string|number|null}   value - new green component.
+    * Updates the internal state from changes in {@link ColorState} current color.
+    * Covert to RGB and round values for display in the TextInput component.
     *
-    * @returns {number} Set successful.
-    */
-   #setG(value)
-   {
-      // Handle case when all number input is removed or invalid and value is null.
-      if (value === null) { value = 0; }
-
-      if (typeof value !== 'number') { throw new TypeError(`RgbState 'set g' error: 'value' is not a number.`); }
-
-      // Validate that input values are between `0 - 255`.
-      if (value === Number.NaN) { value = 0; }
-      if (value < 0) { value = 0; }
-      if (value > 255) { value = 255; }
-
-      this.#data.g = value;
-
-      this.#colorState.internalUpdate.textUpdate = true;
-
-      // Update hue and sv component stores w/ parsed data.
-      const newHsv = this.#hsv;
-
-      if (!this.#isRgbEqual()) { this.#colorState.stores.hue.set(newHsv.h); }
-      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
-
-      this.#textStateUpdate.color(newHsv, 'rgb');
-
-      return value;
-   }
-
-   /**
-    * @param {string|number|null}   value - new blue component.
-    *
-    * @returns {number} Set successful.
-    */
-   #setB(value)
-   {
-      // Handle case when all number input is removed or invalid and value is null.
-      if (value === null) { value = 0; }
-
-      if (typeof value !== 'number') { throw new TypeError(`RgbState 'set b' error: 'value' is not a number.`); }
-
-      // Validate that input values are between `0 - 255`.
-      if (value === Number.NaN) { value = 0; }
-      if (value < 0) { value = 0; }
-      if (value > 255) { value = 255; }
-
-      this.#data.b = value;
-
-      this.#colorState.internalUpdate.textUpdate = true;
-
-      // Update hue and sv component stores w/ parsed data.
-      const newHsv = this.#hsv;
-
-      if (!this.#isRgbEqual()) { this.#colorState.stores.hue.set(newHsv.h); }
-      this.#colorState.stores.sv.set({ s: newHsv.s, v: newHsv.v });
-
-      this.#textStateUpdate.color(newHsv, 'rgb');
-
-      return value;
-   }
-
-   /**
-    * Updates the internal state.
-    *
-    * @param {{h: number, s: number, v: number}}   color - ColorD instance.
+    * @param {{h: number, s: number, v: number}}   color - Current color value (HSV).
     *
     * @package
     */
@@ -194,3 +143,13 @@ export class RgbState
       this.#storeSet.b(this.#data.b);
    }
 }
+
+/**
+ * @typedef {object} RgbStateStores Provides the buffered stores to use in text input components.
+ *
+ * @property {import('svelte/store').Writable<number|null>} r - Red component value.
+ *
+ * @property {import('svelte/store').Writable<number|null>} g - Green component value.
+ *
+ * @property {import('svelte/store').Writable<number|null>} b - Blue component value.
+ */

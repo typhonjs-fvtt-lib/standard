@@ -24,7 +24,7 @@ export class InternalState
    /**
     * Stores internal data.
     *
-    * @type {InternalData}
+    * @type {PickerInternalData}
     */
    #internalData = {};
 
@@ -249,7 +249,7 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  */
 
 /**
- * @typedef {object} InternalData
+ * @typedef {object} PickerInternalData
  *
  * @property {'object'|'string'} format - Stores the output format passed back to bound color prop.
  *
@@ -292,9 +292,9 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColorPickerOptions.isTextInput}
  *
  *
- * @property {import('svelte/store').Writable<boolean>} isDark - See {@link InternalData.isDark}
+ * @property {import('svelte/store').Writable<boolean>} isDark - See {@link PickerInternalData.isDark}
  *
- * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link InternalData.isOpen}
+ * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
  *
- * @property {import('svelte/store').Writable<boolean>} sliderHorizontal - See {@link InternalData.sliderHorizontal}
+ * @property {import('svelte/store').Writable<boolean>} sliderHorizontal - See {@link PickerInternalData.sliderHorizontal}
  */

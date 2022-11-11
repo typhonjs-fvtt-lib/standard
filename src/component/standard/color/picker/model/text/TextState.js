@@ -19,22 +19,32 @@ export class TextState
     */
    #subscriptions = [];
 
+   /**
+    * @type {{hsv: HsvState, rgb: RgbState}}
+    */
    #modes;
 
-   constructor(colorStateInstance, internalUpdate)
+   /**
+    * @param {ColorState}                 colorState - ColorState instance.
+    *
+    * @param {ColorStateInternalUpdate}   internalUpdate - ColorState internal store update data.
+    */
+   constructor(colorState, internalUpdate)
    {
-      const colorState = {
-         stores: colorStateInstance.stores,
+      /** @type {ColorStateAccess} */
+      const colorStateAccess = {
+         stores: colorState.stores,
          internalUpdate
       }
 
+      /** @type {TextStateAccess} */
       const textStateUpdate = {
-         color: this.#updateColorInternal.bind(this)
+         updateColorInternal: this.#updateColorInternal.bind(this)
       }
 
       this.#modes = {
-         hsv: new HsvState(colorState, textStateUpdate),
-         rgb: new RgbState(colorState, textStateUpdate)
+         hsv: new HsvState(colorStateAccess, textStateUpdate),
+         rgb: new RgbState(colorStateAccess, textStateUpdate)
       }
    }
 
@@ -52,11 +62,6 @@ export class TextState
    get rgb()
    {
       return this.#modes.rgb;
-   }
-
-   destroy()
-   {
-
    }
 
    /**
@@ -113,3 +118,17 @@ export class TextState
       for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
    }
 }
+
+/**
+ * @typedef {object} ColorStateAccess
+ *
+ * @property {ColorStateStores} stores - The stores from {@link ColorState}.
+ *
+ * @property {ColorStateInternalUpdate} internalUpdate - The internal tracking state from {@link ColorState}.
+ */
+
+/**
+ * @typedef {object} TextStateAccess
+ *
+ * @property {Function} updateColorInternal - Provides access to the #updateColorInternal method.
+ */

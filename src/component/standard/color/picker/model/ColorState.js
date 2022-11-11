@@ -47,14 +47,7 @@ export class ColorState
     */
    #unsubscribe = [];
 
-   /**
-    * The separated store updates for alpha, hue, sv are debounced with a next tick update and this object
-    * collates the values for each store update in the same tick. It is reset in #updaateOutputColorDebounce.
-    *
-    * `rpgInt` determines if the update came from RgbInt and is handled differently in #updateColor.
-    *
-    * @type {{a: number, sv: {s: number, v: number}, h: number, textUpdate: boolean}}
-    */
+   /** @type {ColorStateInternalUpdate} */
    #internalUpdate = {
       h: void 0,
       sv: void 0,
@@ -138,8 +131,6 @@ export class ColorState
    destroy()
    {
       for (const unsubscribe of this.#unsubscribe) { unsubscribe(); }
-
-      this.#stores.textState.destroy();
    }
 
    #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, textUpdate = false })
@@ -293,6 +284,24 @@ console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
 
    }
 }
+
+/**
+ * @typedef {object} ColorStateInternalUpdate
+ *
+ * The separated store updates for alpha, hue, sv are debounced with a next tick update and this object
+ * collates the values for each store update in the same tick. It is reset in #updaateOutputColorDebounce.
+ *
+ * `textUpdate` determines if the update came from {@link TextState} and if so TextState is not updated in
+ * #updateCurrentColor.
+ *
+ * @property {number}                  a - New alpha value.
+ *
+ * @property {number}                  h - New hue value.
+ *
+ * @property {{s: number, v: number}}  sv - New SV value.
+ *
+ * @property {boolean}                 textUpdate - Did the update come from {@link TextState}.
+ */
 
 /**
  * @typedef {object} ColorStateStores
