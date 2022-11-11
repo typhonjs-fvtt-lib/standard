@@ -1,183 +1,133 @@
+import { writable } from 'svelte/store';
+
+/**
+ * Provides a buffered set of stores converting the current color from {@link ColorState} into rounded HSV component
+ * values for display in the {@link TextInput} component. These HSV component stores have an overridden set method that
+ * validate updates from the number inputs they are assigned to keeping number ranges between `0-360` for hue / h and
+ * s / v (0 - 100). Also handling the case when the number input is `null` which occurs when the user removes all input
+ * values or inputs `-` a minus character, etc. In that case `0` is substituted for `null`.
+ */
 export class HsvState
 {
    /** @type {{ h: number, s: number, v: number}} */
    #data;
 
-   #colorState;
-   #textStateUpdate
+   /** @type {ColorStateAccess} */
+   #colorStateAccess;
 
-   constructor(colorState, textStateUpdate)
+   /** @type {TextStateAccess} */
+   #textStateAccess;
+
+   /** @type {HsvStateStores} */
+   #stores;
+
+   /**
+    * Stores the original writable set methods.
+    *
+    * @type {{h: Function, s: Function, v: Function}}
+    */
+   #storeSet = {};
+
+   /**
+    * @param {ColorStateAccess}  colorStateAccess -
+    *
+    * @param {TextStateAccess}   textStateAccess -
+    */
+   constructor(colorStateAccess, textStateAccess)
    {
       this.#data = { h: 0, s: 100, v: 100 };
 
-      this.#colorState = colorState;
-      this.#textStateUpdate = textStateUpdate;
+      this.#colorStateAccess = colorStateAccess;
+      this.#textStateAccess = textStateAccess;
+
+      // Setup custom stores that swap out the writable set method invoking `#updateComponent` that after
+      // validation of new component data invokes the original set method.
+      const h = writable(this.#data.h);
+      this.#storeSet.h = h.set;
+      h.set = (value) => this.#updateComponent(value, 'h');
+
+      const s = writable(this.#data.s);
+      this.#storeSet.s = s.set;
+      s.set = (value) => this.#updateComponent(value, 's');
+
+      const v = writable(this.#data.v);
+      this.#storeSet.v = v.set;
+      v.set = (value) => this.#updateComponent(value, 'v');
+
+      this.#stores = { h, s, v };
    }
 
    /**
-    * @returns {{ h: number, s: number, v: number}}
+    * @returns {HsvStateStores} HSV text state stores.
     */
-   get data()
+   get stores()
    {
-      return this.#data;
+      return this.#stores;
    }
 
    /**
-    * @returns {number}
+    * @param {number|null} value - A HSV component value to validate and update.
+    *
+    * @param {'h'|'s'|'v'} index - HSV component index.
     */
-   get h()
+   #updateComponent(value, index)
    {
-      return this.#data.h;
-   }
+      // Handle case when all number input is removed or invalid and value is null.
+      if (value === null) { value = 0; }
 
-   /**
-    * @returns {number}
-    */
-   get s()
-   {
-      return this.#data.s;
-   }
+      if (typeof value !== 'number') { throw new TypeError(`HsvState 'set ${index}' error: 'value' is not a number.`); }
 
-   /**
-    * @returns {number}
-    */
-   get v()
-   {
-      return this.#data.v;
-   }
+      // Validate that input values; h (0-360) / s & v (0 - 100).
+      if (value === Number.NaN) { value = 0; }
+      if (value < 0) { value = 0; }
 
-   /**
-    * @param {string|number}  value - New hue component.
-    */
-   set h(value)
-   {
-      const typeofValue = typeof value;
-
-      if (typeofValue !== 'string' && typeofValue !== 'number')
+      switch (index)
       {
-         throw new TypeError(`HsvState 'set h' error: 'value' is not a string or number.`);
+         case 'h':
+            if (value > 360) { value = 360; }
+            break;
+
+         case 's':
+         case 'v':
+            if (value > 100) { value = 100; }
+            break;
       }
 
-      if (!this.isValidHue(value)) { return; }
+      // Set the `textUpdate` flag to true so when ColorState.#updateCurrentColor executes it does not update
+      // TextState.
+      this.#colorStateAccess.internalUpdate.textUpdate = true;
 
-      let parsedValue = value;
+      // Update local component value.
+      this.#data[index] = value;
 
-      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
-
-      this.#data.h = parsedValue;
-
-      this.#colorState.internalUpdate.textUpdate = true;
-
-      // Update hue and sv component stores w/ parsed data.
-      this.#colorState.stores.hue.set(this.#data.h);
-
-      this.#textStateUpdate.color(this.#data, 'hsv');
-   }
-
-   /**
-    * @param {string|number}  value - New saturation component.
-    */
-   set s(value)
-   {
-      const typeofValue = typeof value;
-
-      if (typeofValue !== 'string' && typeofValue !== 'number')
+      // Update the appropriate ColorState store.
+      switch (index)
       {
-         throw new TypeError(`HsvState 'set s' error: 'value' is not a string or number.`);
+         case 'h':
+            this.#colorStateAccess.stores.hue.set(this.#data.h);
+            break;
+
+         case 's':
+         case 'v':
+            this.#colorStateAccess.stores.sv.set({ s: this.#data.s, v: this.#data.v });
+            break;
       }
 
-      if (!this.isValidSV(value)) { return; }
+      // Hack to have parsed / validated value always take by setting store temporarily to null. This handles the edge
+      // case of writable stores not setting the same value. IE when the value is 0 and the user backspaces the number
+      // input and the corrected value is `0` again.
+      this.#storeSet[index](null);
+      this.#storeSet[index](value);
 
-      let parsedValue = value;
-
-      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
-
-      this.#data.s = parsedValue;
-
-      this.#colorState.internalUpdate.textUpdate = true;
-
-      // Update hue and sv component stores w/ parsed data.
-      this.#colorState.stores.sv.set({ s: this.#data.s, v: this.#data.v });
-
-      this.#textStateUpdate.color(this.#data, 'hsv');
+      // Update all other text state modes, but exclude RgbState.
+      this.#textStateAccess.updateColorInternal(this.#data, 'hsv');
    }
 
    /**
-    * @param {string|number}  value - New value component.
-    */
-   set v(value)
-   {
-      const typeofValue = typeof value;
-
-      if (typeofValue !== 'string' && typeofValue !== 'number')
-      {
-         throw new TypeError(`HsvState 'set v' error: 'value' is not a string or number.`);
-      }
-
-      if (!this.isValidSV(value)) { return; }
-
-      let parsedValue = value;
-
-      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
-
-      this.#data.v = parsedValue;
-
-      this.#colorState.internalUpdate.textUpdate = true;
-
-      // Update hue and sv component stores w/ parsed data.
-      this.#colorState.stores.sv.set({ s: this.#data.s, v: this.#data.v });
-
-      this.#textStateUpdate.color(this.#data, 'hsv');
-   }
-
-   /**
-    * Determines if the given value is a valid hue component from 0-360 either as a number or string.
+    * Updates the internal state from changes in {@link ColorState} current color.
+    * Covert to HSV and round values for display in the TextInput component.
     *
-    * @param {string|number}  value - value to test.
-    *
-    * @returns {boolean} Is a valid hue value.
-    */
-   isValidHue(value)
-   {
-      const typeofValue = typeof value;
-
-      if (typeofValue !== 'string' && typeofValue !== 'number') { return false; }
-
-      let parsedValue = value;
-
-      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
-
-      if (parsedValue === Number.NaN) { return false; }
-
-      return parsedValue >= 0 && parsedValue <= 360;
-   }
-
-   /**
-    * Determines if the given value is a valid saturation or value component from 0-100 either as a number or string.
-    *
-    * @param {string|number}  value - value to test.
-    *
-    * @returns {boolean} Is a valid saturation / value component.
-    */
-   isValidSV(value)
-   {
-      const typeofValue = typeof value;
-
-      if (typeofValue !== 'string' && typeofValue !== 'number') { return false; }
-
-      let parsedValue = value;
-
-      if (typeofValue === 'string') { parsedValue = globalThis.parseFloat(value); }
-
-      if (parsedValue === Number.NaN) { return false; }
-
-      return parsedValue >= 0 && parsedValue <= 100;
-   }
-
-   /**
-    * Updates the internal state.
-    *
-    * @param {{h: number, s: number, v: number}}   color - ColorD instance.
+    * @param {object}   color - Current color value (HSV currently).
     *
     * @package
     */
@@ -186,5 +136,19 @@ export class HsvState
       this.#data.h = Math.round(color.h);
       this.#data.s = Math.round(color.s);
       this.#data.v = Math.round(color.v);
+
+      this.#storeSet.h(this.#data.h);
+      this.#storeSet.s(this.#data.s);
+      this.#storeSet.v(this.#data.v);
    }
 }
+
+/**
+ * @typedef {object} HsvStateStores Provides the buffered stores to use in text input components.
+ *
+ * @property {import('svelte/store').Writable<number|null>} h - Hue component value.
+ *
+ * @property {import('svelte/store').Writable<number|null>} s - Saturation component value.
+ *
+ * @property {import('svelte/store').Writable<number|null>} v - Value / brightness component value.
+ */

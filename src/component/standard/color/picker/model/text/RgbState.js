@@ -82,7 +82,7 @@ export class RgbState
    /**
     * @param {number|null} value - A RGB component value to validate and update.
     *
-    * @param {string}      index -
+    * @param {'r'|'g'|'b'} index - RGB component index.
     */
    #updateComponent(value, index)
    {
@@ -126,7 +126,7 @@ export class RgbState
     * Updates the internal state from changes in {@link ColorState} current color.
     * Covert to RGB and round values for display in the TextInput component.
     *
-    * @param {{h: number, s: number, v: number}}   color - Current color value (HSV).
+    * @param {object}   color - Current color value (HSV currently).
     *
     * @package
     */

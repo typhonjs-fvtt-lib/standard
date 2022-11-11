@@ -24,14 +24,12 @@
 
    $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
-   $: hsv = $textState.hsv.data;
-
+   const { h, s, v } = textState.hsv.stores;
    const { r, g, b } = textState.rgb.stores;
 
    let hex;
 
    $: {
-      const colordInstance = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha });
       hex = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha }).toHex();
    }
 
@@ -58,33 +56,6 @@
          $sv = { s: newHsv.s, v: newHsv.v };
          $alpha = newHsv.a
       }
-   }
-
-   /**
-    * @param {string}    property -
-    *
-    * @returns {(function(InputEvent): void)|*}
-    */
-   function updateHsv(property)
-   {
-      return function (e)
-      {
-         let isValid = false;
-
-         switch (property)
-         {
-            case 'h':
-               isValid = textState.hsv.isValidHue(e.target.value);
-               break;
-
-            case 's':
-            case 'v':
-               isValid = textState.hsv.isValidSV(e.target.value);
-               break;
-         }
-
-         if (isValid) { textState.hsv[property] = e.target.value; }
-      };
    }
 </script>
 
@@ -137,25 +108,22 @@
     {:else}
         <div class=input-container>
             <input aria-label="hue chanel color"
-                   value={hsv.h}
+                   bind:value={$h}
                    type=number
                    min=0
                    max=360
-                   on:input={updateHsv('h')}
             />
             <input aria-label="saturation chanel color"
-                   value={hsv.s}
+                   bind:value={$s}
                    type=number
                    min=0
                    max=100
-                   on:input={updateHsv('s')}
             />
             <input aria-label="brightness chanel color"
-                   value={hsv.v}
+                   bind:value={$v}
                    type=number
                    min=0
                    max=100
-                   on:input={updateHsv('v')}
             />
             {#if $isAlpha}
                 <input aria-label="transparency chanel color"

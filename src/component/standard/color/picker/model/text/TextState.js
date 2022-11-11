@@ -38,13 +38,13 @@ export class TextState
       }
 
       /** @type {TextStateAccess} */
-      const textStateUpdate = {
+      const textStateAccess = {
          updateColorInternal: this.#updateColorInternal.bind(this)
       }
 
       this.#modes = {
-         hsv: new HsvState(colorStateAccess, textStateUpdate),
-         rgb: new RgbState(colorStateAccess, textStateUpdate)
+         hsv: new HsvState(colorStateAccess, textStateAccess),
+         rgb: new RgbState(colorStateAccess, textStateAccess)
       }
    }
 
