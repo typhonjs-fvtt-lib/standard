@@ -1,5 +1,6 @@
-import { HsvState }  from './HsvState.js';
-import { RgbState }  from './RgbState.js';
+import { AlphaState }   from './AlphaState.js';
+import { HsvState }     from './HsvState.js';
+import { RgbState }     from './RgbState.js';
 
 /**
  * Manages the text state for all supported color formats such as `rgb` and `hex` formats. The internal storage format
@@ -20,7 +21,7 @@ export class TextState
    #subscriptions = [];
 
    /**
-    * @type {{hsv: HsvState, rgb: RgbState}}
+    * @type {{alpha: AlphaState, hsv: HsvState, rgb: RgbState}}
     */
    #modes;
 
@@ -43,9 +44,18 @@ export class TextState
       }
 
       this.#modes = {
+         alpha: new AlphaState(colorStateAccess, textStateAccess),
          hsv: new HsvState(colorStateAccess, textStateAccess),
          rgb: new RgbState(colorStateAccess, textStateAccess)
       }
+   }
+
+   /**
+    * @returns {AlphaState}
+    */
+   get alpha()
+   {
+      return this.#modes.alpha;
    }
 
    /**
@@ -71,12 +81,20 @@ export class TextState
     */
    updateColor(color)
    {
+      this.#modes.alpha._updateColor(color);
       this.#modes.hsv._updateColor(color);
       this.#modes.rgb._updateColor(color);
 
       this.#updateSubscribers();
    }
 
+   /**
+    * Provides a mechanism for the various color modes to update the other modes on changes to internal state.
+    *
+    * @param {object}   color - Color object from the source mode.
+    *
+    * @param {string}   skipMode - Mode index to skip; IE when invoked from a given mode that mode is skipped.
+    */
    #updateColorInternal(color, skipMode)
    {
       for (const key in this.#modes)

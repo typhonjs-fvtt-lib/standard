@@ -10,7 +10,6 @@
    const {
       hue,
       sv,
-      alpha,
       textState } = internalState.colorState.stores;
 
    /** @type {RegExp} */
@@ -22,8 +21,9 @@
    /** @type {number} */
    let mode = 0;
 
-   $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
+   // $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
 
+   const { alpha } = textState.alpha.stores;
    const { h, s, v } = textState.hsv.stores;
    const { r, g, b } = textState.rgb.stores;
 
@@ -33,13 +33,13 @@
       hex = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha }).toHex();
    }
 
-   function updateAlpha(e)
-   {
-      const newAlpha = parseFloat(e.target.value);
-      const isValid = newAlpha >= 0 && newAlpha <= 1;
-
-      if (isValid) { $alpha = newAlpha; }
-   }
+   // function updateAlpha(e)
+   // {
+   //    const newAlpha = parseFloat(e.target.value);
+   //    const isValid = newAlpha >= 0 && newAlpha <= 1;
+   //
+   //    if (isValid) { $alpha = newAlpha; }
+   // }
 
    /**
     * @param {InputEvent} e -
@@ -65,12 +65,11 @@
             <input value={hex} on:input={updateHex} style="flex: 3"/>
             {#if $isAlpha}
                 <input aria-label="hexadecimal color"
-                       bind:value={a}
+                       bind:value={$alpha}
                        type=number
                        min=0
                        max=1
                        step=0.01
-                       on:input={updateAlpha}
                 />
             {/if}
         </div>
@@ -96,12 +95,11 @@
             />
             {#if $isAlpha}
                 <input aria-label="transparency chanel color"
-                       value={a}
+                       bind:value={$alpha}
                        type=number
                        min=0
                        max=1
                        step=0.01
-                       on:input={updateAlpha}
                 />
             {/if}
         </div>
@@ -127,12 +125,11 @@
             />
             {#if $isAlpha}
                 <input aria-label="transparency chanel color"
-                       value={a}
+                       bind:value={$alpha}
                        type=number
                        min=0
                        max=1
                        step=0.01
-                       on:input={updateAlpha}
                 />
             {/if}
         </div>
