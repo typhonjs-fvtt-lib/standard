@@ -6,6 +6,8 @@ import { writable } from 'svelte/store';
  * validate updates from the number inputs they are assigned to keeping number ranges between `0-1`.
  * Also handling the case when the number input is `null` which occurs when the user removes all input
  * values or inputs `-` a minus character, etc. In that case `0` is substituted for `null`.
+ *
+ * Note: Alpha state changes do not set `#colorStateAccess.internalUpdate.textUpdate` to true.
  */
 export class AlphaState
 {
@@ -71,10 +73,6 @@ export class AlphaState
       if (value === Number.NaN) { value = 1; }
       if (value < 0) { value = 0; }
       if (value > 1) { value = 1; }
-
-      // Set the `textUpdate` flag to true so when ColorState.#updateCurrentColor executes it does not update
-      // TextState.
-      this.#colorStateAccess.internalUpdate.textUpdate = true;
 
       // Update local component value.
       this.#alpha = value;

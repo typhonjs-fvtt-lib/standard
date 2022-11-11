@@ -1,19 +1,10 @@
 <script>
    import { getContext }   from 'svelte';
 
-   import { colord }       from '@typhonjs-fvtt/runtime/color/colord';
-
    const internalState = getContext('#cp-state');
 
    const { isAlpha } = internalState.stores;
-
-   const {
-      hue,
-      sv,
-      textState } = internalState.colorState.stores;
-
-   /** @type {RegExp} */
-   const HEX_COLOR_REGEX = /^#?([A-F0-9]{6}|[A-F0-9]{8})$/i;
+   const { textState } = internalState.colorState.stores;
 
    /** @type {['HEX', 'RGB', 'HSV']} */
    const modes = ['HEX', 'RGB', 'HSV'];
@@ -21,50 +12,22 @@
    /** @type {number} */
    let mode = 0;
 
-   // $: a = $alpha === undefined ? 1 : Math.round($alpha * 100) / 100;
-
    const { alpha } = textState.alpha.stores;
+   const { hex, isHexValid } = textState.hex.stores;
    const { h, s, v } = textState.hsv.stores;
    const { r, g, b } = textState.rgb.stores;
-
-   let hex;
-
-   $: {
-      hex = colord({ h: $hue, s: $sv.s, v: $sv.v, a: $alpha }).toHex();
-   }
-
-   // function updateAlpha(e)
-   // {
-   //    const newAlpha = parseFloat(e.target.value);
-   //    const isValid = newAlpha >= 0 && newAlpha <= 1;
-   //
-   //    if (isValid) { $alpha = newAlpha; }
-   // }
-
-   /**
-    * @param {InputEvent} e -
-    */
-   function updateHex(e)
-   {
-      const value = e.target.value;
-
-      if (HEX_COLOR_REGEX.test(value))
-      {
-         const newHsv = colord(value).toHsv();
-
-         $hue = newHsv.h;
-         $sv = { s: newHsv.s, v: newHsv.v };
-         $alpha = newHsv.a
-      }
-   }
 </script>
 
 <div class=text-input>
     {#if mode === 0}
         <div class=input-container>
-            <input value={hex} on:input={updateHex} style="flex: 3"/>
+            <input aria-label="hex color"
+                   class:is-hex-invalid={!$isHexValid}
+                   bind:value={$hex}
+                   style="flex: 3"
+            />
             {#if $isAlpha}
-                <input aria-label="hexadecimal color"
+                <input aria-label="transparency chanel color"
                        bind:value={$alpha}
                        type=number
                        min=0
@@ -160,6 +123,10 @@
         display: flex;
         flex: 1;
         gap: 10px;
+    }
+
+    .is-hex-invalid {
+        color: red;
     }
 
     input,
