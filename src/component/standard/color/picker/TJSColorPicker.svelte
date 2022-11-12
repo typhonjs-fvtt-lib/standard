@@ -29,7 +29,7 @@
     */
    export let options = void 0;
 
-   const internalState = new InternalState($$props, options);
+   const internalState = new InternalState(color, options);
 
    setContext('#cp-state', internalState);
 
@@ -52,23 +52,11 @@
 
    onDestroy(() => internalState.destroy());
 
-   // When alpha is set to false externally ensure local state is correct.
-   // TODO: REFACTOR GENERIC COLOR STATE
-   // const { hsv } = colorState.stores;
-   // $: if (!$isAlpha) { $hsv.a = 1; }
-
    /** @type {object} */
    $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
 
    // When options changes update internal state.
    $: internalState.update(options);
-
-//    // When internal color state changes update `color` prop.
-//    $: if ($colorState)
-//    {
-//       color = colorState.getExternalColor();
-// // console.log(`!! TJSColorPicker - $colorState - 0 - color: `, color);
-//    }
 
    $: {
       color = $currentColor;

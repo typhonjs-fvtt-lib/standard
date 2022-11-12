@@ -6,6 +6,7 @@ import { isObject }        from '@typhonjs-svelte/lib/util';
 import { ColorState }      from './ColorState.js';
 
 import { layout }          from '../base/layout/index.js'
+import { textInput }       from '../base/text/index.js';
 
 export class InternalState
 {
@@ -33,10 +34,13 @@ export class InternalState
     */
    #stores;
 
-   constructor($$props, options)
+   /**
+    * @param {TJSColorPickerColor}     color -
+    *
+    * @param {TJSColorPickerOptions}   options -
+    */
+   constructor(color, options)
    {
-      this.#colorState = new ColorState($$props);
-
       // TODO determine color output format from initial props bound or otherwise; object or string.
       const opts = isObject(options) ? options : {};
 
@@ -77,7 +81,9 @@ export class InternalState
          sliderHorizontal: propertyStore(internalData, 'sliderHorizontal')
       }
 
-console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
+      this.#colorState = new ColorState(this, color);
+
+      console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
 console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData)
    }
 
@@ -142,6 +148,7 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       }
 
       return {
+         ...textInput,
          ...layout.default,
          ...(isObject(opts.components) ? opts.components : selectedVariant)
       }
@@ -233,6 +240,10 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
       }
    }
 }
+
+/**
+ * @typedef {object|string} TJSColorPickerColor
+ */
 
 /**
  * @typedef {object} TJSColorPickerOptions

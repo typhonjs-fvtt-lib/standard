@@ -28,7 +28,7 @@ export class ColorState
       currentColor: { h: 0, s: 100, v: 100, a: 1 }
    };
 
-   #lastTime = 0;
+   #lastTime = Number.MIN_SAFE_INTEGER;
 
    /** @type {ColorStateStores} */
    #stores = {};
@@ -63,9 +63,14 @@ export class ColorState
     */
    #updateCurrentColorDebounce;
 
-   constructor($$props)
+   /**
+    * @param {InternalState}  internalState -
+    *
+    * @param {object|string}  color
+    */
+   constructor(internalState, color)
    {
-      this.#validateProps($$props);
+      this.#validateProps(color);
 
       this.#updateCurrentColorDebounce = debounce(() =>
       {
@@ -124,6 +129,20 @@ export class ColorState
 
             this.#internalUpdate.sv = sv;
             this.#updateCurrentColorDebounce();
+         }));
+
+         this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.sv, (sv) =>
+         {
+// console.log(`!! ColorState - stores.sv change`);
+
+            this.#internalUpdate.sv = sv;
+            this.#updateCurrentColorDebounce();
+         }));
+
+         // Subscribe to InternalState `isAlpha` option to set ColorState alpha store when disabled.
+         this.#unsubscribe.push(subscribeIgnoreFirst(internalState.stores.isAlpha, (isAlpha) =>
+         {
+            if (!isAlpha) { this.#stores.alpha.set(1); }
          }));
       }, 0);
    }
@@ -237,15 +256,15 @@ export class ColorState
    /**
     * Validates all props ensuring that only one color prop is bound.
     *
-    * @param {object}   $$props -
+    * @param {object|string}   color -
     */
-   #validateProps($$props)
+   #validateProps(color)
    {
-console.log(`!! ColorState - #validateProps - 0 - $$props: `, $$props)
+console.log(`!! ColorState - #validateProps - 0 - color: `, color)
 
-      if (isObject($$props?.color) || typeof $$props?.color === 'string')
+      if (isObject(color) || typeof color === 'string')
       {
-         const colordInstance = colord($$props.color);
+         const colordInstance = colord(color);
 
          if (colordInstance.isValid())
          {
@@ -278,10 +297,9 @@ console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
          }
          else
          {
-            console.warn(`TJSColorPicker warning: bound 'color' prop is not a valid color; '${$$props.color}`);
+            console.warn(`TJSColorPicker warning: bound 'color' prop is not a valid color; '${color}`);
          }
       }
-
    }
 }
 
