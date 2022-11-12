@@ -101,7 +101,7 @@
 <svelte:window on:keydown={keydown} on:keyup={keyup}/>
 
 <span bind:this={span}
-      class=color-picker
+      class=tjs-color-picker
       style:--_tjs-color-picker-current-color-rgb={$rgbString}
       style:--_tjs-color-picker-current-color-rgb-hue={$rgbHueString}
       style:--_tjs-color-picker-current-color-rgba={$rgbaString}
