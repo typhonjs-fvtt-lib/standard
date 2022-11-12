@@ -20,7 +20,59 @@
     gap: 10px;
 }
 
-.tjs-color-picker .text-input input, button {
+/*.tjs-color-picker .text-input .tjs-input-container {*/
+/*    flex: 1;*/
+/*    border: none;*/
+/*    background-color: #eee;*/
+/*    padding: 0;*/
+/*    border-radius: 5px;*/
+/*    height: 30px;*/
+/*    line-height: 30px;*/
+/*    text-align: center;*/
+/*}*/
+
+.tjs-color-picker .text-input .tjs-input-container {
+    flex: 1;
+    padding: 0;
+    text-align: center;
+    --tjs-input-text-align: center;
+    --tjs-input-width: 5px;
+}
+
+/*.tjs-color-picker .text-input input {*/
+/*    flex: 1;*/
+/*    border: none;*/
+/*    background-color: #eee;*/
+/*    padding: 0;*/
+/*    border-radius: 5px;*/
+/*    height: 30px;*/
+/*    line-height: 30px;*/
+/*    text-align: center;*/
+/*}*/
+
+   /*
+    * --tjs-input-border
+    * --tjs-input-border-radius
+    * --tjs-input-background
+    * --tjs-input-cursor
+    * --tjs-input-height
+    * --tjs-input-padding
+    * --tjs-input-placeholder-color;
+    * --tjs-input-text-align
+    * --tjs-input-width
+    *
+    * --tjs-input-text-border
+    * --tjs-input-text-border-radius
+    * --tjs-input-text-background
+    * --tjs-input-text-cursor
+    * --tjs-input-text-height
+    * --tjs-input-text-padding
+    * --tjs-input-text-placeholder-color
+    * --tjs-input-text-text-align
+    * --tjs-input-text-width
+    */
+
+.tjs-color-picker .text-input button {
     flex: 1;
     border: none;
     background-color: #eee;
@@ -31,9 +83,9 @@
     text-align: center;
 }
 
-.tjs-color-picker .text-input input {
-    width: 5px;
-}
+/*.tjs-color-picker .text-input input {*/
+/*    width: 5px;*/
+/*}*/
 
 .tjs-color-picker .text-input .is-input-invalid {
     color: red;

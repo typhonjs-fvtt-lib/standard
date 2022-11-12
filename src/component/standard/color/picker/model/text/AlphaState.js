@@ -1,5 +1,8 @@
 import { writable } from 'svelte/store';
 
+// TODO REFACTOR TO TOP LEVEL OPTION
+import { rippleFocus } from '@typhonjs-fvtt/svelte-standard/action';
+
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into a rounded alpha
  * value for display in the {@link TextInput} component. The alpha component store has an overridden set method that
@@ -19,6 +22,9 @@ export class AlphaState
 
    /** @type {TextStateAccess} */
    #textStateAccess;
+
+   /** @type {AlphaStateInputData} */
+   #inputData;
 
    /** @type {AlphaStateStores} */
    #stores;
@@ -49,6 +55,29 @@ export class AlphaState
       alpha.set = (value) => this.#updateComponent(value);
 
       this.#stores = { alpha };
+
+      this.#inputData = {
+         alpha: {
+            store: alpha,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 1,
+            step: 0.01,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            }
+         }
+      }
+   }
+
+   /**
+    * @returns {AlphaStateInputData} Alpha input component data.
+    */
+   get inputData()
+   {
+      return this.#inputData;
    }
 
    /**
@@ -103,7 +132,13 @@ export class AlphaState
 }
 
 /**
- * @typedef {object} AlphaStateStores Provides the buffered stores to use in text input components.
+ * @typedef {object} AlphaStateInputData Provides the input data options to use in number input components.
+ *
+ * @property {object} alpha - Alpha input component data.
+ */
+
+/**
+ * @typedef {object} AlphaStateStores Provides the buffered stores to use in number input components.
  *
  * @property {import('svelte/store').Writable<number|null>} alpha - Alpha component value.
  */

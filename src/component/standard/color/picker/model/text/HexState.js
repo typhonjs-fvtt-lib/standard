@@ -2,6 +2,9 @@ import { writable }  from 'svelte/store';
 
 import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
 
+// TODO REFACTOR TO TOP LEVEL OPTION
+import { rippleFocus } from '@typhonjs-fvtt/svelte-standard/action';
+
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into a hex values for display
  * in the {@link TextInput} component. The hex store has an overridden set method that validate updates from the text
@@ -19,6 +22,9 @@ export class HexState
 
    /** @type {TextStateAccess} */
    #textStateAccess;
+
+   /** @type {HexStateInputData} */
+   #inputData;
 
    /** @type {HexStateStores} */
    #stores;
@@ -50,6 +56,28 @@ export class HexState
 
       const isHexValid = writable(true);
       this.#stores = { hex, isHexValid };
+
+      this.#inputData = {
+         hex: {
+            store: hex,
+            storeIsValid: isHexValid,
+            efx: rippleFocus(),
+            type: 'text',
+            styles: { flex: 3 },
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            }
+         }
+      }
+   }
+
+   /**
+    * @returns {HexStateInputData} Hex input component data.
+    */
+   get inputData()
+   {
+      return this.#inputData;
    }
 
    /**
@@ -144,6 +172,12 @@ export class HexState
       this.#stores.isHexValid.set(true);
    }
 }
+
+/**
+ * @typedef {object} HexStateInputData Provides the input data options to use in text input components.
+ *
+ * @property {object} hex - Hex input component data.
+ */
 
 /**
  * @typedef {object} HexStateStores Provides the buffered stores to use in text input components.

@@ -1,5 +1,7 @@
 <script>
-   import { getContext } from 'svelte';
+   import { getContext }    from 'svelte';
+
+   import { rippleFocus }   from '@typhonjs-fvtt/svelte-standard/action';
 
    const internalState = getContext('#tjs-color-picker-state');
 
@@ -8,6 +10,19 @@
 
    const { alpha } = textState.alpha.stores;
    const { h, s, l } = textState.hsl.stores;
+
+   const inputAlpha = {
+      store: alpha,
+      efx: rippleFocus(),
+      type: 'number',
+      min: 0,
+      max: 1,
+      step: 0.01,
+      options: {
+         blurOnEnterKey: true,
+         cancelOnEscKey: true
+      }
+   };
 </script>
 
 <div class=input-container>

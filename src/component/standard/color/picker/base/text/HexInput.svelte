@@ -1,28 +1,20 @@
 <script>
    import { getContext } from 'svelte';
 
+   import { TJSInput }  from '../../../../form/input/index.js'
+
    const internalState = getContext('#tjs-color-picker-state');
 
    const { isAlpha } = internalState.stores;
    const { textState } = internalState.colorState.stores;
 
-   const { alpha } = textState.alpha.stores;
-   const { hex, isHexValid } = textState.hex.stores;
+   const { alpha } = textState.alpha.inputData;
+   const { hex } = textState.hex.inputData;
 </script>
 
 <div class=input-container>
-    <input aria-label="hex color"
-           class:is-input-invalid={!$isHexValid}
-           bind:value={$hex}
-           style="flex: 3"
-    />
+    <TJSInput input={hex} />
     {#if $isAlpha}
-        <input aria-label="transparency chanel color"
-               bind:value={$alpha}
-               type=number
-               min=0
-               max=1
-               step=0.01
-        />
+        <TJSInput input={alpha} />
     {/if}
 </div>
