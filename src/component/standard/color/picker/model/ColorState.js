@@ -131,14 +131,6 @@ export class ColorState
             this.#updateCurrentColorDebounce();
          }));
 
-         this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.sv, (sv) =>
-         {
-// console.log(`!! ColorState - stores.sv change`);
-
-            this.#internalUpdate.sv = sv;
-            this.#updateCurrentColorDebounce();
-         }));
-
          // Subscribe to InternalState `isAlpha` option to set ColorState alpha store when disabled.
          this.#unsubscribe.push(subscribeIgnoreFirst(internalState.stores.isAlpha, (isAlpha) =>
          {
