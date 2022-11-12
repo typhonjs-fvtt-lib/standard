@@ -1,7 +1,7 @@
 <script>
    import { getContext } from 'svelte';
 
-   const internalState = getContext('#cp-state');
+   const internalState = getContext('#tjs-color-picker-state');
 </script>
 
 <div class=outer

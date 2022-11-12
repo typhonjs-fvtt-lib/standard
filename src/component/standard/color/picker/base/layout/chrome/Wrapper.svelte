@@ -1,7 +1,7 @@
 <script>
    import { getContext }    from 'svelte';
 
-   const { isOpen, isPopup, sliderHorizontal } = getContext('#cp-state').stores;
+   const { isOpen, isPopup, sliderHorizontal } = getContext('#tjs-color-picker-state').stores;
 
    sliderHorizontal.set(true);
 

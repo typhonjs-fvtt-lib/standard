@@ -4,7 +4,7 @@
    import { keyPressed, keyPressedCustom }  from '../util/store.js';
    import { easeInOutSin }                  from '../util/transition.js';
 
-   const internalState = getContext('#cp-state');
+   const internalState = getContext('#tjs-color-picker-state');
 
    const { components, sliderHorizontal } = internalState.stores;
    const { alpha } = internalState.colorState.stores;

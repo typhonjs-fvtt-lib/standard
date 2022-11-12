@@ -7,7 +7,7 @@
 
    import { easeInOutSin } from '../util/transition.js';
 
-   const internalState = getContext('#cp-state');
+   const internalState = getContext('#tjs-color-picker-state');
 
    const hue = internalState.colorState.stores.hue;
 

@@ -4,7 +4,7 @@
    /** @type {{ x: number; y: number }} */
    export let pos = void 0;
 
-   const { isDark } = getContext('#cp-state').stores;
+   const { isDark } = getContext('#tjs-color-picker-state').stores;
 
    /** @type {string} */
    $: pickerStyle = `left: calc(${(pos.x / 260) * 246}% + 2px); top: calc(${

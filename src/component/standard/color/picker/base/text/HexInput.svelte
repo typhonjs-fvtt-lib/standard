@@ -1,7 +1,7 @@
 <script>
    import { getContext } from 'svelte';
 
-   const internalState = getContext('#cp-state');
+   const internalState = getContext('#tjs-color-picker-state');
 
    const { isAlpha } = internalState.stores;
    const { textState } = internalState.colorState.stores;

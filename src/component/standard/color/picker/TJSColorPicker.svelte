@@ -31,7 +31,7 @@
 
    const internalState = new InternalState(color, options);
 
-   setContext('#cp-state', internalState);
+   setContext('#tjs-color-picker-state', internalState);
 
    const {
       components,

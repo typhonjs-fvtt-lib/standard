@@ -6,7 +6,7 @@
    import HsvInput         from './HsvInput.svelte';
    import RgbInput         from './RgbInput.svelte';
 
-   const internalState = getContext('#cp-state');
+   const internalState = getContext('#tjs-color-picker-state');
 
    /** @type {['HEX', 'RGB', 'HSL', 'HSV']} */
    const modes = ['HEX', 'RGB', 'HSL', 'HSV'];
