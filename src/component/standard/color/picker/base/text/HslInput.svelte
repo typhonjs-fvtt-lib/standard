@@ -7,14 +7,27 @@
    const { textState } = internalState.colorState.stores;
 
    const { alpha } = textState.alpha.stores;
-   const { hex, isHexValid } = textState.hex.stores;
+   const { h, s, l } = textState.hsl.stores;
 </script>
 
 <div class=input-container>
-    <input aria-label="hex color"
-           class:is-input-invalid={!$isHexValid}
-           bind:value={$hex}
-           style="flex: 3"
+    <input aria-label="hue chanel color"
+           bind:value={$h}
+           type=number
+           min=0
+           max=360
+    />
+    <input aria-label="saturation chanel color"
+           bind:value={$s}
+           type=number
+           min=0
+           max=100
+    />
+    <input aria-label="luminance chanel color"
+           bind:value={$l}
+           type=number
+           min=0
+           max=100
     />
     {#if $isAlpha}
         <input aria-label="transparency chanel color"
@@ -26,3 +39,4 @@
         />
     {/if}
 </div>
+

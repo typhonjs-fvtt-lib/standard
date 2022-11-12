@@ -1,5 +1,6 @@
 import { AlphaState }   from './AlphaState.js';
 import { HexState }     from './HexState.js';
+import { HslState }     from './HslState.js';
 import { HsvState }     from './HsvState.js';
 import { RgbState }     from './RgbState.js';
 
@@ -22,7 +23,7 @@ export class TextState
    #subscriptions = [];
 
    /**
-    * @type {{ alpha: AlphaState, hex: HexState, hsv: HsvState, rgb: RgbState }}
+    * @type {{ alpha: AlphaState, hex: HexState, hsl: HslState, hsv: HsvState, rgb: RgbState }}
     */
    #modes;
 
@@ -47,6 +48,7 @@ export class TextState
       this.#modes = {
          alpha: new AlphaState(colorStateAccess, textStateAccess),
          hex: new HexState(colorStateAccess, textStateAccess),
+         hsl: new HslState(colorStateAccess, textStateAccess),
          hsv: new HsvState(colorStateAccess, textStateAccess),
          rgb: new RgbState(colorStateAccess, textStateAccess)
       }
@@ -66,6 +68,14 @@ export class TextState
    get hex()
    {
       return this.#modes.hex;
+   }
+
+   /**
+    * @returns {HslState}
+    */
+   get hsl()
+   {
+      return this.#modes.hsl;
    }
 
    /**
@@ -93,6 +103,7 @@ export class TextState
    {
       this.#modes.alpha._updateColor(color);
       this.#modes.hex._updateColor(color);
+      this.#modes.hsl._updateColor(color);
       this.#modes.hsv._updateColor(color);
       this.#modes.rgb._updateColor(color);
 
