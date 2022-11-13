@@ -1,41 +1,23 @@
 <script>
-   import { getContext } from 'svelte';
+   import { getContext }    from 'svelte';
+
+   import { TJSInput }      from '../../../../form/input/index.js'
 
    const internalState = getContext('#tjs-color-picker-state');
 
    const { isAlpha } = internalState.stores;
    const { textState } = internalState.colorState.stores;
 
-   const { alpha } = textState.alpha.stores;
-   const { r, g, b } = textState.rgb.stores;
+   const { alpha } = textState.alpha.inputData;
+   const { r, g, b } = textState.rgb.inputData;
 </script>
 
 <div class=input-container>
-    <input aria-label="red chanel color"
-           bind:value={$r}
-           type=number
-           min=0
-           max=255
-    />
-    <input aria-label="green chanel color"
-           bind:value={$g}
-           type=number
-           min=0
-           max=255
-    />
-    <input aria-label="blue chanel color"
-           bind:value={$b}
-           type=number
-           min=0
-           max=255
-    />
+    <TJSInput input={r} />
+    <TJSInput input={g} />
+    <TJSInput input={b} />
     {#if $isAlpha}
-        <input aria-label="transparency chanel color"
-               bind:value={$alpha}
-               type=number
-               min=0
-               max=1
-               step=0.01
-        />
+        <TJSInput input={alpha} />
     {/if}
 </div>
+

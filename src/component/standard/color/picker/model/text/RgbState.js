@@ -1,6 +1,9 @@
-import { writable }  from 'svelte/store';
+import { writable }     from 'svelte/store';
 
-import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
+import { colord }       from '@typhonjs-fvtt/runtime/color/colord';
+
+// TODO REFACTOR TO TOP LEVEL OPTION
+import { rippleFocus }  from '@typhonjs-fvtt/svelte-standard/action';
 
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into rounded RGB component
@@ -19,6 +22,9 @@ export class RgbState
 
    /** @type {TextStateAccess} */
    #textStateAccess;
+
+   /** @type {RgbStateInputData} */
+   #inputData;
 
    /** @type {RgbStateStores} */
    #stores;
@@ -57,6 +63,59 @@ export class RgbState
       b.set = (value) => this.#updateComponent(value, 'b');
 
       this.#stores = { r, g, b };
+
+      this.#inputData = {
+         r: {
+            store: r,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 255,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'red chanel color'
+            }
+         },
+         g: {
+            store: g,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 255,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'green chanel color'
+            }
+         },
+         b: {
+            store: b,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 255,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'blue chanel color'
+            }
+         }
+      }
+   }
+
+   /**
+    * @returns {RgbStateInputData} HSL input component data.
+    */
+   get inputData()
+   {
+      return this.#inputData;
    }
 
    /**
@@ -143,6 +202,16 @@ export class RgbState
       this.#storeSet.b(this.#data.b);
    }
 }
+
+/**
+ * @typedef {object} RgbStateInputData Provides the input data options to use in number input components.
+ *
+ * @property {object} r - Red input component data.
+ *
+ * @property {object} g - Green input component data.
+ *
+ * @property {object} b - Blue input component data.
+ */
 
 /**
  * @typedef {object} RgbStateStores Provides the buffered stores to use in text input components.

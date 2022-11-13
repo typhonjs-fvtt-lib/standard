@@ -67,6 +67,9 @@ export class AlphaState
             options: {
                blurOnEnterKey: true,
                cancelOnEscKey: true
+            },
+            aria: {
+               label: 'transparency chanel color'
             }
          }
       }

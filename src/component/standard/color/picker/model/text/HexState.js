@@ -67,6 +67,9 @@ export class HexState
             options: {
                blurOnEnterKey: true,
                cancelOnEscKey: true
+            },
+            aria: {
+               label: 'hex color'
             }
          }
       }

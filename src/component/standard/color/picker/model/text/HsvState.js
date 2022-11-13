@@ -1,4 +1,7 @@
-import { writable } from 'svelte/store';
+import { writable }     from 'svelte/store';
+
+// TODO REFACTOR TO TOP LEVEL OPTION
+import { rippleFocus }  from '@typhonjs-fvtt/svelte-standard/action';
 
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into rounded HSV component
@@ -17,6 +20,9 @@ export class HsvState
 
    /** @type {TextStateAccess} */
    #textStateAccess;
+
+   /** @type {HsvStateInputData} */
+   #inputData;
 
    /** @type {HsvStateStores} */
    #stores;
@@ -55,6 +61,59 @@ export class HsvState
       v.set = (value) => this.#updateComponent(value, 'v');
 
       this.#stores = { h, s, v };
+
+      this.#inputData = {
+         h: {
+            store: h,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 360,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'hue chanel color'
+            }
+         },
+         s: {
+            store: s,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 100,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'saturation chanel color'
+            }
+         },
+         v: {
+            store: v,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 100,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'brightness chanel color'
+            }
+         }
+      }
+   }
+
+   /**
+    * @returns {HsvStateInputData} HSV input component data.
+    */
+   get inputData()
+   {
+      return this.#inputData;
    }
 
    /**
@@ -142,6 +201,16 @@ export class HsvState
       this.#storeSet.v(this.#data.v);
    }
 }
+
+/**
+ * @typedef {object} HsvStateInputData Provides the input data options to use in number input components.
+ *
+ * @property {object} h - Hue input component data.
+ *
+ * @property {object} s - Saturation input component data.
+ *
+ * @property {object} v - Value / Brightness value input component data.
+ */
 
 /**
  * @typedef {object} HsvStateStores Provides the buffered stores to use in text input components.

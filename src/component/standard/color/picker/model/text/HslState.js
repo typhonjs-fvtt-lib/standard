@@ -2,6 +2,9 @@ import { writable }  from 'svelte/store';
 
 import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
 
+// TODO REFACTOR TO TOP LEVEL OPTION
+import { rippleFocus } from '@typhonjs-fvtt/svelte-standard/action';
+
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into rounded HSL component
  * values for display in the {@link TextInput} component. These HSL component stores have an overridden set method that
@@ -19,6 +22,9 @@ export class HslState
 
    /** @type {TextStateAccess} */
    #textStateAccess;
+
+   /** @type {HslStateInputData} */
+   #inputData;
 
    /** @type {HslStateStores} */
    #stores;
@@ -57,6 +63,59 @@ export class HslState
       l.set = (value) => this.#updateComponent(value, 'l');
 
       this.#stores = { h, s, l };
+
+      this.#inputData = {
+         h: {
+            store: h,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 360,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'hue chanel color'
+            }
+         },
+         s: {
+            store: s,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 100,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'saturation chanel color'
+            }
+         },
+         l: {
+            store: l,
+            efx: rippleFocus(),
+            type: 'number',
+            min: 0,
+            max: 100,
+            options: {
+               blurOnEnterKey: true,
+               cancelOnEscKey: true
+            },
+            aria: {
+               label: 'luminance chanel color'
+            }
+         }
+      }
+   }
+
+   /**
+    * @returns {HslStateInputData} HSL input component data.
+    */
+   get inputData()
+   {
+      return this.#inputData;
    }
 
    /**
@@ -161,6 +220,16 @@ export class HslState
       this.#storeSet.l(this.#data.l);
    }
 }
+
+/**
+ * @typedef {object} HslStateInputData Provides the input data options to use in number input components.
+ *
+ * @property {object} h - Hue input component data.
+ *
+ * @property {object} s - Saturation input component data.
+ *
+ * @property {object} l - Luminance input component data.
+ */
 
 /**
  * @typedef {object} HslStateStores Provides the buffered stores to use in text input components.
