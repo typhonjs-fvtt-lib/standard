@@ -4,7 +4,7 @@
 
 .tjs-color-picker .text-input input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
-    opacity: 1
+    opacity: 1;
 }
 
 .tjs-color-picker .text-input {

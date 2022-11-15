@@ -58,9 +58,6 @@ export class InternalState
 
       // this.#internalData.format =
 
-      // Set in updateColor
-      this.#internalData.isDark = false;
-
       this.#internalData.isOpen = typeof opts.isOpen === 'boolean' ? opts.isOpen : !this.#externalData.isPopup;
 
       // Set by the respective wrapper; default wrapper sets to true & the Chrome wrapper to false.
@@ -76,7 +73,6 @@ export class InternalState
          isPopup: propertyStore(externalData, 'isPopup'),
          isTextInput: propertyStore(externalData, 'isTextInput'),
 
-         isDark: propertyStore(internalData, 'isDark'),
          isOpen: propertyStore(internalData, 'isOpen'),
          sliderHorizontal: propertyStore(internalData, 'sliderHorizontal')
       }
@@ -264,8 +260,6 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {'object'|'string'} format - Stores the output format passed back to bound color prop.
  *
- * @property {boolean} isDark - Is the current color considered dark by `colord`.
- *
  * @property {boolean} isOpen - Is the color picker in the open state.
  *
  * @property {boolean} sliderHorizontal - Are the sliders oriented horizontally.
@@ -302,8 +296,6 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColorPickerOptions.isTextInput}
  *
- *
- * @property {import('svelte/store').Writable<boolean>} isDark - See {@link PickerInternalData.isDark}
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
  *

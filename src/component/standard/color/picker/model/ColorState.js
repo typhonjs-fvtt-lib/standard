@@ -21,6 +21,7 @@ export class ColorState
    #data = {
       alpha: 1,
       hue: 0,
+      isDark: false,
       rgbString: 'rgb(255, 0, 0)',
       rgbHueString: 'rgb(255, 0, 0)',
       rgbaString: 'rgba(255, 0, 0, 1)',
@@ -82,16 +83,18 @@ export class ColorState
          this.#internalUpdate.textUpdate = false;
       }, 0);
 
+      const tempStoreCurrentColor = writable(this.#data.currentColor);
+      const tempStoreIsDark = writable(this.#data.isDark);
       const tempStoreRGBString = writable(this.#data.rgbString);
       const tempStoreRGBHueString = writable(this.#data.rgbHueString);
       const tempStoreRGBAString = writable(this.#data.rgbaString);
-      const tempStoreOutputColor = writable(this.#data.currentColor);
 
       this.#storeSet = {
+         currentColor: tempStoreCurrentColor.set,
+         isDark: tempStoreIsDark.set,
          rgbString: tempStoreRGBString.set,
-         rgbHueString: tempStoreRGBHueString.set,
          rgbaString: tempStoreRGBAString.set,
-         currentColor: tempStoreOutputColor.set
+         rgbHueString: tempStoreRGBHueString.set,
       }
 
       // Writable stores
@@ -101,10 +104,11 @@ export class ColorState
 
       // Readable stores
       this.#stores.textState = new TextState(this, this.#internalUpdate);
+      this.#stores.isDark = { subscribe: tempStoreIsDark.subscribe };
       this.#stores.rgbString = { subscribe: tempStoreRGBString.subscribe };
       this.#stores.rgbHueString = { subscribe: tempStoreRGBHueString.subscribe };
       this.#stores.rgbaString = { subscribe: tempStoreRGBAString.subscribe };
-      this.#stores.currentColor = { subscribe: tempStoreOutputColor.subscribe };
+      this.#stores.currentColor = { subscribe: tempStoreCurrentColor.subscribe };
 
       setTimeout(() =>
       {
@@ -157,6 +161,7 @@ export class ColorState
       this.#data.sv = sv;
       this.#data.alpha = a;
       this.#data.currentColor = newHsv;
+      this.#data.isDark = colordInstance.isDark();
 
       this.#data.rgbString = colordInstance.alpha(1).toRgbString();
       this.#data.rgbHueString = colord({ h, s: 100, v: 100, a: 1 }).toRgbString();
@@ -166,7 +171,9 @@ export class ColorState
       if (!textUpdate) { this.#stores.textState.updateColor(newHsv); }
 
       this.#lastTime = globalThis.performance.now();
+
       this.#storeSet.currentColor(this.#data.currentColor);
+      this.#storeSet.isDark(this.#data.isDark);
 
       this.#storeSet.rgbString(this.#data.rgbString);
       this.#storeSet.rgbHueString(this.#data.rgbHueString);
@@ -321,6 +328,8 @@ console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
  * @property {import('svelte/store').Writable<number>} hue - The current hue value (0 - 360).
  *
  * @property {import('svelte/store').Readable<string|object>} currentColor - The current color.
+ *
+ * @property {import('svelte/store').Readable<boolean>} isDark - Is the current color considered "dark".
  *
  * @property {TextState} textState - The text state for various supported color formats.
  *
