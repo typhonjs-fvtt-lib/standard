@@ -1,8 +1,8 @@
-import { AlphaState }   from './AlphaState.js';
-import { HexState }     from './HexState.js';
-import { HslState }     from './HslState.js';
-import { HsvState }     from './HsvState.js';
-import { RgbState }     from './RgbState.js';
+import { AlphaState }      from './AlphaState.js';
+import { HexState }        from './HexState.js';
+import { HslState }        from './HslState.js';
+import { HsvState }        from './HsvState.js';
+import { RgbState }        from './RgbState.js';
 
 /**
  * Manages the text state for all supported color formats such as `rgb` and `hex` formats. The internal storage format
@@ -16,16 +16,16 @@ import { RgbState }     from './RgbState.js';
 export class TextState
 {
    /**
+    * @type {{ alpha: AlphaState, hex: HexState, hsl: HslState, hsv: HsvState, rgb: RgbState }}
+    */
+   #allState;
+
+   /**
     * Stores the subscribers.
     *
     * @type {(function(TextState): void)[]}
     */
    #subscriptions = [];
-
-   /**
-    * @type {{ alpha: AlphaState, hex: HexState, hsl: HslState, hsv: HsvState, rgb: RgbState }}
-    */
-   #modes;
 
    /**
     * @param {ColorState}                 colorState - ColorState instance.
@@ -45,7 +45,7 @@ export class TextState
          updateColorInternal: this.#updateColorInternal.bind(this)
       }
 
-      this.#modes = {
+      this.#allState = {
          alpha: new AlphaState(colorStateAccess, textStateAccess),
          hex: new HexState(colorStateAccess, textStateAccess),
          hsl: new HslState(colorStateAccess, textStateAccess),
@@ -59,7 +59,7 @@ export class TextState
     */
    get alpha()
    {
-      return this.#modes.alpha;
+      return this.#allState.alpha;
    }
 
    /**
@@ -67,7 +67,7 @@ export class TextState
     */
    get hex()
    {
-      return this.#modes.hex;
+      return this.#allState.hex;
    }
 
    /**
@@ -75,7 +75,7 @@ export class TextState
     */
    get hsl()
    {
-      return this.#modes.hsl;
+      return this.#allState.hsl;
    }
 
    /**
@@ -83,7 +83,7 @@ export class TextState
     */
    get hsv()
    {
-      return this.#modes.hsv;
+      return this.#allState.hsv;
    }
 
    /**
@@ -91,7 +91,15 @@ export class TextState
     */
    get rgb()
    {
-      return this.#modes.rgb;
+      return this.#allState.rgb;
+   }
+
+   /**
+    * @param {boolean}  canChangeMode - New can change mode state.
+    */
+   set canChangeMode(canChangeMode)
+   {
+      this.#canChangeModes = canChangeMode;
    }
 
    /**
@@ -101,11 +109,11 @@ export class TextState
     */
    updateColor(color)
    {
-      this.#modes.alpha._updateColor(color);
-      this.#modes.hex._updateColor(color);
-      this.#modes.hsl._updateColor(color);
-      this.#modes.hsv._updateColor(color);
-      this.#modes.rgb._updateColor(color);
+      this.#allState.alpha._updateColor(color);
+      this.#allState.hex._updateColor(color);
+      this.#allState.hsl._updateColor(color);
+      this.#allState.hsv._updateColor(color);
+      this.#allState.rgb._updateColor(color);
 
       this.#updateSubscribers();
    }
@@ -119,11 +127,11 @@ export class TextState
     */
    #updateColorInternal(color, skipMode)
    {
-      for (const key in this.#modes)
+      for (const key in this.#allState)
       {
          if (key === skipMode) { continue; }
 
-         this.#modes[key]._updateColor(color);
+         this.#allState[key]._updateColor(color);
       }
 
       this.#updateSubscribers();
@@ -171,4 +179,10 @@ export class TextState
  * @typedef {object} TextStateAccess
  *
  * @property {Function} updateColorInternal - Provides access to the #updateColorInternal method.
+ */
+
+/**
+ * @typedef {object} TextStateStores
+ *
+ * @property {import('svelte/store').Readable<object>} activeMode - The current active text mode config object.
  */

@@ -189,6 +189,11 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
+      if (typeof opts.canChangeMode === 'boolean')
+      {
+         this.#colorState.stores.textState.canChangeMode = opts.canChangeMode;
+      }
+
       // Internal data -----------------------------------------------------------------------------------------------
 
       // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
@@ -208,6 +213,11 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
       if (opts.format !== void 0 && typeof opts.format !== 'string')
       {
          throw new TypeError(`'options.format' is not a string.`);
+      }
+
+      if (opts.canChangeMode !== void 0 && typeof opts.canChangeMode !== 'boolean')
+      {
+         throw new TypeError(`'options.canChangeMode' is not a boolean.`);
       }
 
       if (opts.isAlpha !== void 0 && typeof opts.isAlpha !== 'boolean')
@@ -245,6 +255,8 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  * @typedef {object} TJSColorPickerOptions
  *
  * @property {PickerComponents} [components] - User defined picker component overrides.
+ *
+ * @property {boolean} [canChangeMode=true] - Can the text mode be changed.
  *
  * @property {boolean} [isAlpha=true] - Is alpha / opacity color selection and output enabled.
  *
