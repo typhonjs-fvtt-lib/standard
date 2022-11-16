@@ -95,14 +95,6 @@ export class TextState
    }
 
    /**
-    * @param {boolean}  canChangeMode - New can change mode state.
-    */
-   set canChangeMode(canChangeMode)
-   {
-      this.#canChangeModes = canChangeMode;
-   }
-
-   /**
     * Updates all text state for supported formats from the given color.
     *
     * @param {{h: number, s: number, v: number}}  color - A supported ColorD color format.

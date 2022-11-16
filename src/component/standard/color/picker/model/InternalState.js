@@ -48,6 +48,8 @@ export class InternalState
 
       // External data -----------------------------------------------------------------------------------------------
 
+      this.#externalData.canChangeMode = typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true;
+
       this.#externalData.isAlpha = typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true;
 
       this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
@@ -60,20 +62,20 @@ export class InternalState
 
       this.#internalData.isOpen = typeof opts.isOpen === 'boolean' ? opts.isOpen : !this.#externalData.isPopup;
 
-      // Set by the respective wrapper; default wrapper sets to true & the Chrome wrapper to false.
-      // this.#internalData.sliderHorizontal = false;
-
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
 
       this.#stores = {
          components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.layout
 
+         canChangeMode: propertyStore(externalData, 'canChangeMode'),
          isAlpha: propertyStore(externalData, 'isAlpha'),
          isPopup: propertyStore(externalData, 'isPopup'),
          isTextInput: propertyStore(externalData, 'isTextInput'),
 
          isOpen: propertyStore(internalData, 'isOpen'),
+
+         // Set by the respective wrapper; default wrapper sets to true & the Chrome wrapper to false.
          sliderHorizontal: propertyStore(internalData, 'sliderHorizontal')
       }
 
@@ -189,10 +191,7 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
-      if (typeof opts.canChangeMode === 'boolean')
-      {
-         this.#colorState.stores.textState.canChangeMode = opts.canChangeMode;
-      }
+      this.#stores.canChangeMode.set(typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true);
 
       // Internal data -----------------------------------------------------------------------------------------------
 
@@ -299,6 +298,8 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
 
 /**
  * @typedef {object} PickerStores
+ *
+ * @property {import('svelte/store').Writable<boolean>} canChangeMode - See {@link TJSColorPickerOptions.canChangeMode}
  *
  * @property {import('svelte/store').Writable<PickerComponents>} components - This selected layout components.
  *

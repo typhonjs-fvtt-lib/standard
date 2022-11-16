@@ -11,11 +11,9 @@
    import { InternalState }         from './model/InternalState.js';
 
    import {
-      Alpha,
       ArrowKeyHandler,
       Input,
-      Picker,
-      Slider }                      from './base/index.js'
+      MainLayout }                  from './base/index.js'
 
    /**
     * color properties
@@ -70,7 +68,7 @@
    }
 
    /** @type {HTMLSpanElement} */
-   let span = void 0;
+   let spanEl = void 0;
 
    /**
     * @param {KeyboardEvent}    e -
@@ -79,7 +77,7 @@
    {
       if (e.key === 'Tab')
       {
-         span.classList.add('has-been-tabbed');
+         spanEl.classList.add('has-been-tabbed');
       }
    }
 
@@ -90,7 +88,7 @@
    {
       if (e.key === 'Tab' && $isPopup)
       {
-         internalState.isOpen = span?.contains(document.activeElement);
+         internalState.isOpen = spanEl?.contains(document.activeElement);
       }
    }
 </script>
@@ -99,7 +97,7 @@
 
 <svelte:window on:keydown={keydown} on:keyup={keyup}/>
 
-<span bind:this={span}
+<span bind:this={spanEl}
       class=tjs-color-picker
       style:--_tjs-color-picker-current-color-rgb={$rgbString}
       style:--_tjs-color-picker-current-color-rgb-hue={$rgbHueString}
@@ -109,16 +107,7 @@
     {#if $isPopup}
         <Input />
     {/if}
-    <svelte:component this={$components.wrapper}>
-        <Picker />
-        <Slider />
-        {#if $isAlpha}
-            <Alpha />
-        {/if}
-        {#if $isTextInput}
-            <svelte:component this={$components.textInput} />
-        {/if}
-    </svelte:component>
+    <MainLayout />
 </span>
 
 <style>
