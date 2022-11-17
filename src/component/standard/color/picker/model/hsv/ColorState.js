@@ -31,7 +31,7 @@ export class ColorState
    /** @type {ColorStateData} */
    #data = {
       alpha: 1,
-      currentColor: void 0, // { h: 0, s: 100, v: 100, a: 1 },
+      currentColor: { h: 0, s: 100, v: 100, a: 1 },
       // TODO REFACTOR TO 'hsl' / 'string'.
       format: 'hsv',
       formatType: 'object',
@@ -105,6 +105,9 @@ console.log(`!! ColorState - ctor - 0 - colorFormat: `, colorFormat)
 
             this.#data.format = colorFormat.format;
             this.#data.formatType = colorFormat.type;
+
+            const initialHsv = HsvColorParser.parseExternal(color);
+            this.#updateColorData(initialHsv);
          }
       }
       else // Accept any explicitly set color model format & type.
@@ -149,7 +152,7 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
 
       // Readable stores
       this.#stores.activeTextMode = new ActiveTextMode();
-      this.#stores.textState = new TextState(this, this.#internalUpdate);
+      this.#stores.textState = new TextState(this.#data.currentColor, this, this.#internalUpdate);
       this.#stores.isDark = { subscribe: tempStoreIsDark.subscribe };
       this.#stores.rgbString = { subscribe: tempStoreRGBString.subscribe };
       this.#stores.rgbHueString = { subscribe: tempStoreRGBHueString.subscribe };
@@ -231,6 +234,24 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
       // return (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
    }
 
+   /**
+    * @param {object}   hsvColor -
+    */
+   #updateColorData(hsvColor)
+   {
+      this.#data.hue = hsvColor.h;
+      this.#data.sv = { s: hsvColor.s, v: hsvColor.v };
+      this.#data.alpha = hsvColor.a ?? 1;
+      this.#data.currentColor = hsvColor;
+
+      const colordInstance = colord(hsvColor);
+
+      this.#data.isDark = colordInstance.isDark();
+      this.#data.rgbString = colordInstance.alpha(1).toRgbString(3);
+      this.#data.rgbHueString = colord({ h: hsvColor.h, s: 100, v: 100, a: 1 }).toRgbString(3);
+      this.#data.rgbaString = colordInstance.toRgbString(3);
+   }
+
    #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, textUpdate = false } = {})
    {
       const newHsv = { h, s: sv.s, v: sv.v, a };
@@ -238,17 +259,7 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
 // console.log(`!! ColorState - #updateCurrentColor - 0 - textUpdate: ${textUpdate}; newHsv: `, newHsv);
 // console.trace();
 
-      const colordInstance = colord(newHsv);
-
-      this.#data.hue = h;
-      this.#data.sv = sv;
-      this.#data.alpha = a;
-      this.#data.currentColor = newHsv;
-      this.#data.isDark = colordInstance.isDark();
-
-      this.#data.rgbString = colordInstance.alpha(1).toRgbString(3);
-      this.#data.rgbHueString = colord({ h, s: 100, v: 100, a: 1 }).toRgbString(3);
-      this.#data.rgbaString = colordInstance.toRgbString(3);
+      this.#updateColorData(newHsv);
 
       // Update RgbInt store if the update didn't come from RgbInt.
       if (!textUpdate) { this.#stores.textState.updateColor(newHsv); }
@@ -267,30 +278,23 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
    {
       if (!this.#isExternalUpdate()) { return; }
 
-// console.log(`!! ColorState - updateExternal - 0 - data: `, extColor);
+console.log(`!! ColorState - updateExternal - 0 - data: `, extColor);
 
       if (!colord(extColor).isValid())
       {
-// console.log(`!! ColorState - updateExternal - 1 - extColor is invalid`);
-
-         // Ignore non-valid external color state changes after the initial invocation of `#updateCurrentColor`.
-         // Post a warning.
-         if (this.#lastTime >= 0)
-         {
-            console.warn(`TJSColorPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
-            return;
-         }
-         else
-         {
-            // On first non-valid external color assume that the color prop was not set and set default to red.
-            // A console warning already has been posted in ColorState constructor when the color prop is malformed.
-            extColor = '#ff0000';
-         }
+         console.warn(`TJSColorPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
+         return;
       }
 
       const newHsv = HsvColorParser.parseExternal(extColor);
 
-// console.log(`!! ColorState - updateExternal - 2 - newHsv: `, newHsv);
+console.log(`!! ColorState - updateExternal - 2 - newHsv: `, newHsv);
+
+      if (colord(newHsv).isEqual(this.#data.currentColor))
+      {
+console.log(`!! ColorState - updateExternal - 3 - newHsv === this.#data.currentColor`);
+         return;
+      }
 
       if (typeof newHsv.h === 'number')
       {

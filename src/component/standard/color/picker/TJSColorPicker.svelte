@@ -3,17 +3,19 @@
 
    import {
       onDestroy,
-      setContext }                  from 'svelte';
+      setContext }          from 'svelte';
 
-   import { applyStyles }           from '@typhonjs-svelte/lib/action';
-   import { isObject }              from '@typhonjs-svelte/lib/util';
+   import { colord }        from '@typhonjs-fvtt/runtime/color/colord';
 
-   import { InternalState }         from './model/InternalState.js';
+   import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { isObject }      from '@typhonjs-svelte/lib/util';
+
+   import { InternalState } from './model/InternalState.js';
 
    import {
       ArrowKeyHandler,
       Input,
-      MainLayout }                  from './base/index.js'
+      MainLayout }          from './base/index.js'
 
    /**
     * color properties
@@ -55,7 +57,7 @@
    // When options changes update internal state.
    $: internalState.updateOptions(options);
 
-   $: if ($currentColor) {
+   $: if (!colord($currentColor).isEqual(color)) {
 // console.log(`!! TJSColorPicker - $currentColor: `, $currentColor)
       color = $currentColor;
    }
