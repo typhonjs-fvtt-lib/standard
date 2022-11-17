@@ -5,8 +5,8 @@
       onDestroy,
       setContext }                  from 'svelte';
 
-   import { applyStyles }           from '@typhonjs-fvtt/runtime/svelte/action';
-   import { isObject }              from '@typhonjs-fvtt/runtime/svelte/util';
+   import { applyStyles }           from '@typhonjs-svelte/lib/action';
+   import { isObject }              from '@typhonjs-svelte/lib/util';
 
    import { InternalState }         from './model/InternalState.js';
 
@@ -53,7 +53,7 @@
    $: styles = isObject(options) && isObject(options.styles) ? options.styles : void 0;
 
    // When options changes update internal state.
-   $: internalState.update(options);
+   $: internalState.updateOptions(options);
 
    $: {
       color = $currentColor;
