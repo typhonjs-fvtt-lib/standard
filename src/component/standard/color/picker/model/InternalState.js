@@ -41,7 +41,6 @@ export class InternalState
     */
    constructor(color, options)
    {
-      // TODO determine color output format from initial props bound or otherwise; object or string.
       const opts = isObject(options) ? options : {};
 
       this.#validateOptions(opts);
@@ -58,9 +57,7 @@ export class InternalState
 
       // Internal data -----------------------------------------------------------------------------------------------
 
-      // this.#internalData.format =
-
-      this.#internalData.isOpen = typeof opts.isOpen === 'boolean' ? opts.isOpen : !this.#externalData.isPopup;
+      this.#internalData.isOpen = !this.#externalData.isPopup;
 
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
@@ -79,9 +76,9 @@ export class InternalState
          sliderHorizontal: propertyStore(internalData, 'sliderHorizontal')
       }
 
-      this.#colorState = new ColorState(this, color);
+      this.#colorState = new ColorState(this, color, opts);
 
-      console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
+console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
 console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData)
    }
 
@@ -171,7 +168,7 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
     *
     * @param {TJSColorPickerOptions} options -
     */
-   update(options)
+   updateOptions(options)
    {
       const opts = isObject(options) ? options : {};
 
@@ -198,6 +195,10 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
       if (newIsPopup !== currentIsPopup) { this.#stores.isOpen.set(!newIsPopup); }
 
+      // Update color state options (color format / type) ------------------------------------------------------------
+
+      this.#colorState.updateOptions(opts);
+
 console.log(`!! InternalState - update - this.#externalData: `, this.#externalData)
 console.log(`!! InternalState - update - this.#internalData: `, this.#internalData)
    }
@@ -209,11 +210,6 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
     */
    #validateOptions(opts)
    {
-      if (opts.format !== void 0 && typeof opts.format !== 'string')
-      {
-         throw new TypeError(`'options.format' is not a string.`);
-      }
-
       if (opts.canChangeMode !== void 0 && typeof opts.canChangeMode !== 'boolean')
       {
          throw new TypeError(`'options.canChangeMode' is not a boolean.`);
@@ -257,6 +253,10 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  *
  * @property {boolean} [canChangeMode=true] - Can the text mode be changed.
  *
+ * @property {'hex'|'hsl'|'hsv'|'rgb'} [format] - The user defined color format.
+ *
+ * @property {'object'|'string'} [formatType] - The user defined color format type.
+ *
  * @property {boolean} [isAlpha=true] - Is alpha / opacity color selection and output enabled.
  *
  * @property {boolean} [isPopup=true] - Is the picker configured as a pop-up.
@@ -264,12 +264,12 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  * @property {boolean} [isTextInput=true] - Is the picker configured with text input components.
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
+ *
+ * @property {object} [styles] - Inline styles to apply to TJSColorPicker span; useful to set CSS variables.
  */
 
 /**
  * @typedef {object} PickerInternalData
- *
- * @property {'object'|'string'} format - Stores the output format passed back to bound color prop.
  *
  * @property {boolean} isOpen - Is the color picker in the open state.
  *
