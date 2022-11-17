@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 import { rippleFocus } from '@typhonjs-fvtt/svelte-standard/action';
 
 /**
- * Provides a buffered set of stores converting the current color from {@link ColorState} into a rounded alpha
+ * Provides a buffered set of stores converting the current color from color state into a rounded alpha
  * value for display in the {@link TextInput} component. The alpha component store has an overridden set method that
  * validate updates from the number inputs they are assigned to keeping number ranges between `0-1`.
  * Also handling the case when the number input is `null` which occurs when the user removes all input
@@ -119,8 +119,7 @@ export class AlphaState
    }
 
    /**
-    * Updates the internal state from changes in {@link ColorState} current color.
-    * Covert to HSV and round values for display in the TextInput component.
+    * Updates the internal state from changes in color state current color.
     *
     * @param {object}   color - Current color value (HSV currently).
     *

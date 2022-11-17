@@ -162,7 +162,7 @@ export class HslState
       this.#data[index] = value;
 
       // Update ColorState hue and sv component stores w/ parsed local HSL component data.
-      const newHsv = colord(this.#data).toHsv();
+      const newHsv = colord(this.#data).toHsv(5);
 
       // The colord conversion will not maintain hue when `s` or `l` is `0`.
       if (this.#data.s === 0 || this.#data.l === 0) { newHsv.h = this.#data.h; }

@@ -3,7 +3,7 @@ import { writable }        from 'svelte/store';
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 import { isObject }        from '@typhonjs-svelte/lib/util';
 
-import { ColorState }      from './ColorState.js';
+import { ColorState }      from './hsv/ColorState.js';
 
 import { layout }          from '../base/layout/index.js'
 import { textInput }       from '../base/text/index.js';

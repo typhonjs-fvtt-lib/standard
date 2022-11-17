@@ -163,7 +163,7 @@ export class RgbState
       this.#data[index] = value;
 
       // Update ColorState hue and sv component stores w/ parsed local RGB component data.
-      const newHsv = colord(this.#data).toHsv();
+      const newHsv = colord(this.#data).toHsv(5);
 
       // Only change 'hue' when RGB components are not equal as the RGB to HSV conversion loses current hue value when
       // RGB components aare equal (IE it switches to 0 / red).

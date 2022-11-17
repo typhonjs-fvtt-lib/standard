@@ -15,10 +15,11 @@ import { RgbState }        from './RgbState.js';
  */
 export class TextState
 {
-   /**
-    * @type {{ alpha: AlphaState, hex: HexState, hsl: HslState, hsv: HsvState, rgb: RgbState }}
-    */
+   /** @type {{ hex: HexState, hsl: HslState, hsv: HsvState, rgb: RgbState }} */
    #allState;
+
+   /** @type {AlphaState} */
+   #alphaState;
 
    /**
     * Stores the subscribers.
@@ -45,8 +46,9 @@ export class TextState
          updateColorInternal: this.#updateColorInternal.bind(this)
       }
 
+      this.#alphaState = new AlphaState(colorStateAccess, textStateAccess);
+
       this.#allState = {
-         alpha: new AlphaState(colorStateAccess, textStateAccess),
          hex: new HexState(colorStateAccess, textStateAccess),
          hsl: new HslState(colorStateAccess, textStateAccess),
          hsv: new HsvState(colorStateAccess, textStateAccess),
@@ -59,7 +61,7 @@ export class TextState
     */
    get alpha()
    {
-      return this.#allState.alpha;
+      return this.#alphaState;
    }
 
    /**
@@ -97,11 +99,12 @@ export class TextState
    /**
     * Updates all text state for supported formats from the given color.
     *
-    * @param {{h: number, s: number, v: number}}  color - A supported ColorD color format.
+    * @param {object}  color - A supported ColorD color format.
     */
    updateColor(color)
    {
-      this.#allState.alpha._updateColor(color);
+      this.#alphaState._updateColor(color);
+
       this.#allState.hex._updateColor(color);
       this.#allState.hsl._updateColor(color);
       this.#allState.hsv._updateColor(color);

@@ -1,4 +1,4 @@
-import { textInputModes } from '../../base/text/index.js';
+import { textInputModes } from '../../../base/text/index.js';
 
 export class ActiveTextMode
 {
