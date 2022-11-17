@@ -1,6 +1,8 @@
 import { writable }        from 'svelte/store';
 
-import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
+import {
+   colord,
+   getFormat }             from '@typhonjs-fvtt/runtime/color/colord';
 
 import {
    debounce,
@@ -20,15 +22,24 @@ export class ColorState
     */
    static #delta = 100;
 
+   /** @type {Set<string>} */
+   static #supportedFormats = new Set(['hex', 'hsl', 'hsv', 'rgb']);
+
+   /** @type {Set<string>} */
+   static #supportedFormatTypes = new Set(['object', 'string']);
+
+   /** @type {ColorStateData} */
    #data = {
       alpha: 1,
+      currentColor: { h: 0, s: 100, v: 100, a: 1 },
+      format: 'hsv',
+      formatType: 'object',
       hue: 0,
       isDark: false,
       rgbString: 'rgb(255, 0, 0)',
       rgbHueString: 'rgb(255, 0, 0)',
       rgbaString: 'rgba(255, 0, 0, 1)',
-      sv: { s: 100, v: 100 },
-      currentColor: { h: 0, s: 100, v: 100, a: 1 }
+      sv: { s: 100, v: 100 }
    };
 
    #lastTime = Number.MIN_SAFE_INTEGER;
@@ -67,12 +78,23 @@ export class ColorState
    #updateCurrentColorDebounce;
 
    /**
-    * @param {InternalState}  internalState -
+    * @param {InternalState}           internalState -
     *
-    * @param {object|string}  color
+    * @param {object|string}           color -
+    *
+    * @param {TJSColorPickerOptions}   options -
     */
-   constructor(internalState, color)
+   constructor(internalState, color, options)
    {
+      this.#data.format = options.format === 'string' ? options.format : 'hsv';
+      this.#data.formatType = options.formatType === 'string' ? options.formatType : 'object';
+
+console.log(`!! ColorState - ctor - 0 - #internalData.format: ${this.#data.format}; #internalData.formatType: ${this.#data.formatType}`)
+
+      const colorFormat = this.#getColorFormat(color);
+
+console.log(`!! ColorState - ctor - 1 - colorFormat: `, colorFormat)
+
       this.#validateProps(color);
 
       this.#updateCurrentColorDebounce = debounce(() =>
@@ -146,9 +168,71 @@ export class ColorState
       }, 0);
    }
 
+   /**
+    * @returns {number}
+    */
+   get alpha()
+   {
+      return this.#data.alpha;
+   }
+
+   /**
+    * @returns {number}
+    */
+   get hue()
+   {
+      return this.#data.hue;
+   }
+
+   get stores()
+   {
+      return this.#stores;
+   }
+
+   /**
+    * @returns {{s: number, v: number}}
+    */
+   get sv()
+   {
+      return this.#data.sv;
+   }
+
    destroy()
    {
       for (const unsubscribe of this.#unsubscribe) { unsubscribe(); }
+   }
+
+   #getColorFormat(color)
+   {
+console.log(`!! ColorState - #getColorFormat - 0 - color: `, color);
+      const result = {
+         format: 'hsv',
+         type: 'object'
+      };
+
+      const format = getFormat(color);
+      if (!format) { return result; }
+
+      result.type = typeof color;
+      result.format = format;
+
+console.log(`!! ColorState - #getColorFormat - 1 - result: `, result);
+
+      return result;
+   }
+
+
+
+
+   #isExternalUpdate()
+   {
+      const result = (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
+
+// console.log(`!! ColorState - isExternalUpdate - elapsedTime: ${(globalThis.performance.now() - this.#lastTime)}; result: `, result);
+
+      return result;
+
+      // return (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
    }
 
    #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, textUpdate = false })
@@ -181,46 +265,6 @@ export class ColorState
       this.#storeSet.rgbString(this.#data.rgbString);
       this.#storeSet.rgbHueString(this.#data.rgbHueString);
       this.#storeSet.rgbaString(this.#data.rgbaString);
-   }
-
-   /**
-    * @returns {number}
-    */
-   get alpha()
-   {
-      return this.#data.alpha;
-   }
-
-   /**
-    * @returns {number}
-    */
-   get hue()
-   {
-      return this.#data.hue;
-   }
-
-   get stores()
-   {
-      return this.#stores;
-   }
-
-   /**
-    * @returns {{s: number, v: number}}
-    */
-   get sv()
-   {
-      return this.#data.sv;
-   }
-
-   #isExternalUpdate()
-   {
-      const result = (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
-
-// console.log(`!! ColorState - isExternalUpdate - elapsedTime: ${(globalThis.performance.now() - this.#lastTime)}; result: `, result);
-
-      return result;
-
-      // return (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
    }
 
    updateExternal(extColor)
@@ -256,6 +300,55 @@ export class ColorState
    }
 
    /**
+    * Updates options related to ColorState.
+    *
+    * @param {TJSColorPickerOptions}   options -
+    */
+   updateOptions(options)
+   {
+      this.#validateOptions(options);
+
+      if (options.format !== void 0 && options.format !== this.#data.format)
+      {
+         this.#data.format = format;
+      }
+
+      if (options.formatType !== void 0 && options.formatType !== this.#data.formatType)
+      {
+         this.#data.formatType = options.formatType;
+      }
+   }
+
+   /**
+    * Validates external user defined options.
+    *
+    * @param {TJSColorPickerOptions} opts -
+    */
+   #validateOptions(opts)
+   {
+      if (opts.format !== void 0)
+      {
+         if (typeof opts.format !== 'string') { throw new TypeError(`'options.format' is not a string.`); }
+
+         if (!ColorState.#supportedFormats.has(opts.format))
+         {
+            throw new Error(`'TJSColorPicker error: Unknown format for 'options.format' - '${opts.format}'.`);
+         }
+      }
+
+      if (opts.formatType !== void 0)
+      {
+         if (typeof opts.formatType !== 'string') { throw new TypeError(`'options.formatType' is not a string.`); }
+
+         if (!ColorState.#supportedFormatTypes.has(opts.formatType))
+         {
+            throw new Error(
+             `'TJSColorPicker error: Unknown format type for 'options.formatType' - '${opts.formatType}'.`);
+         }
+      }
+   }
+
+   /**
     * Validates all props ensuring that only one color prop is bound.
     *
     * @param {object|string}   color -
@@ -270,13 +363,20 @@ console.log(`!! ColorState - #validateProps - 0 - color: `, color)
 
          if (colordInstance.isValid())
          {
+            const hue = colordInstance.hue();
+
+console.log(`!! ColorState - #validateProps - 1 - hue: `, hue)
+
             const newHsv = colordInstance.toHsv();
 
-console.log(`!! ColorState - #validateProps - 1 - newHsv: `, newHsv)
+            // Maintain hue from initial ColorD instance.
+            newHsv.h = hue;
 
-            if (typeof newHsv.h === 'number')
+console.log(`!! ColorState - #validateProps - 2 - newHsv: `, newHsv)
+
+            if (typeof hue === 'number')
             {
-               this.#data.hue = newHsv.h;
+               this.#data.hue = hue;
             }
 
             if (typeof newHsv.s === 'number' && typeof newHsv.v === 'number')
@@ -295,7 +395,7 @@ console.log(`!! ColorState - #validateProps - 1 - newHsv: `, newHsv)
             this.#data.rgbHueString = colord({ h: newHsv.h, s: 100, v: 100, a: 1 }).toRgbString();
             this.#data.rgbaString = colordInstance.toRgbString();
 
-console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
+console.log(`!! ColorState - #validateProps - 3 - this.#data: `, this.#data)
          }
          else
          {
@@ -304,6 +404,30 @@ console.log(`!! ColorState - #validateProps - 2 - this.#data: `, this.#data)
       }
    }
 }
+
+/**
+ * @typedef {object} ColorStateData
+ *
+ * @property {number} alpha - Current alpha value.
+ *
+ * @property {object|string} currentColor - Current color value.
+ *
+ * @property {'hex'|'hsl'|'hsv'|'rgb'} format - Output color format determined from initial color prop or options.
+ *
+ * @property {'object'|'string'} formatType - Output color format type determined from initial color prop or options.
+ *
+ * @property {number} hue - Current hue value.
+ *
+ * @property {boolean} isDark - Is the current color considered dark.
+ *
+ * @property {string} rgbString - Current color as RGB string without `alpha` component.
+ *
+ * @property {string} rgbHueString - Current hue as RGB string.
+ *
+ * @property {string} rgbaString - Current color as RGB string with `alpha` component.
+ *
+ * @property {{ s: number, v: number }} sv - Current internal color saturation / value state.
+ */
 
 /**
  * @typedef {object} ColorStateInternalUpdate
