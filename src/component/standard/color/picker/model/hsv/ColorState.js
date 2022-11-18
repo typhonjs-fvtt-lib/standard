@@ -397,13 +397,15 @@ class HsvColorParser
             case 'hsl':
             {
                const newHsl = colordInstance.toHsl(precision);
-               newHsl.h = hsvColor.h;
+               newHsl.h = ColorParser.round(hsvColor.h, precision);
                result = newHsl;
                break;
             }
 
             case 'hsv':
-               result = hsvColor;
+               const newHsv = colordInstance.toHsv(precision);
+               newHsv.h = ColorParser.round(hsvColor.h, precision);
+               result = newHsv;
                break;
 
             case 'rgb':
