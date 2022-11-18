@@ -55,6 +55,8 @@ export class InternalState
 
       this.#externalData.isTextInput = typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true;
 
+      this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
+
       // Internal data -----------------------------------------------------------------------------------------------
 
       this.#internalData.isOpen = !this.#externalData.isPopup;
@@ -69,6 +71,7 @@ export class InternalState
          isAlpha: propertyStore(externalData, 'isAlpha'),
          isPopup: propertyStore(externalData, 'isPopup'),
          isTextInput: propertyStore(externalData, 'isTextInput'),
+         precision: propertyStore(externalData, 'precision'),
 
          isOpen: propertyStore(internalData, 'isOpen'),
 
@@ -96,6 +99,14 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
    get isOpen()
    {
       return this.#internalData.isOpen;
+   }
+
+   /**
+    * @returns {number}
+    */
+   get precision()
+   {
+      return this.#externalData.precision;
    }
 
    /**
@@ -178,6 +189,8 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       // External data -----------------------------------------------------------------------------------------------
 
+      this.#stores.canChangeMode.set(typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true);
+
       this.#stores.isAlpha.set(typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true);
 
       const newIsPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
@@ -188,7 +201,7 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
-      this.#stores.canChangeMode.set(typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true);
+      this.#stores.precision.set(Number.isInteger(opts.precision) ? opts.precision : 0);
 
       // Internal data -----------------------------------------------------------------------------------------------
 
@@ -239,6 +252,11 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
       {
          throw new Error(`Unknown 'options.layout': ${opts.layout}; must be undefined or 'chrome'.`)
       }
+
+      if (opts.precision !== void 0 && (!Number.isInteger(opts.precision) || opts.precision < 0))
+      {
+         throw new TypeError(`'options.precision' must be an integer >= 0.`);
+      }
    }
 }
 
@@ -264,6 +282,8 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  * @property {boolean} [isTextInput=true] - Is the picker configured with text input components.
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
+ *
+ * @property {number} [precision=0] - A positive whole number defining rounding precision.
  *
  * @property {object} [styles] - Inline styles to apply to TJSColorPicker span; useful to set CSS variables.
  */
@@ -308,6 +328,8 @@ console.log(`!! InternalState - update - this.#internalData: `, this.#internalDa
  * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColorPickerOptions.isPopup}
  *
  * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColorPickerOptions.isTextInput}
+ *
+ * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColorPickerOptions.precision}
  *
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}

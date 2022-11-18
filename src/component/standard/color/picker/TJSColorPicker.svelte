@@ -57,13 +57,13 @@
    // When options changes update internal state.
    $: internalState.updateOptions(options);
 
-   $: if (!colord($currentColor).isEqual(color)) {
+   $: {
 // console.log(`!! TJSColorPicker - $currentColor: `, $currentColor)
       color = $currentColor;
    }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
-   $:
+   $: if (!colord($currentColor).isEqual(color))
    {
 // console.log(`!! TJSColorPicker - $:color: `, color)
       colorState.updateExternal(color);

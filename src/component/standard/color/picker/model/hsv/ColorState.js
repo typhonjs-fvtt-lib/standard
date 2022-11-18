@@ -2,9 +2,7 @@ import { writable }        from 'svelte/store';
 
 import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
 
-import {
-   debounce,
-   isObject }              from '@typhonjs-fvtt/runtime/svelte/util';
+import { debounce }        from '@typhonjs-fvtt/runtime/svelte/util';
 
 import { subscribeIgnoreFirst }    from '@typhonjs-fvtt/runtime/svelte/store';
 
@@ -31,17 +29,22 @@ export class ColorState
    /** @type {ColorStateData} */
    #data = {
       alpha: 1,
-      currentColor: { h: 0, s: 100, v: 100, a: 1 },
-      // TODO REFACTOR TO 'hsl' / 'string'.
-      format: 'hsv',
-      formatType: 'object',
+      currentColor: 'hsl(0, 100%, 50%)',
+      format: 'hsl',
+      formatType: 'string',
       hue: 0,
       isDark: false,
+      precision: 0,
       rgbString: 'rgb(255, 0, 0)',
       rgbHueString: 'rgb(255, 0, 0)',
       rgbaString: 'rgba(255, 0, 0, 1)',
       sv: { s: 100, v: 100 }
    };
+
+   /**
+    * @type {InternalState}
+    */
+   #internalState;
 
    #lastTime = Number.MIN_SAFE_INTEGER;
 
@@ -87,6 +90,8 @@ export class ColorState
     */
    constructor(internalState, color, options)
    {
+      this.#internalState = internalState;
+
       this.#validateOptions(options);
 
       // Attempt to parse color model format & type.
@@ -101,8 +106,6 @@ export class ColorState
          }
          else
          {
-console.log(`!! ColorState - ctor - 0 - colorFormat: `, colorFormat)
-
             this.#data.format = colorFormat.format;
             this.#data.formatType = colorFormat.type;
 
@@ -112,17 +115,16 @@ console.log(`!! ColorState - ctor - 0 - colorFormat: `, colorFormat)
       }
       else // Accept any explicitly set color model format & type.
       {
-         // TODO REFACTOR TO 'hsl' / 'string'.
-         this.#data.format = typeof options.format === 'string' ? options.format : 'hsv';
-         this.#data.formatType = typeof options.formatType === 'string' ? options.formatType : 'object';
+         this.#data.format = typeof options.format === 'string' ? options.format : 'hsl';
+         this.#data.formatType = typeof options.formatType === 'string' ? options.formatType : 'string';
       }
 
-console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.format}; #internalData.formatType: ${this.#data.formatType}`)
+      // Set initial precision.
+      this.#data.precision = internalState.precision;
 
       // 'alpha', 'hue', and 'sv' stores on subscription below invoke `#updateCurrentColor` on the next tick.
       this.#updateCurrentColorDebounce = debounce(() =>
       {
-// console.log(`!! ColorState - #updateCurrentColorDebounce - invoked - this.#internalUpdate: `, JSON.stringify(this.#internalUpdate))
          this.#updateCurrentColor(this.#internalUpdate);
          this.#internalUpdate.h = void 0;
          this.#internalUpdate.sv = void 0;
@@ -161,23 +163,18 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
 
       this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.alpha, (a) =>
       {
-// console.log(`!! ColorState - stores.alpha change`);
-
          this.#internalUpdate.a = a;
          this.#updateCurrentColorDebounce();
       }));
 
-      this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.hue, (h) => {
-// console.log(`!! ColorState - stores.hue change`);
-
+      this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.hue, (h) =>
+      {
          this.#internalUpdate.h = h;
          this.#updateCurrentColorDebounce();
       }));
 
       this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.sv, (sv) =>
       {
-// console.log(`!! ColorState - stores.sv change`);
-
          this.#internalUpdate.sv = sv;
          this.#updateCurrentColorDebounce();
       }));
@@ -186,6 +183,13 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
       this.#unsubscribe.push(subscribeIgnoreFirst(internalState.stores.isAlpha, (isAlpha) =>
       {
          if (!isAlpha) { this.#stores.alpha.set(1); }
+      }));
+
+      // Subscribe to InternalState `precision` option to set new color precision.
+      this.#unsubscribe.push(subscribeIgnoreFirst(internalState.stores.precision, (precision) =>
+      {
+         this.#data.precision = precision;
+         this.#updateCurrentColor();
       }));
    }
 
@@ -225,13 +229,7 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
 
    #isExternalUpdate()
    {
-      const result = (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
-
-// console.log(`!! ColorState - isExternalUpdate - elapsedTime: ${(globalThis.performance.now() - this.#lastTime)}; result: `, result);
-
-      return result;
-
-      // return (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
+      return (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
    }
 
    /**
@@ -242,7 +240,6 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
       this.#data.hue = hsvColor.h;
       this.#data.sv = { s: hsvColor.s, v: hsvColor.v };
       this.#data.alpha = hsvColor.a ?? 1;
-      this.#data.currentColor = hsvColor;
 
       const colordInstance = colord(hsvColor);
 
@@ -250,18 +247,18 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
       this.#data.rgbString = colordInstance.alpha(1).toRgbString(3);
       this.#data.rgbHueString = colord({ h: hsvColor.h, s: 100, v: 100, a: 1 }).toRgbString(3);
       this.#data.rgbaString = colordInstance.toRgbString(3);
+
+      // Update current color based on `format` and `formatType`
+      this.#data.currentColor = HsvColorParser.convertColor(hsvColor, this.#data);
    }
 
    #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, textUpdate = false } = {})
    {
       const newHsv = { h, s: sv.s, v: sv.v, a };
 
-// console.log(`!! ColorState - #updateCurrentColor - 0 - textUpdate: ${textUpdate}; newHsv: `, newHsv);
-// console.trace();
-
       this.#updateColorData(newHsv);
 
-      // Update RgbInt store if the update didn't come from RgbInt.
+      // Update TextState store if the update didn't come from TextState.
       if (!textUpdate) { this.#stores.textState.updateColor(newHsv); }
 
       this.#lastTime = globalThis.performance.now();
@@ -278,8 +275,6 @@ console.log(`!! ColorState - ctor - 1 - #internalData.format: ${this.#data.forma
    {
       if (!this.#isExternalUpdate()) { return; }
 
-console.log(`!! ColorState - updateExternal - 0 - data: `, extColor);
-
       if (!colord(extColor).isValid())
       {
          console.warn(`TJSColorPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
@@ -288,28 +283,16 @@ console.log(`!! ColorState - updateExternal - 0 - data: `, extColor);
 
       const newHsv = HsvColorParser.parseExternal(extColor);
 
-console.log(`!! ColorState - updateExternal - 2 - newHsv: `, newHsv);
+      if (colord(newHsv).isEqual(this.#data.currentColor)) { return; }
 
-      if (colord(newHsv).isEqual(this.#data.currentColor))
-      {
-console.log(`!! ColorState - updateExternal - 3 - newHsv === this.#data.currentColor`);
-         return;
-      }
-
-      if (typeof newHsv.h === 'number')
-      {
-         this.#stores.hue.set(newHsv.h);
-      }
+      if (typeof newHsv.h === 'number') { this.#stores.hue.set(newHsv.h); }
 
       if (typeof newHsv.s === 'number' && typeof newHsv.v === 'number')
       {
          this.#stores.sv.set({ s: newHsv.s, v: newHsv.v });
       }
 
-      if (typeof newHsv.a === 'number')
-      {
-         this.#stores.alpha.set(newHsv.a);
-      }
+      if (typeof newHsv.a === 'number') { this.#stores.alpha.set(newHsv.a); }
    }
 
    /**
@@ -321,15 +304,21 @@ console.log(`!! ColorState - updateExternal - 3 - newHsv === this.#data.currentC
    {
       this.#validateOptions(options);
 
+      let updateColor = false;
+
       if (options.format !== void 0 && options.format !== this.#data.format)
       {
-         this.#data.format = format;
+         this.#data.format = options.format;
+         updateColor = true;
       }
 
       if (options.formatType !== void 0 && options.formatType !== this.#data.formatType)
       {
          this.#data.formatType = options.formatType;
+         updateColor = true;
       }
+
+      if (updateColor) { this.#updateCurrentColor(); }
    }
 
    /**
@@ -373,6 +362,76 @@ class HsvColorParser
    static #hslaMatcherSpace = /^hsla?\(\s*([+-]?\d*\.?\d+)(deg|rad|grad|turn)?\s+([+-]?\d*\.?\d+)%\s+([+-]?\d*\.?\d+)%\s*(?:\/\s*([+-]?\d*\.?\d+)(%)?\s*)?\)$/i;
 
    /**
+    * Converts the internal HSV color to the given format and primitive type.
+    *
+    * @param {object}                  hsvColor - HSV color to convert.
+    *
+    * @param {object}                  [opts] - Optional parameters.
+    *
+    * @param {'hex'|'hsl'|'hsv'|'rgb'} [opts.format='hsl'] - Format to convert to...
+    *
+    * @param {'object'|'string'}       [opts.formatType='string'] - Primitive type.
+    *
+    * @param {number}                  [opts.precision=0] - Primitive type.
+    *
+    * @returns {object|string} Converted color.
+    */
+   static convertColor(hsvColor, { format = 'hsl', formatType = 'string', precision = 0 } = {})
+   {
+      let result;
+
+      const colordInstance = colord(hsvColor);
+
+      if (formatType === 'object')
+      {
+         switch (format)
+         {
+            case 'hsl':
+            {
+               const newHsl = colordInstance.toHsl(precision);
+               newHsl.h = hsvColor.h;
+               result = newHsl;
+               break;
+            }
+
+            case 'hsv':
+               result = hsvColor;
+               break;
+
+            case 'rgb':
+            {
+               result = colordInstance.toRgb(precision);
+               break;
+            }
+         }
+      }
+      else
+      {
+         switch (format)
+         {
+            case 'hex':
+               result = colordInstance.toHex(precision);
+               break;
+
+            case 'hsl':
+            {
+               const newHsl = colordInstance.toHslString(precision);
+               // TODO: Need to modify hue
+               // newHsl.h = this.#data.hue;
+               result = newHsl;
+               break;
+            }
+
+            case 'rgb':
+               result = colordInstance.toRgbString(precision);
+               break;
+         }
+      }
+
+      return result;
+   }
+
+   /**
     * Parses an externally set color. If HSL or HSV the hue is maintained in conversion to internal HSV data.
     *
     * @param {object|string}   color - Color to parse.
@@ -385,13 +444,10 @@ class HsvColorParser
 
       let initialHue = 0;
 
-// console.log(`!! HsvColorParser - parseExternal - 0 - colorModel: `, colorModel);
-
       // Parse initial hue value from `hsl` or `hsv` formats.
       if (colorModel.format === 'hsv' && colorModel.type === 'object')
       {
          initialHue = color.h ?? 0;
-// console.log(`!! HsvColorParser - parseExternal - A - initialHue: `, initialHue);
       }
       else if (colorModel.format === 'hsl')
       {
@@ -399,31 +455,18 @@ class HsvColorParser
          {
             case 'object':
                initialHue = color.h ?? 0;
-// console.log(`!! HsvColorParser - parseExternal - B - initialHue: `, initialHue);
                break;
 
             case 'string':
             {
                const match = this.#hslaMatcherComma.exec(color) ?? this.#hslaMatcherSpace.exec(color);
-// console.log(`!! HsvColorParser - parseExternal - C - match: `, match);
-               if (match)
-               {
-                  initialHue = ColorParser.parseHue(match[1], match[2]);
-console.log(`!! HsvColorParser - parseExternal - C1 - initialHue: `, initialHue);
-               }
+               if (match) { initialHue = ColorParser.parseHue(match[1], match[2]); }
             }
          }
       }
 
-// console.log(`!! HsvColorParser - parseExternal - 1 - initialHue: `, initialHue);
-// console.log(`!! HsvColorParser - parseExternal - 2 - colord: `, colord(color));
-
       const newHsv = colord(color).toHsv(5);
       newHsv.h = ColorParser.clampHue(initialHue);
-
-// console.log(`!! HsvColorParser - parseExternal - 3 - newHsv: `, newHsv);
-// console.log(`!! HsvColorParser - parseExternal - 4 - newHsv colord: `, colord(newHsv));
-// console.log(`!! HsvColorParser - parseExternal - 5 - newHsv colord back to rgb: `, colord(newHsv).toRgb(5));
 
       return newHsv;
    }
@@ -444,6 +487,8 @@ console.log(`!! HsvColorParser - parseExternal - C1 - initialHue: `, initialHue)
  * @property {number} hue - Current hue value.
  *
  * @property {boolean} isDark - Is the current color considered dark.
+ *
+ * @property {number} precision - The rounding precision for the current color output.
  *
  * @property {string} rgbString - Current color as RGB string without `alpha` component.
  *
