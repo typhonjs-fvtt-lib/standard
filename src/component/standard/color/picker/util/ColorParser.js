@@ -15,7 +15,7 @@ export class ColorParser
       grad: 360 / 400,
       turn: 360,
       rad: 360 / (Math.PI * 2)
-   }
+   };
 
    /**
     * Parses the given color object or string returning the color model format and storage type.
@@ -26,16 +26,13 @@ export class ColorParser
     */
    static getColorFormat(color)
    {
-console.log(`!! ColorParser - getColorFormat - 0 - color: `, color)
       const format = getFormat(color);
-console.log(`!! ColorParser - getColorFormat - 1 - format: `, format)
-
       if (!format) { return void 0; }
 
       return {
          format,
          type: typeof color
-      }
+      };
    }
 
    /**
@@ -62,4 +59,18 @@ console.log(`!! ColorParser - getColorFormat - 1 - format: `, format)
    {
       return Number(value) * (this.#ANGLE_UNITS[unit] ?? 1);
    }
+
+   /**
+    * @param {number} number - Number to round.
+    *
+    * @param {number} [digits=0] - Digit precision.
+    *
+    * @param {number} [base] - Base to round.
+    *
+    * @returns {number} Rounded number.
+    */
+   static round(number, digits = 0, base = Math.pow(10, digits))
+   {
+      return Math.round(base * number) / base;
+   };
 }

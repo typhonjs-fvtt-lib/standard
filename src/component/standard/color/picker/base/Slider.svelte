@@ -123,7 +123,6 @@
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
                $hue = Math.min(360, Math.max(0, internalState.colorState.hue + movement * 360 * focusMovementFactor));
-               // h = Math.min(360, Math.max(0, h + movement * 360 * focusMovementFactor));
             }, 10);
          }
       }

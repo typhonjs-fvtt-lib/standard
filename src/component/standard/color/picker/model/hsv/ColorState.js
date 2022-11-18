@@ -416,9 +416,12 @@ class HsvColorParser
             case 'hsl':
             {
                const newHsl = colordInstance.toHslString(precision);
-               // TODO: Need to modify hue
-               // newHsl.h = this.#data.hue;
-               result = newHsl;
+
+               // The colord conversion will not maintain hue when `s` or `v` is `0`.
+               // Replace hue value with rounded original hue from `hsvColor`.
+               result = hsvColor.s === 0 || hsvColor.v === 0 ?
+                newHsl.replace(/(hsla?\()\s*([+-]?\d*\.?\d+)(.*)/, (match, p1, p2, p3) =>
+                 `${p1}${ColorParser.round(hsvColor.h, precision)}${p3}`) : newHsl;
                break;
             }
 
