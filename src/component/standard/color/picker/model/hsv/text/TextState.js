@@ -29,13 +29,11 @@ export class TextState
    #subscriptions = [];
 
    /**
-    * @param {object}                     initialHsv - Initial color
-    *
     * @param {ColorState}                 colorState - ColorState instance.
     *
     * @param {ColorStateInternalUpdate}   internalUpdate - ColorState internal store update data.
     */
-   constructor(initialHsv, colorState, internalUpdate)
+   constructor(colorState, internalUpdate)
    {
       /** @type {ColorStateAccess} */
       const colorStateAccess = {
@@ -57,7 +55,7 @@ export class TextState
          rgb: new RgbState(colorStateAccess, textStateAccess)
       }
 
-      this.updateColor(initialHsv);
+      this.updateColor(colorState.hsv);
    }
 
    /**

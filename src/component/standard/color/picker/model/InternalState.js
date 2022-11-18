@@ -80,9 +80,6 @@ export class InternalState
       }
 
       this.#colorState = new ColorState(this, color, opts);
-
-console.log(`!! InternalState - ctor - this.#externalData: `, this.#externalData)
-console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData)
    }
 
    /**
@@ -211,9 +208,6 @@ console.log(`!! InternalState - ctor - this.#internalData: `, this.#internalData
       // Update color state options (color format / type) ------------------------------------------------------------
 
       this.#colorState.updateOptions(opts);
-
-console.log(`!! InternalState - update - this.#externalData: `, this.#externalData)
-console.log(`!! InternalState - update - this.#internalData: `, this.#internalData)
    }
 
    /**

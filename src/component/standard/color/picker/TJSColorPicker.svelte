@@ -57,17 +57,10 @@
    // When options changes update internal state.
    $: internalState.updateOptions(options);
 
-   $: {
-// console.log(`!! TJSColorPicker - $currentColor: `, $currentColor)
-      color = $currentColor;
-   }
+   $: color = $currentColor;
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
-   $: if (!colord($currentColor).isEqual(color))
-   {
-// console.log(`!! TJSColorPicker - $:color: `, color)
-      colorState.updateExternal(color);
-   }
+   $: if (!colord($currentColor).isEqual(color)) { colorState.updateExternal(color); }
 
    /** @type {HTMLSpanElement} */
    let spanEl = void 0;
@@ -105,7 +98,7 @@
       style:--_tjs-color-picker-current-color-rgb-hue={$rgbHueString}
       style:--_tjs-color-picker-current-color-rgba={$rgbaString}
       use:applyStyles={styles}>
-<!--    <input type=hidden value={hex}/>-->
+    <input type=hidden value={$rgbaString}/>
     {#if $isPopup}
         <Input />
     {/if}

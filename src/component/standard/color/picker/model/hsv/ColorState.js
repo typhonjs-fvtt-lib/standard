@@ -154,7 +154,7 @@ export class ColorState
 
       // Readable stores
       this.#stores.activeTextMode = new ActiveTextMode();
-      this.#stores.textState = new TextState(this.#data.currentColor, this, this.#internalUpdate);
+      this.#stores.textState = new TextState(this, this.#internalUpdate);
       this.#stores.isDark = { subscribe: tempStoreIsDark.subscribe };
       this.#stores.rgbString = { subscribe: tempStoreRGBString.subscribe };
       this.#stores.rgbHueString = { subscribe: tempStoreRGBHueString.subscribe };
@@ -207,6 +207,14 @@ export class ColorState
    get hue()
    {
       return this.#data.hue;
+   }
+
+   /**
+    * @returns {{ h: number, s: number, v: number, a: number }} Current HSV color object.
+    */
+   get hsv()
+   {
+      return { h: this.#data.hue, s: this.#data.sv.s, v: this.#data.sv.v, a: this.#data.alpha };
    }
 
    get stores()
