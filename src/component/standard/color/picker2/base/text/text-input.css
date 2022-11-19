@@ -1,0 +1,63 @@
+.tjs-color-picker .text-input input[type="number"] {
+    appearance: auto;
+}
+
+.tjs-color-picker .text-input input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+    opacity: 1;
+}
+
+.tjs-color-picker .text-input {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 10px 5px 5px;
+}
+
+.tjs-color-picker .text-input .input-container {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+}
+
+.tjs-color-picker .text-input .tjs-input-container {
+    flex: 1;
+    padding: 0;
+    text-align: center;
+    --tjs-input-text-align: center;
+    --tjs-input-width: 5px;
+}
+
+.tjs-color-picker .text-input button {
+    flex: 1;
+    border: none;
+    background-color: #eee;
+    padding: 0;
+    border-radius: 5px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+}
+
+.tjs-color-picker .text-input .is-input-invalid {
+    color: red;
+}
+
+.tjs-color-picker .text-input button {
+    cursor: pointer;
+    flex: 1;
+    transition: background-color 0.2s;
+}
+
+.tjs-color-picker .text-input button:hover {
+    background-color: #ccc;
+}
+
+.tjs-color-picker .text-input input:focus, button:focus {
+    outline: none;
+}
+
+.tjs-color-picker.has-been-tabbed .text-input input:focus-visible, button:focus-visible {
+    outline: 2px solid var(--tjs-color-picker-focus-color, red);
+    outline-offset: 2px;
+}
