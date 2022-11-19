@@ -1,6 +1,8 @@
 import { writable }        from 'svelte/store';
 
-import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
+import {
+   colord,
+   Colord }                from '@typhonjs-fvtt/runtime/color/colord';
 
 import { debounce }        from '@typhonjs-fvtt/runtime/svelte/util';
 
@@ -252,9 +254,10 @@ export class ColorState
       const colordInstance = colord(hsvColor);
 
       this.#data.isDark = colordInstance.isDark();
-      this.#data.hslString = colordInstance.alpha(1).toHslString(3);
-      this.#data.hslHueString = colord({ h: hsvColor.h, s: 100, v: 100, a: 1 }).toHslString(3);
-      this.#data.hslaString = colordInstance.toHslString(3);
+
+      this.#data.hslString = HsvColorParser.convertColor({ ...hsvColor, a: 1 }, { precision: 3 });
+      this.#data.hslHueString = HsvColorParser.convertColor({ h: hsvColor.h, s: 100, v: 100, a: 1 }, { precision: 3 });
+      this.#data.hslaString = HsvColorParser.convertColor(hsvColor, { precision: 3 });
 
       // Update current color based on `format` and `formatType`
       this.#data.currentColor = HsvColorParser.convertColor(hsvColor, this.#data);
@@ -372,7 +375,7 @@ class HsvColorParser
    /**
     * Converts the internal HSV color to the given format and primitive type.
     *
-    * @param {object}                  hsvColor - HSV color to convert.
+    * @param {object}                  color - ColorD instance or HSV color to convert.
     *
     * @param {object}                  [opts] - Optional parameters.
     *
@@ -384,11 +387,12 @@ class HsvColorParser
     *
     * @returns {object|string} Converted color.
     */
-   static convertColor(hsvColor, { format = 'hsl', formatType = 'string', precision = 0 } = {})
+   static convertColor(color, { hue = color?.h ?? color.hue(), format = 'hsl', formatType = 'string',
+    precision = 0 } = {})
    {
       let result;
 
-      const colordInstance = colord(hsvColor);
+      const colordInstance = color instanceof Colord ? color : colord(color);
 
       if (formatType === 'object')
       {
@@ -397,14 +401,14 @@ class HsvColorParser
             case 'hsl':
             {
                const newHsl = colordInstance.toHsl(precision);
-               newHsl.h = ColorParser.round(hsvColor.h, precision);
+               newHsl.h = ColorParser.round(hue, precision);
                result = newHsl;
                break;
             }
 
             case 'hsv':
                const newHsv = colordInstance.toHsv(precision);
-               newHsv.h = ColorParser.round(hsvColor.h, precision);
+               newHsv.h = ColorParser.round(hue, precision);
                result = newHsv;
                break;
 
@@ -426,12 +430,13 @@ class HsvColorParser
             case 'hsl':
             {
                const newHsl = colordInstance.toHslString(precision);
+               const hsvColor = colordInstance.toHsv();
 
                // The colord conversion will not maintain hue when `s` or `v` is `0`.
                // Replace hue value with rounded original hue from `hsvColor`.
                result = hsvColor.s === 0 || hsvColor.v === 0 ?
                 newHsl.replace(/(hsla?\()\s*([+-]?\d*\.?\d+)(.*)/, (match, p1, p2, p3) =>
-                 `${p1}${ColorParser.round(hsvColor.h, precision)}${p3}`) : newHsl;
+                 `${p1}${ColorParser.round(hue, precision)}${p3}`) : newHsl;
                break;
             }
 
