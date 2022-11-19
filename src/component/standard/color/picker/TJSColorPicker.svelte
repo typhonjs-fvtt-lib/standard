@@ -43,9 +43,9 @@
    const colorState = internalState.colorState;
 
    const {
-      rgbString,
-      rgbHueString,
-      rgbaString,
+      hslString,
+      hslHueString,
+      hslaString,
       currentColor
    } = colorState.stores;
 
@@ -94,11 +94,11 @@
 
 <span bind:this={spanEl}
       class=tjs-color-picker
-      style:--_tjs-color-picker-current-color-rgb={$rgbString}
-      style:--_tjs-color-picker-current-color-rgb-hue={$rgbHueString}
-      style:--_tjs-color-picker-current-color-rgba={$rgbaString}
+      style:--_tjs-color-picker-current-color-hsl={$hslString}
+      style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
+      style:--_tjs-color-picker-current-color-hsla={$hslaString}
       use:applyStyles={styles}>
-    <input type=hidden value={$rgbaString}/>
+    <input type=hidden value={$hslaString}/>
     {#if $isPopup}
         <Input />
     {/if}

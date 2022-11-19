@@ -167,12 +167,12 @@
         position: absolute;
         content: '';
         inset: 0;
-        background: linear-gradient(#00000000, var(--_tjs-color-picker-current-color-rgb));
+        background: linear-gradient(#00000000, var(--_tjs-color-picker-current-color-hsl));
         z-index: 0;
     }
 
     .horizontal:after {
-        background: linear-gradient(0.25turn, #00000000, var(--_tjs-color-picker-current-color-rgb));
+        background: linear-gradient(0.25turn, #00000000, var(--_tjs-color-picker-current-color-hsl));
     }
 
     .alpha {

@@ -15,7 +15,7 @@
     .inner {
         width: 100%;
         height: 100%;
-        background: var(--_tjs-color-picker-current-color-rgba);
+        background: var(--_tjs-color-picker-current-color-hsla);
     }
 
     .outer {

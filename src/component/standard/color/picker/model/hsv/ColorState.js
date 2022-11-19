@@ -35,9 +35,9 @@ export class ColorState
       hue: 0,
       isDark: false,
       precision: 0,
-      rgbString: 'rgb(255, 0, 0)',
-      rgbHueString: 'rgb(255, 0, 0)',
-      rgbaString: 'rgba(255, 0, 0, 1)',
+      hslString: 'hsl(0, 100%, 50%)',
+      hslHueString: 'hsl(0, 100%, 50%)',
+      hslaString: 'hsla(0, 100%, 50%, 1)',
       sv: { s: 100, v: 100 }
    };
 
@@ -135,16 +135,16 @@ export class ColorState
       // Cache externally "readable" store set methods.
       const tempStoreCurrentColor = writable(this.#data.currentColor);
       const tempStoreIsDark = writable(this.#data.isDark);
-      const tempStoreRGBString = writable(this.#data.rgbString);
-      const tempStoreRGBHueString = writable(this.#data.rgbHueString);
-      const tempStoreRGBAString = writable(this.#data.rgbaString);
+      const tempStoreHslString = writable(this.#data.hslString);
+      const tempStoreHslHueString = writable(this.#data.hslHueString);
+      const tempStoreHslaString = writable(this.#data.hslaString);
 
       this.#storeSet = {
          currentColor: tempStoreCurrentColor.set,
          isDark: tempStoreIsDark.set,
-         rgbString: tempStoreRGBString.set,
-         rgbaString: tempStoreRGBAString.set,
-         rgbHueString: tempStoreRGBHueString.set,
+         hslString: tempStoreHslString.set,
+         hslaString: tempStoreHslaString.set,
+         hslHueString: tempStoreHslHueString.set,
       }
 
       // Writable stores
@@ -156,9 +156,9 @@ export class ColorState
       this.#stores.activeTextMode = new ActiveTextMode();
       this.#stores.textState = new TextState(this, this.#internalUpdate);
       this.#stores.isDark = { subscribe: tempStoreIsDark.subscribe };
-      this.#stores.rgbString = { subscribe: tempStoreRGBString.subscribe };
-      this.#stores.rgbHueString = { subscribe: tempStoreRGBHueString.subscribe };
-      this.#stores.rgbaString = { subscribe: tempStoreRGBAString.subscribe };
+      this.#stores.hslString = { subscribe: tempStoreHslString.subscribe };
+      this.#stores.hslHueString = { subscribe: tempStoreHslHueString.subscribe };
+      this.#stores.hslaString = { subscribe: tempStoreHslaString.subscribe };
       this.#stores.currentColor = { subscribe: tempStoreCurrentColor.subscribe };
 
       this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.alpha, (a) =>
@@ -252,9 +252,9 @@ export class ColorState
       const colordInstance = colord(hsvColor);
 
       this.#data.isDark = colordInstance.isDark();
-      this.#data.rgbString = colordInstance.alpha(1).toRgbString(3);
-      this.#data.rgbHueString = colord({ h: hsvColor.h, s: 100, v: 100, a: 1 }).toRgbString(3);
-      this.#data.rgbaString = colordInstance.toRgbString(3);
+      this.#data.hslString = colordInstance.alpha(1).toHslString(3);
+      this.#data.hslHueString = colord({ h: hsvColor.h, s: 100, v: 100, a: 1 }).toHslString(3);
+      this.#data.hslaString = colordInstance.toHslString(3);
 
       // Update current color based on `format` and `formatType`
       this.#data.currentColor = HsvColorParser.convertColor(hsvColor, this.#data);
@@ -274,9 +274,9 @@ export class ColorState
       this.#storeSet.currentColor(this.#data.currentColor);
       this.#storeSet.isDark(this.#data.isDark);
 
-      this.#storeSet.rgbString(this.#data.rgbString);
-      this.#storeSet.rgbHueString(this.#data.rgbHueString);
-      this.#storeSet.rgbaString(this.#data.rgbaString);
+      this.#storeSet.hslString(this.#data.hslString);
+      this.#storeSet.hslHueString(this.#data.hslHueString);
+      this.#storeSet.hslaString(this.#data.hslaString);
    }
 
    updateExternal(extColor)
@@ -503,11 +503,11 @@ class HsvColorParser
  *
  * @property {number} precision - The rounding precision for the current color output.
  *
- * @property {string} rgbString - Current color as RGB string without `alpha` component.
+ * @property {string} hslString - Current color as RGB string without `alpha` component.
  *
- * @property {string} rgbHueString - Current hue as RGB string.
+ * @property {string} hslHueString - Current hue as RGB string.
  *
- * @property {string} rgbaString - Current color as RGB string with `alpha` component.
+ * @property {string} hslaString - Current color as RGB string with `alpha` component.
  *
  * @property {{ s: number, v: number }} sv - Current internal color saturation / value state.
  */
@@ -545,11 +545,11 @@ class HsvColorParser
  *
  * @property {TextState} textState - The text state for various supported color formats.
  *
- * @property {import('svelte/store').Readable<string>} rgbString - The current color / RGB only string.
+ * @property {import('svelte/store').Readable<string>} hslString - The current color / RGB only string.
  *
- * @property {import('svelte/store').Readable<string>} rgbHueString - The current color hue / RGB only string.
+ * @property {import('svelte/store').Readable<string>} hslHueString - The current color hue / RGB only string.
  *
- * @property {import('svelte/store').Readable<string>} rgbaString - The current color / RGBA only string.
+ * @property {import('svelte/store').Readable<string>} hslaString - The current color / RGBA only string.
  *
  * @property {import('svelte/store').Writable<{ s: number, v: number }>} sv - The saturation / value pair for HSV components.
  */
