@@ -1,1 +1,1 @@
-export * from './picker/index.js';
+export * from './picker-colord/index.js';
