@@ -25,7 +25,7 @@
    /**
     * User settable options / customization properties.
     *
-    * @type {TJSColorPickerOptions}
+    * @type {TJSColordPickerOptions}
     */
    export let options = void 0;
 

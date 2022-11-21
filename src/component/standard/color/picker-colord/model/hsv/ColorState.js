@@ -1,8 +1,6 @@
 import { writable }        from 'svelte/store';
 
-import {
-   colord,
-   Colord }                from '@typhonjs-fvtt/runtime/color/colord';
+import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
 
 import { debounce }        from '@typhonjs-fvtt/runtime/svelte/util';
 
@@ -16,7 +14,7 @@ import { ColorParser }     from '../../util/ColorParser.js';
 export class ColorState
 {
    /**
-    * Delta time in milliseconds determining if a change to the color prop in {@link TJSColorPicker} is made externally.
+    * Delta time in milliseconds determining if a change to the color prop in {@link TJSColordPicker} is made externally.
     *
     * @type {number}
     */
@@ -88,7 +86,7 @@ export class ColorState
     *
     * @param {object|string}           color -
     *
-    * @param {TJSColorPickerOptions}   options -
+    * @param {TJSColordPickerOptions}   options -
     */
    constructor(internalState, color, options)
    {
@@ -104,7 +102,7 @@ export class ColorState
          // Post a warning message that any initial bound color prop is invalid. The default will be set to red.
          if (!colorFormat)
          {
-            console.warn(`TJSColorPicker warning - initial 'color' prop value is invalid: ${color}`);
+            console.warn(`TJSColordPicker warning - initial 'color' prop value is invalid: ${color}`);
          }
          else
          {
@@ -288,7 +286,7 @@ export class ColorState
 
       if (!colord(extColor).isValid())
       {
-         console.warn(`TJSColorPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
+         console.warn(`TJSColordPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
          return;
       }
 
@@ -309,7 +307,7 @@ export class ColorState
    /**
     * Updates options related to ColorState.
     *
-    * @param {TJSColorPickerOptions}   options -
+    * @param {TJSColordPickerOptions}   options -
     */
    updateOptions(options)
    {
@@ -335,7 +333,7 @@ export class ColorState
    /**
     * Validates external user defined options.
     *
-    * @param {TJSColorPickerOptions} opts -
+    * @param {TJSColordPickerOptions} opts -
     */
    #validateOptions(opts)
    {
@@ -345,7 +343,7 @@ export class ColorState
 
          if (!ColorState.#supportedFormats.has(opts.format))
          {
-            throw new Error(`'TJSColorPicker error: Unknown format for 'options.format' - '${opts.format}'.`);
+            throw new Error(`'TJSColordPicker error: Unknown format for 'options.format' - '${opts.format}'.`);
          }
       }
 
@@ -356,7 +354,7 @@ export class ColorState
          if (!ColorState.#supportedFormatTypes.has(opts.formatType))
          {
             throw new Error(
-             `'TJSColorPicker error: Unknown format type for 'options.formatType' - '${opts.formatType}'.`);
+             `'TJSColordPicker error: Unknown format type for 'options.formatType' - '${opts.formatType}'.`);
          }
       }
    }
@@ -375,7 +373,7 @@ class HsvColorParser
    /**
     * Converts the internal HSV color to the given format and primitive type.
     *
-    * @param {object}                  color - ColorD instance or HSV color to convert.
+    * @param {object}                  color - HSV color to convert.
     *
     * @param {object}                  [opts] - Optional parameters.
     *
@@ -387,12 +385,12 @@ class HsvColorParser
     *
     * @returns {object|string} Converted color.
     */
-   static convertColor(color, { hue = color?.h ?? color.hue(), format = 'hsl', formatType = 'string',
+   static convertColor(color, { hue = color?.h, format = 'hsl', formatType = 'string',
     precision = 0 } = {})
    {
       let result;
 
-      const colordInstance = color instanceof Colord ? color : colord(color);
+      const colordInstance = colord(color);
 
       if (formatType === 'object')
       {
@@ -433,7 +431,7 @@ class HsvColorParser
                const hsvColor = colordInstance.toHsv();
 
                // The colord conversion will not maintain hue when `s` or `v` is `0`.
-               // Replace hue value with rounded original hue from `hsvColor`.
+               // Replace hue value with rounded original hue from `color`.
                result = hsvColor.s === 0 || hsvColor.v === 0 ?
                 newHsl.replace(/(hsla?\()\s*([+-]?\d*\.?\d+)(.*)/, (match, p1, p2, p3) =>
                  `${p1}${ColorParser.round(hue, precision)}${p3}`) : newHsl;

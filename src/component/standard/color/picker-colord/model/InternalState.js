@@ -18,7 +18,7 @@ export class InternalState
    /**
     * Stores external user configurable settings.
     *
-    * @type {TJSColorPickerOptions}
+    * @type {TJSColordPickerOptions}
     */
    #externalData = {};
 
@@ -35,9 +35,9 @@ export class InternalState
    #stores;
 
    /**
-    * @param {TJSColorPickerColor}     color -
+    * @param {TJSColordPickerColor}     color -
     *
-    * @param {TJSColorPickerOptions}   options -
+    * @param {TJSColordPickerOptions}   options -
     */
    constructor(color, options)
    {
@@ -130,7 +130,7 @@ export class InternalState
    /**
     * Prepares layout components based on any user provided `options.layout`
     *
-    * @param {TJSColorPickerOptions} opts -
+    * @param {TJSColordPickerOptions} opts -
     *
     * @returns {PickerComponents} Configured layout components.
     */
@@ -174,7 +174,7 @@ export class InternalState
    /**
     * Updates external & internal data on changes to the `options` prop.
     *
-    * @param {TJSColorPickerOptions} options -
+    * @param {TJSColordPickerOptions} options -
     */
    updateOptions(options)
    {
@@ -213,7 +213,7 @@ export class InternalState
    /**
     * Validates external user defined options.
     *
-    * @param {TJSColorPickerOptions} opts -
+    * @param {TJSColordPickerOptions} opts -
     */
    #validateOptions(opts)
    {
@@ -255,11 +255,11 @@ export class InternalState
 }
 
 /**
- * @typedef {object|string} TJSColorPickerColor
+ * @typedef {object|string} TJSColordPickerColor
  */
 
 /**
- * @typedef {object} TJSColorPickerOptions
+ * @typedef {object} TJSColordPickerOptions
  *
  * @property {PickerComponents} [components] - User defined picker component overrides.
  *
@@ -279,7 +279,7 @@ export class InternalState
  *
  * @property {number} [precision=0] - A positive whole number defining rounding precision.
  *
- * @property {object} [styles] - Inline styles to apply to TJSColorPicker span; useful to set CSS variables.
+ * @property {object} [styles] - Inline styles to apply to TJSColordPicker span; useful to set CSS variables.
  */
 
 /**
@@ -313,17 +313,17 @@ export class InternalState
 /**
  * @typedef {object} PickerStores
  *
- * @property {import('svelte/store').Writable<boolean>} canChangeMode - See {@link TJSColorPickerOptions.canChangeMode}
+ * @property {import('svelte/store').Writable<boolean>} canChangeMode - See {@link TJSColordPickerOptions.canChangeMode}
  *
  * @property {import('svelte/store').Writable<PickerComponents>} components - This selected layout components.
  *
- * @property {import('svelte/store').Writable<boolean>} isAlpha - See {@link TJSColorPickerOptions.isAlpha}
+ * @property {import('svelte/store').Writable<boolean>} isAlpha - See {@link TJSColordPickerOptions.isAlpha}
  *
- * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColorPickerOptions.isPopup}
+ * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
  *
- * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColorPickerOptions.isTextInput}
+ * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColordPickerOptions.isTextInput}
  *
- * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColorPickerOptions.precision}
+ * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
  *
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
