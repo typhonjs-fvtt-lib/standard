@@ -13,13 +13,6 @@ import { ColorParser }     from '../../util/ColorParser.js';
 
 export class ColorState
 {
-   /**
-    * Delta time in milliseconds determining if a change to the color prop in {@link TJSColordPicker} is made externally.
-    *
-    * @type {number}
-    */
-   static #delta = 100;
-
    /** @type {Set<string>} */
    static #supportedFormats = new Set(['hex', 'hsl', 'hsv', 'rgb']);
 
@@ -235,11 +228,6 @@ export class ColorState
       for (const unsubscribe of this.#unsubscribe) { unsubscribe(); }
    }
 
-   #isExternalUpdate()
-   {
-      return (globalThis.performance.now() - this.#lastTime) > ColorState.#delta;
-   }
-
    /**
     * @param {object}   hsvColor -
     */
@@ -282,8 +270,6 @@ export class ColorState
 
    updateExternal(extColor)
    {
-      if (!this.#isExternalUpdate()) { return; }
-
       if (!colord(extColor).isValid())
       {
          console.warn(`TJSColordPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
