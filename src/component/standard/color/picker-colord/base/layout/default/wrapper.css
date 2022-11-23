@@ -1,4 +1,6 @@
-@container (min-width: 0) {
+/* Container Styles ------------------------------------------------------------------------------------------------- */
+
+@container tjs-color-picker-container (min-width: 0) {
     .tjs-color-picker .tjs-color-picker-wrapper-default {
         padding: var(--tjs-color-picker-wrapper-padding, 3cqw 2cqw 2cqw 3cqw);
     }
@@ -19,6 +21,8 @@
        margin: var(--tjs-color-picker-slider-margin, 0 2cqw 0 0);
    }
 }
+
+/* Static Styles ---------------------------------------------------------------------------------------------------- */
 
 .tjs-color-picker .tjs-color-picker-wrapper-default {
     background: var(--tjs-color-picker-wrapper-background, white);

@@ -1,4 +1,6 @@
-@container (min-width: 0) {
+/* Container Styles ------------------------------------------------------------------------------------------------- */
+
+@container tjs-color-picker-container (min-width: 0) {
     .tjs-color-picker .tjs-color-picker-wrapper-chrome {
         padding: var(--tjs-color-picker-wrapper-padding, 0 0 3px 0);
         /*padding: var(--tjs-color-picker-wrapper-padding, 0 0 2cqw 0);*/
@@ -26,6 +28,8 @@
    /*    margin: var(--tjs-color-picker-slider-margin, 0 2cqw 0 0);*/
    /*}*/
 }
+
+/* Static Styles ---------------------------------------------------------------------------------------------------- */
 
 .tjs-color-picker .tjs-color-picker-wrapper-chrome {
     display: inline-flex;
