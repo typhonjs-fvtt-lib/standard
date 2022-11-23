@@ -1,0 +1,67 @@
+@container (min-width: 0) {
+    .tjs-color-picker .tjs-color-picker-wrapper-chrome {
+        padding: var(--tjs-color-picker-wrapper-padding, 0 0 3px 0);
+        /*padding: var(--tjs-color-picker-wrapper-padding, 0 0 2cqw 0);*/
+    }
+
+   .tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-picker-wrapper {
+       margin: var(--tjs-color-picker-picker-margin, 0 0 5px 0);
+
+       width: var(--tjs-color-picker-picker-width, 100%);
+       height: var(--tjs-color-picker-picker-height, 77cqw);
+       /*width: var(--tjs-color-picker-picker-width, 260px); */ /* 0.7692 ratio */
+       /*height: var(--tjs-color-picker-picker-height, 200px);*/
+   }
+
+   .tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-slider-wrapper {
+       margin: var(--tjs-color-picker-slider-margin, 4px);
+
+       width: var(--tjs-color-picker-slider-width, 96cqw);
+       height: var(--tjs-color-picker-slider-height, 10px);
+       /*width: var(--tjs-color-picker-slider-width, 250px);*/ /* 0.9615 ratio */
+       /*height: var(--tjs-color-picker-slider-height, 10px);*/
+   }
+
+   /*.tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-slider-wrapper:not(:last-of-type) {*/
+   /*    margin: var(--tjs-color-picker-slider-margin, 0 2cqw 0 0);*/
+   /*}*/
+}
+
+.tjs-color-picker .tjs-color-picker-wrapper-chrome {
+    display: inline-flex;
+    flex-direction: column;
+
+    background: var(--tjs-color-picker-wrapper-background, white);
+    border: var(--tjs-color-picker-wrapper-border, 1px solid black);
+    border-radius: var(--tjs-color-picker-wrapper-border-radius, 8px);
+    margin: var(--tjs-color-picker-wrapper-margin, 0);
+
+    width: 100%;
+    height: max-content;
+}
+
+.tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-picker-wrapper {
+    display: inline-block;
+    border-radius: var(--tjs-color-picker-picker-border-radius, 8px 8px 0 0);
+    overflow: hidden;
+    user-select: none;
+
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+    transition: outline 0.2s ease-in-out;
+}
+
+.tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-slider-wrapper {
+    display: inline-block;
+    border-radius: var(--tjs-color-picker-slider-border-radius, 7px);
+    overflow: hidden;
+    user-select: none;
+
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+    transition: outline 0.2s ease-in-out;
+}
+
+.tjs-color-picker .tjs-color-picker-wrapper-chrome div.focused {
+    outline: 2px solid var(--tjs-color-picker-focus-color, red);
+}
