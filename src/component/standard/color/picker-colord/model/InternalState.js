@@ -35,9 +35,9 @@ export class InternalState
    #stores;
 
    /**
-    * @param {TJSColordPickerColor}     color -
+    * @param {object|string}           color -
     *
-    * @param {TJSColordPickerOptions}   options -
+    * @param {TJSColordPickerOptions}  options -
     */
    constructor(color, options)
    {
@@ -57,6 +57,8 @@ export class InternalState
 
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
+      this.#externalData.width = Number.isInteger(opts.width) ? opts.width : 200;
+
       // Internal data -----------------------------------------------------------------------------------------------
 
       this.#internalData.isOpen = !this.#externalData.isPopup;
@@ -72,6 +74,7 @@ export class InternalState
          isPopup: propertyStore(externalData, 'isPopup'),
          isTextInput: propertyStore(externalData, 'isTextInput'),
          precision: propertyStore(externalData, 'precision'),
+         width: propertyStore(externalData, 'width'),
 
          isOpen: propertyStore(internalData, 'isOpen'),
 
@@ -200,6 +203,8 @@ export class InternalState
 
       this.#stores.precision.set(Number.isInteger(opts.precision) ? opts.precision : 0);
 
+      this.#stores.width.set(Number.isInteger(opts.width) ? opts.width : 200);
+
       // Internal data -----------------------------------------------------------------------------------------------
 
       // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
@@ -251,6 +256,11 @@ export class InternalState
       {
          throw new TypeError(`'options.precision' must be an integer >= 0.`);
       }
+
+      if (opts.width !== void 0 && (!Number.isInteger(opts.width) || opts.width < 50))
+      {
+         throw new TypeError(`'options.precision' must be an integer >= 50.`);
+      }
    }
 }
 
@@ -277,9 +287,11 @@ export class InternalState
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
  *
- * @property {number} [precision=0] - A positive whole number defining rounding precision.
+ * @property {number} [precision=0] - A positive integer defining rounding precision.
  *
  * @property {object} [styles] - Inline styles to apply to TJSColordPicker span; useful to set CSS variables.
+ *
+ * @property {number} [width=200] - A positive integer greater than 50 defining the main container width in pixels.
  */
 
 /**
@@ -324,6 +336,8 @@ export class InternalState
  * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColordPickerOptions.isTextInput}
  *
  * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
+ *
+ * @property {import('svelte/store').Writable<number>} width - See {@link TJSColordPickerOptions.width}
  *
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
