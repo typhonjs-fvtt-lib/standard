@@ -37,7 +37,8 @@
       components,
       isAlpha,
       isPopup,
-      isTextInput
+      isTextInput,
+      width
    } = internalState.stores;
 
    const colorState = internalState.colorState;
@@ -97,6 +98,7 @@
       style:--_tjs-color-picker-current-color-hsl={$hslString}
       style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
       style:--_tjs-color-picker-current-color-hsla={$hslaString}
+      style:--tjs-color-picker-container-width={`${$width}px`}
       use:applyStyles={styles}>
     <input type=hidden value={$hslaString}/>
     {#if $isPopup}
