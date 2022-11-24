@@ -10,14 +10,14 @@
 .tjs-color-picker .text-input {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin: 10px 5px 5px;
+    gap: 8px;
+    margin-top: 6px;
 }
 
 .tjs-color-picker .text-input .input-container {
     display: flex;
     flex: 1;
-    gap: 10px;
+    gap: 8px;
 }
 
 .tjs-color-picker .text-input .tjs-input-container {

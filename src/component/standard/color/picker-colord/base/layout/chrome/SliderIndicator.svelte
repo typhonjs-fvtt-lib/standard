@@ -6,16 +6,17 @@
    $: sliderStyle = `left: calc(${(pos / 200) * 192}% + 2px);`;
 </script>
 
-<div class=slider-indicator style={sliderStyle} />
+<div class=tjs-slider-indicator style={sliderStyle} />
 
 <style>
     div {
         position: absolute;
-        width: 6px;
-        height: 6px;
         background-color: white;
-        border-radius: 5px;
-        margin-top: 2px;
+
+        /*border-radius: 5px;*/
+        /*margin-top: 2px;*/
+        /*width: 6px;*/
+        /*height: 6px;*/
 
         pointer-events: none;
         z-index: 1;

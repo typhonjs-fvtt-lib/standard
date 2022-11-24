@@ -31,19 +31,4 @@
 
 <style>
     @import 'wrapper.css';
-
-    /*div {*/
-    /*    !*padding: var(--tjs-color-picker-wrapper-padding, 0 0 3px 0);*!*/
-
-    /*    background: var(--tjs-color-picker-wrapper-background, white);*/
-    /*    border: var(--tjs-color-picker-wrapper-border, 1px solid black);*/
-    /*    border-radius: var(--tjs-color-picker-wrapper-border-radius, 8px);*/
-    /*    margin: var(--tjs-color-picker-wrapper-margin, 0);*/
-
-    /*    height: max-content;*/
-    /*    width: 100%;*/
-
-    /*    display: inline-flex;*/
-    /*    flex-direction: column;*/
-    /*}*/
 </style>

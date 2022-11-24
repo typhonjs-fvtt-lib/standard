@@ -4,6 +4,8 @@ import {
    cssVariables,
    FoundryStyles }   from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
+import 'container-query-polyfill';
+
 export *             from './button/index.js';
 export *             from './color/index.js';
 export *             from './editor/index.js';
@@ -17,10 +19,10 @@ export *             from './settings/index.js';
 // -------------------------------------------------------------------------------------------------------------------
 
 // Conditional import for container query polyfill (Firefox).
-if (!('container' in document.documentElement.style))
-{
-   import('https://cdn.skypack.dev/container-query-polyfill');
-}
+// if (!('container' in document.documentElement.style))
+// {
+//    import('https://cdn.skypack.dev/container-query-polyfill');
+// }
 
 // -------------------------------------------------------------------------------------------------------------------
 

@@ -13,6 +13,10 @@
 
    const { components, sliderHorizontal } = internalState.stores;
 
+   const stylesSliderIndicator = {
+      background: 'var(--_tjs-color-picker-current-color-hsl-hue)'
+   }
+
    /** @type {HTMLDivElement} */
    let slider = void 0;
 
@@ -32,6 +36,20 @@
    let focusMovementCounter = void 0;
 
    $: if (typeof $hue === 'number' && slider) { pos = (100 * $hue) / 360; }
+
+   $: if ($sliderHorizontal)
+   {
+      stylesSliderIndicator.left = `calc(${(pos / 200) * 192}% + 2px)`;
+      stylesSliderIndicator.top = null;
+   }
+   else
+   {
+      stylesSliderIndicator.left = null;
+      stylesSliderIndicator.top = `calc(${(pos / 200) * 186}%)`;
+   }
+
+   // $: sliderStyle = `top: calc(${(pos / 200) * 186}%);`;
+   // $: sliderStyle = `left: calc(${(pos / 200) * 192}% + 2px);`;
 
    /**
     * @param {number}    pos -
@@ -151,7 +169,7 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={$components.sliderWrapper} {focused}>
+<svelte:component this={$components.sliderWrapper}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div
             class=slider
@@ -167,7 +185,7 @@
             aria-valuemax={360}
             aria-valuenow={Math.round($hue)}
     >
-        <svelte:component this={$components.sliderIndicator} {pos} />
+        <svelte:component this={$components.sliderIndicator} {focused} styles={stylesSliderIndicator} />
     </div>
 </svelte:component>
 

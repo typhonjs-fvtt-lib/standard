@@ -44,10 +44,10 @@
    div {
       display: none;
 
+      /* Controlled by `options.width` and set in TJSColordPicker */
       width: var(--tjs-color-picker-container-width, 275px);
 
-      container-type: inline-size;
-      container-name: tjs-color-picker-container;
+      container: tjs-color-picker-container / inline-size;
    }
 
    .isOpen {

@@ -9,6 +9,8 @@
    const { components, sliderHorizontal } = internalState.stores;
    const { alpha } = internalState.colorState.stores;
 
+   const stylesSliderIndicator = {}
+
    /** @type {HTMLDivElement} */
    let alphaEl = void 0;
 
@@ -28,6 +30,20 @@
    let pos = void 0;
 
    $: if (typeof $alpha === 'number' && alphaEl) { pos = 100 * $alpha; }
+
+   $: if ($sliderHorizontal)
+   {
+      stylesSliderIndicator.left = `calc(${(pos / 200) * 192}% + 2px)`;
+      stylesSliderIndicator.top = null;
+   }
+   else
+   {
+      stylesSliderIndicator.left = null;
+      stylesSliderIndicator.top = `calc(${(pos / 200) * 186}%)`;
+   }
+
+   // $: sliderStyle = `top: calc(${(pos / 200) * 186}%);`;
+   // $: sliderStyle = `left: calc(${(pos / 200) * 192}% + 2px);`;
 
    /**
     * @param {number}    pos -
@@ -142,7 +158,7 @@
         on:keydown={keydown}
 />
 
-<svelte:component this={$components.alphaWrapper} {focused}>
+<svelte:component this={$components.alphaWrapper}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div bind:this={alphaEl}
          class=alpha
@@ -158,7 +174,7 @@
          aria-valuenow={Math.round(pos)}
          aria-valuetext="{pos?.toFixed()}%"
     >
-        <svelte:component this={$components.alphaIndicator} {pos} />
+        <svelte:component this={$components.alphaIndicator} {focused} styles={stylesSliderIndicator} />
     </div>
 </svelte:component>
 

@@ -27,6 +27,17 @@
    /*.tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-slider-wrapper:not(:last-of-type) {*/
    /*    margin: var(--tjs-color-picker-slider-margin, 0 2cqw 0 0);*/
    /*}*/
+
+}
+
+@container tjs-color-picker-slider-container (min-width: 0) {
+   .tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-slider-indicator {
+       border-radius: 5px;
+       margin-top: 2px;
+
+       width: 6px;
+       height: 6px;
+   }
 }
 
 /* Static Styles ---------------------------------------------------------------------------------------------------- */

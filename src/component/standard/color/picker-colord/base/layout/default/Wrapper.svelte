@@ -31,14 +31,4 @@
 
 <style>
     @import 'wrapper.css';
-
-    /*div {*/
-    /*    background: var(--tjs-color-picker-wrapper-background, white);*/
-    /*    border: var(--tjs-color-picker-wrapper-border, 1px solid black);*/
-    /*    border-radius: var(--tjs-color-picker-wrapper-border-radius, 12px);*/
-    /*    margin: var(--tjs-color-picker-wrapper-margin, 0);*/
-
-    /*    width: 100%;*/
-    /*    height: max-content;*/
-    /*}*/
 </style>
