@@ -147,18 +147,12 @@
                let focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
                $sv = {
-                  s: Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+                  s: Math.min(100, Math.max(0, $sv.s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
                    focusMovementFactor * 100)),
 
-                  v: Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+                  v: Math.min(100, Math.max(0, $sv.v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
                    focusMovementFactor * 100))
                };
-
-               // $hsv.s = Math.min(100, Math.max(0, s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
-               //  focusMovementFactor * 100));
-               //
-               // $hsv.v = Math.min(100, Math.max(0, v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
-               //  focusMovementFactor * 100));
             }, 10);
          }
       }
