@@ -30,5 +30,5 @@
 </div>
 
 <style>
-    @import 'wrapper.css';
+    /*@import 'wrapper.css';*/
 </style>
