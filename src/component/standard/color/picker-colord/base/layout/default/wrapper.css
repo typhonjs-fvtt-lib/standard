@@ -49,52 +49,52 @@
 
 /* Static Styles ---------------------------------------------------------------------------------------------------- */
 
-.tjs-color-picker .tjs-color-picker-wrapper-default {
-    background: var(--tjs-color-picker-wrapper-background, white);
-    border: var(--tjs-color-picker-wrapper-border, 1px solid black);
-    margin: var(--tjs-color-picker-wrapper-margin, 0);
+/*.tjs-color-picker .tjs-color-picker-wrapper-default {*/
+/*    background: var(--tjs-color-picker-wrapper-background, white);*/
+/*    border: var(--tjs-color-picker-wrapper-border, 1px solid black);*/
+/*    margin: var(--tjs-color-picker-wrapper-margin, 0);*/
 
-    width: max-content;
-    height: max-content;
-}
+/*    width: max-content;*/
+/*    height: max-content;*/
+/*}*/
 
-.tjs-color-picker .tjs-color-picker-wrapper-default .tjs-picker-wrapper {
-    display: inline-block;
-    overflow: hidden;
-    user-select: none;
+/*.tjs-color-picker .tjs-color-picker-wrapper-default .tjs-picker-wrapper {*/
+/*    display: inline-block;*/
+/*    overflow: hidden;*/
+/*    user-select: none;*/
 
-    outline: 2px solid transparent;
-    outline-offset: 3px;
-    transition: outline 0.2s ease-in-out;
-}
+/*    outline: 2px solid transparent;*/
+/*    outline-offset: 3px;*/
+/*    transition: outline 0.2s ease-in-out;*/
+/*}*/
 
-.tjs-color-picker .tjs-color-picker-wrapper-default .tjs-slider-wrapper {
-    display: inline-block;
-    border-radius: var(--tjs-color-picker-slider-border-radius, 7px);
-    /*overflow: hidden;*/
-    user-select: none;
+/*.tjs-color-picker .tjs-color-picker-wrapper-default .tjs-slider-wrapper {*/
+/*    display: inline-block;*/
+/*    border-radius: var(--tjs-color-picker-slider-border-radius, 7px);*/
+/*    !*overflow: hidden;*!*/
+/*    user-select: none;*/
 
-    /*outline: 2px solid transparent;*/
-    /*outline-offset: 3px;*/
-    /*transition: outline 0.2s ease-in-out;*/
-}
+/*    !*outline: 2px solid transparent;*!*/
+/*    !*outline-offset: 3px;*!*/
+/*    !*transition: outline 0.2s ease-in-out;*!*/
+/*}*/
 
-.tjs-color-picker .tjs-color-picker-wrapper-default .tjs-slider-indicator {
-    position: absolute;
-    pointer-events: none;
-    z-index: 1;
+/*.tjs-color-picker .tjs-color-picker-wrapper-default .tjs-slider-indicator {*/
+/*    position: absolute;*/
+/*    pointer-events: none;*/
+/*    z-index: 1;*/
 
-    background: transparent;
+/*    background: transparent;*/
 
-    box-sizing: border-box;
-    box-shadow: 0 0 4px black, inset 0 0 4px black;
+/*    box-sizing: border-box;*/
+/*    box-shadow: 0 0 4px black, inset 0 0 4px black;*/
 
-    outline-color:transparent;
-    outline-style: solid;
+/*    outline-color:transparent;*/
+/*    outline-style: solid;*/
 
-    transition: outline 0.2s ease-in-out;
-}
+/*    transition: outline 0.2s ease-in-out;*/
+/*}*/
 
-.tjs-color-picker .tjs-color-picker-wrapper-default div.focused {
-    outline-color: var(--tjs-color-picker-focus-color, red);
-}
+/*.tjs-color-picker .tjs-color-picker-wrapper-default div.focused {*/
+/*    outline-color: var(--tjs-color-picker-focus-color, red);*/
+/*}*/

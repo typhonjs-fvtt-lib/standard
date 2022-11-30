@@ -1,5 +1,4 @@
-import { default as ChromePickerIndicator }  from './PickerIndicator.svelte';
-import { default as ChromeSliderIndicator }  from './SliderIndicator.svelte';
+import { default as ChromePickerWrapper }    from './PickerWrapper.svelte';
 import { default as ChromeWrapper }          from './Wrapper.svelte';
 
 /**
@@ -8,8 +7,6 @@ import { default as ChromeWrapper }          from './Wrapper.svelte';
  * @type {PickerComponents}
  */
 export const components = {
-   alphaIndicator: ChromeSliderIndicator,
-   pickerIndicator: ChromePickerIndicator,
-   sliderIndicator: ChromeSliderIndicator,
+   pickerWrapper: ChromePickerWrapper,
    wrapper: ChromeWrapper
 };

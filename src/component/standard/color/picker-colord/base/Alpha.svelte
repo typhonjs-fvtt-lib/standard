@@ -5,8 +5,10 @@
    import { easeInOutSin }                  from '../util/transition.js';
 
    const internalState = getContext('#tjs-color-picker-state');
+   const sliderConstraint = getContext('#tjs-color-picker-slider-constraint');
+   const sliderHorizontal = getContext('#tjs-color-picker-slider-horizontal');
 
-   const { components, sliderHorizontal } = internalState.stores;
+   const { components } = internalState.stores;
    const { alpha } = internalState.colorState.stores;
 
    const stylesSliderIndicator = {}
@@ -31,26 +33,23 @@
 
    $: if (typeof $alpha === 'number' && alphaEl) { pos = 100 * $alpha; }
 
-   $: if ($sliderHorizontal)
+   $: if (sliderHorizontal)
    {
-      stylesSliderIndicator.left = `calc(${(pos / 200) * 192}% + 2px)`;
+      stylesSliderIndicator.left = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
       stylesSliderIndicator.top = null;
    }
    else
    {
       stylesSliderIndicator.left = null;
-      stylesSliderIndicator.top = `calc(${(pos / 200) * 186}%)`;
+      stylesSliderIndicator.top = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
    }
-
-   // $: sliderStyle = `top: calc(${(pos / 200) * 186}%);`;
-   // $: sliderStyle = `left: calc(${(pos / 200) * 192}% + 2px);`;
 
    /**
     * @param {number}    pos -
     */
    function onClick(pos)
    {
-      const size = $sliderHorizontal ? alphaEl.getBoundingClientRect().width : alphaEl.getBoundingClientRect().height;
+      const size = sliderHorizontal ? alphaEl.getBoundingClientRect().width : alphaEl.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       $alpha = boundedPos / size;
@@ -64,7 +63,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick($sliderHorizontal ? e.offsetX : e.offsetY);
+         onClick(sliderHorizontal ? e.offsetX : e.offsetY);
       }
    }
 
@@ -83,7 +82,7 @@
    {
       if (isMouseDown)
       {
-         onClick($sliderHorizontal ? e.clientX - alphaEl.getBoundingClientRect().left :
+         onClick(sliderHorizontal ? e.clientX - alphaEl.getBoundingClientRect().left :
           e.clientY - alphaEl.getBoundingClientRect().top);
       }
    }
@@ -125,7 +124,7 @@
             focusMovementIntervalId = window.setInterval(() =>
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
-               const movement = $sliderHorizontal
+               const movement = sliderHorizontal
                 ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
                 : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
                $alpha = Math.min(1, Math.max(0, internalState.colorState.alpha + movement * focusMovementFactor));
@@ -146,7 +145,7 @@
    {
       e.preventDefault();
 
-      onClick($sliderHorizontal ? e.changedTouches[0].clientX - alphaEl.getBoundingClientRect().left
+      onClick(sliderHorizontal ? e.changedTouches[0].clientX - alphaEl.getBoundingClientRect().left
        : e.changedTouches[0].clientY - alphaEl.getBoundingClientRect().top);
    }
 </script>
@@ -163,7 +162,7 @@
     <div bind:this={alphaEl}
          class=alpha
          tabindex=0
-         class:horizontal={$sliderHorizontal}
+         class:horizontal={sliderHorizontal}
          on:mousedown|preventDefault|stopPropagation={mouseDown}
          on:touchstart={touch}
          on:touchmove|preventDefault|stopPropagation={touch}

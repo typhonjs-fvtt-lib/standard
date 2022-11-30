@@ -77,9 +77,6 @@ export class InternalState
          width: propertyStore(externalData, 'width'),
 
          isOpen: propertyStore(internalData, 'isOpen'),
-
-         // Set by the respective wrapper; default wrapper sets to true & the Chrome wrapper to false.
-         sliderHorizontal: propertyStore(internalData, 'sliderHorizontal')
       }
 
       this.#colorState = new ColorState(this, color, opts);
@@ -298,8 +295,6 @@ export class InternalState
  * @typedef {object} PickerInternalData
  *
  * @property {boolean} isOpen - Is the color picker in the open state.
- *
- * @property {boolean} sliderHorizontal - Are the sliders oriented horizontally.
  */
 
 /**
@@ -341,6 +336,4 @@ export class InternalState
  *
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
- *
- * @property {import('svelte/store').Writable<boolean>} sliderHorizontal - See {@link PickerInternalData.sliderHorizontal}
  */

@@ -42,18 +42,18 @@
 
 /* Static Styles ---------------------------------------------------------------------------------------------------- */
 
-.tjs-color-picker .tjs-color-picker-wrapper-chrome {
-    display: inline-flex;
-    flex-direction: column;
+/*.tjs-color-picker .tjs-color-picker-wrapper-chrome {*/
+/*    display: inline-flex;*/
+/*    flex-direction: column;*/
 
-    background: var(--tjs-color-picker-wrapper-background, white);
-    border: var(--tjs-color-picker-wrapper-border, 1px solid black);
-    border-radius: var(--tjs-color-picker-wrapper-border-radius, 8px);
-    margin: var(--tjs-color-picker-wrapper-margin, 0);
+/*    background: var(--tjs-color-picker-wrapper-background, white);*/
+/*    border: var(--tjs-color-picker-wrapper-border, 1px solid black);*/
+/*    border-radius: var(--tjs-color-picker-wrapper-border-radius, 8px);*/
+/*    margin: var(--tjs-color-picker-wrapper-margin, 0);*/
 
-    width: 100%;
-    height: max-content;
-}
+/*    width: 100%;*/
+/*    height: max-content;*/
+/*}*/
 
 .tjs-color-picker .tjs-color-picker-wrapper-chrome .tjs-picker-wrapper {
     display: inline-block;

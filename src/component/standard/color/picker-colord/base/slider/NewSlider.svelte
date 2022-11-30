@@ -8,10 +8,12 @@
    import { easeInOutSin } from '../../util/transition.js';
 
    const internalState = getContext('#tjs-color-picker-state');
+   const sliderConstraint = getContext('#tjs-color-picker-slider-constraint');
+   const sliderHorizontal = getContext('#tjs-color-picker-slider-horizontal');
 
    const hue = internalState.colorState.stores.hue;
 
-   const { components, sliderHorizontal } = internalState.stores;
+   const { components } = internalState.stores;
 
    const stylesSliderIndicator = {
       background: 'var(--_tjs-color-picker-current-color-hsl-hue)'
@@ -37,26 +39,23 @@
 
    $: if (typeof $hue === 'number' && slider) { pos = (100 * $hue) / 360; }
 
-   $: if ($sliderHorizontal)
+   $: if (sliderHorizontal)
    {
-      stylesSliderIndicator.left = `calc(${(pos / 200) * 192}% + 2px)`;
+      stylesSliderIndicator.left = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
       stylesSliderIndicator.top = null;
    }
    else
    {
       stylesSliderIndicator.left = null;
-      stylesSliderIndicator.top = `calc(${(pos / 200) * 186}%)`;
+      stylesSliderIndicator.top = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
    }
-
-   // $: sliderStyle = `top: calc(${(pos / 200) * 186}%);`;
-   // $: sliderStyle = `left: calc(${(pos / 200) * 192}% + 2px);`;
 
    /**
     * @param {number}    pos -
     */
    function onClick(pos)
    {
-      const size = $sliderHorizontal ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
+      const size = sliderHorizontal ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       $hue = (boundedPos / size) * 360;
@@ -70,7 +69,7 @@
       if (e.button === 0)
       {
          isMouseDown = true;
-         onClick($sliderHorizontal ? e.offsetX : e.offsetY);
+         onClick(sliderHorizontal ? e.offsetX : e.offsetY);
       }
    }
 
@@ -89,7 +88,7 @@
    {
       if (isMouseDown)
       {
-         onClick($sliderHorizontal ? e.clientX - slider.getBoundingClientRect().left :
+         onClick(sliderHorizontal ? e.clientX - slider.getBoundingClientRect().left :
           e.clientY - slider.getBoundingClientRect().top);
       }
    }
@@ -137,7 +136,7 @@
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               const movement = $sliderHorizontal ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
+               const movement = sliderHorizontal ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
                 $keyPressed.ArrowDown - $keyPressed.ArrowUp;
 
                $hue = Math.min(360, Math.max(0, internalState.colorState.hue + movement * 360 * focusMovementFactor));
@@ -157,7 +156,7 @@
    function touch(e)
    {
       e.preventDefault();
-      onClick($sliderHorizontal ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
+      onClick(sliderHorizontal ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
        e.changedTouches[0].clientY - slider.getBoundingClientRect().top);
    }
 </script>
@@ -174,7 +173,7 @@
     <div
             class=tjs-slider
             tabindex=0
-            class:horizontal={$sliderHorizontal}
+            class:horizontal={sliderHorizontal}
             bind:this={slider}
             on:mousedown|preventDefault|stopPropagation={mouseDown}
             on:touchstart={touch}

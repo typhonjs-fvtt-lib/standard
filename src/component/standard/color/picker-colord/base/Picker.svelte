@@ -8,9 +8,14 @@
    import { easeInOutSin }  from '../util/transition.js';
 
    const internalState = getContext('#tjs-color-picker-state');
+   const constraint = getContext('#tjs-color-picker-constraint');
 
    const { components } = internalState.stores;
    const { sv } = internalState.colorState.stores;
+
+   const stylesPickerIndicator = {
+      background: 'var(--_tjs-color-picker-current-color-hsl)'
+   }
 
    /** @type {HTMLDivElement} */
    let pickerEl = void 0;
@@ -33,6 +38,10 @@
    $: if (typeof $sv.s === 'number' && typeof $sv.v === 'number' && pickerEl)
    {
       pos = { x: $sv.s, y: 100 - $sv.v };
+
+      // Take into account the margin-left
+      stylesPickerIndicator.left = `calc(${(pos.x / 100)} * ${constraint.width}cqw - max(7px, 3.5cqw))`;
+      stylesPickerIndicator.top = `calc(${(pos.y / 100)} * ${constraint.height}cqw - max(7px, 3.5cqw))`;
    }
 
    /**
@@ -60,9 +69,6 @@
          s: clamp(mouse.x / width, 0, 1) * 100,
          v: clamp((height - mouse.y) / height, 0, 1) * 100
       };
-
-      // s = clamp(mouse.x / width, 0, 1) * 100;
-      // v = clamp((height - mouse.y) / height, 0, 1) * 100;
    }
 
    /**
@@ -200,10 +206,12 @@
          aria-valuemax={100}
          aria-valuetext="saturation {pos.x?.toFixed()}%, brightness {pos.y?.toFixed()}%"
     >
-        <svelte:component
-                this={$components.pickerIndicator}
-                {pos}
-        />
+        <svelte:component this={$components.pickerIndicator} {focused} styles={stylesPickerIndicator} />
+
+<!--        <svelte:component-->
+<!--                this={$components.pickerIndicator}-->
+<!--                {pos}-->
+<!--        />-->
     </div>
 </svelte:component>
 
