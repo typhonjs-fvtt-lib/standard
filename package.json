@@ -52,6 +52,7 @@
     "@typhonjs-config/eslint-config": "^0.3.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "@typhonjs-utils/file-util": "^0.0.6",
+    "container-query-polyfill": "github:typhonjs-svelte/container-query-polyfill",
     "eslint": "^8",
     "fs-extra": "^10",
     "prosemirror-dev-toolkit": "^1.0.5",
