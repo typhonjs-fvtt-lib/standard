@@ -4,14 +4,12 @@
       setContext }  from 'svelte';
 
    import {
-      Alpha,
       Picker,
-      Slider } from '../../index.js';
-
-   import NewSlider from "../../slider/NewSlider.svelte";
+      SliderAlpha,
+      SliderHue }   from '../../index.js';
 
    setContext('#tjs-color-picker-constraint', { width: 100, height: 77 });
-   setContext('#tjs-color-picker-slider-constraint', 90);
+   setContext('#tjs-color-picker-slider-constraint', 98);
    setContext('#tjs-color-picker-slider-horizontal', true);
 
    const internalState = getContext('#tjs-color-picker-state');
@@ -25,11 +23,10 @@
 
 <div class=tjs-color-picker-wrapper>
     <Picker />
-<!--    <Slider />-->
     <section>
-        <NewSlider />
+        <SliderHue />
         {#if $isAlpha}
-            <Alpha />
+            <SliderAlpha />
         {/if}
         {#if $isTextInput}
             <svelte:component this={$components.textInput} />
@@ -38,10 +35,6 @@
 </div>
 
 <style>
-    /*section {*/
-    /*    padding: 4px;*/
-    /*}*/
-
     .tjs-color-picker-wrapper {
         display: inline-flex;
         flex-direction: column;
@@ -55,18 +48,19 @@
         height: max-content;
     }
 
+    section {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
     @container tjs-color-picker-container (min-width: 0) {
-        /*border-radius: var(--tjs-color-picker-picker-border-radius, max(4px, 2cqw));*/
+        section {
+            padding: max(3px, 2cqw);
+        }
 
         .tjs-color-picker-wrapper {
             border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw));
-            /*padding: var(--tjs-color-picker-wrapper-padding, max(3px, 2cqw));*/
         }
-
-        /* First two direct children (picker / first slider) margin */
-        /*.tjs-color-picker-wrapper > div:nth-child(-n+2) {*/
-        /*    margin: var(--tjs-color-picker-picker-margin, 0 max(3px, 2.5cqw) 0 0);*/
-        /*}*/
     }
-    /*@import 'wrapper.css';*/
 </style>

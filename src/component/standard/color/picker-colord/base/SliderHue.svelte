@@ -3,9 +3,9 @@
 
    import {
       keyPressed,
-      keyPressedCustom }   from '../../util/store.js';
+      keyPressedCustom }   from '../util/store.js';
 
-   import { easeInOutSin } from '../../util/transition.js';
+   import { easeInOutSin } from '../util/transition.js';
 
    const internalState = getContext('#tjs-color-picker-state');
    const sliderConstraint = getContext('#tjs-color-picker-slider-constraint');
@@ -41,13 +41,16 @@
 
    $: if (sliderHorizontal)
    {
-      stylesSliderIndicator.left = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
+      // max(6px, 4cqw) comes from SliderWrapper section padding offset.
+      stylesSliderIndicator.left = `calc(${(pos / 100)} * calc(${
+       sliderConstraint}cqw - max(12px, 7cqw) - max(6px, 4cqw)))`;
+
       stylesSliderIndicator.top = null;
    }
    else
    {
       stylesSliderIndicator.left = null;
-      stylesSliderIndicator.top = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
+      stylesSliderIndicator.top = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(12px, 7cqw)))`;
    }
 
    /**
@@ -170,31 +173,32 @@
 
 <svelte:component this={$components.sliderWrapper}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-    <div
-            class=tjs-slider
-            tabindex=0
-            class:horizontal={sliderHorizontal}
-            bind:this={slider}
-            on:mousedown|preventDefault|stopPropagation={mouseDown}
-            on:touchstart={touch}
-            on:touchmove|preventDefault|stopPropagation={touch}
-            on:touchend={touch}
-            aria-label="hue picker (arrow keyboard navigation)"
-            aria-valuemin={0}
-            aria-valuemax={360}
-            aria-valuenow={Math.round($hue)}
+    <div class=tjs-color-picker-slider
+         bind:this={slider}
+         tabindex=0
+         class:horizontal={sliderHorizontal}
+         on:mousedown|preventDefault|stopPropagation={mouseDown}
+         on:touchstart={touch}
+         on:touchmove|preventDefault|stopPropagation={touch}
+         on:touchend={touch}
+         aria-label="hue picker (arrow keyboard navigation)"
+         aria-valuemin={0}
+         aria-valuemax={360}
+         aria-valuenow={Math.round($hue)}
     >
         <svelte:component this={$components.sliderIndicator} {focused} styles={stylesSliderIndicator} />
     </div>
 </svelte:component>
 
 <style>
-    .tjs-slider {
+    .tjs-color-picker-slider {
         position: relative;
         width: 100%;
         height: 100%;
         box-sizing: border-box;
         background: linear-gradient(var(--_tjs-color-picker-slider-gradient));
+        border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
+
         outline: none;
         user-select: none;
 

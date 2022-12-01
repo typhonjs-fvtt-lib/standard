@@ -14,7 +14,7 @@
    const stylesSliderIndicator = {}
 
    /** @type {HTMLDivElement} */
-   let alphaEl = void 0;
+   let sliderEl = void 0;
 
    /** @type {boolean} */
    let isMouseDown = false;
@@ -31,17 +31,20 @@
    /** @type {number} */
    let pos = void 0;
 
-   $: if (typeof $alpha === 'number' && alphaEl) { pos = 100 * $alpha; }
+   $: if (typeof $alpha === 'number' && sliderEl) { pos = 100 * $alpha; }
 
    $: if (sliderHorizontal)
    {
-      stylesSliderIndicator.left = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
+      // max(6px, 4cqw) comes from SliderWrapper section padding offset.
+      stylesSliderIndicator.left = `calc(${(pos / 100)} * calc(${
+       sliderConstraint}cqw - max(12px, 7cqw) - max(6px, 4cqw)))`;
+
       stylesSliderIndicator.top = null;
    }
    else
    {
       stylesSliderIndicator.left = null;
-      stylesSliderIndicator.top = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(14px, 7cqw)))`;
+      stylesSliderIndicator.top = `calc(${(pos / 100)} * calc(${sliderConstraint}cqw - max(12px, 7cqw)))`;
    }
 
    /**
@@ -49,7 +52,7 @@
     */
    function onClick(pos)
    {
-      const size = sliderHorizontal ? alphaEl.getBoundingClientRect().width : alphaEl.getBoundingClientRect().height;
+      const size = sliderHorizontal ? sliderEl.getBoundingClientRect().width : sliderEl.getBoundingClientRect().height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       $alpha = boundedPos / size;
@@ -82,8 +85,8 @@
    {
       if (isMouseDown)
       {
-         onClick(sliderHorizontal ? e.clientX - alphaEl.getBoundingClientRect().left :
-          e.clientY - alphaEl.getBoundingClientRect().top);
+         onClick(sliderHorizontal ? e.clientX - sliderEl.getBoundingClientRect().left :
+          e.clientY - sliderEl.getBoundingClientRect().top);
       }
    }
 
@@ -92,7 +95,7 @@
     */
    function keyup(e)
    {
-      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(alphaEl); }
+      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(sliderEl); }
 
       if (!e.repeat && focused) { move(); }
    }
@@ -145,8 +148,8 @@
    {
       e.preventDefault();
 
-      onClick(sliderHorizontal ? e.changedTouches[0].clientX - alphaEl.getBoundingClientRect().left
-       : e.changedTouches[0].clientY - alphaEl.getBoundingClientRect().top);
+      onClick(sliderHorizontal ? e.changedTouches[0].clientX - sliderEl.getBoundingClientRect().left
+       : e.changedTouches[0].clientY - sliderEl.getBoundingClientRect().top);
    }
 </script>
 
@@ -159,8 +162,8 @@
 
 <svelte:component this={$components.alphaWrapper}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
-    <div bind:this={alphaEl}
-         class=alpha
+    <div bind:this={sliderEl}
+         class=tjs-color-picker-slider
          tabindex=0
          class:horizontal={sliderHorizontal}
          on:mousedown|preventDefault|stopPropagation={mouseDown}
@@ -178,11 +181,12 @@
 </svelte:component>
 
 <style>
-    .alpha:after {
+    .tjs-color-picker-slider:after {
         position: absolute;
         content: '';
         inset: 0;
         background: linear-gradient(#00000000, var(--_tjs-color-picker-current-color-hsl));
+        border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
         z-index: 0;
     }
 
@@ -190,7 +194,7 @@
         background: linear-gradient(0.25turn, #00000000, var(--_tjs-color-picker-current-color-hsl));
     }
 
-    .alpha {
+    .tjs-color-picker-slider {
         position: relative;
         width: 100%;
         height: 100%;
@@ -198,6 +202,8 @@
         linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%);
         background-size: 10px 10px;
         background-position: 0 0, 5px 5px;
+        border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
+
         outline: none;
         user-select: none;
     }

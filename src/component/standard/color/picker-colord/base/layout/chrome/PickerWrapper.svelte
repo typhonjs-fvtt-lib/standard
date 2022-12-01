@@ -23,7 +23,7 @@
             border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw) max(4px, 2cqw) 0 0);
             margin: var(--tjs-color-picker-picker-margin, 0 0 5px 0);
 
-            width: var(--tjs-color-picker-picker-width, 100%);
+            width: var(--tjs-color-picker-picker-width, 100cqw);
             height: var(--tjs-color-picker-picker-height, 77cqw);
         }
     }
