@@ -40,8 +40,8 @@
       pos = { x: $sv.s, y: 100 - $sv.v };
 
       // Take into account the margin-left
-      stylesPickerIndicator.left = `calc(${(pos.x / 100)} * ${constraint.width}cqw - max(7px, 3.5cqw))`;
-      stylesPickerIndicator.top = `calc(${(pos.y / 100)} * ${constraint.height}cqw - max(7px, 3.5cqw))`;
+      stylesPickerIndicator.left = `calc(${(pos.x / 100)} * ${constraint.width}cqw - max(6px, 3.5cqw))`;
+      stylesPickerIndicator.top = `calc(${(pos.y / 100)} * ${constraint.height}cqw - max(6px, 3.5cqw))`;
    }
 
    /**

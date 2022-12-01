@@ -7,13 +7,6 @@
     opacity: 1;
 }
 
-.tjs-color-picker .text-input {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 6px;
-}
-
 .tjs-color-picker .text-input .input-container {
     display: flex;
     flex: 1;

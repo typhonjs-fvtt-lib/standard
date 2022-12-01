@@ -22,17 +22,23 @@
 </script>
 
 <div class=tjs-color-picker-wrapper>
-    <Picker />
-    <SliderHue />
-    {#if $isAlpha}
-        <SliderAlpha />
-    {/if}
+    <section>
+        <Picker />
+        <SliderHue />
+        {#if $isAlpha}
+            <SliderAlpha />
+        {/if}
+    </section>
     {#if $isTextInput}
         <svelte:component this={$components.textInput} />
     {/if}
 </div>
 
 <style>
+    section {
+        display: flex;
+    }
+
     .tjs-color-picker-wrapper {
         background: var(--tjs-color-picker-wrapper-background, white);
         border: var(--tjs-color-picker-wrapper-border, 1px solid black);
@@ -45,7 +51,7 @@
     @container tjs-color-picker-container (min-width: 0) {
         .tjs-color-picker-wrapper {
             border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw));
-            padding: var(--tjs-color-picker-wrapper-padding, max(3px, 2cqw));
+            padding: var(--tjs-color-picker-wrapper-padding, 2cqw);
         }
     }
 </style>

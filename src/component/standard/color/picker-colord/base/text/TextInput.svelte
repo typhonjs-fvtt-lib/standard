@@ -15,4 +15,16 @@
 
 <style>
     @import 'text-input.css';
+
+    .text-input {
+       display: flex;
+       flex-direction: column;
+    }
+
+    @container tjs-color-picker-container (min-width: 0) {
+       .text-input {
+          gap: max(3px, 2cqw);
+          margin-top: max(3px, 2cqw);
+       }
+    }
 </style>

@@ -13,14 +13,12 @@
 
 <style>
     .tjs-slider-wrapper {
-        display: inline-block;
-        /*border-radius: var(--tjs-color-picker-slider-border-radius, 7px);*/
         user-select: none;
     }
 
     @container tjs-color-picker-container (min-width: 0) {
         .tjs-slider-wrapper {
-            margin: var(--tjs-color-picker-picker-margin, 0 max(3px, 2.5cqw) 0 0);
+            margin: var(--tjs-color-picker-picker-margin, 0 max(7px, 3.5cqw) 0 0);
             width: var(--tjs-color-picker-slider-width, max(8px, 5cqw));
             height: var(--tjs-color-picker-slider-height, 75cqw);
         }
