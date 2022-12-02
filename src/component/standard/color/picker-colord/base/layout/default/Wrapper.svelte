@@ -26,6 +26,7 @@
         <Picker />
         <SliderHue />
         {#if $isAlpha}
+            <span />
             <SliderAlpha />
         {/if}
     </section>
@@ -49,6 +50,11 @@
     }
 
     @container tjs-color-picker-container (min-width: 0) {
+        span {
+            width: max(7px, 3.5cqw);
+            height: var(--tjs-color-picker-slider-height, 75cqw);
+        }
+
         .tjs-color-picker-wrapper {
             border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw));
             padding: var(--tjs-color-picker-wrapper-padding, 2cqw);
