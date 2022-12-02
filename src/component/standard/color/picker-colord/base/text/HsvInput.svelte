@@ -21,4 +21,12 @@
     {/if}
 </div>
 
-
+<style>
+    @container tjs-color-picker-container (min-width: 0) {
+        .input-container {
+            display: flex;
+            flex: 1;
+            gap: min(8px, 2cqw);
+        }
+    }
+</style>

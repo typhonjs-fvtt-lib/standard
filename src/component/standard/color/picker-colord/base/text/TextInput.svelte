@@ -7,7 +7,9 @@
 </script>
 
 <div class=text-input>
-   <svelte:component this={$activeTextMode.mode.class} />
+   <section>
+      <svelte:component this={$activeTextMode.mode.class} />
+   </section>
    <button aria-label="next color format"
            on:click={() => activeTextMode.prevMode()}>{$activeTextMode.mode.name}
    </button>
@@ -20,6 +22,8 @@
        display: flex;
        flex-direction: column;
 
+       --tjs-input-flex: 1;
+       --tjs-input-value-invalid-color: red;
        --tjs-input-text-align: center;
        --tjs-input-width: 5px;
     }
@@ -42,6 +46,18 @@
           /* For Webkit */
           --tjs-input-number-webkit-inner-spin-button-appearance: none;
           --tjs-input-number-webkit-inner-spin-button-opacity: 0;
+       }
+    }
+
+    @container tjs-color-picker-container (0 <= width < 110px) {
+       section {
+          display: none;
+       }
+    }
+
+    @container tjs-color-picker-container (min-width: 110px) {
+       section {
+          display: block;
        }
     }
 
