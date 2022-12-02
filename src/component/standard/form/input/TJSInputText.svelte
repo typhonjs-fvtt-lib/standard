@@ -7,6 +7,7 @@
     *
     * Only use this component for text inputs presently. More work to come.
     *
+    * --tjs-input-appearance
     * --tjs-input-border
     * --tjs-input-border-radius
     * --tjs-input-background
@@ -18,6 +19,7 @@
     * --tjs-input-value-invalid-color
     * --tjs-input-width
     *
+    * --tjs-input-text-appearance
     * --tjs-input-text-border
     * --tjs-input-text-border-radius
     * --tjs-input-text-background
@@ -189,6 +191,8 @@
         display: inline-block;
         position: relative;
         overflow: hidden;
+
+        appearance: var(--tjs-input-text-appearance, var(--tjs-input-appearance, inherit));
 
         background: transparent;
 

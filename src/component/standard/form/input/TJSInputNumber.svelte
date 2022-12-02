@@ -7,6 +7,7 @@
     *
     * Only use this component for text inputs presently. More work to come.
     *
+    * --tjs-input-appearance
     * --tjs-input-border
     * --tjs-input-border-radius
     * --tjs-input-background
@@ -18,6 +19,7 @@
     * --tjs-input-value-invalid-color
     * --tjs-input-width
     *
+    * --tjs-input-number-appearance
     * --tjs-input-number-border
     * --tjs-input-number-border-radius
     * --tjs-input-number-background
@@ -28,6 +30,10 @@
     * --tjs-input-number-text-align
     * --tjs-input-number-value-invalid-color
     * --tjs-input-number-width
+    *
+    * Webkit unique variables:
+    * --tjs-input-number-webkit-inner-spin-button-opacity
+    * --tjs-input-number-webkit-outer-spin-button-opacity
     */
 
    import { writable }  from 'svelte/store';
@@ -186,6 +192,8 @@
         position: relative;
         overflow: hidden;
 
+        appearance: var(--tjs-input-number-appearance, var(--tjs-input-appearance, inherit));
+
         background: transparent;
 
         border: var(--tjs-input-number-border, var(--tjs-input-border));
@@ -209,5 +217,14 @@
 
     input::placeholder {
         color: var(--tjs-input-number-placeholder-color, var(--tjs-input-placeholder-color, inherit));
+    }
+
+    /* For Webkit */
+    input::-webkit-inner-spin-button {
+        opacity: var(--tjs-input-number-webkit-inner-spin-button-opacity, inherit);
+    }
+
+    input::-webkit-outer-spin-button {
+        opacity: var(--tjs-input-number-webkit-outer-spin-button-opacity, inherit);
     }
 </style>
