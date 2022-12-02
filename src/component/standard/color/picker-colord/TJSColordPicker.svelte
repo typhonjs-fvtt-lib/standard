@@ -66,6 +66,8 @@
    /** @type {HTMLSpanElement} */
    let spanEl = void 0;
 
+   let hasBeenTabbed = false;
+
    /**
     * @param {KeyboardEvent}    e -
     */
@@ -73,7 +75,8 @@
    {
       if (e.key === 'Tab')
       {
-         spanEl.classList.add('has-been-tabbed');
+         hasBeenTabbed = true;
+         // spanEl.classList.add('has-been-tabbed');
       }
    }
 
@@ -95,6 +98,7 @@
 
 <span bind:this={spanEl}
       class=tjs-color-picker
+      class:has-been-tabbed={hasBeenTabbed}
       style:--_tjs-color-picker-current-color-hsl={$hslString}
       style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
       style:--_tjs-color-picker-current-color-hsla={$hslaString}
@@ -110,5 +114,11 @@
 <style>
     span {
         position: relative;
+    }
+
+    /* TODO: Refactor ----------------------------------------------------------------------------------------------- */
+    .tjs-color-picker.has-been-tabbed :global(.text-input button:focus-visible) {
+        outline: 2px solid var(--tjs-color-picker-focus-color, red);
+        outline-offset: 2px;
     }
 </style>

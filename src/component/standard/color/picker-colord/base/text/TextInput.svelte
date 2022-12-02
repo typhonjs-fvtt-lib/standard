@@ -16,8 +16,6 @@
 </div>
 
 <style>
-    @import 'text-input.css';
-
     .text-input {
        display: flex;
        flex-direction: column;
@@ -72,5 +70,36 @@
           /* For Webkit */
           --tjs-input-number-webkit-inner-spin-button-opacity: 1;
        }
+
+       /**
+        * For Webkit: It is necessary to include an explicit style to modify -webkit-appearance otherwise Chrome posts
+        * warning messages constantly if set by a CSS variable in TJSInputNumber.
+        */
+       .text-input :global(input[type="number"]::-webkit-inner-spin-button) {
+          -webkit-appearance: inner-spin-button;
+       }
+    }
+
+    /* TODO: Refactor ----------------------------------------------------------------------------------------------- */
+    button {
+       flex: 1;
+       border: none;
+       background-color: #eee;
+       padding: 0;
+       border-radius: 5px;
+       height: 30px;
+       line-height: 30px;
+       text-align: center;
+
+       cursor: pointer;
+       transition: background-color 0.2s;
+    }
+
+    button:hover {
+       background-color: #ccc;
+    }
+
+    button:focus {
+       outline: none;
     }
 </style>
