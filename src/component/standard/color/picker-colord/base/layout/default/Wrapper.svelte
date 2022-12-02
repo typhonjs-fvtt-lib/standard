@@ -26,7 +26,6 @@
         <Picker />
         <SliderHue />
         {#if $isAlpha}
-            <span />
             <SliderAlpha />
         {/if}
     </section>
@@ -41,6 +40,9 @@
     }
 
     .tjs-color-picker-wrapper {
+        display: flex;
+        flex-direction: column;
+
         background: var(--tjs-color-picker-wrapper-background, white);
         border: var(--tjs-color-picker-wrapper-border, 1px solid black);
         margin: var(--tjs-color-picker-wrapper-margin, 0);
@@ -50,13 +52,14 @@
     }
 
     @container tjs-color-picker-container (min-width: 0) {
-        span {
-            width: max(7px, 3.5cqw);
-            height: var(--tjs-color-picker-slider-height, 75cqw);
+        section {
+            gap: max(7px, 3.5cqw);
+            margin-right: max(4px, 2cqw)
         }
 
         .tjs-color-picker-wrapper {
             border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw));
+            gap: max(4px, 2.5cqw);
             padding: var(--tjs-color-picker-wrapper-padding, 2cqw);
         }
     }
