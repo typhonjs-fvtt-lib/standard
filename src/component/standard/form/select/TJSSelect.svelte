@@ -1,16 +1,20 @@
 <script>
    /**
+    * --tjs-input-appearance
     * --tjs-input-border
     * --tjs-input-border-radius
     * --tjs-input-background
     * --tjs-input-cursor
+    * --tjs-input-flex
     * --tjs-input-height
     * --tjs-input-width
     *
+    * --tjs-select-appearance
     * --tjs-select-border
     * --tjs-select-border-radius
     * --tjs-select-background
     * --tjs-select-cursor
+    * --tjs-select-flex
     * --tjs-select-height
     * --tjs-select-width
     */
@@ -75,14 +79,16 @@
 <style>
    .tjs-select-container {
       pointer-events: none;
-      background: var(--tjs-select-background, var(--tjs-input-background));
-      border-radius: var(--tjs-select-border-radius, var(--tjs-input-border-radius));
       display: block;
       overflow: hidden;
+      transform-style: preserve-3d;
+
+      background: var(--tjs-select-background, var(--tjs-input-background));
+      border-radius: var(--tjs-select-border-radius, var(--tjs-input-border-radius));
+      flex: var(--tjs-select-flex, var(--tjs-input-flex));
       margin: var(--tjs-select-margin, var(--tjs-input-margin));
       height: var(--tjs-select-height, var(--tjs-input-height));
       width: var(--tjs-select-width, var(--tjs-input-width));
-      transform-style: preserve-3d;
    }
 
    select {
@@ -90,6 +96,8 @@
       display: inline-block;
       position: relative;
       overflow: hidden;
+
+      appearance: var(--tjs-select-appearance, var(--tjs-input-appearance, inherit));
 
       background: transparent;
 
