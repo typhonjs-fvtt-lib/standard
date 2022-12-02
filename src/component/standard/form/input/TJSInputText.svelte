@@ -12,6 +12,7 @@
     * --tjs-input-border-radius
     * --tjs-input-background
     * --tjs-input-cursor
+    * --tjs-input-flex
     * --tjs-input-height
     * --tjs-input-padding
     * --tjs-input-placeholder-color
@@ -24,6 +25,7 @@
     * --tjs-input-text-border-radius
     * --tjs-input-text-background
     * --tjs-input-text-cursor
+    * --tjs-input-text-flex
     * --tjs-input-text-height
     * --tjs-input-text-padding
     * --tjs-input-text-placeholder-color
@@ -171,15 +173,17 @@
 
 <style>
     .tjs-input-container {
-        pointer-events: none;
-        background: var(--tjs-input-text-background, var(--tjs-input-background));
-        border-radius: var(--tjs-input-text-border-radius, var(--tjs-input-border-radius));
         display: block;
         overflow: hidden;
+        pointer-events: none;
+        transform-style: preserve-3d;
+
+        background: var(--tjs-input-text-background, var(--tjs-input-background));
+        border-radius: var(--tjs-input-text-border-radius, var(--tjs-input-border-radius));
+        flex: var(--tjs-input-text-flex, var(--tjs-input-flex));
         margin: var(--tjs-input-text-margin, var(--tjs-input-margin));
         height: var(--tjs-input-text-height, var(--tjs-input-height));
         width: var(--tjs-input-text-width, var(--tjs-input-width));
-        transform-style: preserve-3d;
     }
 
     .is-value-invalid {
