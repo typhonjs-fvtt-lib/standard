@@ -27,4 +27,16 @@
           margin-top: max(4px, 2.5cqw);
        }
     }
+
+    @container tjs-color-picker-container (min-width: 235px) {
+       .text-input {
+          font-size: 1em;
+       }
+    }
+
+    @container tjs-color-picker-container (0 <= width < 235px) {
+       .text-input {
+          font-size: max(0.5em, 0.5em + 2.98cqi);
+       }
+    }
 </style>
