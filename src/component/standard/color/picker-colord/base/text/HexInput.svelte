@@ -6,7 +6,10 @@
    const internalState = getContext('#tjs-color-picker-state');
 
    const { isAlpha } = internalState.stores;
-   const { textState } = internalState.colorState.stores;
+
+   const {
+      activeTextMode,
+      textState } = internalState.colorState.stores;
 
    const { alpha } = textState.alpha.inputData;
    const { hex } = textState.hex.inputData;
@@ -14,17 +17,12 @@
 
 <div class=input-container>
     <TJSInput input={hex} />
-    {#if $isAlpha}
-        <TJSInput input={alpha} />
-    {/if}
 </div>
-
-<style>
-    @container tjs-color-picker-container (min-width: 0) {
-        .input-container {
-            display: flex;
-            flex: 1;
-            gap: min(8px, 2cqw);
-        }
-    }
-</style>
+<div class=input-attributes
+     role=button
+     aria-label="next color format"
+     tabindex=0
+     on:click|preventDefault={() => activeTextMode.nextMode()}
+     on:keydown|preventDefault={(event) => { if (event.code === 'Space') { activeTextMode.nextMode() } }}>
+    <span>HEX</span>
+</div>

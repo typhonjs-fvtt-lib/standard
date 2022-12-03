@@ -63,7 +63,6 @@ export class HexState
             storeIsValid: isHexValid,
             efx: rippleFocus(),
             type: 'text',
-            styles: { flex: 3 },
             options: {
                blurOnEnterKey: true,
                cancelOnEscKey: true

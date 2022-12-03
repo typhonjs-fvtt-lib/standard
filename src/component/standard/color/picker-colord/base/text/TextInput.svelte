@@ -10,9 +10,6 @@
    <section>
       <svelte:component this={$activeTextMode.mode.class} />
    </section>
-   <button aria-label="next color format"
-           on:click={() => activeTextMode.prevMode()}>{$activeTextMode.mode.name}
-   </button>
 </div>
 
 <style>
@@ -30,6 +27,30 @@
        .text-input {
           gap: max(3px, 2cqw);
        }
+
+       /* Child text input components */
+       .text-input :global(.input-container) {
+          display: flex;
+          flex: 1;
+          gap: min(8px, 2cqw);
+       }
+
+       .text-input :global(.input-attributes) {
+          display: flex;
+          flex: 1;
+          gap: min(8px, 2cqw);
+
+          border-radius: 4px;
+
+          background: rgba(0, 0, 0, 0.1);
+          cursor: pointer;
+          margin-top: max(2px, 1cqw);
+          text-align: center
+       }
+
+       .text-input :global(.input-attributes span) {
+          flex: 1;
+       }
     }
 
     @container tjs-color-picker-container (0 <= width < 235px) {
@@ -46,15 +67,15 @@
        }
     }
 
-    @container tjs-color-picker-container (0 <= width < 110px) {
-       section {
+    @container tjs-color-picker-container (width < 110px) {
+       .text-input {
           display: none;
        }
     }
 
     @container tjs-color-picker-container (min-width: 110px) {
-       section {
-          display: block;
+       .text-input {
+          display: flex;
        }
     }
 
@@ -80,25 +101,25 @@
     }
 
     /* TODO: Refactor ----------------------------------------------------------------------------------------------- */
-    button {
-       flex: 1;
-       border: none;
-       background-color: #eee;
-       padding: 0;
-       border-radius: 5px;
-       height: 30px;
-       line-height: 30px;
-       text-align: center;
+    /*button {*/
+    /*   flex: 1;*/
+    /*   border: none;*/
+    /*   background-color: #eee;*/
+    /*   padding: 0;*/
+    /*   border-radius: 5px;*/
+    /*   height: 30px;*/
+    /*   line-height: 30px;*/
+    /*   text-align: center;*/
 
-       cursor: pointer;
-       transition: background-color 0.2s;
-    }
+    /*   cursor: pointer;*/
+    /*   transition: background-color 0.2s;*/
+    /*}*/
 
-    button:hover {
-       background-color: #ccc;
-    }
+    /*button:hover {*/
+    /*   background-color: #ccc;*/
+    /*}*/
 
-    button:focus {
-       outline: none;
-    }
+    /*button:focus {*/
+    /*   outline: none;*/
+    /*}*/
 </style>
