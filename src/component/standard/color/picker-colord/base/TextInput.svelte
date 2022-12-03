@@ -1,19 +1,44 @@
 <script>
    import { getContext } from 'svelte';
 
+   import { TJSInput }   from '../../../form/input/index.js'
+
    const internalState = getContext('#tjs-color-picker-state');
 
-   const { activeTextMode } = internalState.colorState.stores;
+   const { isAlpha } = internalState.stores;
+   const { textState } = internalState.colorState.stores;
+
+   const activeTextState = textState.activeState;
+   const { alpha } = textState.alpha.inputData;
 </script>
 
-<div class=text-input>
-   <section>
-      <svelte:component this={$activeTextMode.mode.class} />
-   </section>
+<div class=picker-text-input>
+   <div class=input-container>
+      {#each $activeTextState.inputData as input (input.pickerLabel)}
+         <TJSInput {input} />
+      {/each}
+      {#if $isAlpha && $activeTextState.hasAlpha}
+         <TJSInput input={alpha} />
+      {/if}
+   </div>
+   <div class=input-attributes
+        role=button
+        aria-label="next color format"
+        tabindex=0
+        on:click|preventDefault={() => activeTextState.next()}
+        on:keydown|preventDefault={(event) => { if (event.code === 'Space') { activeTextState.next() } }}>
+
+      {#each $activeTextState.inputData as input (input.pickerLabel)}
+         <span>{input.pickerLabel}</span>
+      {/each}
+      {#if $isAlpha && $activeTextState.hasAlpha}
+         <span>A</span>
+      {/if}
+   </div>
 </div>
 
 <style>
-    .text-input {
+    .picker-text-input {
        display: flex;
        flex-direction: column;
 
@@ -24,18 +49,18 @@
     }
 
     @container tjs-color-picker-container (min-width: 0) {
-       .text-input {
+       .picker-text-input {
           gap: max(3px, 2cqw);
        }
 
        /* Child text input components */
-       .text-input :global(.input-container) {
+       .input-container {
           display: flex;
           flex: 1;
           gap: min(8px, 2cqw);
        }
 
-       .text-input :global(.input-attributes) {
+       .input-attributes {
           display: flex;
           flex: 1;
           gap: min(8px, 2cqw);
@@ -44,19 +69,18 @@
 
           background: rgba(0, 0, 0, 0.1);
           cursor: pointer;
-          margin-top: max(2px, 1cqw);
           text-align: center
        }
 
-       .text-input :global(.input-attributes span) {
+       .input-attributes span {
           flex: 1;
        }
     }
 
     @container tjs-color-picker-container (0 <= width < 235px) {
-       .text-input {
-          font-size: max(0.5em, 0.5em + 2.98cqi);
-          --tjs-input-height: max(13px, 13px + 5cqi);
+       .picker-text-input {
+          font-size: max(0.35em, 0.35em + 3.885cqi);
+          --tjs-input-height: max(8px, 8px + 7.65cqi);
 
           /* For Firefox */
           --tjs-input-number-appearance: textfield;
@@ -67,20 +91,20 @@
        }
     }
 
-    @container tjs-color-picker-container (width < 110px) {
-       .text-input {
+    @container tjs-color-picker-container (width < 115px) {
+       .picker-text-input {
           display: none;
        }
     }
 
-    @container tjs-color-picker-container (min-width: 110px) {
-       .text-input {
+    @container tjs-color-picker-container (min-width: 115px) {
+       .picker-text-input {
           display: flex;
        }
     }
 
     @container tjs-color-picker-container (min-width: 235px) {
-       .text-input {
+       .picker-text-input {
           font-size: 1em;
           --tjs-input-height: 26px;
 
@@ -95,31 +119,8 @@
         * For Webkit: It is necessary to include an explicit style to modify -webkit-appearance otherwise Chrome posts
         * warning messages constantly if set by a CSS variable in TJSInputNumber.
         */
-       .text-input :global(input[type="number"]::-webkit-inner-spin-button) {
+       .input-container :global(input[type="number"]::-webkit-inner-spin-button) {
           -webkit-appearance: inner-spin-button;
        }
     }
-
-    /* TODO: Refactor ----------------------------------------------------------------------------------------------- */
-    /*button {*/
-    /*   flex: 1;*/
-    /*   border: none;*/
-    /*   background-color: #eee;*/
-    /*   padding: 0;*/
-    /*   border-radius: 5px;*/
-    /*   height: 30px;*/
-    /*   line-height: 30px;*/
-    /*   text-align: center;*/
-
-    /*   cursor: pointer;*/
-    /*   transition: background-color 0.2s;*/
-    /*}*/
-
-    /*button:hover {*/
-    /*   background-color: #ccc;*/
-    /*}*/
-
-    /*button:focus {*/
-    /*   outline: none;*/
-    /*}*/
 </style>

@@ -6,7 +6,8 @@
    import {
       Picker,
       SliderAlpha,
-      SliderHue }   from '../../index.js';
+      SliderHue,
+      TextInput }   from '../../index.js';
 
    setContext('#tjs-color-picker-constraint', { width: 75, height: 75 });
    setContext('#tjs-color-picker-slider-constraint', 75);
@@ -30,7 +31,7 @@
         {/if}
     </section>
     {#if $isTextInput}
-        <svelte:component this={$components.textInput} />
+        <TextInput />
     {/if}
 </div>
 

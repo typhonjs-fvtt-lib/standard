@@ -57,8 +57,9 @@ export class HexState
       const isHexValid = writable(true);
       this.#stores = { hex, isHexValid };
 
-      this.#inputData = {
-         hex: {
+      this.#inputData = [
+         {
+            pickerLabel: 'HEX',
             store: hex,
             storeIsValid: isHexValid,
             efx: rippleFocus(),
@@ -71,7 +72,15 @@ export class HexState
                label: 'hex color'
             }
          }
-      }
+      ];
+   }
+
+   /**
+    * @returns {boolean} Supports separate alpha channel.
+    */
+   get hasAlpha()
+   {
+      return false
    }
 
    /**
@@ -176,9 +185,7 @@ export class HexState
 }
 
 /**
- * @typedef {object} HexStateInputData Provides the input data options to use in text input components.
- *
- * @property {object} hex - Hex input component data.
+ * @typedef {object[]} HexStateInputData Provides the input data options to use in text input components.
  */
 
 /**

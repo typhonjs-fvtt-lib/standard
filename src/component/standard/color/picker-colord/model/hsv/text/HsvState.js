@@ -62,8 +62,9 @@ export class HsvState
 
       this.#stores = { h, s, v };
 
-      this.#inputData = {
-         h: {
+      this.#inputData = [
+         {
+            pickerLabel: 'H',
             store: h,
             efx: rippleFocus(),
             type: 'number',
@@ -77,7 +78,8 @@ export class HsvState
                label: 'hue chanel color'
             }
          },
-         s: {
+         {
+            pickerLabel: 'S',
             store: s,
             efx: rippleFocus(),
             type: 'number',
@@ -91,7 +93,8 @@ export class HsvState
                label: 'saturation chanel color'
             }
          },
-         v: {
+         {
+            pickerLabel: 'V',
             store: v,
             efx: rippleFocus(),
             type: 'number',
@@ -105,7 +108,15 @@ export class HsvState
                label: 'brightness chanel color'
             }
          }
-      }
+      ];
+   }
+
+   /**
+    * @returns {boolean} Supports separate alpha channel.
+    */
+   get hasAlpha()
+   {
+      return true;
    }
 
    /**
@@ -203,13 +214,7 @@ export class HsvState
 }
 
 /**
- * @typedef {object} HsvStateInputData Provides the input data options to use in number input components.
- *
- * @property {object} h - Hue input component data.
- *
- * @property {object} s - Saturation input component data.
- *
- * @property {object} v - Value / Brightness value input component data.
+ * @typedef {object[]} HsvStateInputData Provides the input data options to use in number input components.
  */
 
 /**

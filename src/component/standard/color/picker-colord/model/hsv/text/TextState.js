@@ -4,6 +4,8 @@ import { HslState }        from './HslState.js';
 import { HsvState }        from './HsvState.js';
 import { RgbState }        from './RgbState.js';
 
+import { ActiveTextState } from './ActiveTextState.js';
+
 /**
  * Manages the text state for all supported color formats such as `rgb` and `hex` formats. The internal storage format
  * is HSV and the conversions between floating point and integer representation in the text input GUI is lossy.
@@ -27,6 +29,8 @@ export class TextState
     * @type {(function(TextState): void)[]}
     */
    #subscriptions = [];
+
+   #activeTextState;
 
    /**
     * @param {ColorState}                 colorState - ColorState instance.
@@ -55,7 +59,14 @@ export class TextState
          rgb: new RgbState(colorStateAccess, textStateAccess)
       }
 
+      this.#activeTextState = new ActiveTextState(this.#allState);
+
       this.updateColor(colorState.hsv);
+   }
+
+   get activeState()
+   {
+      return this.#activeTextState;
    }
 
    /**

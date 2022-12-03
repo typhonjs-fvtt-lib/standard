@@ -6,7 +6,6 @@ import { isObject }        from '@typhonjs-svelte/lib/util';
 import { ColorState }      from './hsv/ColorState.js';
 
 import { layout }          from '../base/layout/index.js'
-import { textInput }       from '../base/text/index.js';
 
 export class InternalState
 {
@@ -151,7 +150,6 @@ export class InternalState
       }
 
       return {
-         ...textInput,
          ...layout.default,
          ...(isObject(opts.components) ? opts.components : selectedVariant)
       }

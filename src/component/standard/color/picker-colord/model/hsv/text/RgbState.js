@@ -64,8 +64,9 @@ export class RgbState
 
       this.#stores = { r, g, b };
 
-      this.#inputData = {
-         r: {
+      this.#inputData = [
+         {
+            pickerLabel: 'R',
             store: r,
             efx: rippleFocus(),
             type: 'number',
@@ -79,7 +80,8 @@ export class RgbState
                label: 'red chanel color'
             }
          },
-         g: {
+         {
+            pickerLabel: 'G',
             store: g,
             efx: rippleFocus(),
             type: 'number',
@@ -93,7 +95,8 @@ export class RgbState
                label: 'green chanel color'
             }
          },
-         b: {
+         {
+            pickerLabel: 'B',
             store: b,
             efx: rippleFocus(),
             type: 'number',
@@ -107,7 +110,15 @@ export class RgbState
                label: 'blue chanel color'
             }
          }
-      }
+      ];
+   }
+
+   /**
+    * @returns {boolean} Supports separate alpha channel.
+    */
+   get hasAlpha()
+   {
+      return true;
    }
 
    /**
@@ -204,13 +215,7 @@ export class RgbState
 }
 
 /**
- * @typedef {object} RgbStateInputData Provides the input data options to use in number input components.
- *
- * @property {object} r - Red input component data.
- *
- * @property {object} g - Green input component data.
- *
- * @property {object} b - Blue input component data.
+ * @typedef {object[]} RgbStateInputData Provides the input data options to use in number input components.
  */
 
 /**

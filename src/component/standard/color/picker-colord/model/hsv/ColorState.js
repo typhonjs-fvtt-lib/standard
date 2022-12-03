@@ -1,15 +1,13 @@
-import { writable }        from 'svelte/store';
+import { writable }              from 'svelte/store';
 
-import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
+import { colord }                from '@typhonjs-fvtt/runtime/color/colord';
 
-import { debounce }        from '@typhonjs-fvtt/runtime/svelte/util';
+import { debounce }              from '@typhonjs-fvtt/runtime/svelte/util';
+import { subscribeIgnoreFirst }  from '@typhonjs-fvtt/runtime/svelte/store';
 
-import { subscribeIgnoreFirst }    from '@typhonjs-fvtt/runtime/svelte/store';
+import { TextState }             from './text/TextState.js';
 
-import { ActiveTextMode }  from './text/ActiveTextMode.js';
-import { TextState }       from './text/TextState.js';
-
-import { ColorParser }     from '../../util/ColorParser.js';
+import { ColorParser }           from '../../util/ColorParser.js';
 
 export class ColorState
 {
@@ -146,7 +144,6 @@ export class ColorState
       this.#stores.sv = writable(this.#data.sv);
 
       // Readable stores
-      this.#stores.activeTextMode = new ActiveTextMode();
       this.#stores.textState = new TextState(this, this.#internalUpdate);
       this.#stores.isDark = { subscribe: tempStoreIsDark.subscribe };
       this.#stores.hslString = { subscribe: tempStoreHslString.subscribe };
@@ -521,8 +518,6 @@ class HsvColorParser
 
 /**
  * @typedef {object} ColorStateStores
- *
- * @property {import('svelte/store').Readable<ActiveTextMode>} activeTextMode - The current active text mode.
  *
  * @property {import('svelte/store').Writable<number>} alpha - The current alpha value (0 - 1).
  *
