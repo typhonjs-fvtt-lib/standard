@@ -58,9 +58,9 @@
         }
 
         .tjs-color-picker-wrapper {
-            border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw));
+            border-radius: max(4px, 2cqw);
             gap: max(4px, 2.5cqw);
-            padding: var(--tjs-color-picker-wrapper-padding, 2cqw);
+            padding: 2cqw;
         }
     }
 </style>

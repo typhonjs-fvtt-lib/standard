@@ -18,13 +18,13 @@
 
     @container tjs-color-picker-container (min-width: 0) {
         .tjs-slider-wrapper {
-            width: var(--tjs-color-picker-slider-width, max(8px, 5cqw));
-            height: var(--tjs-color-picker-slider-height, 75cqw);
+            width: max(8px, 5cqw);
+            height: 75cqw;
         }
 
         .tjs-slider-wrapper.horizontal {
-            width: var(--tjs-color-picker-slider-width, calc(98cqw - max(6px, 4cqw)));
-            height: var(--tjs-color-picker-slider-height, max(8px, 5cqw));
+            width: calc(98cqw - max(6px, 4cqw));
+            height: max(8px, 5cqw);
         }
     }
 </style>

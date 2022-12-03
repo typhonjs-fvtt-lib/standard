@@ -43,7 +43,6 @@
 
         background: var(--tjs-color-picker-wrapper-background, white);
         border: var(--tjs-color-picker-wrapper-border, 1px solid black);
-        border-radius: var(--tjs-color-picker-wrapper-border-radius, 8px);
         margin: var(--tjs-color-picker-wrapper-margin, 0);
 
         width: 100%;
@@ -61,6 +60,13 @@
         justify-content: space-between;
     }
 
+    @container tjs-color-picker-container (width >= 110px) {
+        /* Add a margin to slider section when text input is visible */
+        section {
+            margin-bottom: max(4px, 2cqw)
+        }
+    }
+
     @container tjs-color-picker-container (min-width: 0) {
         main {
             gap: max(4px, 2.5cqw);
@@ -72,7 +78,7 @@
         }
 
         .tjs-color-picker-wrapper {
-            border-radius: var(--tjs-color-picker-wrapper-border-radius, max(4px, 2cqw));
+            border-radius: max(4px, 2cqw);
             gap: max(2px, 2.5cqw);
         }
     }

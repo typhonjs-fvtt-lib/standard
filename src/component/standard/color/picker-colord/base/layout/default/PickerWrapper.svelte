@@ -15,9 +15,9 @@
 
     @container tjs-color-picker-container (min-width: 0) {
         .tjs-picker-wrapper {
-            border-radius: var(--tjs-color-picker-picker-border-radius, max(4px, 2cqw));
-            width: var(--tjs-color-picker-picker-width, 75cqw);
-            height: var(--tjs-color-picker-picker-height, 75cqw);
+            border-radius: max(4px, 2cqw);
+            width: 75cqw;
+            height: 75cqw;
         }
     }
 </style>
