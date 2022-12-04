@@ -6,9 +6,7 @@
    const {
       components,
       isOpen,
-      isPopup,
-      isAlpha,
-      isTextInput
+      isPopup
    } = internalState.stores;
 
    let containerEl;

@@ -4,6 +4,7 @@
       setContext }  from 'svelte';
 
    import {
+      ButtonBar,
       Picker,
       SliderAlpha,
       SliderHue,
@@ -33,6 +34,7 @@
     {#if $isTextInput}
         <TextInput />
     {/if}
+    <ButtonBar />
 </div>
 
 <style>
@@ -62,6 +64,22 @@
             border-radius: max(4px, 2cqw);
             gap: max(4px, 2.5cqw);
             padding: 2cqw;
+        }
+    }
+
+    @container tjs-color-picker-container (0 <= width < 235px) {
+        .tjs-color-picker-wrapper {
+            --tjs-input-height: max(8px, 8px + 7.65cqi);
+
+            font-size: max(0.35em, 0.35em + 3.885cqi);
+        }
+    }
+
+    @container tjs-color-picker-container (min-width: 235px) {
+        .tjs-color-picker-wrapper {
+            --tjs-input-height: 26px;
+
+            font-size: 1em;
         }
     }
 </style>

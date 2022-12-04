@@ -45,7 +45,6 @@
        --tjs-input-flex: 1;
        --tjs-input-value-invalid-color: red;
        --tjs-input-text-align: center;
-       --tjs-input-width: 5px;
     }
 
     @container tjs-color-picker-container (min-width: 0) {
@@ -79,9 +78,6 @@
 
     @container tjs-color-picker-container (0 <= width < 235px) {
        .picker-text-input {
-          font-size: max(0.35em, 0.35em + 3.885cqi);
-          --tjs-input-height: max(8px, 8px + 7.65cqi);
-
           /* For Firefox */
           --tjs-input-number-appearance: textfield;
 
@@ -105,9 +101,6 @@
 
     @container tjs-color-picker-container (min-width: 235px) {
        .picker-text-input {
-          font-size: 1em;
-          --tjs-input-height: 26px;
-
           /* For Firefox */
           --tjs-input-number-appearance: auto;
 
