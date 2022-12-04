@@ -35,9 +35,7 @@
 
    const {
       components,
-      isAlpha,
       isPopup,
-      isTextInput,
       width
    } = internalState.stores;
 

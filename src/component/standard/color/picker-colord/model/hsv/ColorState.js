@@ -169,10 +169,10 @@ export class ColorState
          this.#updateCurrentColorDebounce();
       }));
 
-      // Subscribe to InternalState `isAlpha` option to set ColorState alpha store when disabled.
-      this.#unsubscribe.push(subscribeIgnoreFirst(internalState.stores.isAlpha, (isAlpha) =>
+      // Subscribe to InternalState `hasAlpha` option to set ColorState alpha store when disabled.
+      this.#unsubscribe.push(subscribeIgnoreFirst(internalState.stores.hasAlpha, (hasAlpha) =>
       {
-         if (!isAlpha) { this.#stores.alpha.set(1); }
+         if (!hasAlpha) { this.#stores.alpha.set(1); }
       }));
 
       // Subscribe to InternalState `precision` option to set new color precision.

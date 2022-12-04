@@ -5,7 +5,7 @@
 
    const internalState = getContext('#tjs-color-picker-state');
 
-   const { isAlpha } = internalState.stores;
+   const { hasAlpha } = internalState.stores;
    const { textState } = internalState.colorState.stores;
 
    const activeTextState = textState.activeState;
@@ -17,7 +17,7 @@
       {#each $activeTextState.inputData as input (input.pickerLabel)}
          <TJSInput {input} />
       {/each}
-      {#if $isAlpha && $activeTextState.hasAlpha}
+      {#if $hasAlpha && $activeTextState.hasAlpha}
          <TJSInput input={alpha} />
       {/if}
    </div>
@@ -31,7 +31,7 @@
       {#each $activeTextState.inputData as input (input.pickerLabel)}
          <span>{input.pickerLabel}</span>
       {/each}
-      {#if $isAlpha && $activeTextState.hasAlpha}
+      {#if $hasAlpha && $activeTextState.hasAlpha}
          <span>A</span>
       {/if}
    </div>

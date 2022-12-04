@@ -18,8 +18,8 @@
 
    const {
       components,
-      isAlpha,
-      isTextInput,
+      hasAlpha,
+      hasTextInput,
    } = internalState.stores;
 </script>
 
@@ -28,11 +28,11 @@
     <main>
         <section>
             <SliderHue />
-            {#if $isAlpha}
+            {#if $hasAlpha}
                 <SliderAlpha />
             {/if}
         </section>
-        {#if $isTextInput}
+        {#if $hasTextInput}
             <TextInput />
         {/if}
         <ButtonBar />

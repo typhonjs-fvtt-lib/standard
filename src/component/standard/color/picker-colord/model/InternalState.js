@@ -48,11 +48,13 @@ export class InternalState
 
       this.#externalData.canChangeMode = typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true;
 
-      this.#externalData.isAlpha = typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true;
+      this.#externalData.hasEyeDropper = typeof opts.hasEyeDropper === 'boolean' ? opts.hasEyeDropper : true;
+
+      this.#externalData.hasAlpha = typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true;
 
       this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
-      this.#externalData.isTextInput = typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true;
+      this.#externalData.hasTextInput = typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true;
 
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
@@ -69,9 +71,9 @@ export class InternalState
          components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.layout
 
          canChangeMode: propertyStore(externalData, 'canChangeMode'),
-         isAlpha: propertyStore(externalData, 'isAlpha'),
+         hasAlpha: propertyStore(externalData, 'hasAlpha'),
          isPopup: propertyStore(externalData, 'isPopup'),
-         isTextInput: propertyStore(externalData, 'isTextInput'),
+         hasTextInput: propertyStore(externalData, 'hasTextInput'),
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
@@ -186,13 +188,13 @@ export class InternalState
 
       this.#stores.canChangeMode.set(typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true);
 
-      this.#stores.isAlpha.set(typeof opts.isAlpha === 'boolean' ? opts.isAlpha : true);
+      this.#stores.hasAlpha.set(typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true);
 
       const newIsPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#stores.isPopup.set(newIsPopup);
 
-      this.#stores.isTextInput.set(typeof opts.isTextInput === 'boolean' ? opts.isTextInput : true);
+      this.#stores.hasTextInput.set(typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true);
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
@@ -222,9 +224,9 @@ export class InternalState
          throw new TypeError(`'options.canChangeMode' is not a boolean.`);
       }
 
-      if (opts.isAlpha !== void 0 && typeof opts.isAlpha !== 'boolean')
+      if (opts.hasAlpha !== void 0 && typeof opts.hasAlpha !== 'boolean')
       {
-         throw new TypeError(`'options.isAlpha' is not a boolean.`);
+         throw new TypeError(`'options.hasAlpha' is not a boolean.`);
       }
 
       if (opts.isPopup !== void 0 && typeof opts.isPopup !== 'boolean')
@@ -232,9 +234,9 @@ export class InternalState
          throw new TypeError(`'options.isPopup' is not a boolean.`);
       }
 
-      if (opts.isTextInput !== void 0 && typeof opts.isTextInput !== 'boolean')
+      if (opts.hasTextInput !== void 0 && typeof opts.hasTextInput !== 'boolean')
       {
-         throw new TypeError(`'options.isTextInput' is not a boolean.`);
+         throw new TypeError(`'options.hasTextInput' is not a boolean.`);
       }
 
       if (opts.layout !== void 0 && typeof opts.layout !== 'string')
@@ -274,11 +276,13 @@ export class InternalState
  *
  * @property {'object'|'string'} [formatType] - The user defined color format type.
  *
- * @property {boolean} [isAlpha=true] - Is alpha / opacity color selection and output enabled.
+ * @property {boolean} [hasAlpha=true] - Is alpha / opacity color selection and output enabled.
+ *
+ * @property {boolean} [hasEyeDropper=true] - Enables eye dropper support if available (requires secure context).
+ *
+ * @property {boolean} [hasTextInput=true] - Is the picker configured with text input components.
  *
  * @property {boolean} [isPopup=true] - Is the picker configured as a pop-up.
- *
- * @property {boolean} [isTextInput=true] - Is the picker configured with text input components.
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
  *
@@ -322,11 +326,13 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<PickerComponents>} components - This selected layout components.
  *
- * @property {import('svelte/store').Writable<boolean>} isAlpha - See {@link TJSColordPickerOptions.isAlpha}
+ * @property {import('svelte/store').Writable<boolean>} hasAlpha - See {@link TJSColordPickerOptions.hasAlpha}
+ *
+ * @property {import('svelte/store').Writable<boolean>} hasEyeDropper - See {@link TJSColordPickerOptions.hasEyeDropper}
+ *
+ * @property {import('svelte/store').Writable<boolean>} hasTextInput - See {@link TJSColordPickerOptions.hasTextInput}
  *
  * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
- *
- * @property {import('svelte/store').Writable<boolean>} isTextInput - See {@link TJSColordPickerOptions.isTextInput}
  *
  * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
  *
