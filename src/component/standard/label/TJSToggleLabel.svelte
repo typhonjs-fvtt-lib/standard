@@ -27,6 +27,8 @@
    export let store = void 0;
    export let styles = void 0;
    export let efx = void 0;
+   export let onClick = void 0;
+   export let onClose = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
 
@@ -45,6 +47,11 @@
    $: efx = isObject(label) && typeof label.efx === 'function' ? label.efx :
     typeof efx === 'function' ? efx : () => {};
 
+   $: onClick = isObject(label) && typeof label.onClick === 'function' ? label.onClick :
+    typeof onClick === 'function' ? onClick : void 0;
+   $: onClose = isObject(label) && typeof label.onClose === 'function' ? label.onClose :
+    typeof onClose === 'function' ? onClose : void 0;
+
    $: onClosePropagate = isObject(label) && typeof label.onClosePropagate === 'boolean' ? label.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false
    $: onClickPropagate = isObject(label) && typeof label.onClickPropagate === 'boolean' ? label.onClickPropagate :
@@ -57,10 +64,12 @@
    // Chose the current title when `selected` changes; if there is no `titleSelected` fallback to `title`.
    $: titleCurrent = selected && titleSelected !== '' ? titleSelected : title
 
-   function onClick(event)
+   function onClickHandler(event)
    {
       selected = !selected;
       if (store) { store.set(selected); }
+
+      if (typeof onClick === 'function') { onClick(selected); }
 
       if (!onClickPropagate)
       {
@@ -87,10 +96,12 @@
    /**
     * Handles `close` event from any children elements.
     */
-   function onClose(event)
+   function onCloseHandler(event)
    {
       selected = false;
       if (store) { store.set(false); }
+
+      if (typeof onClose === 'function') { onClose(selected); }
 
       if (!onClosePropagate)
       {
@@ -101,12 +112,12 @@
 </script>
 
 <div on:click={onClickDiv}
-     on:close={onClose}
+     on:close={onCloseHandler}
      title={localize(titleCurrent)}
      use:applyStyles={styles}
      role=presentation>
    <slot name=outer />
-   <span on:click={onClick} use:efx class:selected role=presentation>
+   <span on:click={onClickHandler} use:efx class:selected role=presentation>
       <slot name=left />
       {#if comp}
          <svelte:component this={comp}/>

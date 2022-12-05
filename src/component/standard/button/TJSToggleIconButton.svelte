@@ -21,6 +21,8 @@
    export let store = void 0;
    export let styles = void 0;
    export let efx = void 0;
+   export let onClick = void 0;
+   export let onClose = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
 
@@ -37,6 +39,11 @@
    $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
 
+   $: onClick = typeof button === 'object' && typeof button.onClick === 'function' ? button.onClick :
+    typeof onClick === 'function' ? onClick : void 0;
+   $: onClose = typeof button === 'object' && typeof button.onClose === 'function' ? button.onClose :
+    typeof onClose === 'function' ? onClose : void 0;
+
    $: onClosePropagate = typeof button === 'object' && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false;
    $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
@@ -49,10 +56,12 @@
    // Chose the current title when `selected` changes; if there is no `titleSelected` fallback to `title`.
    $: titleCurrent = selected && titleSelected !== '' ? titleSelected : title
 
-   function onClick(event)
+   function onClickHandler(event)
    {
       selected = !selected;
       if (store) { store.set(selected); }
+
+      if (typeof onClick === 'function') { onClick(selected); }
 
       if (!onClickPropagate)
       {
@@ -79,10 +88,12 @@
    /**
     * Handles `close` event from any children elements.
     */
-   function onClose(event)
+   function onCloseHandler(event)
    {
       selected = false;
       if (store) { store.set(false); }
+
+      if (typeof onClose === 'function') { onClose(selected); }
 
       if (!onClosePropagate)
       {
@@ -93,11 +104,11 @@
 </script>
 
 <div on:click={onClickDiv}
-     on:close={onClose}
+     on:close={onCloseHandler}
      title={localize(titleCurrent)}
      use:applyStyles={styles}
      role=presentation>
-   <a on:click={onClick} use:efx class:selected role=presentation>
+   <a on:click={onClickHandler} use:efx class:selected role=presentation>
       <i class={icon} class:selected></i>
    </a>
    {#if selected}

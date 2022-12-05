@@ -18,6 +18,7 @@
    export let title = void 0;
    export let styles = void 0;
    export let efx = void 0;
+   export let onClick = void 0;
    export let onClickPropagate = void 0;
 
    $: icon = typeof button === 'object' && typeof button.icon === 'string' ? button.icon :
@@ -28,11 +29,15 @@
     typeof styles === 'object' ? styles : void 0;
    $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
+   $: onClick = typeof button === 'object' && typeof button.onClick === 'function' ? button.onClick :
+    typeof onClick === 'function' ? onClick : void 0;
    $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
 
-   function onClick(event)
+   function onClickHandler(event)
    {
+      if (typeof onClick === 'function') { onClick(); }
+
       if (!onClickPropagate)
       {
          event.preventDefault();
@@ -41,7 +46,7 @@
    }
 </script>
 
-<div on:click={onClick} use:applyStyles={styles} title={localize(title)} role=presentation>
+<div on:click={onClickHandler} use:applyStyles={styles} title={localize(title)} role=presentation>
     <a on:click use:efx role=presentation>
         <i class={icon}></i>
     </a>
