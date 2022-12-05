@@ -15,7 +15,7 @@
    import {
       ArrowKeyHandler,
       Input,
-      MainLayout }          from './base/index.js'
+      MainLayout }          from './view/index.js'
 
    /**
     * color properties

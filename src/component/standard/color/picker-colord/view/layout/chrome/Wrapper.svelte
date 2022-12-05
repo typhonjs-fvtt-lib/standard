@@ -26,20 +26,22 @@
 
 <div class=tjs-color-picker-wrapper>
     <Picker />
-    <main>
-        <section>
+    <div class=tjs-color-picker-wrapper-body>
+        <section class=sliders>
             <SliderHue />
             {#if $hasAlpha}
                 <SliderAlpha />
             {/if}
         </section>
-        {#if $hasTextInput}
-            <TextInput />
-        {/if}
-        {#if $hasButtonBar}
-            <ButtonBar />
-        {/if}
-    </main>
+        <section class=extra>
+            {#if $hasTextInput}
+                <TextInput />
+            {/if}
+            {#if $hasButtonBar}
+                <ButtonBar />
+            {/if}
+        </section>
+    </div>
 </div>
 
 <style>
@@ -55,37 +57,47 @@
         height: max-content;
     }
 
-    main {
-        flex-direction: column;
-        display: flex;
-    }
-
-    section {
+    .extra, .sliders, .tjs-color-picker-wrapper-body {
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
     }
 
-    @container tjs-color-picker-container (width >= 110px) {
+    @container tjs-color-picker-container (width >= 115px) {
         /* Add a margin to slider section when text input is visible */
-        section {
+        .sliders {
             margin-bottom: max(4px, 2cqw)
         }
     }
 
+    @container tjs-color-picker-container (width < 115px) {
+        .extra {
+            display: none;
+        }
+    }
+
+    @container tjs-color-picker-container (min-width: 115px) {
+        .extra {
+            display: flex;
+        }
+    }
+
     @container tjs-color-picker-container (min-width: 0) {
-        main {
-            gap: max(4px, 2.5cqw);
-            padding: max(3px, 2cqw);
+        .extra {
+            gap: max(2px, 2.5cqw);
         }
 
-        section {
+        .sliders {
             gap: max(7px, 3.5cqw);
         }
 
         .tjs-color-picker-wrapper {
             border-radius: max(4px, 2cqw);
             gap: max(2px, 2.5cqw);
+        }
+
+        .tjs-color-picker-wrapper-body {
+            gap: max(4px, 2.5cqw);
+            padding: max(3px, 2cqw);
         }
     }
 

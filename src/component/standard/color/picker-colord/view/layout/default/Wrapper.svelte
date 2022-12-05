@@ -25,24 +25,31 @@
 </script>
 
 <div class=tjs-color-picker-wrapper>
-    <section>
+    <section class=main>
         <Picker />
         <SliderHue />
         {#if $hasAlpha}
             <SliderAlpha />
         {/if}
     </section>
-    {#if $hasTextInput}
-        <TextInput />
-    {/if}
-    {#if $hasButtonBar}
-        <ButtonBar />
-    {/if}
+    <section class=extra>
+        {#if $hasTextInput}
+            <TextInput />
+        {/if}
+        {#if $hasButtonBar}
+            <ButtonBar />
+        {/if}
+    </section>
 </div>
 
 <style>
-    section {
+    .main {
         display: flex;
+    }
+
+    .extra {
+        display: flex;
+        flex-direction: column;
     }
 
     .tjs-color-picker-wrapper {
@@ -58,7 +65,11 @@
     }
 
     @container tjs-color-picker-container (min-width: 0) {
-        section {
+        .extra {
+            gap: max(2px, 2.5cqw);
+        }
+
+        .main {
             gap: max(7px, 3.5cqw);
             margin-right: max(4px, 2cqw)
         }
@@ -67,6 +78,18 @@
             border-radius: max(4px, 2cqw);
             gap: max(4px, 2.5cqw);
             padding: 2cqw;
+        }
+    }
+
+    @container tjs-color-picker-container (width < 115px) {
+        .extra {
+            display: none;
+        }
+    }
+
+    @container tjs-color-picker-container (min-width: 115px) {
+        .extra {
+            display: flex;
         }
     }
 

@@ -6,7 +6,7 @@ import { isObject }        from '@typhonjs-svelte/lib/util';
 import { ColorState }      from './hsv/ColorState.js';
 import { EyeDropper }      from './EyeDropper.js';
 
-import { layout }          from '../base/layout/index.js'
+import { layout }          from '../view/layout/index.js'
 
 export class InternalState
 {

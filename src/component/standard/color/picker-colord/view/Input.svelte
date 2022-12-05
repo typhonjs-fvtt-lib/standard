@@ -23,7 +23,7 @@
         padding: 0;
         border: none;
         width: 32px;
-        height: 26px;   /* Create CSS variable and assign default height to --form-field-height */
+        height: 26px;   /* TODO: Create CSS variable and assign default height to --form-field-height */
         flex-shrink: 0;
         cursor: pointer;
 
