@@ -74,7 +74,6 @@
       if (e.key === 'Tab')
       {
          hasBeenTabbed = true;
-         // spanEl.classList.add('has-been-tabbed');
       }
    }
 

@@ -1,3 +1,4 @@
+export { default as ButtonBar }        from './ButtonBar.svelte';
 export { default as Input }            from './Input.svelte';
 export { default as MainLayout }       from './MainLayout.svelte';
 export { default as Picker }           from './Picker.svelte';

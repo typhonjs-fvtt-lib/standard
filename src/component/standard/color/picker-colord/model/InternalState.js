@@ -4,6 +4,7 @@ import { propertyStore }   from '@typhonjs-svelte/lib/store';
 import { isObject }        from '@typhonjs-svelte/lib/util';
 
 import { ColorState }      from './hsv/ColorState.js';
+import { EyeDropper }      from './EyeDropper.js';
 
 import { layout }          from '../base/layout/index.js'
 
@@ -48,13 +49,16 @@ export class InternalState
 
       this.#externalData.canChangeMode = typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true;
 
-      this.#externalData.hasEyeDropper = typeof opts.hasEyeDropper === 'boolean' ? opts.hasEyeDropper : true;
-
       this.#externalData.hasAlpha = typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true;
 
-      this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
+      this.#externalData.hasButtonBar = typeof opts.hasButtonBar === 'boolean' ? opts.hasButtonBar : true;
+
+      this.#externalData.hasEyeDropper = typeof opts.hasEyeDropper === 'boolean' ?
+       opts.hasEyeDropper && EyeDropper.isAvailable : EyeDropper.isAvailable;
 
       this.#externalData.hasTextInput = typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true;
+
+      this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
@@ -71,9 +75,11 @@ export class InternalState
          components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.layout
 
          canChangeMode: propertyStore(externalData, 'canChangeMode'),
+         hasEyeDropper: propertyStore(externalData, 'hasEyeDropper'),
          hasAlpha: propertyStore(externalData, 'hasAlpha'),
-         isPopup: propertyStore(externalData, 'isPopup'),
+         hasButtonBar: propertyStore(externalData, 'hasButtonBar'),
          hasTextInput: propertyStore(externalData, 'hasTextInput'),
+         isPopup: propertyStore(externalData, 'isPopup'),
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
@@ -190,11 +196,16 @@ export class InternalState
 
       this.#stores.hasAlpha.set(typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true);
 
+      this.#stores.hasButtonBar.set(typeof opts.hasButtonBar === 'boolean' ? opts.hasButtonBar : true);
+
+      this.#stores.hasEyeDropper.set(typeof opts.hasEyeDropper === 'boolean' ?
+       opts.hasEyeDropper && EyeDropper.isAvailable : EyeDropper.isAvailable);
+
+      this.#stores.hasTextInput.set(typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true);
+
       const newIsPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#stores.isPopup.set(newIsPopup);
-
-      this.#stores.hasTextInput.set(typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true);
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
@@ -229,14 +240,24 @@ export class InternalState
          throw new TypeError(`'options.hasAlpha' is not a boolean.`);
       }
 
-      if (opts.isPopup !== void 0 && typeof opts.isPopup !== 'boolean')
+      if (opts.hasButtonBar !== void 0 && typeof opts.hasButtonBar !== 'boolean')
       {
-         throw new TypeError(`'options.isPopup' is not a boolean.`);
+         throw new TypeError(`'options.hasButtonBar' is not a boolean.`);
+      }
+
+      if (opts.hasEyeDropper !== void 0 && typeof opts.hasEyeDropper !== 'boolean')
+      {
+         throw new TypeError(`'options.hasEyeDropper' is not a boolean.`);
       }
 
       if (opts.hasTextInput !== void 0 && typeof opts.hasTextInput !== 'boolean')
       {
          throw new TypeError(`'options.hasTextInput' is not a boolean.`);
+      }
+
+      if (opts.isPopup !== void 0 && typeof opts.isPopup !== 'boolean')
+      {
+         throw new TypeError(`'options.isPopup' is not a boolean.`);
       }
 
       if (opts.layout !== void 0 && typeof opts.layout !== 'string')
@@ -276,11 +297,13 @@ export class InternalState
  *
  * @property {'object'|'string'} [formatType] - The user defined color format type.
  *
- * @property {boolean} [hasAlpha=true] - Is alpha / opacity color selection and output enabled.
+ * @property {boolean} [hasAlpha=true] - Enables alpha / opacity color selection and output.
+ *
+ * @property {boolean} [hasButtonBar=true] - Enables the button bar.
  *
  * @property {boolean} [hasEyeDropper=true] - Enables eye dropper support if available (requires secure context).
  *
- * @property {boolean} [hasTextInput=true] - Is the picker configured with text input components.
+ * @property {boolean} [hasTextInput=true] - Enables text input component.
  *
  * @property {boolean} [isPopup=true] - Is the picker configured as a pop-up.
  *

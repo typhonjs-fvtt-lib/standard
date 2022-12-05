@@ -19,6 +19,7 @@
    const {
       components,
       hasAlpha,
+      hasButtonBar,
       hasTextInput,
    } = internalState.stores;
 </script>
@@ -34,7 +35,9 @@
     {#if $hasTextInput}
         <TextInput />
     {/if}
-    <ButtonBar />
+    {#if $hasButtonBar}
+        <ButtonBar />
+    {/if}
 </div>
 
 <style>

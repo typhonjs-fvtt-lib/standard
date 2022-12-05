@@ -226,6 +226,24 @@ export class ColorState
    }
 
    /**
+    * Sets current color from given color data.
+    *
+    * @param {object|string}   color - Supported ColorD color format.
+    */
+   setColor(color)
+   {
+      const colordInstance = colord(color);
+      if (colordInstance.isValid())
+      {
+         const newHsv = colordInstance.toHsv();
+
+         this.#stores.hue.set(newHsv.h);
+         this.#stores.sv.set({ s: newHsv.s, v: newHsv.v })
+         this.#stores.alpha.set(newHsv.a)
+      }
+   }
+
+   /**
     * @param {object}   hsvColor -
     */
    #updateColorData(hsvColor)
