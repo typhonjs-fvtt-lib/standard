@@ -1,12 +1,22 @@
 <script>
    /**
+    * --tjs-button-background
+    * --tjs-button-background-hover
+    * --tjs-button-background-selected
+    * --tjs-button-border
+    * --tjs-button-border-radius
+    * --tjs-button-clip-path
+    * --tjs-button-clip-path-hover
+    * --tjs-button-diameter
+    * --tjs-button-transition
+    *
     * --tjs-icon-button-background
     * --tjs-icon-button-background-hover
     * --tjs-icon-button-background-selected
+    * --tjs-icon-button-border
     * --tjs-icon-button-border-radius
     * --tjs-icon-button-clip-path
     * --tjs-icon-button-clip-path-hover
-    * --tjs-icon-button-clip-path-selected
     * --tjs-icon-button-diameter
     * --tjs-icon-button-transition
     */
@@ -56,9 +66,9 @@
     div {
         pointer-events: none;
         display: block;
-        flex: 0 0 var(--tjs-icon-button-diameter);
-        height: var(--tjs-icon-button-diameter);
-        width: var(--tjs-icon-button-diameter);
+        flex: 0 0 var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
+        height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
+        width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
         align-self: center;
         text-align: center;
     }
@@ -66,24 +76,25 @@
     a {
         pointer-events: initial;
         display: inline-block;
-        background: var(--tjs-icon-button-background);
-        border-radius: var(--tjs-icon-button-border-radius);
+        background: var(--tjs-icon-button-background, var(--tjs-button-background));
+        border: var(--tjs-icon-button-border, var(--tjs-button-border));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
         position: relative;
         overflow: hidden;
-        clip-path: var(--tjs-icon-button-clip-path, none);
+        clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
         transform-style: preserve-3d;
         width: 100%;
         height: 100%;
-        transition: var(--tjs-icon-button-transition);
+        transition: var(--tjs-icon-button-transition, var(--tjs-button-transition));
     }
 
     a:hover {
-        background: var(--tjs-icon-button-background-hover);
-        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, none));
+        background: var(--tjs-icon-button-background-hover, var(--tjs-button-background-hover));
+        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-hover, none)));
     }
 
     i {
-        line-height: var(--tjs-icon-button-diameter);
+        line-height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
         transform: translateZ(1px);
     }
 </style>
