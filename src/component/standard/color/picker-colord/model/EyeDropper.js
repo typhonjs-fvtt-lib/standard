@@ -21,10 +21,7 @@ export class EyeDropper
                   colorState.setColor(colorSelectionResult.sRGBHex);
                }
             }
-            catch (err)
-            {
-               console.warn(`TJSColordPicker warning: Could not set color from browser EyeDropper API.`);
-            }
+            catch (err) { /**/ }
          }
       }
    }
