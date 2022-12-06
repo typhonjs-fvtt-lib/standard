@@ -62,7 +62,7 @@ export class InternalState
 
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
-      this.#externalData.width = Number.isInteger(opts.width) ? opts.width : 200;
+      this.#externalData.width = Number.isInteger(opts.width) ? `${opts.width}px` : opts.width;
 
       // Internal data -----------------------------------------------------------------------------------------------
 
@@ -211,7 +211,7 @@ export class InternalState
 
       this.#stores.precision.set(Number.isInteger(opts.precision) ? opts.precision : 0);
 
-      this.#stores.width.set(Number.isInteger(opts.width) ? opts.width : 200);
+      this.#stores.width.set(Number.isInteger(opts.width) ? `${opts.width}px` : opts.width);
 
       // Internal data -----------------------------------------------------------------------------------------------
 
@@ -275,9 +275,24 @@ export class InternalState
          throw new TypeError(`'options.precision' must be an integer >= 0.`);
       }
 
-      if (opts.width !== void 0 && (!Number.isInteger(opts.width) || opts.width < 50))
+      if (opts.width !== void 0)
       {
-         throw new TypeError(`'options.precision' must be an integer >= 50.`);
+         switch (typeof opts.width)
+         {
+            case 'number':
+               if (Number.isInteger(opts.width) && opts.width < 50)
+               {
+                  throw new TypeError(`'options.width' must be an integer >= 50 or valid CSS dimension string.`);
+               }
+               break;
+
+            default:
+               if (typeof opts.width !== 'string')
+               {
+                  throw new TypeError(`'options.width' must be an integer >= 50 or valid CSS dimension string.`);
+               }
+               break;
+         }
       }
    }
 }
