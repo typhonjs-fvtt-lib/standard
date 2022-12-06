@@ -62,6 +62,8 @@
 
         width: max-content;
         height: max-content;
+
+        --tjs-icon-button-border: var(--tjs-input-border);
     }
 
     @container tjs-color-picker-container (min-width: 0) {

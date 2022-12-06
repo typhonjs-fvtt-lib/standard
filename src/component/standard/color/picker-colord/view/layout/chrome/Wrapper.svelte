@@ -55,6 +55,8 @@
 
         width: 100%;
         height: max-content;
+
+        --tjs-icon-button-border: var(--tjs-input-border);
     }
 
     .extra, .sliders, .tjs-color-picker-wrapper-body {
