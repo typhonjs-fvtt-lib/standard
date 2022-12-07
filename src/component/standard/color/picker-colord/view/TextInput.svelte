@@ -50,6 +50,7 @@
     @container tjs-color-picker-container (min-width: 0) {
        .picker-text-input {
           gap: max(3px, 2cqw);
+          width: 94cqw; /* TODO: Evaluate as this was necessary for Firefox nightly 12/7/22 */
        }
 
        /* Child text input components */
@@ -66,7 +67,7 @@
 
           border-radius: 4px;
 
-          background: rgba(0, 0, 0, 0.1);
+          background: rgba(0, 0, 0, 0.1); /* TODO: CSS Variable */
           cursor: pointer;
           text-align: center
        }
