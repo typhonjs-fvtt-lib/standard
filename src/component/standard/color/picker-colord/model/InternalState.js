@@ -60,6 +60,8 @@ export class InternalState
 
       this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
+      this.#externalData.paddingOffset = typeof opts.paddingOffset === 'string' ? opts.paddingOffset : '0';
+
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
       this.#externalData.width = Number.isInteger(opts.width) ? `${opts.width}px` : opts.width;
@@ -80,6 +82,7 @@ export class InternalState
          hasButtonBar: propertyStore(externalData, 'hasButtonBar'),
          hasTextInput: propertyStore(externalData, 'hasTextInput'),
          isPopup: propertyStore(externalData, 'isPopup'),
+         paddingOffset: propertyStore(externalData, 'paddingOffset'),
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
@@ -152,6 +155,7 @@ export class InternalState
             selectedVariant = layout.chrome;
             break;
 
+         case 'default':
          default:
             this.#externalData.layout = void 0;
             break;
@@ -209,6 +213,8 @@ export class InternalState
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
+      this.#stores.paddingOffset.set(opts.paddingOffset ? opts.paddingOffset : '0');
+
       this.#stores.precision.set(Number.isInteger(opts.precision) ? opts.precision : 0);
 
       this.#stores.width.set(Number.isInteger(opts.width) ? `${opts.width}px` : opts.width);
@@ -265,9 +271,9 @@ export class InternalState
          throw new TypeError(`'options.layout' is not a string or undefined.`);
       }
 
-      if (typeof opts.layout === 'string' && opts.layout !== 'chrome')
+      if (opts.paddingOffset !== void 0 && typeof opts.paddingOffset !== 'string')
       {
-         throw new Error(`Unknown 'options.layout': ${opts.layout}; must be undefined or 'chrome'.`)
+         throw new TypeError(`'options.paddingOffset' is not a string.`);
       }
 
       if (opts.precision !== void 0 && (!Number.isInteger(opts.precision) || opts.precision < 0))
@@ -324,11 +330,15 @@ export class InternalState
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
  *
+ * @property {string} [paddingOffset] - A valid CSS dimension to provide offset padding as necessary depending on layout.
+ *                                      IE the default layout when below 235px wide needs make up padding on the right.
+ *
  * @property {number} [precision=0] - A positive integer defining rounding precision.
  *
  * @property {object} [styles] - Inline styles to apply to TJSColordPicker span; useful to set CSS variables.
  *
- * @property {number} [width=200] - A positive integer greater than 50 defining the main container width in pixels.
+ * @property {number|string} [width=200] - A positive integer greater than 50 defining the main container width in
+ *                                         pixels or a valid CSS dimension string.
  */
 
 /**
@@ -372,9 +382,11 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
  *
+ * @property {import('svelte/store').Writable<string>} paddingOffset - See {@link TJSColordPickerOptions.paddingOffset}
+ *
  * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
  *
- * @property {import('svelte/store').Writable<number>} width - See {@link TJSColordPickerOptions.width}
+ * @property {import('svelte/store').Writable<string>} width - See {@link TJSColordPickerOptions.width}
  *
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}

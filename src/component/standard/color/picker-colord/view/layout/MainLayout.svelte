@@ -6,7 +6,8 @@
    const {
       components,
       isOpen,
-      isPopup
+      isPopup,
+      paddingOffset
    } = internalState.stores;
 
    let containerEl;
@@ -29,14 +30,16 @@
    $: if (!$isPopup) { document.body.removeEventListener('pointerdown', onPointerDown); }
 </script>
 
-<div bind:this={containerEl}
-     class=tjs-color-picker-container
-     class:isOpen={$isOpen}
-     class:isPopup={$isPopup}
-     role={$isPopup ? 'dialog' : 'none'}
-     aria-label="color picker">
-   <svelte:component this={$components.wrapper} />
-</div>
+<main style:padding-right={$paddingOffset}>
+   <div bind:this={containerEl}
+        class=tjs-color-picker-container
+        class:isOpen={$isOpen}
+        class:isPopup={$isPopup}
+        role={$isPopup ? 'dialog' : 'none'}
+        aria-label="color picker">
+      <svelte:component this={$components.wrapper} />
+   </div>
+</main>
 
 <style>
    div {
