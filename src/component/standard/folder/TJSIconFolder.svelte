@@ -9,7 +9,9 @@
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Exported props include:
-    * `folder`: An object containing id (any), label (string), store (writable boolean)
+    * `folder` ({@link TJSFolderData}): An object defining all properties of a folder including potentially data driven
+    * minimal Svelte configuration objects (`slotDefault`, `slotLabel`, and `slotSummaryEnd`) providing default
+    * component implementations.
     *
     * Or in lieu of passing the folder object you can assign these props directly:
     * `id`: Anything used for an ID.
@@ -86,7 +88,9 @@
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
    import { isWritableStore }   from '@typhonjs-svelte/lib/store';
-   import { isObject }          from '@typhonjs-svelte/lib/util';
+   import {
+      isObject,
+      isSvelteComponent }       from '@typhonjs-svelte/lib/util';
 
    import { localize }          from '@typhonjs-fvtt/svelte/helper';
 
@@ -309,14 +313,28 @@
              class:default-cursor={localOptions.chevronOnly}>
         {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
-        <slot name=label>{localize(label)}</slot>
+        <slot name=label>
+            {#if isSvelteComponent(folder?.slotLabel?.class)}
+                <svelte:component this={folder.slotLabel.class} {...(isObject(folder?.slotLabel?.props) ? folder.slotLabel.props : {})} />
+            {:else}
+                {localize(label)}
+            {/if}
+        </slot>
 
-        <slot name="summary-end"></slot>
+        <slot name="summary-end">
+            {#if isSvelteComponent(folder?.slotSummaryEnd?.class)}
+                <svelte:component this={folder.slotSummaryEnd.class} {...(isObject(folder?.slotSummaryEnd?.props) ? folder.slotSummaryEnd.props : {})} />
+            {/if}
+        </slot>
     </summary>
 
     <div class=contents>
         {#if visible}
-            <slot />
+            <slot>
+                {#if isSvelteComponent(folder?.slotDefault?.class)}
+                    <svelte:component this={folder.slotDefault.class} {...(isObject(folder?.slotDefault?.props) ? folder.slotDefault.props : {})} />
+                {/if}
+            </slot>
         {/if}
     </div>
 </details>

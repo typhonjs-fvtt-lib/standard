@@ -12,14 +12,11 @@
       {
          id: 'saved-colors',
          label: 'Saved Colors',
-         content: {
+         slotDefault: {
             class: SavedColors
          },
          slotSummaryEnd: {
             class: SavedColorsSummaryEnd
-         },
-         styles: {
-            '--tjs-summary-width': '98%'
          }
       }
    ];
@@ -28,16 +25,7 @@
 <div class=tjs-color-picker-addons>
     {#each addOnList as addOn (addOn.id)}
         <section>
-            <TJSSvgFolder folder={addOn}>
-                <svelte:fragment slot=summary-end>
-                    {#if addOn?.slotSummaryEnd}
-                        <svelte:component this={addOn.slotSummaryEnd.class} {...(addOn.slotSummaryEnd.props ? addOn.slotSummaryEnd.props : {})} />
-                    {/if}
-                </svelte:fragment>
-                {#if addOn?.content}
-                    <svelte:component this={addOn.content.class} {...(addOn.content.props ? addOn.content.props : {})} />
-                {/if}
-            </TJSSvgFolder>
+            <TJSSvgFolder folder={addOn} />
         </section>
     {/each}
 </div>
@@ -50,6 +38,9 @@
     }
 
     section {
+        --tjs-summary-padding: 0.1em;
+        --tjs-summary-width: 98%;
+
         background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
         border: var(--tjs-color-picker-overlay-border, var(--tjs-input-border, 2px solid rgba(0, 0, 0, 0.75)));
         border-radius: 0.25em;
