@@ -3,7 +3,8 @@
 
    import TJSSvgFolder      from '../../../../folder/TJSSvgFolder.svelte';
 
-   import SavedColors       from './saved-colors/SavedColors.svelte';
+   import SavedColors           from './saved-colors/SavedColors.svelte';
+   import SavedColorsSummaryEnd from './saved-colors/SavedColorsSummaryEnd.svelte';
 
    const internalState = getContext('#tjs-color-picker-state');
 
@@ -11,7 +12,15 @@
       {
          id: 'saved-colors',
          label: 'Saved Colors',
-         class: SavedColors
+         content: {
+            class: SavedColors
+         },
+         slotSummaryEnd: {
+            class: SavedColorsSummaryEnd
+         },
+         styles: {
+            '--tjs-summary-width': '98%'
+         }
       }
    ];
 </script>
@@ -20,7 +29,14 @@
     {#each addOnList as addOn (addOn.id)}
         <section>
             <TJSSvgFolder folder={addOn}>
-                <svelte:component this={addOn.class} {...(addOn.props ? addOn.props : {})}/>
+                <svelte:fragment slot=summary-end>
+                    {#if addOn?.slotSummaryEnd}
+                        <svelte:component this={addOn.slotSummaryEnd.class} {...(addOn.slotSummaryEnd.props ? addOn.slotSummaryEnd.props : {})} />
+                    {/if}
+                </svelte:fragment>
+                {#if addOn?.content}
+                    <svelte:component this={addOn.content.class} {...(addOn.content.props ? addOn.content.props : {})} />
+                {/if}
             </TJSSvgFolder>
         </section>
     {/each}
@@ -37,7 +53,7 @@
         background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
         border: var(--tjs-color-picker-overlay-border, var(--tjs-input-border, 2px solid rgba(0, 0, 0, 0.75)));
         border-radius: 0.25em;
-        padding: 0 0.5em;
+        padding-left: 0.5em;
     }
 
     @container tjs-color-picker-container (min-width: 0) {

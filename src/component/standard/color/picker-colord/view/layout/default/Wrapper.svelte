@@ -66,8 +66,6 @@
         width: max-content;
         height: max-content;
 
-        --tjs-icon-button-border: var(--tjs-input-border);
-        --tjs-icon-button-border-width: 2px;
         --tjs-icon-button-diameter: 2em;
     }
 

@@ -28,6 +28,9 @@
 
         border-radius: 4px;
         background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
+
+        --tjs-icon-button-border: var(--tjs-input-border);
+        --tjs-icon-button-border-width: 2px;
     }
 
     @container tjs-color-picker-container (min-width: 0) {
@@ -39,7 +42,7 @@
 
     @container tjs-color-picker-container (min-width: 235px) {
         section {
-            font-size: min(1em, 0.175em + 5cqi);
+            font-size: calc(0.175em + 5cqi);
         }
     }
 </style>
