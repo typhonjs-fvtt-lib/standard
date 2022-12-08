@@ -245,6 +245,29 @@
       if (localOptions.noKeys && event.key === ' ') { event.preventDefault(); }
    }
 
+
+   /**
+    * Handle receiving bubbled event from summary or content to close details / content.
+    */
+   function onLocalClose(event)
+   {
+      event.preventDefault();
+      event.stopPropagation();
+
+      store.set(false);
+   }
+
+   /**
+    * Handle receiving bubbled event from summary bar to open details / content.
+    */
+   function onLocalOpen(event)
+   {
+      event.preventDefault();
+      event.stopPropagation();
+
+      store.set(true);
+   }
+
    // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
    // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
    // `createEventDispatcher`.
@@ -268,6 +291,12 @@
          on:close
          on:openAny
          on:closeAny
+
+         on:close={onLocalClose}
+         on:closeAny={onLocalClose}
+         on:open={onLocalOpen}
+         on:openAny={onLocalOpen}
+
          use:toggleDetails={{ store, clickActive: false }}
          use:applyStyles={styles}
          data-id={id}
