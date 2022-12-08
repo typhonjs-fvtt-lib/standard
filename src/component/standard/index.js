@@ -61,7 +61,10 @@ cssVariables.setProperties({
          '--tjs-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
          '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
          '--tjs-input-padding': 'padding' in props ? props['padding'] : '1px 3px',
-         '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)'
+         '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)',
+
+         // Set default values that are only to be referenced and not set.
+         '--_tjs-default-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
       }, false);
    }
 }

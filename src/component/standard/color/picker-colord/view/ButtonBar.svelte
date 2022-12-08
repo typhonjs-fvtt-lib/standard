@@ -36,4 +36,10 @@
             gap: min(8px, 2cqw);
         }
     }
+
+    @container tjs-color-picker-container (min-width: 235px) {
+        section {
+            font-size: min(1em, 0.175em + 5cqi);
+        }
+    }
 </style>

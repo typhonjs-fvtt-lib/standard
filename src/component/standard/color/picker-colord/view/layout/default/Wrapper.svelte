@@ -110,8 +110,7 @@
 
     @container tjs-color-picker-container (min-width: 235px) {
         .tjs-color-picker-wrapper {
-            --tjs-icon-button-diameter: max(4em, 1em + 3cqi);
-            --tjs-input-height: 26px;
+            --tjs-input-height: var(--_tjs-default-input-height);  /* 26px */
 
             font-size: 1em;
         }
