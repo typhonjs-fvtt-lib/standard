@@ -5,10 +5,23 @@
     * --tjs-button-background-selected
     * --tjs-button-border
     * --tjs-button-border-radius
-    * --tjs-button-clip-path
+    * --tjs-button-border-width
     * --tjs-button-clip-path-hover
+    * --tjs-button-cursor
     * --tjs-button-diameter
     * --tjs-button-transition
+    *
+    * --tjs-icon-button-background
+    * --tjs-icon-button-background-hover
+    * --tjs-icon-button-background-selected
+    * --tjs-icon-button-border
+    * --tjs-icon-button-border-radius
+    * --tjs-icon-button-border-width
+    * --tjs-icon-button-clip-path
+    * --tjs-icon-button-clip-path-hover
+    * --tjs-icon-button-cursor
+    * --tjs-icon-button-diameter
+    * --tjs-icon-button-transition
     */
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
    import { localize }        from '@typhonjs-svelte/lib/helper';
@@ -34,16 +47,16 @@
    $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
 
-   let rgbColor;
+   let hslColor;
 
    $: {
       const colordInstance = colord(color);
-      rgbColor = colordInstance.isValid() ? colordInstance.toRgbString() : 'transparent';
+      hslColor = colordInstance.isValid() ? colordInstance.toHslString() : 'transparent';
    }
 
    function onClickHandler(event)
    {
-      if (typeof onClick === 'function') { onClick(rgbColor); }
+      if (typeof onClick === 'function') { onClick(hslColor); }
 
       if (!onClickPropagate)
       {
@@ -56,7 +69,7 @@
    {
       if (event.code === 'Enter')
       {
-         if (typeof onClick === 'function') { onClick(rgbColor); }
+         if (typeof onClick === 'function') { onClick(hslColor); }
       }
    }
 </script>
@@ -65,7 +78,7 @@
      on:keydown|preventDefault={onKeyDownHandler}
      use:applyStyles={styles}
      title={localize(title)}
-     style:--tjs-icon-button-background={rgbColor}
+     style:--tjs-icon-button-background={hslColor}
      role=button>
     <div class=inner
          use:efx
@@ -107,5 +120,7 @@
         border: var(--tjs-icon-button-border, var(--tjs-button-border));
         border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
         border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
+
+        cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
     }
 </style>

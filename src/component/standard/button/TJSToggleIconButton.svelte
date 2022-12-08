@@ -9,6 +9,7 @@
     * --tjs-button-clip-path
     * --tjs-button-clip-path-hover
     * --tjs-button-clip-path-selected
+    * --tjs-button-cursor
     * --tjs-button-diameter
     * --tjs-button-transition
     *
@@ -21,6 +22,7 @@
     * --tjs-icon-button-clip-path
     * --tjs-icon-button-clip-path-hover
     * --tjs-icon-button-clip-path-selected
+    * --tjs-icon-button-cursor
     * --tjs-icon-button-diameter
     * --tjs-icon-button-transition
     */
@@ -148,6 +150,7 @@
       border: var(--tjs-icon-button-border, var(--tjs-button-border));
       border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
       border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
+      cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
       position: relative;
       overflow: hidden;
       clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
