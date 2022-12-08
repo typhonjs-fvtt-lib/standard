@@ -4,6 +4,7 @@
       setContext }  from 'svelte';
 
    import {
+      AddOnPanel,
       ButtonBar,
       Picker,
       SliderAlpha,
@@ -21,6 +22,7 @@
       hasAlpha,
       hasButtonBar,
       hasTextInput,
+      paddingOffset
    } = internalState.stores;
 </script>
 
@@ -39,6 +41,7 @@
         {#if $hasButtonBar}
             <ButtonBar />
         {/if}
+        <AddOnPanel />
     </section>
 </div>
 
@@ -64,6 +67,8 @@
         height: max-content;
 
         --tjs-icon-button-border: var(--tjs-input-border);
+        --tjs-icon-button-border-width: 2px;
+        --tjs-icon-button-diameter: 2em;
     }
 
     @container tjs-color-picker-container (min-width: 0) {
@@ -105,6 +110,7 @@
 
     @container tjs-color-picker-container (min-width: 235px) {
         .tjs-color-picker-wrapper {
+            --tjs-icon-button-diameter: max(4em, 1em + 3cqi);
             --tjs-input-height: 26px;
 
             font-size: 1em;

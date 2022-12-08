@@ -25,10 +25,14 @@
     section {
         display: flex;
         flex: 1;
+
+        border-radius: 4px;
+        background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
     }
 
     @container tjs-color-picker-container (min-width: 0) {
         section {
+            padding: min(4px, 0.5cqw);
             gap: min(8px, 2cqw);
         }
     }

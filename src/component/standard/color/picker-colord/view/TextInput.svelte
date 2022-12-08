@@ -45,12 +45,12 @@
        --tjs-input-flex: 1;
        --tjs-input-value-invalid-color: red;
        --tjs-input-text-align: center;
+       --tjs-input-width: 0; /* Required for Firefox / flex layout will resize */
     }
 
     @container tjs-color-picker-container (min-width: 0) {
        .picker-text-input {
           gap: max(3px, 2cqw);
-          width: 94cqw; /* TODO: Evaluate as this was necessary for Firefox nightly 12/7/22 */
        }
 
        /* Child text input components */
@@ -67,9 +67,9 @@
 
           border-radius: 4px;
 
-          background: rgba(0, 0, 0, 0.1); /* TODO: CSS Variable */
+          background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
           cursor: pointer;
-          text-align: center
+          text-align: center;
        }
 
        .input-attributes span {

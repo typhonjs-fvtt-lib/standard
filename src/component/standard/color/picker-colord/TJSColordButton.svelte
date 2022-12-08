@@ -35,6 +35,7 @@
    export let efx = void 0;
    export let onClick = void 0;
    export let onClickPropagate = void 0;
+   export let onContextClick = void 0;
 
    $: title = typeof button === 'object' && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : '';
@@ -46,6 +47,8 @@
     typeof onClick === 'function' ? onClick : void 0;
    $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
+   $: onContextClick = typeof button === 'object' && typeof button.onContextClick === 'function' ? button.onContextClick :
+    typeof onContextClick === 'function' ? onContextClick : void 0;
 
    let hslColor;
 
@@ -65,6 +68,17 @@
       }
    }
 
+   function onContextClickHandler(event)
+   {
+      if (typeof onContextClick === 'function') { onContextClick(hslColor); }
+
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
    function onKeyDownHandler(event)
    {
       if (event.code === 'Enter')
@@ -75,6 +89,7 @@
 </script>
 
 <div on:click={onClickHandler}
+     on:contextmenu={onContextClickHandler}
      on:keydown|preventDefault={onKeyDownHandler}
      use:applyStyles={styles}
      title={localize(title)}
