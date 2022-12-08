@@ -105,5 +105,7 @@
 
         background: var(--tjs-icon-button-background, var(--tjs-button-background));
         border: var(--tjs-icon-button-border, var(--tjs-button-border));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
     }
 </style>
