@@ -1,34 +1,22 @@
 <script>
    import { getContext }    from 'svelte';
 
-   import TJSSvgFolder      from '../../../../folder/TJSSvgFolder.svelte';
-
-   import SavedColors           from './saved-colors/SavedColors.svelte';
-   import SavedColorsSummaryEnd from './saved-colors/SavedColorsSummaryEnd.svelte';
+   import TJSSvgFolder      from '../../../folder/TJSSvgFolder.svelte';
 
    const internalState = getContext('#tjs-color-picker-state');
 
-   const addOnList = [
-      {
-         id: 'saved-colors',
-         label: 'Saved Colors',
-         slotDefault: {
-            class: SavedColors
-         },
-         slotSummaryEnd: {
-            class: SavedColorsSummaryEnd
-         }
-      }
-   ];
+   const addOnState = internalState.addOnState;
 </script>
 
-<div class=tjs-color-picker-addons>
-    {#each addOnList as addOn (addOn.id)}
-        <section>
-            <TJSSvgFolder folder={addOn} />
-        </section>
-    {/each}
-</div>
+{#if $addOnState.length > 0}
+    <div class=tjs-color-picker-addons>
+        {#each $addOnState as addOn (addOn.id)}
+            <section>
+                <TJSSvgFolder folder={addOn.folderData} />
+            </section>
+        {/each}
+    </div>
+{/if}
 
 <style>
     .tjs-color-picker-addons {
@@ -38,6 +26,7 @@
     }
 
     section {
+        --tjs-contents-padding: 0;
         --tjs-summary-padding: 0.1em;
         --tjs-summary-width: 98%;
 
@@ -50,10 +39,6 @@
     @container tjs-color-picker-container (min-width: 0) {
         .tjs-color-picker-addons {
             gap: min(8px, 2cqw);
-        }
-
-        section {
-
         }
     }
 </style>

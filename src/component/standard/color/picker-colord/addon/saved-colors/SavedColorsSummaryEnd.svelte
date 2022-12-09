@@ -1,7 +1,7 @@
 <script>
-   import { TJSIconButton } from '../../../../../button/index.js';
+   import { TJSIconButton } from '../../../../button/index.js';
 
-   import { ripple }        from '../../../../../../../action/index.js';
+   import { ripple }        from '../../../../../../action/index.js';
 
    let sectionEl;
 

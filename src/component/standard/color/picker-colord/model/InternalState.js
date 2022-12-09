@@ -1,8 +1,12 @@
 import { writable }        from 'svelte/store';
 
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
-import { isObject }        from '@typhonjs-svelte/lib/util';
 
+import {
+   isIterable,
+   isObject }              from '@typhonjs-svelte/lib/util';
+
+import { AddOnState }      from './AddOnState.js';
 import { ColorState }      from './hsv/ColorState.js';
 import { EyeDropper }      from './EyeDropper.js';
 
@@ -10,6 +14,11 @@ import { layout }          from '../view/layout/index.js'
 
 export class InternalState
 {
+   /**
+    * @type {AddOnState}
+    */
+   #addonState;
+
    /**
     * @type {ColorState}
     */
@@ -44,6 +53,10 @@ export class InternalState
       const opts = isObject(options) ? options : {};
 
       this.#validateOptions(opts);
+
+      this.#addonState = new AddOnState(this);
+
+      this.#addonState.updateOptions(isIterable(opts.addOn) ? opts.addOn : []);
 
       // External data -----------------------------------------------------------------------------------------------
 
@@ -90,6 +103,14 @@ export class InternalState
       }
 
       this.#colorState = new ColorState(this, color, opts);
+   }
+
+   /**
+    * @returns {AddOnState}
+    */
+   get addOnState()
+   {
+      return this.#addonState;
    }
 
    /**
@@ -194,6 +215,8 @@ export class InternalState
 
       const currentIsPopup = this.#externalData.isPopup;
 
+      this.#addonState.updateOptions(isIterable(opts.addOn) ? opts.addOn : []);
+
       // External data -----------------------------------------------------------------------------------------------
 
       this.#stores.canChangeMode.set(typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true);
@@ -236,6 +259,11 @@ export class InternalState
     */
    #validateOptions(opts)
    {
+      if (opts.addOn !== void 0 && !isIterable(opts.addOn))
+      {
+         throw new TypeError(`'options.addOn' is not an iterable list of addon constructor functions.`);
+      }
+
       if (opts.canChangeMode !== void 0 && typeof opts.canChangeMode !== 'boolean')
       {
          throw new TypeError(`'options.canChangeMode' is not a boolean.`);
@@ -309,6 +337,8 @@ export class InternalState
 
 /**
  * @typedef {object} TJSColordPickerOptions
+ *
+ * @property {Iterable<Function>} [addOn] - Iterable list of addon class constructor functions.
  *
  * @property {PickerComponents} [components] - User defined picker component overrides.
  *
