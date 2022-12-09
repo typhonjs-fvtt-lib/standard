@@ -326,7 +326,7 @@
             {#if isSvelteComponent(folder?.slotLabel?.class)}
                 <svelte:component this={folder.slotLabel.class} {...(isObject(folder?.slotLabel?.props) ? folder.slotLabel.props : {})} />
             {:else}
-                <div bind:this={labelEl} className=label>{localize(label)}</div>
+                <div bind:this={labelEl} class=label>{localize(label)}</div>
             {/if}
         </slot>
 
