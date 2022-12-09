@@ -47,6 +47,7 @@
     * The following CSS variables are supported, but not defined by default.
     *
     * Details element (attributes follow `--tjs-details-`):
+    * --tjs-details-margin-left: -5px;
     * --tjs-details-padding-left: 5px; set for children to indent more;
     *
     * Summary element (attributes follow `--tjs-summary-`):
@@ -67,9 +68,19 @@
     *
     * --tjs-summary-chevron-color: currentColor
     * --tjs-summary-chevron-opacity: 0.2; Opacity when not hovering.
-    * --tjs-summary-chevron-rotate-closed: -90deg; rotation angle when closed.
     * --tjs-summary-chevron-opacity-hover: 1; Opacity when hovering.
+    * --tjs-summary-chevron-margin: 0 5px 0 0;
+    * --tjs-summary-chevron-rotate-closed: -90deg; rotation angle when closed.
     * --tjs-summary-chevron-rotate-open: 0; rotation angle when open.
+    *
+    * Summary label element (attributes follow `--tjs-summary-label-):
+    *
+    * By default the label element does not wrap and uses ellipsis for text overflow.
+    *
+    * --tjs-summary-label-overflow: hidden
+    * --tjs-summary-label-text-overflow: ellipsis
+    * --tjs-summary-label-white-space: nowrap
+    * --tjs-summary-label-width: fit-content
     *
     * Contents element (attributes follow `--tjs-contents-`):
     * --tjs-contents-background-blend-mode: initial
@@ -127,7 +138,7 @@
       noKeys: false
    }
 
-   let detailsEl, summaryEl, svgEl;
+   let detailsEl, labelEl, summaryEl, svgEl;
 
    $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
     typeof id === 'string' ? id : void 0;
@@ -194,7 +205,8 @@
 
       const chevronTarget = target === svgEl || svgEl.contains(target);
 
-      if (target === summaryEl || chevronTarget || target.querySelector('.summary-click') !== null)
+      if (target === summaryEl || target === labelEl || chevronTarget ||
+       target.querySelector('.summary-click') !== null)
       {
          if (localOptions.chevronOnly && !chevronTarget)
          {
@@ -307,7 +319,7 @@
             {#if isSvelteComponent(folder?.slotLabel?.class)}
                 <svelte:component this={folder.slotLabel.class} {...(isObject(folder?.slotLabel?.props) ? folder.slotLabel.props : {})} />
             {:else}
-                {localize(label)}
+                <div bind:this={labelEl} class=label>{localize(label)}</div>
             {/if}
         </slot>
 
@@ -331,7 +343,7 @@
 
 <style>
     details {
-        margin-left: -5px;
+        margin-left: var(--tjs-details-margin-left, -5px);
         padding-left: var(--tjs-details-padding-left, 5px); /* Set for children folders to increase indent */
     }
 
@@ -366,7 +378,7 @@
         color: var(--tjs-summary-chevron-color, currentColor);
         cursor: var(--tjs-summary-cursor, pointer);
         opacity: var(--tjs-summary-chevron-opacity, 0.2);
-        margin: 0 5px 0 0;
+        margin: var(--tjs-summary-chevron-margin, 0 5px 0 0);
         transition: opacity 0.2s, transform 0.1s;
         transform: rotate(var(--tjs-summary-chevron-rotate-closed, -90deg));
     }
@@ -399,6 +411,13 @@
         height: calc(100% + 8px);
         left: 0;
         top: -8px;
+    }
+
+    .label {
+        overflow: var(--tjs-summary-label-overflow, hidden);
+        text-overflow: var(--tjs-summary-label-text-overflow, ellipsis);
+        white-space: var(--tjs-summary-label-white-space, nowrap);
+        width: var(--tjs-summary-label-width, fit-content);
     }
 
     summary:focus-visible + .contents::before {

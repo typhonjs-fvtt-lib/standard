@@ -67,9 +67,17 @@
     *
     * --tjs-summary-chevron-color: currentColor
     * --tjs-summary-chevron-opacity: 0.2; Opacity when not hovering.
-    * --tjs-summary-chevron-rotate-closed: -90deg; rotation angle when closed.
     * --tjs-summary-chevron-opacity-hover: 1; Opacity when hovering.
-    * --tjs-summary-chevron-rotate-open: 0; rotation angle when open.
+    * --tjs-summary-chevron-margin: 0 0 0 0.25em;
+    *
+    * Summary label element (attributes follow `--tjs-summary-label-):
+    *
+    * By default the label element does not wrap and uses ellipsis for text overflow.
+    *
+    * --tjs-summary-label-overflow: hidden
+    * --tjs-summary-label-text-overflow: ellipsis
+    * --tjs-summary-label-white-space: nowrap
+    * --tjs-summary-label-width: fit-content
     *
     * Contents element (attributes follow `--tjs-contents-`):
     * --tjs-contents-background-blend-mode: initial
@@ -133,7 +141,7 @@
       noKeys: false
    }
 
-   let detailsEl, iconEl, summaryEl;
+   let detailsEl, iconEl, labelEl, summaryEl;
    let currentIcon;
 
    $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
@@ -211,7 +219,8 @@
    {
       const target = event.target;
 
-      if (target === summaryEl || target === iconEl || target.querySelector('.summary-click') !== null)
+      if (target === summaryEl || target === iconEl || target === labelEl ||
+       target.querySelector('.summary-click') !== null)
       {
          if (localOptions.chevronOnly && target !== iconEl)
          {
@@ -317,7 +326,7 @@
             {#if isSvelteComponent(folder?.slotLabel?.class)}
                 <svelte:component this={folder.slotLabel.class} {...(isObject(folder?.slotLabel?.props) ? folder.slotLabel.props : {})} />
             {:else}
-                {localize(label)}
+                <div bind:this={labelEl} className=label>{localize(label)}</div>
             {/if}
         </slot>
 
@@ -341,7 +350,7 @@
 
 <style>
     details {
-        margin-left: -5px;
+        margin-left: var(--tjs-details-margin-left, -5px);
         padding-left: var(--tjs-details-padding-left, 5px); /* Set for children folders to increase indent */
     }
 
@@ -371,7 +380,7 @@
         color: var(--tjs-summary-chevron-color, currentColor);
         cursor: var(--tjs-summary-cursor, pointer);
         opacity: var(--tjs-summary-chevron-opacity, 1);
-        margin: 0 0 0 0.25em;
+        margin: var(--tjs-summary-chevron-margin, 0 0 0 0.25em);
         width: var(--tjs-summary-chevron-width, 1.65em);
         transition: opacity 0.2s;
     }
@@ -404,6 +413,13 @@
         height: calc(100% + 8px);
         left: 0;
         top: -8px;
+    }
+
+    .label {
+        overflow: var(--tjs-summary-label-overflow, hidden);
+        text-overflow: var(--tjs-summary-label-text-overflow, ellipsis);
+        white-space: var(--tjs-summary-label-white-space, nowrap);
+        width: var(--tjs-summary-label-width, fit-content);
     }
 
     summary:focus-visible + .contents::before {
