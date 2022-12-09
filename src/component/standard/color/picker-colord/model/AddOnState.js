@@ -90,7 +90,11 @@ export class AddOnState
 
       for (const key of removeKeys)
       {
+         const addon = this.#addOnMap.get(key);
          this.#addOnMap.delete(key);
+
+         // Invoke any destroy function allowing the addon model to cleanup / do any housekeeping.
+         if (typeof addon?.destroy === 'function') { addon.destroy(); }
       }
 
       const duplicateSet = new Set();

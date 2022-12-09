@@ -2,6 +2,7 @@
    // import type { RgbaColor, HsvaColor, Colord } from 'colord';
 
    import {
+      getContext,
       onDestroy,
       setContext }          from 'svelte';
 
@@ -29,7 +30,9 @@
     */
    export let options = void 0;
 
-   const internalState = new InternalState(color, options);
+   const external = getContext('external');
+
+   const internalState = new InternalState(color, options, external?.sessionStorage);
 
    setContext('#tjs-color-picker-state', internalState);
 

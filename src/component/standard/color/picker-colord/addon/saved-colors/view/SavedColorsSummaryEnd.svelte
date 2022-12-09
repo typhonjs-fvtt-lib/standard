@@ -1,7 +1,13 @@
 <script>
-   import { TJSIconButton } from '../../../../button/index.js';
+   import { getContext }    from 'svelte';
 
-   import { ripple }        from '../../../../../../action/index.js';
+   import { TJSIconButton } from '../../../../../button/index.js';
+
+   import { ripple }        from '../../../../../../../action/index.js';
+
+   const internalState = getContext('#tjs-color-picker-state');
+
+   const savedColorsState = internalState.addOnState.get('saved-colors').savedColorsState;
 
    let sectionEl;
 
@@ -19,13 +25,20 @@
 
    function onAdd()
    {
+      internalState.addOnState.get('saved-colors').savedColorsState.addColor();
+
       // Open details content.
       sectionEl.dispatchEvent(new CustomEvent('open', { bubbles: true }))
    }
 
    function onDeleteAll()
    {
-      // Close details content.
+      savedColorsState.deleteAll();
+   }
+
+   // Close details content when saved color state is empty.
+   $: if (sectionEl && $savedColorsState.length === 0)
+   {
       sectionEl.dispatchEvent(new CustomEvent('close', { bubbles: true }))
    }
 </script>
@@ -38,7 +51,7 @@
 <style>
     section {
         display: flex;
-        gap: 0.25em;
+        gap: 0.1em;
         margin-left: auto;
     }
 </style>

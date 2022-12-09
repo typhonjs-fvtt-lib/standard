@@ -1,5 +1,7 @@
-import SavedColors from "./SavedColors.svelte";
-import SavedColorsSummaryEnd from "./SavedColorsSummaryEnd.svelte";
+import { SavedColorsState }   from './SavedColorsState.js';
+
+import SavedColors            from '../view/SavedColors.svelte';
+import SavedColorsSummaryEnd  from '../view/SavedColorsSummaryEnd.svelte';
 
 /**
  * Provides the main addon example for TJSColordPicker. Addons allow extension of the color picker. This addon provides
@@ -10,10 +12,13 @@ import SavedColorsSummaryEnd from "./SavedColorsSummaryEnd.svelte";
  */
 export class TJSColordPickerSavedColors
 {
+   static #id = 'saved-colors';
+
    /** @type {TJSFolderData} */
    #folderData;
 
-   static #id = 'saved-colors';
+   /** @type {SavedColorsState} */
+   #savedColorsState;
 
    /**
     * @returns {string} ID of the addon.
@@ -23,8 +28,14 @@ export class TJSColordPickerSavedColors
       return TJSColordPickerSavedColors.#id;
    }
 
-   constructor({ label = 'Saved Colors' } = {})
+   // constructor({ internalState, label = 'Saved Colors Along test yepper even longer test' } = {})
+   constructor({ internalState, label = 'Saved Colors' } = {})
    {
+      /**
+       * Defines the Svelte components to add to TJSSvgFolder.
+       *
+       * @type {TJSFolderData}
+       */
       this.#folderData = {
          id: TJSColordPickerSavedColors.#id,
          label,
@@ -35,6 +46,19 @@ export class TJSColordPickerSavedColors
             class: SavedColorsSummaryEnd
          }
       }
+
+      this.#savedColorsState = new SavedColorsState(internalState);
+
+      console.log(`!! TJSColordPickerSavedColors - ctor`)
+   }
+
+   /**
+    * @returns {SavedColorsState}
+    */
+   get savedColorsState()
+   {
+      console.log(`!! TJSColordPickerSavedColors - ctor`)
+      return this.#savedColorsState;
    }
 
    /**
@@ -44,5 +68,10 @@ export class TJSColordPickerSavedColors
    get folderData()
    {
       return this.#folderData;
+   }
+
+   destroy()
+   {
+      this.#savedColorsState.destroy();
    }
 }

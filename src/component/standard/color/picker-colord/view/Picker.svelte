@@ -207,11 +207,6 @@
          aria-valuetext="saturation {pos.x?.toFixed()}%, brightness {pos.y?.toFixed()}%"
     >
         <svelte:component this={$components.pickerIndicator} {focused} styles={stylesPickerIndicator} />
-
-<!--        <svelte:component-->
-<!--                this={$components.pickerIndicator}-->
-<!--                {pos}-->
-<!--        />-->
     </div>
 </svelte:component>
 

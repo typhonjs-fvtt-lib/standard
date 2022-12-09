@@ -88,7 +88,10 @@
    }
 </script>
 
-<div on:click={onClickHandler}
+<div on:click
+     on:contextmenu
+     on:keydown
+     on:click={onClickHandler}
      on:contextmenu={onContextClickHandler}
      on:keydown|preventDefault={onKeyDownHandler}
      use:applyStyles={styles}

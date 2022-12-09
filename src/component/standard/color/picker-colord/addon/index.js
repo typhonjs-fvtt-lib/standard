@@ -1,1 +1,1 @@
-export * from './saved-colors/TJSColordPickerSavedColors.js';
+export * from './saved-colors/model/TJSColordPickerSavedColors.js';

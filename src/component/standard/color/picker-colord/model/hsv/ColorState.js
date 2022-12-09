@@ -226,6 +226,26 @@ export class ColorState
    }
 
    /**
+    * Gets the current color in the specific format and format type.
+    *
+    * @param {object}                  [opts] - Optional parameters.
+    *
+    * @param {'hex'|'hsl'|'hsv'|'rgb'} [opts.format='hsl'] - Format to convert to...
+    *
+    * @param {'object'|'string'}       [opts.formatType='string'] - Primitive type.
+    *
+    * @param {number}                  [opts.precision=0] - Primitive type.
+    *
+    * @returns {object|string} Current color.
+    */
+   getColor(opts)
+   {
+      const currentHsv = { h: this.#data.hue, s: this.#data.sv.s, v: this.#data.sv.v, a: this.#data.alpha };
+
+      return HsvColorParser.convertColor(currentHsv, opts);
+   }
+
+   /**
     * Sets current color from given color data.
     *
     * @param {object|string}   color - Supported ColorD color format.

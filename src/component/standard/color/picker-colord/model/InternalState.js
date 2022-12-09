@@ -39,6 +39,13 @@ export class InternalState
    #internalData = {};
 
    /**
+    * External SessionStorage instance.
+    *
+    * @type {SessionStorage}
+    */
+   #sessionStorage;
+
+   /**
     * @type {PickerStores}
     */
    #stores;
@@ -47,12 +54,16 @@ export class InternalState
     * @param {object|string}           color -
     *
     * @param {TJSColordPickerOptions}  options -
+    *
+    * @param {SessionStorage}          sessionStorage - External SessionStorage instance.
     */
-   constructor(color, options)
+   constructor(color, options, sessionStorage)
    {
       const opts = isObject(options) ? options : {};
 
       this.#validateOptions(opts);
+
+      this.#sessionStorage = sessionStorage;
 
       this.#addonState = new AddOnState(this);
 
@@ -122,6 +133,14 @@ export class InternalState
    }
 
    /**
+    * @returns {SessionStorage}
+    */
+   get sessionStorage()
+   {
+      return this.#sessionStorage;
+   }
+
+   /**
     * @returns {boolean} Current `isOpen` state.
     */
    get isOpen()
@@ -156,6 +175,7 @@ export class InternalState
    destroy()
    {
       this.#colorState.destroy();
+      this.#sessionStorage = void 0;
    }
 
    /**

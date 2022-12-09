@@ -98,7 +98,7 @@
         }
     }
 
-    @container tjs-color-picker-container (0 <= width < 235px) {
+    @container tjs-color-picker-container (width < 235px) {
         .tjs-color-picker-wrapper {
             --tjs-input-height: max(8px, 8px + 7.65cqi);
 
