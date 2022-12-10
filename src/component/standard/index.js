@@ -81,6 +81,7 @@ cssVariables.setProperties({
          // Set directly / no lookup:
          '--tjs-input-border-color': 'var(--color-border-light-tertiary)',
          '--tjs-input-border-width': '1px',
+         '--tjs-input-value-invalid-color': 'red'
       }, false);
    }
 }

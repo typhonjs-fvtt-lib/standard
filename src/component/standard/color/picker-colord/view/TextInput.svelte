@@ -43,7 +43,6 @@
        flex-direction: column;
 
        --tjs-input-flex: 1;
-       --tjs-input-value-invalid-color: red;
        --tjs-input-text-align: center;
        --tjs-input-width: 0; /* Required for Firefox / flex layout will resize */
     }
