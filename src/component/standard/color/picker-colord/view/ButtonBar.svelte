@@ -26,8 +26,9 @@
         display: flex;
         flex: 1;
 
-        border-radius: 4px;
         background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
+        border: var(--tjs-input-number-border, var(--tjs-input-border));
+        border-radius: 0.25em;
 
         --tjs-icon-button-border: var(--tjs-input-border);
         --tjs-icon-button-border-width: 2px;

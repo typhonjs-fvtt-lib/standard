@@ -65,9 +65,10 @@
           flex: 1;
           gap: min(8px, 2cqw);
 
-          border-radius: 4px;
-
           background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
+          border: var(--tjs-input-number-border, var(--tjs-input-border));
+          border-radius: 0.25em;
+
           cursor: pointer;
           text-align: center;
        }
