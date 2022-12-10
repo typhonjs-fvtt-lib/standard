@@ -195,8 +195,11 @@
         position: relative;
         width: 100%;
         height: 100%;
-        box-sizing: border-box;
+
         background: linear-gradient(var(--_tjs-color-picker-slider-gradient));
+
+        box-shadow: var(--tjs-color-picker-slider-box-shadow);
+
         border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
 
         outline: none;
@@ -204,6 +207,18 @@
 
         --_tjs-color-picker-slider-gradient: #ff0000, #ffff00 17.2%, #ffff00 18.2%, #00ff00 33.3%, #00ffff 49.5%,
         #00ffff 51.5%, #0000ff 67.7%, #ff00ff 83.3%, #ff0000;
+    }
+
+    /* Need to use :after pseudo element for border to match the alpha slider. */
+    .tjs-color-picker-slider:after {
+        position: absolute;
+        content: '';
+        inset: 0;
+
+        border: var(--tjs-input-number-border, var(--tjs-input-border));
+        border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
+
+        z-index: 0;
     }
 
     .horizontal {

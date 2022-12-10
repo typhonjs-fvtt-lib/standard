@@ -11,6 +11,7 @@
     .tjs-picker-wrapper {
         overflow: hidden;
         user-select: none;
+        box-shadow: var(--tjs-color-picker-wrapper-box-shadow, 0 0 2px black);
     }
 
     @container tjs-color-picker-container (min-width: 0) {

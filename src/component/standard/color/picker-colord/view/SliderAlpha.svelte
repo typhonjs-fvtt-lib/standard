@@ -186,7 +186,10 @@
         content: '';
         inset: 0;
         background: linear-gradient(#00000000, var(--_tjs-color-picker-current-color-hsl));
+
+        border: var(--tjs-input-number-border, var(--tjs-input-border));
         border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
+
         z-index: 0;
     }
 
@@ -198,10 +201,11 @@
         position: relative;
         width: 100%;
         height: 100%;
-        background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%),
-        linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%);
-        background-size: 10px 10px;
-        background-position: 0 0, 5px 5px;
+
+
+        background: var(--tjs-checkerboard-background-10);
+        box-shadow: var(--tjs-color-picker-slider-box-shadow);
+
         border-radius: var(--tjs-color-picker-slider-border-radius, max(4px, 2.5cqw));
 
         outline: none;
