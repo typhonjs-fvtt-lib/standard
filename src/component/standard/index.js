@@ -27,6 +27,18 @@ export *             from './settings/index.js';
 // -------------------------------------------------------------------------------------------------------------------
 
 /**
+ * Assign all TyphonJS thematic CSS variables.
+ */
+
+cssVariables.setProperties({
+   // For components w/ transparent background checkered pattern.
+   '--tjs-checkerboard-background-dark': 'rgb(205, 205, 205)',
+   '--tjs-checkerboard-background-10': `url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205))`
+}, false);
+
+// -------------------------------------------------------------------------------------------------------------------
+
+/**
  * Assign all TyphonJS CSS variables to Foundry defaults.
  */
 
@@ -65,6 +77,10 @@ cssVariables.setProperties({
 
          // Set default values that are only to be referenced and not set.
          '--_tjs-default-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
+
+         // Set directly / no lookup:
+         '--tjs-input-border-color': 'var(--color-border-light-tertiary)',
+         '--tjs-input-border-width': '1px',
       }, false);
    }
 }
