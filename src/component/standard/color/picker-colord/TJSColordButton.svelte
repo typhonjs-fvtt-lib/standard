@@ -116,25 +116,26 @@
         align-self: center;
         text-align: center;
 
-        border: var(--tjs-icon-button-border, var(--tjs-button-border));
+        background: var(--tjs-checkerboard-background-10);
         border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
-        border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
 
         cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
-
-        background: url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205));
 
         clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
 
         transform-style: preserve-3d;
     }
 
-    .tjs-color-button::before {
+    .tjs-color-button:before {
         position: absolute;
         content: '';
         inset: -0.5px;
         background: var(--tjs-icon-button-background, var(--tjs-button-background));
+
+        border: var(--tjs-icon-button-border, var(--tjs-button-border));
         border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
+
         z-index: 0;
     }
 
