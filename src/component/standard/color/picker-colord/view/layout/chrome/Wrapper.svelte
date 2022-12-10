@@ -19,6 +19,7 @@
 
    const {
       components,
+      hasAddons,
       hasAlpha,
       hasButtonBar,
       hasTextInput,
@@ -34,14 +35,17 @@
                 <SliderAlpha />
             {/if}
         </section>
-        <section class=extra>
+        <section class=extra
+                 class:display-none={!($hasAddons || $hasTextInput || $hasButtonBar)}>
             {#if $hasTextInput}
                 <TextInput />
             {/if}
             {#if $hasButtonBar}
                 <ButtonBar />
             {/if}
-            <AddOnPanel />
+            {#if $hasAddons}
+                <AddOnPanel />
+            {/if}
         </section>
     </div>
 </div>
@@ -64,6 +68,10 @@
     .extra, .sliders, .tjs-color-picker-wrapper-body {
         display: flex;
         flex-direction: column;
+    }
+
+    .extra.display-none {
+        display: none;
     }
 
     @container tjs-color-picker-container (width >= 115px) {

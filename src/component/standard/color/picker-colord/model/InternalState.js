@@ -75,6 +75,8 @@ export class InternalState
 
       this.#externalData.hasAlpha = typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true;
 
+      this.#externalData.hasAddons = typeof opts.hasAddons === 'boolean' ? opts.hasAddons : true;
+
       this.#externalData.hasButtonBar = typeof opts.hasButtonBar === 'boolean' ? opts.hasButtonBar : true;
 
       this.#externalData.hasEyeDropper = typeof opts.hasEyeDropper === 'boolean' ?
@@ -94,6 +96,8 @@ export class InternalState
 
       this.#internalData.isOpen = !this.#externalData.isPopup;
 
+      this.#internalData.hasAddons = this.#externalData.hasAddons && this.#addonState.size > 0;
+
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
 
@@ -111,6 +115,7 @@ export class InternalState
          width: propertyStore(externalData, 'width'),
 
          isOpen: propertyStore(internalData, 'isOpen'),
+         hasAddons: propertyStore(internalData, 'hasAddons'),
       }
 
       this.#colorState = new ColorState(this, color, opts);
@@ -251,6 +256,8 @@ export class InternalState
 
       this.#stores.hasAlpha.set(typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true);
 
+      this.#externalData.hasAddons = typeof opts.hasAddons === 'boolean' ? opts.hasAddons : true;
+
       this.#stores.hasButtonBar.set(typeof opts.hasButtonBar === 'boolean' ? opts.hasButtonBar : true);
 
       this.#stores.hasEyeDropper.set(typeof opts.hasEyeDropper === 'boolean' ?
@@ -271,6 +278,8 @@ export class InternalState
       this.#stores.width.set(Number.isInteger(opts.width) ? `${opts.width}px` : opts.width);
 
       // Internal data -----------------------------------------------------------------------------------------------
+
+      this.#stores.hasAddons.set(this.#externalData.hasAddons && this.#addonState.size > 0);
 
       // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
       if (newIsPopup !== currentIsPopup) { this.#stores.isOpen.set(!newIsPopup); }
@@ -295,6 +304,11 @@ export class InternalState
       if (opts.canChangeMode !== void 0 && typeof opts.canChangeMode !== 'boolean')
       {
          throw new TypeError(`'options.canChangeMode' is not a boolean.`);
+      }
+
+      if (opts.hasAddons !== void 0 && typeof opts.hasAddons !== 'boolean')
+      {
+         throw new TypeError(`'options.hasAddons' is not a boolean.`);
       }
 
       if (opts.hasAlpha !== void 0 && typeof opts.hasAlpha !== 'boolean')
@@ -376,6 +390,8 @@ export class InternalState
  *
  * @property {'object'|'string'} [formatType] - The user defined color format type.
  *
+ * @property {boolean} [hasAddons=true] - Enables the addons panel / can set to false to hide panel when addons loaded.
+ *
  * @property {boolean} [hasAlpha=true] - Enables alpha / opacity color selection and output.
  *
  * @property {boolean} [hasButtonBar=true] - Enables the button bar.
@@ -401,6 +417,8 @@ export class InternalState
 
 /**
  * @typedef {object} PickerInternalData
+ *
+ * @property {boolean} hasAddons - true when external options `hasAddons` is true and there are addons loaded.
  *
  * @property {boolean} isOpen - Is the color picker in the open state.
  */
@@ -434,6 +452,8 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<boolean>} hasAlpha - See {@link TJSColordPickerOptions.hasAlpha}
  *
+ * @property {import('svelte/store').Writable<boolean>} hasButtonBar - See {@link TJSColordPickerOptions.hasButtonBar}
+ *
  * @property {import('svelte/store').Writable<boolean>} hasEyeDropper - See {@link TJSColordPickerOptions.hasEyeDropper}
  *
  * @property {import('svelte/store').Writable<boolean>} hasTextInput - See {@link TJSColordPickerOptions.hasTextInput}
@@ -446,6 +466,8 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<string>} width - See {@link TJSColordPickerOptions.width}
  *
+ *
+ * @property {import('svelte/store').Writable<boolean>} hasAddons - See {@link PickerInternalData.hasAddons}
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
  */

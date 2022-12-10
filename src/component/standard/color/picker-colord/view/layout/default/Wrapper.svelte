@@ -19,11 +19,14 @@
 
    const {
       components,
+      hasAddons,
       hasAlpha,
       hasButtonBar,
       hasTextInput,
       paddingOffset
    } = internalState.stores;
+
+   $: console.log(`!!! Wrapper - extra display none: `, (!($hasAddons || $hasTextInput || $hasButtonBar)))
 </script>
 
 <div class=tjs-color-picker-wrapper>
@@ -34,14 +37,17 @@
             <SliderAlpha />
         {/if}
     </section>
-    <section class=extra>
+    <section class=extra
+             class:display-none={!($hasAddons || $hasTextInput || $hasButtonBar)}>
         {#if $hasTextInput}
             <TextInput />
         {/if}
         {#if $hasButtonBar}
             <ButtonBar />
         {/if}
-        <AddOnPanel />
+        {#if $hasAddons}
+            <AddOnPanel />
+        {/if}
     </section>
 </div>
 
@@ -53,6 +59,10 @@
     .extra {
         display: flex;
         flex-direction: column;
+    }
+
+    .extra.display-none {
+        display: none;
     }
 
     .tjs-color-picker-wrapper {

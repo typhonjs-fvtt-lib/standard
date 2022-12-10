@@ -36,7 +36,7 @@
 
     @container tjs-color-picker-container (min-width: 0) {
         section {
-            padding: min(4px, 0.5cqw);
+            padding: min(4px, 1.5cqw);
             gap: min(8px, 2cqw);
         }
     }
