@@ -88,7 +88,8 @@
    }
 </script>
 
-<div on:click
+<div class=tjs-color-button
+     on:click
      on:contextmenu
      on:keydown
      on:click={onClickHandler}
@@ -97,48 +98,57 @@
      use:applyStyles={styles}
      title={localize(title)}
      style:--tjs-icon-button-background={hslColor}
-     role=button>
-    <div class=inner
-         use:efx
-         role=button>
-    </div>
+     role=button
+     >
+    <div class=tjs-color-button-inner use:efx />
+    <slot />
 </div>
 
 <style>
-    div {
+    .tjs-color-button {
         display: block;
         position: relative;
-        pointer-events: none;
-
-        background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%), linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%);
-        background-size: 10px 10px;
-        background-position: 0 0, 5px 5px;
-
-        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
-        overflow: hidden;
 
         flex: 0 0 var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
         height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
         width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
+
         align-self: center;
         text-align: center;
 
-        clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
-    }
-
-    div:hover {
-        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path-hover, var(--tjs-button-clip-path-hover, none)));
-    }
-
-    .inner {
-        display: block;
-        pointer-events: initial;
-
-        background: var(--tjs-icon-button-background, var(--tjs-button-background));
         border: var(--tjs-icon-button-border, var(--tjs-button-border));
         border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
         border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
 
         cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
+
+        background: url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205));
+
+        clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
+
+        transform-style: preserve-3d;
+    }
+
+    .tjs-color-button::before {
+        position: absolute;
+        content: '';
+        inset: -0.5px;
+        background: var(--tjs-icon-button-background, var(--tjs-button-background));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        z-index: 0;
+    }
+
+    .tjs-color-button:hover {
+        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path-hover, var(--tjs-button-clip-path-hover, none)));
+    }
+
+    .tjs-color-button-inner {
+        width: 100%;
+        height: 100%;
+
+        overflow: hidden;
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+
+        transform: translateZ(1px);
     }
 </style>
