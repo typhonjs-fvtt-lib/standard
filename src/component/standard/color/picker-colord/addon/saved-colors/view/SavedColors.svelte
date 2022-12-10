@@ -24,17 +24,19 @@
         display: grid;
         border-top: 1px solid gray;
 
+        --tjs-icon-button-border: var(--tjs-input-number-border, var(--tjs-input-border));
         --tjs-icon-button-border-radius: 0.25em;
+        --tjs-icon-button-border-width: 1px;
     }
 
     @container tjs-color-picker-container (min-width: 0) {
         section {
-            --tjs-icon-button-diameter: clamp(10px, 5cqw, 14px);
+            --tjs-icon-button-diameter: clamp(10px, 8cqw, 32px);
 
             padding: min(4px, 1.5cqw);
 
             grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10%;
-            grid-template-rows: 14px;
+            grid-template-rows: clamp(10px, 8cqw, 32px);
             column-gap: 3%;
             row-gap: 2cqw;
         }

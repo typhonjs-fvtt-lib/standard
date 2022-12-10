@@ -53,5 +53,12 @@
         display: flex;
         gap: 0.1em;
         margin-left: auto;
+        padding: 0 2px;
+    }
+
+    @container tjs-color-picker-container (min-width: 0) {
+        section {
+            padding: min(2px, 0.5cqw);
+        }
     }
 </style>
