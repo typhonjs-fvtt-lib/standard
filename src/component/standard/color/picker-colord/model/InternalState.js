@@ -133,11 +133,11 @@ export class InternalState
    }
 
    /**
-    * @returns {SessionStorage}
+    * @returns {boolean} Current 'hasAlpha' state.
     */
-   get sessionStorage()
+   get hasAlpha()
    {
-      return this.#sessionStorage;
+      return this.#externalData.hasAlpha;
    }
 
    /**
@@ -154,6 +154,14 @@ export class InternalState
    get precision()
    {
       return this.#externalData.precision;
+   }
+
+   /**
+    * @returns {SessionStorage}
+    */
+   get sessionStorage()
+   {
+      return this.#sessionStorage;
    }
 
    /**

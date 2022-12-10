@@ -252,14 +252,21 @@ export class ColorState
     */
    setColor(color)
    {
-      const colordInstance = colord(color);
+      let colordInstance = colord(color);
       if (colordInstance.isValid())
       {
+         // If alpha is disabled then reset it in case the given color is not opaque.
+         if (!this.#internalState.hasAlpha) { colordInstance = colordInstance.alpha(1); }
+
          const newHsv = colordInstance.toHsv();
 
          this.#stores.hue.set(newHsv.h);
          this.#stores.sv.set({ s: newHsv.s, v: newHsv.v })
          this.#stores.alpha.set(newHsv.a)
+      }
+      else
+      {
+         console.warn('TJSColordPicker setColor warning: Invalid color; ', color);
       }
    }
 
