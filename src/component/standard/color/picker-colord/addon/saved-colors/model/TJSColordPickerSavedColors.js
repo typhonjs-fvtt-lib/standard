@@ -48,8 +48,6 @@ export class TJSColordPickerSavedColors
       }
 
       this.#savedColorsState = new SavedColorsState(internalState);
-
-      console.log(`!! TJSColordPickerSavedColors - ctor`)
    }
 
    /**
@@ -57,7 +55,6 @@ export class TJSColordPickerSavedColors
     */
    get savedColorsState()
    {
-      console.log(`!! TJSColordPickerSavedColors - ctor`)
       return this.#savedColorsState;
    }
 

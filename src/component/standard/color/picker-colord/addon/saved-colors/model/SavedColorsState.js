@@ -46,16 +46,12 @@ export class SavedColorsState
       this.#internalState = void 0;
       this.#sessionStore = void 0;
       this.#unsubscribe = void 0;
-
-      console.log(`!! SavedColorState - destroy`)
    }
 
 
    addColor()
    {
       const color = this.#internalState.colorState.getColor({ format: 'hsl', formatType: 'string' });
-
-console.log(`!! SavedColorState - addColor - 0 - color: `, color);
 
       const currentIndex = this.#colorArray.findIndex((elem) => elem === color);
 
@@ -83,8 +79,6 @@ console.log(`!! SavedColorState - addColor - 0 - color: `, color);
 
    deleteColor(color)
    {
-console.log(`!! SavedColorState - deleteColor - 0 - color: `, color);
-
       const currentIndex = this.#colorArray.findIndex((elem) => elem === color);
 
       if (currentIndex >= 0)
@@ -96,7 +90,6 @@ console.log(`!! SavedColorState - deleteColor - 0 - color: `, color);
 
    deleteAll()
    {
-      console.log(`!! SavedColorState - deleteAll`);
       this.#sessionStore.set([]);
    }
 
@@ -107,12 +100,9 @@ console.log(`!! SavedColorState - deleteColor - 0 - color: `, color);
     */
    #sessionUpdate(colorArray)
    {
-      console.log(`!! SavedColorsState - #sessionUpdate - colorArray: `, colorArray);
-
       this.#colorArray = colorArray;
       this.#updateSubscribers();
    }
-
 
    // Store subscriber implementation --------------------------------------------------------------------------------
 
