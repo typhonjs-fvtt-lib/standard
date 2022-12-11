@@ -25,8 +25,6 @@
       hasTextInput,
       paddingOffset
    } = internalState.stores;
-
-   $: console.log(`!!! Wrapper - extra display none: `, (!($hasAddons || $hasTextInput || $hasButtonBar)))
 </script>
 
 <div class=tjs-color-picker-wrapper>
