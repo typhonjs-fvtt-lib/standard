@@ -1,4 +1,6 @@
-import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
+import {
+   debounce as debounceFn,
+   isIterable } from '@typhonjs-svelte/lib/util';
 
 /**
  * Defines the classic Material Design ripple effect as an action. `ripple` is a wrapper around the returned action.
@@ -15,13 +17,13 @@ import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
  *
  * @param {string}   [opts.background='rgba(255, 255, 255, 0.7)'] - A valid CSS background attribute.
  *
- * @param {string}   [opts.event='click'] - DOM event to bind element to respond with the ripple effect.
+ * @param {Iterable<string>}  [opts.events=['click']] - DOM event to bind element to respond with the ripple effect.
  *
  * @param {number}   [opts.debounce=undefined] - Add a debounce to incoming events in milliseconds.
  *
  * @returns Function - Actual action.
  */
-export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', event = 'click', debounce } = {})
+export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', events = ['click'], debounce } = {})
 {
    return (element) =>
    {
@@ -67,10 +69,13 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
 
       const eventFn = Number.isInteger(debounce) && debounce > 0 ? debounceFn(createRipple, debounce) : createRipple;
 
-      element.addEventListener(event, eventFn);
+      for (const event of events) { element.addEventListener(event, eventFn); }
 
       return {
-         destroy: () => element.removeEventListener(event, eventFn)
+         destroy: () =>
+         {
+            for (const event of events) { element.removeEventListener(event, eventFn); }
+         }
       };
    }
 }

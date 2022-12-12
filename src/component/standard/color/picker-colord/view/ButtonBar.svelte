@@ -15,7 +15,7 @@
 </script>
 
 <section>
-    <TJSColordButton color={$currentColor} efx={ripple()} />
+    <TJSColordButton color={$currentColor} efx={ripple({ events: ['click', 'contextmenu'] })} />
     {#if $hasEyeDropper}
         <TJSIconButton button={EyeDropper.buttonData(internalState.colorState)} efx={ripple()} />
     {/if}
