@@ -86,7 +86,7 @@ export class InternalState
 
       this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
-      this.#externalData.paddingOffset = typeof opts.paddingOffset === 'string' ? opts.paddingOffset : '0';
+      this.#externalData.padding = typeof opts.padding === 'string' ? opts.padding : '0';
 
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
@@ -110,7 +110,7 @@ export class InternalState
          hasButtonBar: propertyStore(externalData, 'hasButtonBar'),
          hasTextInput: propertyStore(externalData, 'hasTextInput'),
          isPopup: propertyStore(externalData, 'isPopup'),
-         paddingOffset: propertyStore(externalData, 'paddingOffset'),
+         padding: propertyStore(externalData, 'padding'),
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
@@ -271,7 +271,7 @@ export class InternalState
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
-      this.#stores.paddingOffset.set(opts.paddingOffset ? opts.paddingOffset : '0');
+      this.#stores.padding.set(opts.padding ? opts.padding : '0');
 
       this.#stores.precision.set(Number.isInteger(opts.precision) ? opts.precision : 0);
 
@@ -341,9 +341,9 @@ export class InternalState
          throw new TypeError(`'options.layout' is not a string or undefined.`);
       }
 
-      if (opts.paddingOffset !== void 0 && typeof opts.paddingOffset !== 'string')
+      if (opts.padding !== void 0 && typeof opts.padding !== 'string')
       {
-         throw new TypeError(`'options.paddingOffset' is not a string.`);
+         throw new TypeError(`'options.padding' is not a string.`);
       }
 
       if (opts.precision !== void 0 && (!Number.isInteger(opts.precision) || opts.precision < 0))
@@ -404,7 +404,7 @@ export class InternalState
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
  *
- * @property {string} [paddingOffset] - A valid CSS dimension to provide offset padding as necessary depending on layout.
+ * @property {string} [padding] - A valid CSS dimension to provide offset padding as necessary depending on layout.
  *                                      IE the default layout when below 235px wide needs make up padding on the right.
  *
  * @property {number} [precision=0] - A positive integer defining rounding precision.
@@ -460,7 +460,7 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
  *
- * @property {import('svelte/store').Writable<string>} paddingOffset - See {@link TJSColordPickerOptions.paddingOffset}
+ * @property {import('svelte/store').Writable<string>} padding - See {@link TJSColordPickerOptions.padding}
  *
  * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
  *

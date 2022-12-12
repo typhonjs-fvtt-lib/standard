@@ -6,8 +6,7 @@
    const {
       components,
       isOpen,
-      isPopup,
-      paddingOffset
+      isPopup
    } = internalState.stores;
 
    let containerEl;
@@ -30,7 +29,7 @@
    $: if (!$isPopup) { document.body.removeEventListener('pointerdown', onPointerDown); }
 </script>
 
-<main style:padding-right={$paddingOffset}>
+<main>
    <div bind:this={containerEl}
         class=tjs-color-picker-container
         class:isOpen={$isOpen}
@@ -45,10 +44,14 @@
    div {
       display: none;
 
-      /* Controlled by `options.width` and set in TJSColordPicker */
-      width: var(--tjs-color-picker-container-width, 275px);
+      /* External variable then fallback to `options.width` set in TJSColordPicker */
+      width: var(--tjs-color-picker-width, var(--_tjs-color-picker-width-option, 235px));
 
       container: tjs-color-picker-container / inline-size;
+   }
+
+   main {
+      padding: var(--tjs-color-picker-padding, var(--_tjs-color-picker-padding-option, 0));
    }
 
    .isOpen {

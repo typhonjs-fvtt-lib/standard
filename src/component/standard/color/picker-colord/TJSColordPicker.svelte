@@ -39,6 +39,7 @@
    const {
       components,
       isPopup,
+      padding,
       width
    } = internalState.stores;
 
@@ -102,7 +103,8 @@
       style:--_tjs-color-picker-current-color-hsl={$hslString}
       style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
       style:--_tjs-color-picker-current-color-hsla={$hslaString}
-      style:--tjs-color-picker-container-width={$width}
+      style:--_tjs-color-picker-width-option={$width}
+      style:--_tjs-color-picker-padding-option={$padding}
       use:applyStyles={styles}>
     <input type=hidden value={$hslaString}/>
     {#if $isPopup}
