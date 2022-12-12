@@ -421,6 +421,8 @@ export class InternalState
  *
  * @property {number} [precision=0] - A positive integer defining rounding precision.
  *
+ * @property {import('svelte/store').Writable<string|object>} [store] - An external store to update current color.
+ *
  * @property {object} [styles] - Inline styles to apply to TJSColordPicker span; useful to set CSS variables.
  *
  * @property {number|string} [width=200] - A positive integer greater than 50 defining the main container width in
