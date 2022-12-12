@@ -1,21 +1,40 @@
 <script>
-   import { getContext }    from 'svelte';
+   import { getContext }        from 'svelte';
 
-   import { ripple }        from '@typhonjs-fvtt/svelte-standard/action';
+   import { ClipboardAccess }   from '@typhonjs-fvtt/svelte/util';
 
-   import TJSIconButton     from '../../../button/TJSIconButton.svelte';
-   import TJSColordButton   from '../TJSColordButton.svelte';
+   import { ripple }            from '@typhonjs-fvtt/svelte-standard/action';
 
-   import { EyeDropper }    from '../model/EyeDropper.js';
+   import TJSIconButton         from '../../../button/TJSIconButton.svelte';
+   import TJSColordButton       from '../TJSColordButton.svelte';
+
+   import { EyeDropper }        from '../model/EyeDropper.js';
 
    const internalState = getContext('#tjs-color-picker-state');
 
-   const { currentColor } = internalState.colorState.stores;
+   const {
+      currentColor ,
+      currentColorString
+   } = internalState.colorState.stores;
+
    const { hasEyeDropper } = internalState.stores;
+
+   /**
+    * Copy current color string to clipboard.
+    *
+    * TODO Eventbus: If / when an app eventbus is added trigger UI notification message
+    */
+   function onClick()
+   {
+      ClipboardAccess.writeText($currentColorString);
+   }
 </script>
 
 <section>
-    <TJSColordButton color={$currentColor} efx={ripple({ events: ['click', 'contextmenu'] })} />
+    <TJSColordButton color={$currentColor}
+                     efx={ripple()}
+                     on:click={onClick} />
+
     {#if $hasEyeDropper}
         <TJSIconButton button={EyeDropper.buttonData(internalState.colorState)} efx={ripple()} />
     {/if}
