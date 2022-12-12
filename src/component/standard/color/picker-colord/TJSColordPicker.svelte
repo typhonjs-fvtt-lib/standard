@@ -1,7 +1,13 @@
 <script>
-   // import type { RgbaColor, HsvaColor, Colord } from 'colord';
+   /**
+    * TODO: Finish documentation.
+    *
+    * Events:
+    * - input: current color
+    */
 
    import {
+      createEventDispatcher,
       getContext,
       onDestroy,
       setContext }          from 'svelte';
@@ -29,6 +35,8 @@
     * @type {TJSColordPickerOptions}
     */
    export let options = void 0;
+
+   const dispatch = createEventDispatcher();
 
    const external = getContext('external');
 
@@ -62,7 +70,12 @@
    // When options changes update internal state.
    $: internalState.updateOptions(options);
 
-   $: color = $currentColor;
+   $: {
+      color = $currentColor;
+
+      // Dispatch `on:input` event for current color.
+      dispatch('input', { color });
+   }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
    $: if (!colord($currentColor).isEqual(color)) { colorState.updateExternal(color); }
