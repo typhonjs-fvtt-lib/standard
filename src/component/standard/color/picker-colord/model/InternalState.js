@@ -84,6 +84,8 @@ export class InternalState
 
       this.#externalData.hasTextInput = typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true;
 
+      this.#externalData.inputName = typeof opts.inputName === 'string' ? opts.inputName : 'tjs-color-picker';
+
       this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#externalData.padding = typeof opts.padding === 'string' ? opts.padding : '0';
@@ -109,6 +111,7 @@ export class InternalState
          hasAlpha: propertyStore(externalData, 'hasAlpha'),
          hasButtonBar: propertyStore(externalData, 'hasButtonBar'),
          hasTextInput: propertyStore(externalData, 'hasTextInput'),
+         inputName: propertyStore(externalData, 'inputName'),
          isPopup: propertyStore(externalData, 'isPopup'),
          padding: propertyStore(externalData, 'padding'),
          precision: propertyStore(externalData, 'precision'),
@@ -265,6 +268,8 @@ export class InternalState
 
       this.#stores.hasTextInput.set(typeof opts.hasTextInput === 'boolean' ? opts.hasTextInput : true);
 
+      this.#stores.inputName.set(typeof opts.inputName === 'string' ? opts.inputName : 'tjs-color-picker');
+
       const newIsPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
       this.#stores.isPopup.set(newIsPopup);
@@ -329,6 +334,11 @@ export class InternalState
       if (opts.hasTextInput !== void 0 && typeof opts.hasTextInput !== 'boolean')
       {
          throw new TypeError(`'options.hasTextInput' is not a boolean.`);
+      }
+
+      if (opts.inputName !== void 0 && typeof opts.inputName !== 'string')
+      {
+         throw new TypeError(`'options.inputName' is not a string.`);
       }
 
       if (opts.isPopup !== void 0 && typeof opts.isPopup !== 'boolean')
@@ -400,6 +410,8 @@ export class InternalState
  *
  * @property {boolean} [hasTextInput=true] - Enables text input component.
  *
+ * @property {string} [inputName='tjs-color-picker'] - Name attribute for hidden input element / form submission.
+ *
  * @property {boolean} [isPopup=true] - Is the picker configured as a pop-up.
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
@@ -457,6 +469,8 @@ export class InternalState
  * @property {import('svelte/store').Writable<boolean>} hasEyeDropper - See {@link TJSColordPickerOptions.hasEyeDropper}
  *
  * @property {import('svelte/store').Writable<boolean>} hasTextInput - See {@link TJSColordPickerOptions.hasTextInput}
+ *
+ * @property {import('svelte/store').Writable<string>} inputName - See {@link TJSColordPickerOptions.inputName}
  *
  * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
  *

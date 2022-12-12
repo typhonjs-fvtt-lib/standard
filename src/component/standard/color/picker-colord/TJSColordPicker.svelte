@@ -38,6 +38,7 @@
 
    const {
       components,
+      inputName,
       isPopup,
       padding,
       width
@@ -106,7 +107,7 @@
       style:--_tjs-color-picker-width-option={$width}
       style:--_tjs-color-picker-padding-option={$padding}
       use:applyStyles={styles}>
-    <input type=hidden value={$hslaString}/>
+    <input name={$inputName} type=hidden value={$hslaString}/>
     {#if $isPopup}
         <Input />
     {/if}
