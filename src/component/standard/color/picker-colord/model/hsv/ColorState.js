@@ -21,6 +21,7 @@ export class ColorState
    #data = {
       alpha: 1,
       currentColor: 'hsl(0, 100%, 50%)',
+      currentColorString: 'hsl(0, 100%, 50%)',
       format: 'hsl',
       formatType: 'string',
       hue: 0,
@@ -125,6 +126,7 @@ export class ColorState
 
       // Cache externally "readable" store set methods.
       const tempStoreCurrentColor = writable(this.#data.currentColor);
+      const tempStoreCurrentColorString = writable(this.#data.currentColorString);
       const tempStoreIsDark = writable(this.#data.isDark);
       const tempStoreHslString = writable(this.#data.hslString);
       const tempStoreHslHueString = writable(this.#data.hslHueString);
@@ -132,6 +134,7 @@ export class ColorState
 
       this.#storeSet = {
          currentColor: tempStoreCurrentColor.set,
+         currentColorString: tempStoreCurrentColorString.set,
          isDark: tempStoreIsDark.set,
          hslString: tempStoreHslString.set,
          hslaString: tempStoreHslaString.set,
@@ -150,6 +153,7 @@ export class ColorState
       this.#stores.hslHueString = { subscribe: tempStoreHslHueString.subscribe };
       this.#stores.hslaString = { subscribe: tempStoreHslaString.subscribe };
       this.#stores.currentColor = { subscribe: tempStoreCurrentColor.subscribe };
+      this.#stores.currentColorString = { subscribe: tempStoreCurrentColorString.subscribe };
 
       this.#unsubscribe.push(subscribeIgnoreFirst(this.#stores.alpha, (a) =>
       {
@@ -289,6 +293,13 @@ export class ColorState
 
       // Update current color based on `format` and `formatType`
       this.#data.currentColor = HsvColorParser.convertColor(hsvColor, this.#data);
+
+      // Update current color string based on `format` where string is defined or `hsl`.
+      this.#data.currentColorString = HsvColorParser.convertColor(hsvColor, {
+         format: this.#data.format === 'hsv' ? 'hsl' : this.#data.format,
+         formatType: 'string',
+         precision: this.#data.precision
+      });
    }
 
    #updateCurrentColor({ h = this.#data.hue, sv = this.#data.sv, a = this.#data.alpha, textUpdate = false } = {})
@@ -303,6 +314,7 @@ export class ColorState
       this.#lastTime = globalThis.performance.now();
 
       this.#storeSet.currentColor(this.#data.currentColor);
+      this.#storeSet.currentColorString(this.#data.currentColorString);
       this.#storeSet.isDark(this.#data.isDark);
 
       this.#storeSet.hslString(this.#data.hslString);
@@ -524,6 +536,8 @@ class HsvColorParser
  *
  * @property {object|string} currentColor - Current color value.
  *
+ * @property {string} currentColorString - Current color value; matches format if string available otherwise HSL.
+ *
  * @property {'hex'|'hsl'|'hsv'|'rgb'} format - Output color format determined from initial color prop or options.
  *
  * @property {'object'|'string'} formatType - Output color format type determined from initial color prop or options.
@@ -569,6 +583,8 @@ class HsvColorParser
  * @property {import('svelte/store').Writable<number>} hue - The current hue value (0 - 360).
  *
  * @property {import('svelte/store').Readable<string|object>} currentColor - The current color.
+ *
+ * @property {import('svelte/store').Readable<string>} currentColorString - The current color string matching format or HSL.
  *
  * @property {import('svelte/store').Readable<boolean>} isDark - Is the current color considered "dark".
  *

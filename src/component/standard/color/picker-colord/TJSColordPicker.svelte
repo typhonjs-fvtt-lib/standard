@@ -47,10 +47,11 @@
    const colorState = internalState.colorState;
 
    const {
+      currentColor,
+      currentColorString,
       hslString,
       hslHueString,
       hslaString,
-      currentColor
    } = colorState.stores;
 
    onDestroy(() => internalState.destroy());
@@ -107,7 +108,7 @@
       style:--_tjs-color-picker-width-option={$width}
       style:--_tjs-color-picker-padding-option={$padding}
       use:applyStyles={styles}>
-    <input name={$inputName} type=hidden value={$hslaString}/>
+    <input name={$inputName} type=hidden value={$currentColorString}/>
     {#if $isPopup}
         <Input />
     {/if}
