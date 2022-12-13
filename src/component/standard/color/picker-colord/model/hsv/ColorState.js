@@ -30,6 +30,7 @@ export class ColorState
       hslString: 'hsl(0, 100%, 50%)',
       hslHueString: 'hsl(0, 100%, 50%)',
       hslaString: 'hsla(0, 100%, 50%, 1)',
+      lockTextFormat: false,
       sv: { s: 100, v: 100 }
    };
 
@@ -378,7 +379,7 @@ export class ColorState
          this.#data.format = options.format;
          updateColor = true;
 
-         // Explicitly update text mode format.
+         // Explicitly update text mode format when format mode changes.
          this.#stores.textState.updateFormat(this.#data.format);
       }
 
@@ -386,6 +387,14 @@ export class ColorState
       {
          this.#data.formatType = options.formatType;
          updateColor = true;
+      }
+
+      if (options.lockTextFormat !== void 0 && options.lockTextFormat !== this.#data.lockTextFormat)
+      {
+         this.#data.lockTextFormat = options.lockTextFormat;
+
+         // When switching to locked text format state set update text state format.
+         if (this.#data.lockTextFormat) { this.#stores.textState.updateFormat(this.#data.format); }
       }
 
       if (updateColor) { this.#updateCurrentColor(); }
@@ -574,6 +583,8 @@ class HsvColorParser
  * @property {string} hslHueString - Current hue as RGB string.
  *
  * @property {string} hslaString - Current color as RGB string with `alpha` component.
+ *
+ * @property {boolean} lockTextFormat - Current lock text state format state.
  *
  * @property {{ s: number, v: number }} sv - Current internal color saturation / value state.
  */

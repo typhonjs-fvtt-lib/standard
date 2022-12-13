@@ -5,11 +5,21 @@
 
    const internalState = getContext('#tjs-color-picker-state');
 
-   const { hasAlpha } = internalState.stores;
+   const { hasAlpha, lockTextFormat } = internalState.stores;
    const { textState } = internalState.colorState.stores;
 
    const activeTextState = textState.activeState;
    const { alpha } = textState.alpha.inputData;
+
+   function onClick()
+   {
+      if (!$lockTextFormat) { activeTextState.next(); }
+   }
+
+   function onKeydown(event)
+   {
+      if (!$lockTextFormat && event.code === 'Space') { activeTextState.next(); }
+   }
 </script>
 
 <div class=picker-text-input>
@@ -25,8 +35,9 @@
         role=button
         aria-label="next color format"
         tabindex=0
-        on:click|preventDefault={() => activeTextState.next()}
-        on:keydown|preventDefault={(event) => { if (event.code === 'Space') { activeTextState.next() } }}>
+        class:lock-text-format={$lockTextFormat}
+        on:click|preventDefault={onClick}
+        on:keydown|preventDefault={onKeydown}>
 
       {#each $activeTextState.inputData as input (input.pickerLabel)}
          <span>{input.pickerLabel}</span>
@@ -38,6 +49,32 @@
 </div>
 
 <style>
+    .input-attributes {
+       display: flex;
+       flex: 1;
+
+       background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
+       border: var(--tjs-input-number-border, var(--tjs-input-border));
+       border-radius: 0.25em;
+
+       cursor: pointer;
+       text-align: center;
+    }
+
+    .input-attributes.lock-text-format {
+       cursor: default;
+    }
+
+    .input-attributes span {
+       flex: 1;
+    }
+
+    /* Child text input components */
+    .input-container {
+       display: flex;
+       flex: 1;
+    }
+
     .picker-text-input {
        display: flex;
        flex-direction: column;
@@ -54,26 +91,11 @@
 
        /* Child text input components */
        .input-container {
-          display: flex;
-          flex: 1;
           gap: min(8px, 2cqw);
        }
 
        .input-attributes {
-          display: flex;
-          flex: 1;
           gap: min(8px, 2cqw);
-
-          background: var(--tjs-color-picker-overlay-background, rgba(0, 0, 0, 0.1));
-          border: var(--tjs-input-number-border, var(--tjs-input-border));
-          border-radius: 0.25em;
-
-          cursor: pointer;
-          text-align: center;
-       }
-
-       .input-attributes span {
-          flex: 1;
        }
     }
 

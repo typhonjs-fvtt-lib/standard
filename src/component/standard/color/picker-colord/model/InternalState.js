@@ -71,8 +71,6 @@ export class InternalState
 
       // External data -----------------------------------------------------------------------------------------------
 
-      this.#externalData.canChangeMode = typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true;
-
       this.#externalData.hasAlpha = typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true;
 
       this.#externalData.hasAddons = typeof opts.hasAddons === 'boolean' ? opts.hasAddons : true;
@@ -87,6 +85,8 @@ export class InternalState
       this.#externalData.inputName = typeof opts.inputName === 'string' ? opts.inputName : 'tjs-color-picker';
 
       this.#externalData.isPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
+
+      this.#externalData.lockTextFormat = typeof opts.lockTextFormat === 'boolean' ? opts.lockTextFormat : false;
 
       this.#externalData.padding = typeof opts.padding === 'string' ? opts.padding : '0';
 
@@ -106,13 +106,13 @@ export class InternalState
       this.#stores = {
          components: writable(this.#prepareComponents(opts)), // Sets this.#externalData.layout
 
-         canChangeMode: propertyStore(externalData, 'canChangeMode'),
          hasEyeDropper: propertyStore(externalData, 'hasEyeDropper'),
          hasAlpha: propertyStore(externalData, 'hasAlpha'),
          hasButtonBar: propertyStore(externalData, 'hasButtonBar'),
          hasTextInput: propertyStore(externalData, 'hasTextInput'),
          inputName: propertyStore(externalData, 'inputName'),
          isPopup: propertyStore(externalData, 'isPopup'),
+         lockTextFormat: propertyStore(externalData, 'lockTextFormat'),
          padding: propertyStore(externalData, 'padding'),
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
@@ -255,8 +255,6 @@ export class InternalState
 
       // External data -----------------------------------------------------------------------------------------------
 
-      this.#stores.canChangeMode.set(typeof opts.canChangeMode === 'boolean' ? opts.canChangeMode : true);
-
       this.#stores.hasAlpha.set(typeof opts.hasAlpha === 'boolean' ? opts.hasAlpha : true);
 
       this.#externalData.hasAddons = typeof opts.hasAddons === 'boolean' ? opts.hasAddons : true;
@@ -275,6 +273,8 @@ export class InternalState
       this.#stores.isPopup.set(newIsPopup);
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
+
+      this.#stores.lockTextFormat.set(typeof opts.lockTextFormat === 'boolean' ? opts.lockTextFormat : false);
 
       this.#stores.padding.set(opts.padding ? opts.padding : '0');
 
@@ -304,11 +304,6 @@ export class InternalState
       if (opts.addOn !== void 0 && !isIterable(opts.addOn))
       {
          throw new TypeError(`'options.addOn' is not an iterable list of addon constructor functions.`);
-      }
-
-      if (opts.canChangeMode !== void 0 && typeof opts.canChangeMode !== 'boolean')
-      {
-         throw new TypeError(`'options.canChangeMode' is not a boolean.`);
       }
 
       if (opts.hasAddons !== void 0 && typeof opts.hasAddons !== 'boolean')
@@ -349,6 +344,11 @@ export class InternalState
       if (opts.layout !== void 0 && typeof opts.layout !== 'string')
       {
          throw new TypeError(`'options.layout' is not a string or undefined.`);
+      }
+
+      if (opts.lockTextFormat !== void 0 && typeof opts.lockTextFormat !== 'boolean')
+      {
+         throw new TypeError(`'options.lockTextFormat' is not a boolean.`);
       }
 
       if (opts.padding !== void 0 && typeof opts.padding !== 'string')
@@ -394,8 +394,6 @@ export class InternalState
  *
  * @property {PickerComponents} [components] - User defined picker component overrides.
  *
- * @property {boolean} [canChangeMode=true] - Can the text mode be changed.
- *
  * @property {'hex'|'hsl'|'hsv'|'rgb'} [format] - The user defined color format.
  *
  * @property {'object'|'string'} [formatType] - The user defined color format type.
@@ -415,6 +413,8 @@ export class InternalState
  * @property {boolean} [isPopup=true] - Is the picker configured as a pop-up.
  *
  * @property {'chrome'|undefined} [layout=undefined] - Picker layout variant.
+ *
+ * @property {boolean} [lockTextFormat=false] - When true text input format can not be changed from current format.
  *
  * @property {string} [padding] - A valid CSS dimension to provide offset padding as necessary depending on layout.
  *                                      IE the default layout when below 235px wide needs make up padding on the right.
@@ -460,8 +460,6 @@ export class InternalState
 /**
  * @typedef {object} PickerStores
  *
- * @property {import('svelte/store').Writable<boolean>} canChangeMode - See {@link TJSColordPickerOptions.canChangeMode}
- *
  * @property {import('svelte/store').Writable<PickerComponents>} components - This selected layout components.
  *
  * @property {import('svelte/store').Writable<boolean>} hasAlpha - See {@link TJSColordPickerOptions.hasAlpha}
@@ -475,6 +473,8 @@ export class InternalState
  * @property {import('svelte/store').Writable<string>} inputName - See {@link TJSColordPickerOptions.inputName}
  *
  * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
+ *
+ * @property {import('svelte/store').Writable<boolean>} lockTextFormat - See {@link TJSColordPickerOptions.lockTextFormat}
  *
  * @property {import('svelte/store').Writable<string>} padding - See {@link TJSColordPickerOptions.padding}
  *
