@@ -57,6 +57,22 @@ export class ActiveTextState
       this.#updateSubscribers();
    }
 
+   /**
+    * Sets the active key / format for text component display.
+    *
+    * @param {string}   format -
+    */
+   setFormat(format)
+   {
+      if (this.#allState[format] === void 0)
+      {
+         throw new TypeError(`ActiveTextState setFormat error: Unknown format key (${format}).`);
+      }
+
+      this.#activeKey = format;
+      this.#updateSubscribers();
+   }
+
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**

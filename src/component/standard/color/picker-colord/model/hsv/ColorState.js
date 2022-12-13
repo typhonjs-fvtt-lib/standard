@@ -377,6 +377,9 @@ export class ColorState
       {
          this.#data.format = options.format;
          updateColor = true;
+
+         // Explicitly update text mode format.
+         this.#stores.textState.updateFormat(this.#data.format);
       }
 
       if (options.formatType !== void 0 && options.formatType !== this.#data.formatType)

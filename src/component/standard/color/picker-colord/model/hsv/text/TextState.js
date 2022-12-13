@@ -127,6 +127,16 @@ export class TextState
    }
 
    /**
+    * Updates active text state format when format option changes.
+    *
+    * @param {string} format -
+    */
+   updateFormat(format)
+   {
+      this.#activeTextState.setFormat(format);
+   }
+
+   /**
     * Provides a mechanism for the various color modes to update the other modes on changes to internal state.
     *
     * @param {object}   color - Color object from the source mode.
