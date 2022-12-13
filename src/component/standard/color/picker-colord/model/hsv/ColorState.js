@@ -105,11 +105,10 @@ export class ColorState
             this.#updateColorData(initialHsv);
          }
       }
-      else // Accept any explicitly set color model format & type.
-      {
-         this.#data.format = typeof options.format === 'string' ? options.format : 'hsl';
-         this.#data.formatType = typeof options.formatType === 'string' ? options.formatType : 'string';
-      }
+
+      // Override any parsed color format / format type above if explicitly set in initial options.
+      if (typeof options.format === 'string') { this.#data.format = options.format; }
+      if (typeof options.formatType === 'string') { this.#data.formatType = options.formatType; }
 
       // Set initial precision.
       this.#data.precision = internalState.precision;
