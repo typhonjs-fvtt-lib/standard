@@ -196,6 +196,22 @@ export class ColorState
    }
 
    /**
+    * @returns {"hex"|"hsl"|"hsv"|"rgb"}
+    */
+   get format()
+   {
+      return this.#data.format;
+   }
+
+   /**
+    * @returns {"object"|"string"}
+    */
+   get formatType()
+   {
+      return this.#data.formatType;
+   }
+
+   /**
     * @returns {number}
     */
    get hue()
@@ -211,6 +227,9 @@ export class ColorState
       return { h: this.#data.hue, s: this.#data.sv.s, v: this.#data.sv.v, a: this.#data.alpha };
    }
 
+   /**
+    * @returns {ColorStateStores}
+    */
    get stores()
    {
       return this.#stores;

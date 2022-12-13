@@ -15,11 +15,11 @@ export class ActiveTextState
     */
    #subscriptions = [];
 
-   constructor(allState)
+   constructor(allState, activeKey = 'hex')
    {
       this.#allState = allState;
       this.#modeKeys = Object.keys(allState);
-      this.#activeKey = 'hex';
+      this.#activeKey = activeKey;
       this.#activeState = allState[this.#activeKey];
    }
 

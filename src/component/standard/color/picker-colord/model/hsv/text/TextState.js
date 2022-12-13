@@ -59,7 +59,7 @@ export class TextState
          rgb: new RgbState(colorStateAccess, textStateAccess)
       }
 
-      this.#activeTextState = new ActiveTextState(this.#allState);
+      this.#activeTextState = new ActiveTextState(this.#allState, colorState.format);
 
       this.updateColor(colorState.hsv);
    }
