@@ -13,7 +13,6 @@
    const internalState = getContext('#tjs-color-picker-state');
 
    const {
-      currentColor ,
       currentColorString
    } = internalState.colorState.stores;
 
@@ -31,7 +30,7 @@
 </script>
 
 <section>
-    <TJSColordButton color={$currentColor}
+    <TJSColordButton color={$currentColorString}
                      efx={ripple()}
                      on:click={onClick} />
 
