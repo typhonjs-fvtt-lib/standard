@@ -59,19 +59,19 @@ export class AddOnState
    /**
     * Invoked from {@link InternalState} to update addon state.
     *
-    * @param {Iterable<Function>}   addOnOptions - `options.addOn` iterable list of addon constructor functions.
+    * @param {Iterable<Function>}   addonOptions - `options.addons` iterable list of addon constructor functions.
     */
-   updateOptions(addOnOptions)
+   updateOptions(addonOptions)
    {
       // Store all existing addon IDs / keys and any not maintained in the initial loop through `addOnOptions` are
       // removed.
       const removeKeys = new Set(this.#addOnMap.keys());
 
-      for (const AddOn of addOnOptions)
+      for (const AddOn of addonOptions)
       {
          if (typeof AddOn?.id !== 'string')
          {
-            throw new TypeError(`'options.addOns' missing static 'id' accessor.`);
+            throw new TypeError(`'options.addons' missing static 'id' accessor.`);
          }
 
          const hasId = this.#addOnMap.has(AddOn.id);
@@ -101,8 +101,8 @@ export class AddOnState
 
       this.#addOnArray = [];
 
-      // Create new addon array from the order of the given `options.addOn` iterable removing any duplicates.
-      for (const AddOn of addOnOptions)
+      // Create new addon array from the order of the given `options.addons` iterable removing any duplicates.
+      for (const AddOn of addonOptions)
       {
          if (!duplicateSet.has(AddOn.id)) { this.#addOnArray.push(this.#addOnMap.get(AddOn.id)); }
          duplicateSet.add(AddOn.id);

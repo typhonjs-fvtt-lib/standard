@@ -67,7 +67,7 @@ export class InternalState
 
       this.#addonState = new AddOnState(this);
 
-      this.#addonState.updateOptions(isIterable(opts.addOn) ? opts.addOn : []);
+      this.#addonState.updateOptions(isIterable(opts.addons) ? opts.addons : []);
 
       // External data -----------------------------------------------------------------------------------------------
 
@@ -251,7 +251,7 @@ export class InternalState
 
       const currentIsPopup = this.#externalData.isPopup;
 
-      this.#addonState.updateOptions(isIterable(opts.addOn) ? opts.addOn : []);
+      this.#addonState.updateOptions(isIterable(opts.addons) ? opts.addons : []);
 
       // External data -----------------------------------------------------------------------------------------------
 
@@ -301,9 +301,9 @@ export class InternalState
     */
    #validateOptions(opts)
    {
-      if (opts.addOn !== void 0 && !isIterable(opts.addOn))
+      if (opts.addons !== void 0 && !isIterable(opts.addons))
       {
-         throw new TypeError(`'options.addOn' is not an iterable list of addon constructor functions.`);
+         throw new TypeError(`'options.addons' is not an iterable list of addon constructor functions.`);
       }
 
       if (opts.hasAddons !== void 0 && typeof opts.hasAddons !== 'boolean')
@@ -390,7 +390,7 @@ export class InternalState
 /**
  * @typedef {object} TJSColordPickerOptions
  *
- * @property {Iterable<Function>} [addOn] - Iterable list of addon class constructor functions.
+ * @property {Iterable<Function>} [addons] - Iterable list of addon class constructor functions.
  *
  * @property {PickerComponents} [components] - User defined picker component overrides.
  *
