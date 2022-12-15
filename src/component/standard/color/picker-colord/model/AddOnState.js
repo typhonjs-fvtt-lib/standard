@@ -78,8 +78,20 @@ export class AddOnState
 
          if (!hasId)
          {
-            const addOnInstance = new AddOn({ internalState: this.#internalState });
-            this.#addOnMap.set(AddOn.id, addOnInstance);
+            try
+            {
+               // Add a temporary key so that addons can add buttons by ID in addon constructor.
+               this.#addOnMap.set(AddOn.id, {});
+
+               const addOnInstance = new AddOn({ internalState: this.#internalState });
+
+               this.#addOnMap.set(AddOn.id, addOnInstance);
+            }
+            catch (err)
+            {
+               console.error(`TJSColordPicker addon error: Failed to load addon (${AddOn.id}).`, err);
+               this.#addOnMap.delete(AddOn.id);
+            }
          }
          else
          {
@@ -92,6 +104,9 @@ export class AddOnState
       {
          const addon = this.#addOnMap.get(key);
          this.#addOnMap.delete(key);
+
+         // Remove any associated buttons.
+         this.#internalState.buttonState.removeById(key);
 
          // Invoke any destroy function allowing the addon model to cleanup / do any housekeeping.
          if (typeof addon?.destroy === 'function') { addon.destroy(); }

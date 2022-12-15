@@ -7,6 +7,7 @@ import {
    isObject }              from '@typhonjs-svelte/lib/util';
 
 import { AddOnState }      from './AddOnState.js';
+import { ButtonState }     from './ButtonState.js';
 import { ColorState }      from './hsv/ColorState.js';
 import { EyeDropper }      from './EyeDropper.js';
 
@@ -18,6 +19,11 @@ export class InternalState
     * @type {AddOnState}
     */
    #addonState;
+
+   /**
+    * @type {ButtonState}
+    */
+   #buttonState;
 
    /**
     * @type {ColorState}
@@ -65,8 +71,9 @@ export class InternalState
 
       this.#sessionStorage = sessionStorage;
 
-      this.#addonState = new AddOnState(this);
+      this.#buttonState = new ButtonState(this);
 
+      this.#addonState = new AddOnState(this);
       this.#addonState.updateOptions(isIterable(opts.addons) ? opts.addons : []);
 
       // External data -----------------------------------------------------------------------------------------------
@@ -130,6 +137,14 @@ export class InternalState
    get addOnState()
    {
       return this.#addonState;
+   }
+
+   /**
+    * @returns {ButtonState}
+    */
+   get buttonState()
+   {
+      return this.#buttonState;
    }
 
    /**

@@ -2,8 +2,8 @@ import { writable }              from 'svelte/store';
 
 import { colord }                from '@typhonjs-fvtt/runtime/color/colord';
 
-import { debounce }              from '@typhonjs-fvtt/runtime/svelte/util';
-import { subscribeIgnoreFirst }  from '@typhonjs-fvtt/runtime/svelte/store';
+import { subscribeIgnoreFirst }  from '@typhonjs-svelte/lib/store';
+import { debounce }              from '@typhonjs-svelte/lib/util';
 
 import { TextState }             from './text/TextState.js';
 

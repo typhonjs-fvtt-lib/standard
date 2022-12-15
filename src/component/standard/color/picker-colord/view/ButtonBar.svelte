@@ -6,17 +6,20 @@
    import { ripple }            from '@typhonjs-fvtt/svelte-standard/action';
 
    import TJSIconButton         from '../../../button/TJSIconButton.svelte';
+   import TJSToggleIconButton   from '../../../button/TJSToggleIconButton.svelte';
+
    import TJSColordButton       from '../TJSColordButton.svelte';
 
    import { EyeDropper }        from '../model/EyeDropper.js';
 
    const internalState = getContext('#tjs-color-picker-state');
+   const buttonState = internalState.buttonState;
 
    const {
-      currentColorString
-   } = internalState.colorState.stores;
+      hasAddons,
+      hasEyeDropper} = internalState.stores;
 
-   const { hasEyeDropper } = internalState.stores;
+   const { currentColorString } = internalState.colorState.stores;
 
    /**
     * Copy current color string to clipboard.
@@ -36,6 +39,16 @@
 
     {#if $hasEyeDropper}
         <TJSIconButton button={EyeDropper.buttonData(internalState.colorState)} efx={ripple()} />
+    {/if}
+
+    {#if $hasAddons}
+        {#each $buttonState as button}
+            {#if button.isToggle}
+                <TJSToggleIconButton {button} efx={ripple()} />
+            {:else}
+                <TJSIconButton {button} efx={ripple()} />
+            {/if}
+        {/each}
     {/if}
 </section>
 
