@@ -1,13 +1,13 @@
 import {
    DynArrayReducer,
    isWritableStore,
-   subscribeIgnoreFirst }     from '@typhonjs-fvtt/svelte/store';
+   subscribeIgnoreFirst }     from '@typhonjs-svelte/lib/store';
 
 import {
    debounce,
    isObject,
    klona,
-   uuidv4 }                   from '@typhonjs-fvtt/svelte/util';
+   uuidv4 }                   from '@typhonjs-svelte/lib/util';
 
 import { ObjectEntryStore }   from './ObjectEntryStore.js';
 

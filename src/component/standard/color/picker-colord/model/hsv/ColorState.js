@@ -1,6 +1,6 @@
 import { writable }              from 'svelte/store';
 
-import { colord }                from '@typhonjs-fvtt/runtime/color/colord';
+import { colord }                from '#runtime/color/colord';
 
 import { subscribeIgnoreFirst }  from '@typhonjs-svelte/lib/store';
 import { debounce }              from '@typhonjs-svelte/lib/util';

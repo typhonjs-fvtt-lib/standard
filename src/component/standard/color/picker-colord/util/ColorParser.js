@@ -1,4 +1,4 @@
-import { getFormat } from '@typhonjs-fvtt/runtime/color/colord';
+import { getFormat } from '#runtime/color/colord';
 
 /**
  * Provides generic color model utilities.

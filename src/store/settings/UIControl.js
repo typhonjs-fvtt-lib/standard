@@ -6,7 +6,7 @@ import { localize }     from '@typhonjs-fvtt/svelte/helper';
 
 import {
    isObject,
-   isSvelteComponent }  from '@typhonjs-fvtt/svelte/util';
+   isSvelteComponent }  from '@typhonjs-svelte/lib/util';
 
 import {
    ripple,

@@ -16,7 +16,9 @@ const s_LOCAL_EXTERNAL = [
    'svelte', 'svelte/easing', 'svelte/internal', 'svelte/motion', 'svelte/store', 'svelte/transition',
    'svelte/types',
 
-   '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/component'
+   '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
+   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/dev-tools',
+   '@typhonjs-fvtt/svelte-standard/prosemirror', '@typhonjs-fvtt/svelte-standard/store',
 ];
 
 // Defines potential output plugins to use conditionally if the .env file indicates the bundles should be
@@ -155,6 +157,7 @@ let compFiles = await getFileList({ dir: './_dist/component' });
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/')
    fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
    fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
    fs.writeFileSync(compFile, fileData);

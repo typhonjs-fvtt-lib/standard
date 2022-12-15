@@ -26,7 +26,7 @@
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
    import { localize }        from '@typhonjs-svelte/lib/helper';
 
-   import { colord }          from '@typhonjs-fvtt/runtime/color/colord';
+   import { colord }          from '#runtime/color/colord';
 
    export let button = void 0;
    export let color = void 0;

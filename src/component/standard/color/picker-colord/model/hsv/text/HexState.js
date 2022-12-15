@@ -1,6 +1,6 @@
 import { writable }  from 'svelte/store';
 
-import { colord }    from '@typhonjs-fvtt/runtime/color/colord';
+import { colord }    from '#runtime/color/colord';
 
 // TODO REFACTOR TO TOP LEVEL OPTION
 import { rippleFocus } from '@typhonjs-fvtt/svelte-standard/action';

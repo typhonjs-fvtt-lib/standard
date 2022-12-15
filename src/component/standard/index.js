@@ -1,10 +1,10 @@
-import { SvelteApplication } from '@typhonjs-fvtt/runtime/svelte/application';
+import { SvelteApplication } from '#runtime/svelte/application';
 
 import {
    cssVariables,
    FoundryStyles }   from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
-import 'container-query-polyfill';
+// import 'container-query-polyfill';
 
 export *             from './button/index.js';
 export *             from './color/index.js';

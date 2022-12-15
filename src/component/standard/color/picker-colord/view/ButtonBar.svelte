@@ -1,7 +1,7 @@
 <script>
    import { getContext }        from 'svelte';
 
-   import { ClipboardAccess }   from '@typhonjs-fvtt/svelte/util';
+   import { ClipboardAccess }   from '@typhonjs-svelte/lib/util';
 
    import { ripple }            from '@typhonjs-fvtt/svelte-standard/action';
 

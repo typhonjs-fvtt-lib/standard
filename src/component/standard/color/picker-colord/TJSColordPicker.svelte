@@ -12,7 +12,7 @@
       onDestroy,
       setContext }              from 'svelte';
 
-   import { colord }            from '@typhonjs-fvtt/runtime/color/colord';
+   import { colord }            from '#runtime/color/colord';
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
    import { isWritableStore }   from '@typhonjs-svelte/lib/store';
