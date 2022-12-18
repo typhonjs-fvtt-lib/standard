@@ -72,18 +72,26 @@
    // When options changes update internal state.
    $: internalState.updateOptions(options);
 
+   // Set changes in internal color state to external prop. Set any optional store and dispatch an event.
    $: {
-      color = $currentColor;
+      const newColor = $currentColor;
+      color = newColor;
+
+      // Note: We must store `$currentColor` in a temporary variable to use below otherwise this reactive block will
+      // be triggered by external changes in color.
 
       // If any external store is set in options then set current color.
-      if (externalStore) { externalStore.set(color); }
+      if (externalStore) { externalStore.set(newColor); }
 
       // Dispatch `on:input` event for current color.
-      dispatch('input', { color });
+      dispatch('input', { color: newColor });
    }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
-   $: if (!colord($currentColor).isEqual(color)) { colorState.updateExternal(color); }
+   $: if (!colord($currentColor).isEqual(color))
+   {
+      colorState.updateExternal(color);
+   }
 
    // When any `externalStore` from `options` changes detect any external change potentially updating internal state.
    $: if (externalStore && !colord($currentColor).isEqual($externalStore))
