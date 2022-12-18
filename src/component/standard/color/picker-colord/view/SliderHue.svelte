@@ -1,11 +1,14 @@
 <script>
    import { getContext }    from 'svelte';
+   import { writable }      from 'svelte/store';
 
    import {
-      keyPressed,
-      keyPressedCustom }   from '../util/store.js';
+      isFocused,
+      keyforward }          from '@typhonjs-fvtt/svelte-standard/action';
 
-   import { easeInOutSin } from '../util/transition.js';
+   import { KeyStore }      from '@typhonjs-fvtt/svelte-standard/store';
+
+   import { easeInOutSin }  from '../util/transition.js';
 
    const internalState = getContext('#tjs-color-picker-state');
    const sliderConstraint = getContext('#tjs-color-picker-slider-constraint');
@@ -19,17 +22,25 @@
       background: 'var(--_tjs-color-picker-current-color-hsl-hue)'
    }
 
+   /**
+    * @type {KeyStore}
+    */
+   const keyStore = new KeyStore(sliderHorizontal ? ['ArrowRight', 'ArrowLeft'] : ['ArrowDown', 'ArrowUp'],
+    { preventDefault: true });
+
    /** @type {HTMLDivElement} */
-   let slider = void 0;
+   let sliderEl = void 0;
 
    /** @type {boolean} */
-   let isMouseDown = false;
+   let isPointerDown = false;
 
    /** @type {number} */
    let pos = 0;
 
-   /** @type {boolean} */
-   let focused = false;
+   /**
+    * @type {Writable<boolean>}
+    */
+   let focused = writable(false);
 
    /** @type {number | undefined} */
    let focusMovementIntervalId = void 0;
@@ -37,7 +48,10 @@
    /** @type {number} */
    let focusMovementCounter = void 0;
 
-   $: if (typeof $hue === 'number' && slider) { pos = (100 * $hue) / 360; }
+   // When there is a change to keys monitored invoke `move`.
+   $: move($keyStore);
+
+   $: if (typeof $hue === 'number' && sliderEl) { pos = (100 * $hue) / 360; }
 
    $: if (sliderHorizontal)
    {
@@ -58,79 +72,20 @@
     */
    function onClick(pos)
    {
-      const size = sliderHorizontal ? slider.getBoundingClientRect().width : slider.getBoundingClientRect().height;
+      const rect = sliderEl.getBoundingClientRect();
+
+      const size = sliderHorizontal ? rect.width : rect.height;
       const boundedPos = Math.max(0, Math.min(size, pos));
 
       $hue = (boundedPos / size) * 360;
    }
 
    /**
-    * @param {MouseEvent}    e -
+    * @param {KeyStore} keys -
     */
-   function mouseDown(e)
+   function move(keys)
    {
-      if (e.button === 0)
-      {
-         isMouseDown = true;
-         onClick(sliderHorizontal ? e.offsetX : e.offsetY);
-      }
-   }
-
-   /**
-    *
-    */
-   function mouseUp()
-   {
-      isMouseDown = false;
-   }
-
-   /**
-    * @param {MouseEvent}    e -
-    */
-   function mouseMove(e)
-   {
-      if (isMouseDown)
-      {
-         onClick(sliderHorizontal ? e.clientX - slider.getBoundingClientRect().left :
-          e.clientY - slider.getBoundingClientRect().top);
-      }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keyup(e)
-   {
-      if (e.key === 'Tab')
-      {
-         focused = !!document.activeElement?.isSameNode(slider);
-      }
-
-      if (!e.repeat && focused)
-      {
-         move();
-      }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keydown(e)
-   {
-      if (focused && $keyPressedCustom.ArrowVH)
-      {
-         e.preventDefault();
-
-         if (!e.repeat) { move(); }
-      }
-   }
-
-   /**
-    *
-    */
-   function move()
-   {
-      if ($keyPressedCustom.ArrowVH)
+      if (keys.anyPressed)
       {
          if (!focusMovementIntervalId)
          {
@@ -139,8 +94,8 @@
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
-               const movement = sliderHorizontal ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft :
-                $keyPressed.ArrowDown - $keyPressed.ArrowUp;
+               const movement = sliderHorizontal ? keys.value('ArrowRight') - keys.value('ArrowLeft') :
+                keys.value('ArrowDown') - keys.value('ArrowUp');
 
                $hue = Math.min(360, Math.max(0, internalState.colorState.hue + movement * 360 * focusMovementFactor));
             }, 10);
@@ -153,40 +108,59 @@
       }
    }
 
+
    /**
-    * @param {TouchEvent}    e -
+    * @param {PointerEvent} event -
     */
-   function touch(e)
+   function onPointerDown(event)
    {
-      e.preventDefault();
-      onClick(sliderHorizontal ? e.changedTouches[0].clientX - slider.getBoundingClientRect().left :
-       e.changedTouches[0].clientY - slider.getBoundingClientRect().top);
+      if (event.button === 0)
+      {
+         isPointerDown = true;
+         sliderEl.setPointerCapture(event.pointerId);
+         onClick(sliderHorizontal ? event.offsetX : event.offsetY);
+      }
+   }
+
+   /**
+    * @param {PointerEvent} event -
+    */
+   function onPointerUp(event)
+   {
+      isPointerDown = false;
+      sliderEl.releasePointerCapture(event.pointerId);
+   }
+
+   /**
+    * @param {PointerEvent} event -
+    */
+   function onPointerMove(event)
+   {
+      if (isPointerDown)
+      {
+         const rect = sliderEl.getBoundingClientRect();
+         onClick(sliderHorizontal ? event.clientX - rect.left : event.clientY - rect.top);
+      }
    }
 </script>
-
-<svelte:window
-        on:mouseup={mouseUp}
-        on:mousemove={mouseMove}
-        on:keyup={keyup}
-        on:keydown={keydown}
-/>
 
 <svelte:component this={$components.sliderWrapper}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=tjs-color-picker-slider
-         bind:this={slider}
+         bind:this={sliderEl}
          tabindex=0
          class:horizontal={sliderHorizontal}
-         on:mousedown|preventDefault|stopPropagation={mouseDown}
-         on:touchstart={touch}
-         on:touchmove|preventDefault|stopPropagation={touch}
-         on:touchend={touch}
+         on:pointerdown|preventDefault|stopPropagation={onPointerDown}
+         on:pointermove|preventDefault|stopPropagation={onPointerMove}
+         on:pointerup|preventDefault|stopPropagation={onPointerUp}
          aria-label="hue picker (arrow keyboard navigation)"
          aria-valuemin={0}
          aria-valuemax={360}
          aria-valuenow={Math.round($hue)}
+         use:isFocused={focused}
+         use:keyforward={keyStore}
     >
-        <svelte:component this={$components.sliderIndicator} {focused} styles={stylesSliderIndicator} />
+        <svelte:component this={$components.sliderIndicator} focused={$focused} styles={stylesSliderIndicator} />
     </div>
 </svelte:component>
 

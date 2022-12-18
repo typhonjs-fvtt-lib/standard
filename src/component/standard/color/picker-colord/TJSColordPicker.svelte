@@ -21,7 +21,6 @@
    import { InternalState }     from './model/InternalState.js';
 
    import {
-      ArrowKeyHandler,
       Input,
       MainLayout }              from './view/index.js'
 
@@ -119,8 +118,6 @@
       }
    }
 </script>
-
-<ArrowKeyHandler/>
 
 <svelte:window on:keydown={keydown} on:keyup={keyup}/>
 

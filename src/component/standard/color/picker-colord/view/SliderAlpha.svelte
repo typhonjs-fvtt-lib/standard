@@ -1,8 +1,14 @@
 <script>
    import { getContext }    from 'svelte';
+   import { writable }      from 'svelte/store';
 
-   import { keyPressed, keyPressedCustom }  from '../util/store.js';
-   import { easeInOutSin }                  from '../util/transition.js';
+   import {
+      isFocused,
+      keyforward }          from '@typhonjs-fvtt/svelte-standard/action';
+
+   import { KeyStore }      from '@typhonjs-fvtt/svelte-standard/store';
+
+   import { easeInOutSin }  from '../util/transition.js';
 
    const internalState = getContext('#tjs-color-picker-state');
    const sliderConstraint = getContext('#tjs-color-picker-slider-constraint');
@@ -13,14 +19,22 @@
 
    const stylesSliderIndicator = {}
 
+   /**
+    * @type {KeyStore}
+    */
+   const keyStore = new KeyStore(sliderHorizontal ? ['ArrowRight', 'ArrowLeft'] : ['ArrowDown', 'ArrowUp'],
+    { preventDefault: true });
+
    /** @type {HTMLDivElement} */
    let sliderEl = void 0;
 
    /** @type {boolean} */
-   let isMouseDown = false;
+   let isPointerDown = false;
 
-   /** @type {boolean} */
-   let focused = false;
+   /**
+    * @type {Writable<boolean>}
+    */
+   let focused = writable(false);
 
    /** @type {number | undefined} */
    let focusMovementIntervalId = void 0;
@@ -30,6 +44,9 @@
 
    /** @type {number} */
    let pos = void 0;
+
+   // When there is a change to keys monitored invoke `move`.
+   $: move($keyStore);
 
    $: if (typeof $alpha === 'number' && sliderEl) { pos = 100 * $alpha; }
 
@@ -59,66 +76,11 @@
    }
 
    /**
-    * @param {MouseEvent} e -
+    * @param {KeyStore} keys -
     */
-   function mouseDown(e)
+   function move(keys)
    {
-      if (e.button === 0)
-      {
-         isMouseDown = true;
-         onClick(sliderHorizontal ? e.offsetX : e.offsetY);
-      }
-   }
-
-   /**
-    *
-    */
-   function mouseUp()
-   {
-      isMouseDown = false;
-   }
-
-   /**
-    * @param {MouseEvent}    e -
-    */
-   function mouseMove(e)
-   {
-      if (isMouseDown)
-      {
-         onClick(sliderHorizontal ? e.clientX - sliderEl.getBoundingClientRect().left :
-          e.clientY - sliderEl.getBoundingClientRect().top);
-      }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keyup(e)
-   {
-      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(sliderEl); }
-
-      if (!e.repeat && focused) { move(); }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keydown(e)
-   {
-      if (focused && $keyPressedCustom.ArrowVH)
-      {
-         e.preventDefault();
-
-         if (!e.repeat) { move(); }
-      }
-   }
-
-   /**
-    *
-    */
-   function move()
-   {
-      if ($keyPressedCustom.ArrowVH)
+      if (keys.anyPressed)
       {
          if (!focusMovementIntervalId)
          {
@@ -127,9 +89,10 @@
             focusMovementIntervalId = window.setInterval(() =>
             {
                const focusMovementFactor = easeInOutSin(++focusMovementCounter);
-               const movement = sliderHorizontal
-                ? $keyPressed.ArrowRight - $keyPressed.ArrowLeft
-                : $keyPressed.ArrowDown - $keyPressed.ArrowUp;
+
+               const movement = sliderHorizontal ? keys.value('ArrowRight') - keys.value('ArrowLeft') :
+                keys.value('ArrowDown') - keys.value('ArrowUp');
+
                $alpha = Math.min(1, Math.max(0, internalState.colorState.alpha + movement * focusMovementFactor));
             }, 10);
          }
@@ -142,23 +105,39 @@
    }
 
    /**
-    * @param {TouchEvent}    e -
+    * @param {PointerEvent} event -
     */
-   function touch(e)
+   function onPointerDown(event)
    {
-      e.preventDefault();
+      if (event.button === 0)
+      {
+         isPointerDown = true;
+         sliderEl.setPointerCapture(event.pointerId);
+         onClick(sliderHorizontal ? event.offsetX : event.offsetY);
+      }
+   }
 
-      onClick(sliderHorizontal ? e.changedTouches[0].clientX - sliderEl.getBoundingClientRect().left
-       : e.changedTouches[0].clientY - sliderEl.getBoundingClientRect().top);
+   /**
+    * @param {PointerEvent} event -
+    */
+   function onPointerUp(event)
+   {
+      isPointerDown = false;
+      sliderEl.releasePointerCapture(event.pointerId);
+   }
+
+   /**
+    * @param {PointerEvent} event -
+    */
+   function onPointerMove(event)
+   {
+      if (isPointerDown)
+      {
+         const rect = sliderEl.getBoundingClientRect();
+         onClick(sliderHorizontal ? event.clientX - rect.left : event.clientY - rect.top);
+      }
    }
 </script>
-
-<svelte:window
-        on:mouseup={mouseUp}
-        on:mousemove={mouseMove}
-        on:keyup={keyup}
-        on:keydown={keydown}
-/>
 
 <svelte:component this={$components.alphaWrapper}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
@@ -166,17 +145,18 @@
          class=tjs-color-picker-slider
          tabindex=0
          class:horizontal={sliderHorizontal}
-         on:mousedown|preventDefault|stopPropagation={mouseDown}
-         on:touchstart={touch}
-         on:touchmove|preventDefault|stopPropagation={touch}
-         on:touchend={touch}
+         on:pointerdown|preventDefault|stopPropagation={onPointerDown}
+         on:pointermove|preventDefault|stopPropagation={onPointerMove}
+         on:pointerup|preventDefault|stopPropagation={onPointerUp}
          aria-label="transparency picker (arrow keyboard navigation)"
          aria-valuemin={0}
          aria-valuemax={100}
          aria-valuenow={Math.round(pos)}
          aria-valuetext="{pos?.toFixed()}%"
+         use:isFocused={focused}
+         use:keyforward={keyStore}
     >
-        <svelte:component this={$components.alphaIndicator} {focused} styles={stylesSliderIndicator} />
+        <svelte:component this={$components.alphaIndicator} focused={$focused} styles={stylesSliderIndicator} />
     </div>
 </svelte:component>
 

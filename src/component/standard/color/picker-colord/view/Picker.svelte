@@ -1,9 +1,12 @@
 <script>
    import { getContext }    from 'svelte';
+   import { writable }      from 'svelte/store';
 
    import {
-      keyPressed,
-      keyPressedCustom }    from '../util/store.js';
+      isFocused,
+      keyforward }          from '@typhonjs-fvtt/svelte-standard/action';
+
+   import { KeyStore }      from '@typhonjs-fvtt/svelte-standard/store';
 
    import { easeInOutSin }  from '../util/transition.js';
 
@@ -17,14 +20,21 @@
       background: 'var(--_tjs-color-picker-current-color-hsl)'
    }
 
+   /**
+    * @type {KeyStore}
+    */
+   const keyStore = new KeyStore(['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'], { preventDefault: true });
+
    /** @type {HTMLDivElement} */
    let pickerEl = void 0;
 
    /** @type {boolean} */
-   let isMouseDown = false;
+   let isPointerDown = false;
 
-   /** @type {boolean} */
-   let focused = false;
+   /**
+    * @type {Writable<boolean>}
+    */
+   let focused = writable(false);
 
    /** @type {number | undefined} */
    let focusMovementIntervalId = void 0;
@@ -34,6 +44,9 @@
 
    /** @type {{ x: number, y: number }} */
    let pos = { x: 100, y: 0 };
+
+   // When there is a change to keys monitored invoke `move`.
+   $: move($keyStore);
 
    $: if (typeof $sv.s === 'number' && typeof $sv.v === 'number' && pickerEl)
    {
@@ -61,89 +74,24 @@
     */
    function onClick(e)
    {
-      let mouse = {x: e.offsetX, y: e.offsetY};
-      let width = pickerEl.getBoundingClientRect().width;
-      let height = pickerEl.getBoundingClientRect().height;
+      const pointer = { x: e.offsetX, y: e.offsetY };
+      const rect = pickerEl.getBoundingClientRect();
+
+      let width = rect.width;
+      let height = rect.height;
 
       $sv = {
-         s: clamp(mouse.x / width, 0, 1) * 100,
-         v: clamp((height - mouse.y) / height, 0, 1) * 100
+         s: clamp(pointer.x / width, 0, 1) * 100,
+         v: clamp((height - pointer.y) / height, 0, 1) * 100
       };
    }
 
    /**
-    * @param {MouseEvent}    e -
+    * @param {KeyStore} keys
     */
-   function pickerMouseDown(e)
+   function move(keys)
    {
-      if (e.button === 0)
-      {
-         isMouseDown = true;
-         onClick(e);
-      }
-   }
-
-   /**
-    *
-    */
-   function mouseUp()
-   {
-      isMouseDown = false;
-   }
-
-   /**
-    * @param {MouseEvent}    e -
-    */
-   function mouseMove(e)
-   {
-      if (isMouseDown)
-      {
-         onClick({
-            offsetX: Math.max(0, Math.min(pickerEl.getBoundingClientRect().width,
-              e.clientX - pickerEl.getBoundingClientRect().left)),
-
-            offsetY: Math.max(0, Math.min(pickerEl.getBoundingClientRect().height,
-              e.clientY - pickerEl.getBoundingClientRect().top))
-         });
-      }
-   }
-
-   /**
-    * @param {MouseEvent}    e -
-    */
-   function mouseDown(e)
-   {
-      if (!e.target.isSameNode(pickerEl)) { focused = false; }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keyup(e)
-   {
-      if (e.key === 'Tab') { focused = !!document.activeElement?.isSameNode(pickerEl); }
-
-      if (!e.repeat && focused) { move(); }
-   }
-
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keydown(e)
-   {
-      if (focused && $keyPressedCustom.ArrowVH)
-      {
-         e.preventDefault();
-         if (!e.repeat) { move(); }
-      }
-   }
-
-   /**
-    *
-    */
-   function move()
-   {
-      if ($keyPressedCustom.ArrowVH)
+      if (keys.anyPressed)
       {
          if (!focusMovementIntervalId)
          {
@@ -153,10 +101,10 @@
                let focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
                $sv = {
-                  s: Math.min(100, Math.max(0, $sv.s + ($keyPressed.ArrowRight - $keyPressed.ArrowLeft) *
+                  s: Math.min(100, Math.max(0, $sv.s + (keys.value('ArrowRight') - keys.value('ArrowLeft')) *
                    focusMovementFactor * 100)),
 
-                  v: Math.min(100, Math.max(0, $sv.v + ($keyPressed.ArrowUp - $keyPressed.ArrowDown) *
+                  v: Math.min(100, Math.max(0, $sv.v + (keys.value('ArrowUp') - keys.value('ArrowDown')) *
                    focusMovementFactor * 100))
                };
             }, 10);
@@ -165,48 +113,65 @@
       else if (focusMovementIntervalId)
       {
          clearInterval(focusMovementIntervalId);
-         focusMovementIntervalId = undefined;
+         focusMovementIntervalId = void 0;
       }
    }
 
    /**
-    * @param {TouchEvent}    e -
+    * @param {PointerEvent} event -
     */
-   function touch(e)
+   function onPointerDown(event)
    {
-      e.preventDefault();
+      if (event.button === 0)
+      {
+         isPointerDown = true;
+         pickerEl.setPointerCapture(event.pointerId);
+         onClick(event);
+      }
+   }
 
-      onClick({
-         offsetX: e.changedTouches[0].clientX - pickerEl.getBoundingClientRect().left,
-         offsetY: e.changedTouches[0].clientY - pickerEl.getBoundingClientRect().top
-      });
+   /**
+    * @param {PointerEvent} event -
+    */
+   function onPointerUp(event)
+   {
+      isPointerDown = false;
+      pickerEl.releasePointerCapture(event.pointerId);
+   }
+
+   /**
+    * @param {PointerEvent} event -
+    */
+   function onPointerMove(event)
+   {
+      if (isPointerDown)
+      {
+         const rect = pickerEl.getBoundingClientRect();
+
+         onClick({
+            offsetX: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
+            offsetY: Math.max(0, Math.min(rect.height, event.clientY - rect.top))
+         });
+      }
    }
 </script>
-
-<svelte:window
-        on:mouseup={mouseUp}
-        on:mousedown={mouseDown}
-        on:mousemove={mouseMove}
-        on:keyup={keyup}
-        on:keydown={keydown}
-/>
 
 <svelte:component this={$components.pickerWrapper} {focused}>
     <!-- svelte-ignore a11y-no-noninteractive-tabindex -->
     <div class=picker
          tabindex=0
          bind:this={pickerEl}
-         on:mousedown|preventDefault|stopPropagation={pickerMouseDown}
-         on:touchstart={touch}
-         on:touchmove|preventDefault|stopPropagation={touch}
-         on:touchend={touch}
-
+         on:pointerdown|preventDefault|stopPropagation={onPointerDown}
+         on:pointermove|preventDefault|stopPropagation={onPointerMove}
+         on:pointerup|preventDefault|stopPropagation={onPointerUp}
          aria-label="saturation and brightness picker (arrow keyboard navigation)"
          aria-valuemin={0}
          aria-valuemax={100}
          aria-valuetext="saturation {pos.x?.toFixed()}%, brightness {pos.y?.toFixed()}%"
+         use:isFocused={focused}
+         use:keyforward={keyStore}
     >
-        <svelte:component this={$components.pickerIndicator} {focused} styles={stylesPickerIndicator} />
+        <svelte:component this={$components.pickerIndicator} focused={$focused} styles={stylesPickerIndicator} />
     </div>
 </svelte:component>
 
