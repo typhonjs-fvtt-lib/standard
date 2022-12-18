@@ -65,12 +65,13 @@
    }
 
    /**
-    * @param {number}    pos -
+    * @param {number}    constraint -
     */
-   function onClick(pos)
+   function onClick(constraint)
    {
-      const size = sliderHorizontal ? sliderEl.getBoundingClientRect().width : sliderEl.getBoundingClientRect().height;
-      const boundedPos = Math.max(0, Math.min(size, pos));
+      const rect = sliderEl.getBoundingClientRect();
+      const size = sliderHorizontal ? rect.width : rect.height;
+      const boundedPos = Math.max(0, Math.min(size, constraint));
 
       $alpha = boundedPos / size;
    }
@@ -137,6 +138,15 @@
          onClick(sliderHorizontal ? event.clientX - rect.left : event.clientY - rect.top);
       }
    }
+
+   /**
+    * @param {WheelEvent}   event -
+    */
+   function onWheel(event)
+   {
+      const newPos = Math.max(0, Math.min(100, pos + (event.deltaY * -0.01)));
+      $alpha = newPos / 100;
+   }
 </script>
 
 <svelte:component this={$components.alphaWrapper}>
@@ -148,6 +158,7 @@
          on:pointerdown|preventDefault|stopPropagation={onPointerDown}
          on:pointermove|preventDefault|stopPropagation={onPointerMove}
          on:pointerup|preventDefault|stopPropagation={onPointerUp}
+         on:wheel|preventDefault|stopPropagation={onWheel}
          aria-label="transparency picker (arrow keyboard navigation)"
          aria-valuemin={0}
          aria-valuemax={100}

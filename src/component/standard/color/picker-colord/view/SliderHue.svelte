@@ -68,14 +68,14 @@
    }
 
    /**
-    * @param {number}    pos -
+    * @param {number}    constraint -
     */
-   function onClick(pos)
+   function onClick(constraint)
    {
       const rect = sliderEl.getBoundingClientRect();
 
       const size = sliderHorizontal ? rect.width : rect.height;
-      const boundedPos = Math.max(0, Math.min(size, pos));
+      const boundedPos = Math.max(0, Math.min(size, constraint));
 
       $hue = (boundedPos / size) * 360;
    }
@@ -142,6 +142,15 @@
          onClick(sliderHorizontal ? event.clientX - rect.left : event.clientY - rect.top);
       }
    }
+
+   /**
+    * @param {WheelEvent}   event -
+    */
+   function onWheel(event)
+   {
+      const newPos = Math.max(0, Math.min(100, pos + (event.deltaY * -0.01)));
+      $hue = (newPos / 100) * 360;
+   }
 </script>
 
 <svelte:component this={$components.sliderWrapper}>
@@ -153,6 +162,7 @@
          on:pointerdown|preventDefault|stopPropagation={onPointerDown}
          on:pointermove|preventDefault|stopPropagation={onPointerMove}
          on:pointerup|preventDefault|stopPropagation={onPointerUp}
+         on:wheel|preventDefault|stopPropagation={onWheel}
          aria-label="hue picker (arrow keyboard navigation)"
          aria-valuemin={0}
          aria-valuemax={360}
