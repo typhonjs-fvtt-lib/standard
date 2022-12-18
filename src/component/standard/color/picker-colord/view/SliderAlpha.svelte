@@ -144,8 +144,10 @@
     */
    function onWheel(event)
    {
-      const newPos = Math.max(0, Math.min(100, pos + (event.deltaY * -0.01)));
-      $alpha = newPos / 100;
+      if (event.deltaY !== 0)
+      {
+         $alpha = Math.max(0, Math.min(1, event.deltaY > 0 ? $alpha + 0.01 : $alpha - 0.01));
+      }
    }
 </script>
 

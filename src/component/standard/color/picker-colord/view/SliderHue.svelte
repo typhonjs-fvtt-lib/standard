@@ -148,8 +148,10 @@
     */
    function onWheel(event)
    {
-      const newPos = Math.max(0, Math.min(100, pos + (event.deltaY * -0.01)));
-      $hue = (newPos / 100) * 360;
+      if (event.deltaY !== 0)
+      {
+         $hue = Math.max(0, Math.min(360, event.deltaY > 0 ? $hue + 1 : $hue - 1));
+      }
    }
 </script>
 
