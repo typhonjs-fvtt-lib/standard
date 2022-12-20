@@ -4,11 +4,22 @@
    export let inputEl = void 0;
 
    const internalState = getContext('#tjs-color-picker-state');
+   const colorState = internalState.colorState;
+
+   /**
+    * Handles opening / closing popup; when opening saves current color on initial open.
+    */
+   function onClick()
+   {
+      if (!internalState.isOpen) { colorState.savePopupColor(); }
+
+      internalState.swapIsOpen();
+   }
 </script>
 
 <div bind:this={inputEl}
      class=tjs-color-picker-input
-     on:click={() => internalState.swapIsOpen()}
+     on:click={onClick}
      role=button
      tabindex=0>
     <div class=tjs-color-picker-input-inner />

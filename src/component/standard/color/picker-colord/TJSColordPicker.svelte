@@ -106,39 +106,61 @@
    let spanEl = void 0;
 
    /**
-    * Special capture handling of keyboard presses for specific actions when in popup mode like `Esc` to reset color
+    * Special capture handling of keydown events for specific actions when in popup mode like `Esc` to reset color
     * to initial state when popped up and `Enter` to close the picker container.
     *
     * @param {KeyboardEvent}    event -
     */
-   function onKeypress(event)
+   function onKeydown(event)
    {
-console.log(`!! TJSColordPicker - onKeypress - 0 - event.key: ${event.key}; event.code: `, event.code);
+      // Early out when not in popup mode.
       if (!$isPopup) { return; }
 
-      if (event.key === 'Enter' && $isPopup)
+      switch (event.code)
       {
-console.log(`!! TJSColordPicker - onKeypress - 1`)
+         case 'Enter':
+            const isOpen = internalState.isOpen;
 
-         const isOpen = internalState.isOpen;
+            // Save initial color when popup opens.
+            if (!isOpen) { colorState.savePopupColor(); }
 
-         internalState.swapIsOpen();
+            internalState.swapIsOpen();
 
-         event.preventDefault();
-         event.stopPropagation();
+            event.preventDefault();
+            event.stopImmediatePropagation();
 
-         if (isOpen)
-         {
-console.log(`!! TJSColordPicker - onKeypress - 2 - inputEl: `, inputEl)
-            inputEl.focus();
-         }
+            // If previously open and now closed focus the picker input element.
+            if (isOpen) { inputEl.focus(); }
+            break;
+
+         case 'Escape':
+            // Reset color to initial value when popped out.
+            if (internalState.isOpen)
+            {
+               const initialPopupColor = colorState.getPopupColor();
+               if (!colord($currentColor).isEqual(initialPopupColor))
+               {
+                  // Reset to initial popup color.
+                  colorState.setColor(initialPopupColor);
+               }
+               else
+               {
+                  // Current color is the same as initial so close popup.
+                  internalState.isOpen = false;
+                  inputEl.focus();
+               }
+
+               event.preventDefault();
+               event.stopImmediatePropagation();
+            }
+            break;
       }
    }
 </script>
 
 <span bind:this={spanEl}
       class=tjs-color-picker
-      on:keypress|capture={onKeypress}
+      on:keydown|capture={onKeydown}
       style:--_tjs-color-picker-current-color-hsl={$hslString}
       style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
       style:--_tjs-color-picker-current-color-hsla={$hslaString}

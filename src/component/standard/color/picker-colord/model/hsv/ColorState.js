@@ -25,6 +25,7 @@ export class ColorState
       format: 'hsl',
       formatType: 'string',
       hue: 0,
+      initialPopupColor: 'hsl(0, 100%, 50%)',
       isDark: false,
       precision: 0,
       hslString: 'hsl(0, 100%, 50%)',
@@ -269,6 +270,16 @@ export class ColorState
    }
 
    /**
+    * Returns initial color when in popup mode and container is openend.
+    *
+    * @returns {string|Object} Initial color before popup.
+    */
+   getPopupColor()
+   {
+      return this.#data.initialPopupColor;
+   }
+
+   /**
     * Sets current color from given color data.
     *
     * @param {object|string}   color - Supported ColorD color format.
@@ -291,6 +302,14 @@ export class ColorState
       {
          console.warn('TJSColordPicker setColor warning: Invalid color; ', color);
       }
+   }
+
+   /**
+    * Saves the current color when in popup mode and picker is initially opened.
+    */
+   savePopupColor()
+   {
+      this.#data.initialPopupColor = this.#data.currentColor;
    }
 
    /**
@@ -573,6 +592,8 @@ class HsvColorParser
  * @property {'object'|'string'} formatType - Output color format type determined from initial color prop or options.
  *
  * @property {number} hue - Current hue value.
+ *
+ * @property {string|object} initialPopupColor - Stores the initial color when in popup mode and picker is opened.
  *
  * @property {boolean} isDark - Is the current color considered dark.
  *

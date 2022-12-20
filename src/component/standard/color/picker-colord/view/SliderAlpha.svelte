@@ -157,7 +157,7 @@
          class=tjs-color-picker-slider
          tabindex=0
          class:horizontal={sliderHorizontal}
-         on:pointerdown|preventDefault|stopPropagation={onPointerDown}
+         on:pointerdown|preventDefault={onPointerDown}
          on:pointermove|preventDefault|stopPropagation={onPointerMove}
          on:pointerup|preventDefault|stopPropagation={onPointerUp}
          on:wheel|preventDefault|stopPropagation={onWheel}

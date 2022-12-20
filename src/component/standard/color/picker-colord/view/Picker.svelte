@@ -161,7 +161,7 @@
     <div class=picker
          tabindex=0
          bind:this={pickerEl}
-         on:pointerdown|preventDefault|stopPropagation={onPointerDown}
+         on:pointerdown|preventDefault={onPointerDown}
          on:pointermove|preventDefault|stopPropagation={onPointerMove}
          on:pointerup|preventDefault|stopPropagation={onPointerUp}
          aria-label="saturation and brightness picker (arrow keyboard navigation)"
