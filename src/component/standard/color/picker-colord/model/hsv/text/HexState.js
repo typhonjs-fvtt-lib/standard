@@ -65,7 +65,7 @@ export class HexState
             efx: rippleFocus(),
             type: 'text',
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {

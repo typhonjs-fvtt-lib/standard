@@ -73,11 +73,11 @@ export class HslState
             min: 0,
             max: 360,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'hue chanel color'
+               label: 'hue channel color'
             }
          },
          {
@@ -88,11 +88,11 @@ export class HslState
             min: 0,
             max: 100,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'saturation chanel color'
+               label: 'saturation channel color'
             }
          },
          {
@@ -103,11 +103,11 @@ export class HslState
             min: 0,
             max: 100,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'luminance chanel color'
+               label: 'luminance channel color'
             }
          }
       ];

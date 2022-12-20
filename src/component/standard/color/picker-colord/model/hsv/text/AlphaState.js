@@ -65,11 +65,11 @@ export class AlphaState
             max: 1,
             step: 0.01,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'transparency chanel color'
+               label: 'transparency channel color'
             }
          }
       }

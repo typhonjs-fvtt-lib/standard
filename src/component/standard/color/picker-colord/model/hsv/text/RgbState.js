@@ -73,11 +73,11 @@ export class RgbState
             min: 0,
             max: 255,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'red chanel color'
+               label: 'red channel color'
             }
          },
          {
@@ -88,11 +88,11 @@ export class RgbState
             min: 0,
             max: 255,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'green chanel color'
+               label: 'green channel color'
             }
          },
          {
@@ -103,11 +103,11 @@ export class RgbState
             min: 0,
             max: 255,
             options: {
-               blurOnEnterKey: true,
+               blurOnEnterKey: false,
                cancelOnEscKey: true
             },
             aria: {
-               label: 'blue chanel color'
+               label: 'blue channel color'
             }
          }
       ];

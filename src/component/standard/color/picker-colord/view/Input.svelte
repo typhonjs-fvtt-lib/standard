@@ -1,13 +1,16 @@
 <script>
    import { getContext } from 'svelte';
 
+   export let inputEl = void 0;
+
    const internalState = getContext('#tjs-color-picker-state');
 </script>
 
-<div class=tjs-color-picker-input
+<div bind:this={inputEl}
+     class=tjs-color-picker-input
      on:click={() => internalState.swapIsOpen()}
-     on:keypress={() => internalState.swapIsOpen()}
-     role=button>
+     role=button
+     tabindex=0>
     <div class=tjs-color-picker-input-inner />
 </div>
 
@@ -33,9 +36,4 @@
         border: var(--tjs-color-picker-input-border, var(--tjs-input-border, 1px solid gray));
         border-radius: var(--tjs-color-picker-input-border-radius, var(--tjs-input-border-radius, 0.25em));
     }
-
-    /*:global(.has-been-tabbed) label:focus-within {*/
-    /*    outline: 2px solid var(--tjs-color-picker-focus-color, red);*/
-    /*    outline-offset: 2px;*/
-    /*}*/
 </style>

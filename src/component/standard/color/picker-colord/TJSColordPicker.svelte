@@ -99,39 +99,46 @@
       colorState.updateExternal($externalStore);
    }
 
+   /** @type {HTMLDivElement} */
+   let inputEl = void 0;
+
    /** @type {HTMLSpanElement} */
    let spanEl = void 0;
 
-   let hasBeenTabbed = false;
-
    /**
-    * @param {KeyboardEvent}    e -
+    * Special capture handling of keyboard presses for specific actions when in popup mode like `Esc` to reset color
+    * to initial state when popped up and `Enter` to close the picker container.
+    *
+    * @param {KeyboardEvent}    event -
     */
-   function keydown(e)
+   function onKeypress(event)
    {
-      if (e.key === 'Tab')
-      {
-         hasBeenTabbed = true;
-      }
-   }
+console.log(`!! TJSColordPicker - onKeypress - 0 - event.key: ${event.key}; event.code: `, event.code);
+      if (!$isPopup) { return; }
 
-   /**
-    * @param {KeyboardEvent}    e -
-    */
-   function keyup(e)
-   {
-      if (e.key === 'Tab' && $isPopup)
+      if (event.key === 'Enter' && $isPopup)
       {
-         internalState.isOpen = spanEl?.contains(document.activeElement);
+console.log(`!! TJSColordPicker - onKeypress - 1`)
+
+         const isOpen = internalState.isOpen;
+
+         internalState.swapIsOpen();
+
+         event.preventDefault();
+         event.stopPropagation();
+
+         if (isOpen)
+         {
+console.log(`!! TJSColordPicker - onKeypress - 2 - inputEl: `, inputEl)
+            inputEl.focus();
+         }
       }
    }
 </script>
 
-<svelte:window on:keydown={keydown} on:keyup={keyup}/>
-
 <span bind:this={spanEl}
       class=tjs-color-picker
-      class:has-been-tabbed={hasBeenTabbed}
+      on:keypress|capture={onKeypress}
       style:--_tjs-color-picker-current-color-hsl={$hslString}
       style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
       style:--_tjs-color-picker-current-color-hsla={$hslaString}
@@ -140,7 +147,7 @@
       use:applyStyles={styles}>
     <input name={$inputName} type=hidden value={$currentColorString}/>
     {#if $isPopup}
-        <Input />
+        <Input bind:inputEl />
     {/if}
     <MainLayout />
 </span>
@@ -148,11 +155,5 @@
 <style>
     span {
         position: relative;
-    }
-
-    /* TODO: Refactor ----------------------------------------------------------------------------------------------- */
-    .tjs-color-picker.has-been-tabbed :global(.text-input button:focus-visible) {
-        outline: 2px solid var(--tjs-color-picker-focus-color, red);
-        outline-offset: 2px;
     }
 </style>

@@ -37,7 +37,7 @@
         tabindex=0
         class:lock-text-format={$lockTextFormat}
         on:click|preventDefault={onClick}
-        on:keydown|preventDefault={onKeydown}>
+        on:keydown={onKeydown}>
 
       {#each $activeTextState.inputData as input (input.pickerLabel)}
          <span>{input.pickerLabel}</span>
