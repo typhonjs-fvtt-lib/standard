@@ -15,8 +15,13 @@
    import { colord }            from '#runtime/color/colord';
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
+
    import { isWritableStore }   from '@typhonjs-svelte/lib/store';
-   import { isObject }          from '@typhonjs-svelte/lib/util';
+
+   import {
+      ClipboardAccess,
+      isObject }                from '@typhonjs-svelte/lib/util';
+
 
    import { InternalState }     from './model/InternalState.js';
 
@@ -106,14 +111,71 @@
    let spanEl = void 0;
 
    /**
-    * Special capture handling of keydown events for specific actions when in popup mode like `Esc` to reset color
-    * to initial state when popped up and `Enter` to close the picker container.
+    * Copy `currentColorString` to clipboard.
+    *
+    * TODO Eventbus: If / when an app eventbus is added trigger UI notification message.
+    *
+    * @returns {Promise<void>}
+    */
+   async function handleCopy()
+   {
+      const copyColor = $currentColorString;
+      if (typeof copyColor === 'string')
+      {
+         await ClipboardAccess.writeText(copyColor);
+      }
+   }
+
+   /**
+    * Handle pasting any valid color from secure context (localhost / HTTPS).
+    *
+    * @returns {Promise<void>}
+    */
+   async function handlePaste()
+   {
+      const newColor = await ClipboardAccess.readText();
+      if (colord(newColor).isValid()) { colorState.setColor(newColor); }
+   }
+
+   /**
+    * Special capture handling of keydown events for specific actions.
+    *
+    * Support copy, cut, paste.
+    *
+    * When in popup mode like `Esc` to reset color to initial state when popped up and `Enter` to close the picker
+    * container.
     *
     * @param {KeyboardEvent}    event -
     */
    function onKeydown(event)
    {
-      // Early out when not in popup mode.
+      // Handle cut / copy / paste directly to circumvent external key listeners.
+      switch(event.code)
+      {
+         // Handle copying current color to clipboard.
+         case 'KeyC':
+         case 'KeyX':
+            if (event.ctrlKey || event.metaKey)
+            {
+               handleCopy();
+
+               event.preventDefault();
+               event.stopImmediatePropagation();
+            }
+            break;
+
+         case 'KeyV':
+            if (event.ctrlKey || event.metaKey)
+            {
+               handlePaste();
+
+               event.preventDefault();
+               event.stopImmediatePropagation();
+            }
+            break;
+      }
+
+      // The handling below is for popup mode, so exit now otherwise.
       if (!$isPopup) { return; }
 
       switch (event.code)
