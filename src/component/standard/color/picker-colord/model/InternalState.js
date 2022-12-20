@@ -103,9 +103,9 @@ export class InternalState
 
       // Internal data -----------------------------------------------------------------------------------------------
 
-      this.#internalData.isOpen = !this.#externalData.isPopup;
-
       this.#internalData.hasAddons = this.#externalData.hasAddons && this.#addonState.size > 0;
+
+      this.#internalData.isOpen = !this.#externalData.isPopup;
 
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
@@ -124,8 +124,8 @@ export class InternalState
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
-         isOpen: propertyStore(internalData, 'isOpen'),
          hasAddons: propertyStore(internalData, 'hasAddons'),
+         isOpen: propertyStore(internalData, 'isOpen')
       }
 
       this.#colorState = new ColorState(this, color, opts);
