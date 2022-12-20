@@ -4,18 +4,35 @@
    import { TJSInput }   from '../../../form/input/index.js'
 
    const internalState = getContext('#tjs-color-picker-state');
+   const colorState = internalState.colorState;
 
-   const { hasAlpha, lockTextFormat } = internalState.stores;
-   const { textState } = internalState.colorState.stores;
+   const { hasAlpha, isOpen, isPopup, lockTextFormat } = internalState.stores;
+   const { textState } = colorState.stores;
 
    const activeTextState = textState.activeState;
    const { alpha } = textState.alpha.inputData;
 
+   /**
+    * When in popout mode and not open reset active text state to the current color format.
+    */
+   $: if ($isPopup && !$isOpen)
+   {
+      activeTextState.setFormat(colorState.format);
+   }
+
+   /**
+    * Advances color format on click.
+    */
    function onClick()
    {
       if (!$lockTextFormat) { activeTextState.next(); }
    }
 
+   /**
+    * Advances color format on `Space` key down.
+    *
+    * @param {KeyboardEvent}  event -
+    */
    function onKeydown(event)
    {
       if (!$lockTextFormat && event.code === 'Space') { activeTextState.next(); }

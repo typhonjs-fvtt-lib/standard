@@ -64,6 +64,9 @@ export class TextState
       this.updateColor(colorState.hsv);
    }
 
+   /**
+    * @returns {ActiveTextState}
+    */
    get activeState()
    {
       return this.#activeTextState;
