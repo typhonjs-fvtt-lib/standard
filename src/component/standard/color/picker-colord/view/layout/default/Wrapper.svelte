@@ -1,6 +1,7 @@
- <script>
+<script>
    import {
       getContext,
+      onMount,
       setContext }  from 'svelte';
 
    import {
@@ -19,17 +20,23 @@
 
    const {
       components,
+      firstFocusEl,
       hasAddons,
       hasAlpha,
       hasButtonBar,
-      hasTextInput,
-      paddingOffset
+      hasTextInput
    } = internalState.stores;
+
+   /** @type {HTMLElement} */
+   let pickerEl;
+
+   // Set first focusable element for cyclic focus traversal in popup mode.
+   onMount(() => $firstFocusEl = pickerEl);
 </script>
 
 <div class=tjs-color-picker-wrapper>
     <section class=main>
-        <Picker />
+        <Picker bind:pickerEl />
         <SliderHue />
         {#if $hasAlpha}
             <SliderAlpha />
@@ -48,6 +55,7 @@
         {/if}
     </section>
 </div>
+<svelte:component this={$components.focusWrap} />
 
 <style>
     .main {

@@ -51,6 +51,7 @@
 
    const {
       components,
+      firstFocusEl,
       inputName,
       isPopup,
       padding,
@@ -105,6 +106,9 @@
    }
 
    /** @type {HTMLDivElement} */
+   let containerEl = void 0;
+
+   /** @type {HTMLDivElement} */
    let inputEl = void 0;
 
    /** @type {HTMLSpanElement} */
@@ -143,7 +147,8 @@
     * Support copy, cut, paste.
     *
     * When in popup mode like `Esc` to reset color to initial state when popped up and `Enter` to close the picker
-    * container.
+    * container. `Shift-Tab` when the `firstFocusEl` is the active element the last focusable element that is not
+    * `FocusWrap` is focused.
     *
     * @param {KeyboardEvent}    event -
     */
@@ -216,6 +221,27 @@
                event.stopImmediatePropagation();
             }
             break;
+
+         case 'Tab':
+            // If the popup is open and `Shift-Tab` is pressed and the active element is the first focus element
+            // or container element then search for the last focusable element that is not `FocusWrap` to traverse
+            // internally in the container.
+            if (internalState.isOpen && event.shiftKey &&
+             (containerEl === document.activeElement || $firstFocusEl === document.activeElement))
+            {
+               const allFocusable = spanEl.querySelectorAll('[tabindex]:not([tabindex="-1"])');
+
+               if (allFocusable.length > 2)
+               {
+                  // Select two elements back as the last focusable element is `FocusWrap`.
+                  const lastFocusable = allFocusable[allFocusable.length - 2];
+                  lastFocusable.focus();
+               }
+
+               event.preventDefault();
+               event.stopImmediatePropagation();
+            }
+            break;
       }
    }
 </script>
@@ -233,7 +259,7 @@
     {#if $isPopup}
         <Input bind:inputEl />
     {/if}
-    <MainLayout />
+    <MainLayout bind:containerEl />
 </span>
 
 <style>

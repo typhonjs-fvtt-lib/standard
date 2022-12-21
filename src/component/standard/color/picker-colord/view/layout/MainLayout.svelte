@@ -3,6 +3,8 @@
       getContext,
       onDestroy } from 'svelte';
 
+   export let containerEl = void 0;
+
    const internalState = getContext('#tjs-color-picker-state');
 
    const {
@@ -11,9 +13,13 @@
       isPopup
    } = internalState.stores;
 
-   let containerEl;
+   $: if ($isPopup && $isOpen && containerEl)
+   {
+      document.body.addEventListener('pointerdown', onPointerDown);
 
-   $: if ($isPopup && $isOpen && containerEl) { document.body.addEventListener('pointerdown', onPointerDown); }
+      // Focus containerEl on next tick so that potential tab navigation in popup mode can be traversed in reverse.
+      setTimeout(() => containerEl.focus(), 0);
+   }
 
    // Sanity case to remove listener when `options.isPopup` state changes externally.
    $: if (!$isPopup) { document.body.removeEventListener('pointerdown', onPointerDown); }

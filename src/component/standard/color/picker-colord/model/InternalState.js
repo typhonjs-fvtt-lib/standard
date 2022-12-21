@@ -124,6 +124,7 @@ export class InternalState
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
+         firstFocusEl: writable(void 0),
          hasAddons: propertyStore(internalData, 'hasAddons'),
          isOpen: propertyStore(internalData, 'isOpen')
       }
@@ -459,6 +460,8 @@ export class InternalState
  *
  * @property {import('svelte').SvelteComponent} [alphaWrapper] - Alpha slider wrapper.
  *
+ * @property {import('svelte').SvelteComponent} [focusWrap] - When in popup model advances focus to prop element.
+ *
  * @property {import('svelte').SvelteComponent} [pickerIndicator] - Picker indicator.
  *
  * @property {import('svelte').SvelteComponent} [pickerWrapper] - Picker wrapper.
@@ -497,6 +500,8 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<string>} width - See {@link TJSColordPickerOptions.width}
  *
+ *
+ * @property {import('svelte/store').Writable<boolean>} firstFocusEl - Stores first tab / focus traversable element.
  *
  * @property {import('svelte/store').Writable<boolean>} hasAddons - See {@link PickerInternalData.hasAddons}
  *

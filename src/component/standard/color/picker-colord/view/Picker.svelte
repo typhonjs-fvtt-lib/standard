@@ -10,6 +10,9 @@
 
    import { easeInOutSin }  from '../util/transition.js';
 
+   /** @type {HTMLDivElement} */
+   export let pickerEl = void 0;
+
    const internalState = getContext('#tjs-color-picker-state');
    const constraint = getContext('#tjs-color-picker-constraint');
 
@@ -24,9 +27,6 @@
     * @type {KeyStore}
     */
    const keyStore = new KeyStore(['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'], { preventDefault: true });
-
-   /** @type {HTMLDivElement} */
-   let pickerEl = void 0;
 
    /** @type {boolean} */
    let isPointerDown = false;
