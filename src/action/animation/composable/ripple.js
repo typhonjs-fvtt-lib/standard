@@ -15,7 +15,8 @@ import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
  *
  * @param {string}   [opts.background='rgba(255, 255, 255, 0.7)'] - A valid CSS background attribute.
  *
- * @param {Iterable<string>}  [opts.events=['click']] - DOM event to bind element to respond with the ripple effect.
+ * @param {Iterable<string>}  [opts.events=['click', 'keyup']] - DOM event to bind element to respond with the ripple
+ *                                                                  effect.
  *
  * @param {string}   [opts.keyCode='Enter'] - Key code to trigger for any applicable key events.
  *
@@ -23,7 +24,7 @@ import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
  *
  * @returns Function - Actual action.
  */
-export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', events = ['click', 'keydown'],
+export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', events = ['click', 'keyup'],
  keyCode = 'Enter', debounce } = {})
 {
    return (element) =>
@@ -91,7 +92,7 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
 
       for (const event of events)
       {
-         if (['keydown', 'keyup', 'keypress'].includes(event))
+         if (['keydown', 'keyup'].includes(event))
          {
             element.addEventListener(event, keyEventFn);
          }
@@ -106,7 +107,7 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
          {
             for (const event of events)
             {
-               if (['keydown', 'keyup', 'keypress'].includes(event))
+               if (['keydown', 'keyup'].includes(event))
                {
                   element.removeEventListener(event, keyEventFn);
                }
