@@ -1,6 +1,10 @@
 <script>
    /**
+    * --tjs-anchor-text-shadow-focus-hover: system default
+    * --tjs-comp-outline-focus-visible: undefined; global replacement for focus-visible outline.
+    *
     * --tjs-button-background
+    * --tjs-button-background-focus
     * --tjs-button-background-hover
     * --tjs-button-background-selected
     * --tjs-button-border
@@ -8,27 +12,36 @@
     * --tjs-button-border-width
     * --tjs-button-clip-path
     * --tjs-button-clip-path-hover
-    * --tjs-button-clip-path-selected
     * --tjs-button-cursor
     * --tjs-button-diameter
+    * --tjs-button-outline-focus
+    * --tjs-button-text-shadow-focus: undefined
+    * --tjs-button-text-shadow-hover: undefined
     * --tjs-button-transition
     *
     * --tjs-icon-button-background
+    * --tjs-icon-button-background-focus
     * --tjs-icon-button-background-hover
     * --tjs-icon-button-background-selected
     * --tjs-icon-button-border
     * --tjs-icon-button-border-radius
     * --tjs-icon-button-border-width
     * --tjs-icon-button-clip-path
+    * --tjs-icon-button-clip-path-focus
     * --tjs-icon-button-clip-path-hover
-    * --tjs-icon-button-clip-path-selected
     * --tjs-icon-button-cursor
     * --tjs-icon-button-diameter
+    * --tjs-icon-button-outline-focus
+    * --tjs-icon-button-text-shadow-focus: undefined
+    * --tjs-icon-button-text-shadow-hover: undefined
     * --tjs-icon-button-transition
     */
-   import { applyStyles }     from '@typhonjs-svelte/lib/action';
-   import { isWritableStore } from '@typhonjs-svelte/lib/store';
-   import { localize }        from '@typhonjs-svelte/lib/helper';
+   import { createEventDispatcher } from 'svelte';
+
+   import { applyStyles }           from '@typhonjs-svelte/lib/action';
+   import { isWritableStore }       from '@typhonjs-svelte/lib/store';
+   import { localize }              from '@typhonjs-svelte/lib/helper';
+   import { isObject }              from '@typhonjs-svelte/lib/util';
 
    export let button = void 0;
    export let icon = void 0;
@@ -37,32 +50,37 @@
    export let store = void 0;
    export let styles = void 0;
    export let efx = void 0;
-   export let onClick = void 0;
+   export let keyCode = void 0;
+   export let onPress = void 0;
    export let onClose = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
 
-   $: icon = typeof button === 'object' && typeof button.icon === 'string' ? button.icon :
-    typeof icon === 'string' ? icon : '';
-   $: title = typeof button === 'object' && typeof button.title === 'string' ? button.title :
-    typeof title === 'string' ? title : '';
-   $: titleSelected = typeof button === 'object' && typeof button.titleSelected === 'string' ? button.titleSelected :
-    typeof titleSelected === 'string' ? titleSelected : '';
-   $: store = typeof button === 'object' && isWritableStore(button.store) ? button.store : isWritableStore(store) ?
-    store : void 0;
-   $: styles = typeof button === 'object' && typeof button.styles === 'object' ? button.styles :
-    typeof styles === 'object' ? styles : void 0;
-   $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :
-    typeof efx === 'function' ? efx : () => {};
+   const dispatch = createEventDispatcher();
 
-   $: onClick = typeof button === 'object' && typeof button.onClick === 'function' ? button.onClick :
-    typeof onClick === 'function' ? onClick : void 0;
-   $: onClose = typeof button === 'object' && typeof button.onClose === 'function' ? button.onClose :
+   $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
+    typeof icon === 'string' ? icon : '';
+   $: title = isObject(button) && typeof button.title === 'string' ? button.title :
+    typeof title === 'string' ? title : '';
+   $: titleSelected = isObject(button) && typeof button.titleSelected === 'string' ? button.titleSelected :
+    typeof titleSelected === 'string' ? titleSelected : '';
+   $: store = isObject(button) && isWritableStore(button.store) ? button.store : isWritableStore(store) ?
+    store : void 0;
+   $: styles = isObject(button) && typeof button.styles === 'object' ? button.styles :
+    typeof styles === 'object' ? styles : void 0;
+   $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
+    typeof efx === 'function' ? efx : () => {};
+   $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
+
+   $: onPress = isObject(button) && typeof button.onPress === 'function' ? button.onPress :
+    typeof onPress === 'function' ? onPress : void 0;
+   $: onClose = isObject(button) && typeof button.onClose === 'function' ? button.onClose :
     typeof onClose === 'function' ? onClose : void 0;
 
-   $: onClosePropagate = typeof button === 'object' && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
+   $: onClosePropagate = isObject(button) && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false;
-   $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
+   $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
    let selected = false;
@@ -77,7 +95,9 @@
       selected = !selected;
       if (store) { store.set(selected); }
 
-      if (typeof onClick === 'function') { onClick(selected); }
+      if (typeof onPress === 'function') { onPress(selected); }
+
+      dispatch('press', { selected });
 
       if (!onClickPropagate)
       {
@@ -117,14 +137,57 @@
          event.stopPropagation();
       }
    }
+
+   /**
+    * Consume / stop propagation of key down when key codes match.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onKeydown(event)
+   {
+      if (event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * Handle press event if key codes match.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onKeyup(event)
+   {
+      if (event.code === keyCode)
+      {
+         selected = !selected;
+         if (store) { store.set(selected); }
+
+         if (typeof onPress === 'function') { onPress(selected); }
+
+         dispatch('press', { selected });
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <div on:click={onClickDiv}
      on:close={onCloseHandler}
      title={localize(titleCurrent)}
-     use:applyStyles={styles}
-     role=presentation>
-   <a on:click={onClickHandler} use:efx class:selected role=presentation>
+     use:applyStyles={styles}>
+   <a class:selected
+      on:click={onClickHandler}
+      on:keydown={onKeydown}
+      on:keyup={onKeyup}
+      on:click
+      role=button
+      tabindex=0
+      use:efx>
       <i class={icon} class:selected></i>
    </a>
    {#if selected}
@@ -158,11 +221,23 @@
       width: 100%;
       height: 100%;
       transition: var(--tjs-icon-button-transition, var(--tjs-button-transition));
+      text-decoration: none;
+   }
+
+   a:focus {
+      text-shadow: var(--tjs-icon-button-text-shadow-focus, var(--tjs-button-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover)));
+      clip-path: var(--tjs-icon-button-clip-path-focus, var(--tjs-icon-button-clip-path, none));
+   }
+
+   a:focus-visible {
+      background: var(--tjs-icon-button-background-focus, var(--tjs-button-background-focus));
+      outline: var(--tjs-icon-button-outline-focus, var(--tjs-button-outline-focus, var(--tjs-comp-outline-focus-visible, revert)));
    }
 
    a:hover {
       background: var(--tjs-icon-button-background-hover, var(--tjs-button-background-hover));
       clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-hover, none)));
+      text-shadow: var(--tjs-icon-button-text-shadow-hover, var(--tjs-button-text-shadow-hover, var(--tjs-anchor-text-shadow-focus-hover)));
    }
 
    a.selected {
@@ -176,7 +251,7 @@
       align-items: center;
       width: 100%;
       height: 100%;
-
+      border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
       transform: translateZ(1px);
    }
 </style>
