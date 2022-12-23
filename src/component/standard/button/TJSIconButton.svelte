@@ -12,6 +12,7 @@
     * --tjs-button-border-width
     * --tjs-button-clip-path
     * --tjs-button-clip-path-hover
+    * --tjs-button-clip-path-focus
     * --tjs-button-cursor
     * --tjs-button-diameter
     * --tjs-button-outline-focus
@@ -71,7 +72,7 @@
    /**
     * Handle click event.
     *
-    * @param {KeyboardEvent}    event -
+    * @param {MouseEvent}    event -
     */
    function onClick(event)
    {
@@ -120,13 +121,14 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div use:applyStyles={styles} title={localize(title)}>
+<div class=tjs-icon-button use:applyStyles={styles}>
     <a on:click={onClick}
        on:keydown={onKeydown}
        on:keyup={onKeyup}
        on:click
        role=button
        tabindex=0
+       title={localize(title)}
        use:efx>
         <i class={icon}></i>
     </a>
@@ -163,7 +165,7 @@
 
     a:focus {
         text-shadow: var(--tjs-icon-button-text-shadow-focus, var(--tjs-button-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover)));
-        clip-path: var(--tjs-icon-button-clip-path-focus, var(--tjs-icon-button-clip-path, none));
+        clip-path: var(--tjs-icon-button-clip-path-focus, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-focus, var(--tjs-button-clip-path, none))));
     }
 
     a:focus-visible {
@@ -173,7 +175,7 @@
 
     a:hover {
         background: var(--tjs-icon-button-background-hover, var(--tjs-button-background-hover));
-        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-hover, none)));
+        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-hover, var(--tjs-button-clip-path, none))));
         text-shadow: var(--tjs-icon-button-text-shadow-hover, var(--tjs-button-text-shadow-hover, var(--tjs-anchor-text-shadow-focus-hover)));
     }
 
