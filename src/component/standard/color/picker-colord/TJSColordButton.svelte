@@ -1,53 +1,75 @@
 <script>
    /**
+    * --tjs-anchor-text-shadow-focus-hover: system default
+    * --tjs-comp-outline-focus-visible: undefined; global replacement for focus-visible outline.
+    *
     * --tjs-button-background
+    * --tjs-button-background-focus
     * --tjs-button-background-hover
     * --tjs-button-background-selected
     * --tjs-button-border
     * --tjs-button-border-radius
     * --tjs-button-border-width
+    * --tjs-button-clip-path
+    * --tjs-button-clip-path-focus
     * --tjs-button-clip-path-hover
     * --tjs-button-cursor
     * --tjs-button-diameter
+    * --tjs-button-outline-focus
+    * --tjs-button-text-shadow-focus: undefined
+    * --tjs-button-text-shadow-hover: undefined
     * --tjs-button-transition
     *
     * --tjs-icon-button-background
+    * --tjs-icon-button-background-focus
     * --tjs-icon-button-background-hover
     * --tjs-icon-button-background-selected
     * --tjs-icon-button-border
     * --tjs-icon-button-border-radius
     * --tjs-icon-button-border-width
     * --tjs-icon-button-clip-path
+    * --tjs-icon-button-clip-path-focus
     * --tjs-icon-button-clip-path-hover
     * --tjs-icon-button-cursor
     * --tjs-icon-button-diameter
+    * --tjs-icon-button-outline-focus
+    * --tjs-icon-button-text-shadow-focus: undefined
+    * --tjs-icon-button-text-shadow-hover: undefined
     * --tjs-icon-button-transition
     */
-   import { applyStyles }     from '@typhonjs-svelte/lib/action';
-   import { localize }        from '@typhonjs-svelte/lib/helper';
+   import { createEventDispatcher } from 'svelte';
 
-   import { colord }          from '#runtime/color/colord';
+   import { applyStyles }           from '@typhonjs-svelte/lib/action';
+   import { localize }              from '@typhonjs-svelte/lib/helper';
+   import { isObject }              from '@typhonjs-svelte/lib/util';
+
+   import { colord }                from '#runtime/color/colord';
 
    export let button = void 0;
    export let color = void 0;
    export let title = void 0;
    export let styles = void 0;
    export let efx = void 0;
-   export let onClick = void 0;
+   export let keyCode = void 0;
+   export let onPress = void 0;
    export let onClickPropagate = void 0;
    export let onContextClick = void 0;
 
-   $: title = typeof button === 'object' && typeof button.title === 'string' ? button.title :
+   const dispatch = createEventDispatcher();
+
+   $: title = isObject(button) && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : '';
-   $: styles = typeof button === 'object' && typeof button.styles === 'object' ? button.styles :
+   $: styles = isObject(button) && typeof button.styles === 'object' ? button.styles :
     typeof styles === 'object' ? styles : void 0;
-   $: efx = typeof button === 'object' && typeof button.efx === 'function' ? button.efx :
+   $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
-   $: onClick = typeof button === 'object' && typeof button.onClick === 'function' ? button.onClick :
-    typeof onClick === 'function' ? onClick : void 0;
-   $: onClickPropagate = typeof button === 'object' && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : true;
-   $: onContextClick = typeof button === 'object' && typeof button.onContextClick === 'function' ? button.onContextClick :
+   $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
+   $: onPress = isObject(button) && typeof button.onPress === 'function' ? button.onPress :
+    typeof onPress === 'function' ? onPress : void 0;
+   $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
+    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
+   $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
     typeof onContextClick === 'function' ? onContextClick : void 0;
 
    let hslColor;
@@ -57,9 +79,16 @@
       hslColor = colordInstance.isValid() ? colordInstance.toHslString() : 'transparent';
    }
 
-   function onClickHandler(event)
+   /**
+    * Handle click event.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onClick(event)
    {
-      if (typeof onClick === 'function') { onClick(hslColor); }
+      if (typeof onPress === 'function') { onPress(hslColor); }
+
+      dispatch('press', { color: hslColor });
 
       if (!onClickPropagate)
       {
@@ -79,29 +108,55 @@
       }
    }
 
-   function onKeyDownHandler(event)
+   /**
+    * Consume / stop propagation of key down when key codes match.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onKeydown(event)
    {
-      if (event.code === 'Enter')
+      if (event.code === keyCode)
       {
-         if (typeof onClick === 'function') { onClick(hslColor); }
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * Handle press event if key codes match.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onKeyup(event)
+   {
+      if (event.code === keyCode)
+      {
+         if (typeof onPress === 'function') { onPress(hslColor); }
+
+         dispatch('press', { color: hslColor });
+
+         event.preventDefault();
+         event.stopPropagation();
       }
    }
 </script>
 
 <div class=tjs-color-button
-     on:click
-     on:contextmenu
-     on:keydown
-     on:click={onClickHandler}
-     on:contextmenu={onContextClickHandler}
-     on:keydown|preventDefault={onKeyDownHandler}
      use:applyStyles={styles}
      title={localize(title)}
-     style:--tjs-icon-button-background={hslColor}
-     role=button
-     >
-    <div class=tjs-color-button-inner use:efx />
-    <slot />
+     style:--tjs-icon-button-background={hslColor}>
+    <div class=tjs-color-button-inner
+         on:click={onClick}
+         on:contextmenu={onContextClickHandler}
+         on:keydown={onKeydown}
+         on:keyup={onKeyup}
+         on:click
+         on:contextmenu
+         role=button
+         tabindex=0
+         use:efx>
+        <slot />
+    </div>
 </div>
 
 <style>
@@ -123,6 +178,7 @@
 
         clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
 
+        transition: var(--tjs-icon-button-transition, var(--tjs-button-transition));
         transform-style: preserve-3d;
     }
 
@@ -139,8 +195,14 @@
         z-index: 0;
     }
 
+    .tjs-color-button:focus {
+        text-shadow: var(--tjs-icon-button-text-shadow-focus, var(--tjs-button-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover)));
+        clip-path: var(--tjs-icon-button-clip-path-focus, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-focus, var(--tjs-button-clip-path, none))));
+    }
+
     .tjs-color-button:hover {
-        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path-hover, var(--tjs-button-clip-path-hover, none)));
+        clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-hover, var(--tjs-button-clip-path, none))));
+        text-shadow: var(--tjs-icon-button-text-shadow-hover, var(--tjs-button-text-shadow-hover, var(--tjs-anchor-text-shadow-focus-hover)));
     }
 
     .tjs-color-button-inner {
@@ -151,5 +213,9 @@
         border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
 
         transform: translateZ(1px);
+    }
+
+    .tjs-color-button-inner:focus-visible {
+        outline: var(--tjs-icon-button-outline-focus, var(--tjs-button-outline-focus, var(--tjs-comp-outline-focus-visible, revert)));
     }
 </style>

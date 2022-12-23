@@ -12,7 +12,7 @@
     <div class=tjs-color-picker-addons>
         {#each $addOnState as addOn (addOn.id)}
             <section>
-                <TJSSvgFolder folder={addOn.folderData} />
+                <TJSSvgFolder folder={addOn.folderData} keyCode={'Space'} />
             </section>
         {/each}
     </div>

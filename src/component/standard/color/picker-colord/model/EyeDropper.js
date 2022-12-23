@@ -24,7 +24,8 @@ export class EyeDropper
    static buttonData(colorState) {
       return {
          icon: 'fas fa-eye-dropper',
-         onClick: async () =>
+         keyCode: 'Space',
+         onPress: async () =>
          {
             try
             {

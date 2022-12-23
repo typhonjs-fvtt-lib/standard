@@ -26,27 +26,29 @@
     *
     * TODO Eventbus: If / when an app eventbus is added trigger UI notification message
     */
-   function onClick()
+   function onPress()
    {
       ClipboardAccess.writeText($currentColorString);
    }
 </script>
 
 <section>
-    <TJSColordButton color={$currentColorString}
-                     efx={ripple()}
-                     on:click={onClick} />
+    <TJSColordButton on:press={onPress}
+                     color={$currentColorString}
+                     efx={ripple({ keyCode: 'Space' })}
+                     keyCode={'Space'}
+    />
 
     {#if $hasEyeDropper}
-        <TJSIconButton button={EyeDropper.buttonData(internalState.colorState)} efx={ripple()} />
+        <TJSIconButton button={EyeDropper.buttonData(internalState.colorState)} efx={ripple({ keyCode: 'Space' })} />
     {/if}
 
     {#if $hasAddons}
         {#each $buttonState as button}
             {#if button.isToggle}
-                <TJSToggleIconButton {button} efx={ripple()} />
+                <TJSToggleIconButton {button} efx={ripple({ keyCode: 'Space' })} keyCode={'Space'} />
             {:else}
-                <TJSIconButton {button} efx={ripple()} />
+                <TJSIconButton {button} efx={ripple({ keyCode: 'Space' })} keyCode={'Space'} />
             {/if}
         {/each}
     {/if}

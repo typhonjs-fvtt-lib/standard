@@ -18,14 +18,11 @@
         box-sizing: border-box;
         box-shadow: 0 0 4px black, inset 0 0 4px black;
 
-        outline-color:transparent;
-        outline-style: solid;
-
         transition: outline 0.2s ease-in-out;
     }
 
     .tjs-picker-indicator.focused {
-        outline-color: var(--tjs-color-picker-focus-color, red);
+        outline: var(--tjs-color-picker-outline-focus, var(--tjs-comp-outline-focus-visible, 2px solid red));
     }
 
     @container tjs-color-picker-container (min-width: 0) {

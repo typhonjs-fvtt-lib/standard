@@ -160,6 +160,9 @@
          // Handle copying current color to clipboard.
          case 'KeyC':
          case 'KeyX':
+            // Note: Do not perform action if the active element is TJSInput.
+            if (document.activeElement?.classList.contains('tjs-input')) { break; }
+
             if (event.ctrlKey || event.metaKey)
             {
                handleCopy();
@@ -172,6 +175,9 @@
          case 'KeyV':
             if (event.ctrlKey || event.metaKey)
             {
+               // Note: Do not perform action if the active element is TJSInput.
+               if (document.activeElement?.classList.contains('tjs-input')) { break; }
+
                handlePaste();
 
                event.preventDefault();
@@ -222,6 +228,13 @@
             }
             break;
 
+         case 'Space':
+            // Capture any space key from propagating; space is used in popup mode to select buttons.
+            event.preventDefault();
+            event.stopPropagation();
+
+            break;
+
          case 'Tab':
             // If the popup is open and `Shift-Tab` is pressed and the active element is the first focus element
             // or container element then search for the last focusable element that is not `FocusWrap` to traverse
@@ -248,7 +261,7 @@
 
 <span bind:this={spanEl}
       class=tjs-color-picker
-      on:keydown|capture={onKeydown}
+      on:keydown={onKeydown}
       style:--_tjs-color-picker-current-color-hsl={$hslString}
       style:--_tjs-color-picker-current-color-hsl-hue={$hslHueString}
       style:--_tjs-color-picker-current-color-hsla={$hslaString}

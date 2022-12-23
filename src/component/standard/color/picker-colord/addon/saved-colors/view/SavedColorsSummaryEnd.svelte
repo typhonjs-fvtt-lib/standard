@@ -13,14 +13,14 @@
 
    const buttonAdd = {
       icon: 'fas fa-plus',
-      efx: ripple(),
-      onClickPropagate: false   // Necessary to capture click for Firefox.
+      efx: ripple({ keyCode: 'Space' }),
+      keyCode: 'Space'
    };
 
    const buttonDeleteAll = {
       icon: 'fas fa-trash',
-      efx: ripple(),
-      onClickPropagate: false   // Necessary to capture click for Firefox.
+      efx: ripple({ keyCode: 'Space' }),
+      keyCode: 'Space'
    };
 
    function onAdd()
@@ -44,8 +44,8 @@
 </script>
 
 <section bind:this={sectionEl}>
-    <TJSIconButton button={buttonAdd} on:click={onAdd} />
-    <TJSIconButton button={buttonDeleteAll} on:click={onDeleteAll} />
+    <TJSIconButton button={buttonAdd} on:press={onAdd} />
+    <TJSIconButton button={buttonDeleteAll} on:press={onDeleteAll} />
 </section>
 
 <style>

@@ -1,6 +1,8 @@
 <script>
    import { getContext }    from 'svelte';
 
+   import { ripple }        from '@typhonjs-fvtt/svelte-standard/action';
+
    import TJSColordButton   from '../../../TJSColordButton.svelte';
 
    const internalState = getContext('#tjs-color-picker-state');
@@ -12,8 +14,10 @@
 <section>
     {#each $savedColorState as color (color)}
         <TJSColordButton {color}
-                         on:click={() => colorState.setColor(color)}
-                         on:contextmenu={() => savedColorState.deleteColor(color)} />
+                         on:press={() => colorState.setColor(color)}
+                         on:contextmenu={() => savedColorState.deleteColor(color)}
+                         efx={ripple({ keyCode: 'Space' })}
+                         keyCode={'Space'} />
     {/each}
 </section>
 

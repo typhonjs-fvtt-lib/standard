@@ -29,13 +29,19 @@
    }
 
    /**
-    * Advances color format on `Space` key down.
+    * Advances color format on `Space` key up.
     *
     * @param {KeyboardEvent}  event -
     */
-   function onKeydown(event)
+   function onKeyup(event)
    {
-      if (!$lockTextFormat && event.code === 'Space') { activeTextState.next(); }
+      if (!$lockTextFormat && event.code === 'Space')
+      {
+         activeTextState.next();
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 </script>
 
@@ -54,7 +60,7 @@
         tabindex=0
         class:lock-text-format={$lockTextFormat}
         on:click|preventDefault={onClick}
-        on:keydown={onKeydown}>
+        on:keyup={onKeyup}>
 
       {#each $activeTextState.inputData as input (input.pickerLabel)}
          <span>{input.pickerLabel}</span>
@@ -76,6 +82,10 @@
 
        cursor: pointer;
        text-align: center;
+    }
+
+    .input-attributes:focus-visible {
+       outline: var(--tjs-color-picker-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
     }
 
     .input-attributes.lock-text-format {
