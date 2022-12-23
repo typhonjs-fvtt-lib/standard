@@ -43,6 +43,7 @@ cssVariables.setProperties({
  */
 
 cssVariables.setProperties({
+   '--tjs-anchor-text-shadow-focus-hover': '0 0 8px var(--color-shadow-primary)',
    '--tjs-action-ripple-background': 'rgba(0, 0, 0, 0.35)'
 }, false);
 
@@ -50,12 +51,13 @@ cssVariables.setProperties({
 
 cssVariables.setProperties({
    '--tjs-icon-button-background': 'none',
+   '--tjs-icon-button-background-focus': 'var(--tjs-icon-button-background-hover)',
    '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
    '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
    '--tjs-icon-button-border-radius': '50%',
    '--tjs-icon-button-clip-path': 'none',
    '--tjs-icon-button-diameter': '2em',
-   '--tjs-icon-button-transition': 'background 200ms linear, clip-path 200ms linear'
+   '--tjs-icon-button-transition': 'background 0.2s ease-in-out, clip-path 0.2s ease-in-out'
 }, false);
 
 {

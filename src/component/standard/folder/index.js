@@ -6,6 +6,8 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {boolean} [chevronOnly=false] - When true only clicks on the folder chevron open / close the summary.
  *
+ *
+ *
  * @property {boolean} [noKeys=false] - When true keyboard events do not control the details open / close state.
  *                                      This is useful when embedding an input element in the summary.
  */
@@ -17,7 +19,9 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {string} [label] -
  *
- * @property {TJSFolderOptions} [options] -
+ * @property {string} [keyCode='Enter'] - Defines the key event code to open / close summary when focused.
+ *
+ * @property {TJSFolderOptions} [options] - Additional folder options.
  *
  * @property {{ class: Function, props?: object }} [slotDefault] - A minimal Svelte config defining the default content
  *           component.
@@ -28,13 +32,14 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  * @property {{ class: Function, props?: object }} [slotSummaryEnd] - A minimal Svelte config defining the summary end
  *           component.
  *
- * @property {import('svelte/store').Writable<boolean>} [store] -
+ * @property {import('svelte/store').Writable<boolean>} [store] - Folder open / close store.
  *
- * @property {object} [styles] -
+ * @property {object} [styles] - Additional styles to apply.
  *
- * @property {(event?: MouseEvent) => void} [onClick] -
+ * @property {(event?: MouseEvent|KeyboardEvent) => void} [onPress] - Callback when summary clicked or focused / key up
+ *                                                                    handled.
  *
- * @property {(event?: MouseEvent) => void} [onContextMenu] -
+ * @property {(event?: MouseEvent) => void} [onContextMenu] - Callback for context menu click.
  */
 
 /**

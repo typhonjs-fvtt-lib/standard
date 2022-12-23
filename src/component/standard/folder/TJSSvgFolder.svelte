@@ -116,6 +116,9 @@
    /** @type {string} */
    export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
 
+   /** @type {string} */
+   export let keyCode = isObject(folder) && typeof folder.keyCode === 'string' ? folder.keyCode : 'Enter';
+
    /** @type {TJSFolderOptions} */
    export let options = isObject(folder) && isObject(folder.options) ? folder.options : {};
 
@@ -126,7 +129,7 @@
    export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
 
    /** @type {(event?: MouseEvent) => void} */
-   export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
+   export let onPress = isObject(folder) && typeof folder.onPress === 'function' ? folder.onPress : () => null;
 
    /** @type {(event?: MouseEvent) => void} */
    export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
@@ -160,8 +163,8 @@
    $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
     isObject(styles) ? styles : void 0;
 
-   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
-    typeof onClick === 'function' ? onClick : () => null;
+   $: onPress = isObject(folder) && typeof folder.onPress === 'function' ? folder.onPress :
+    typeof onPress === 'function' ? onPress : () => null;
 
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
@@ -199,7 +202,15 @@
       });
    }
 
-   function onClickSummary(event)
+   /**
+    * Handles opening / closing the details element from either click or keyboard event when summary focused.
+    *
+    * @param {KeyboardEvent|MouseEvent} event -
+    *
+    * @param {boolean} [fromKeyboard=false] - True when event is coming from keyboard. This is used to ignore the
+    * chevronOnly click event handling.
+    */
+   function handleOpenClose(event, fromKeyboard = false)
    {
       const target = event.target;
 
@@ -208,7 +219,7 @@
       if (target === summaryEl || target === labelEl || chevronTarget ||
        target.querySelector('.summary-click') !== null)
       {
-         if (localOptions.chevronOnly && !chevronTarget)
+         if (!fromKeyboard && localOptions.chevronOnly && !chevronTarget)
          {
             event.preventDefault();
             event.stopPropagation();
@@ -216,7 +227,7 @@
          }
 
          $store = !$store;
-         onClick(event);
+         onPress(event);
 
          event.preventDefault();
          event.stopPropagation();
@@ -235,13 +246,71 @@
    }
 
    /**
+    * Detects whether the summary click came from a pointer / mouse device or the keyboard. If from the keyboard and
+    * the active element is `summaryEl` then no action is taken and `onKeyDown` will handle the key event to open /
+    * close the details element.
+    *
+    * @param {PointerEvent|MouseEvent} event
+    */
+   function onClickSummary(event)
+   {
+      // Firefox sends a `click` event / non-standard response so check for mozInputSource equaling 6 (keyboard) or
+      // a negative pointerId from Chromium and prevent default. This allows `onKeyUp` to handle any open / close
+      // action.
+      if (document.activeElement === summaryEl && (event?.pointerId === -1 || event?.mozInputSource === 6))
+      {
+         event.preventDefault();
+         event.stopPropagation();
+         return;
+      }
+
+      handleOpenClose(event);
+   }
+
+   /**
     * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
+    * matches.
+    *
+    * @param {KeyboardEvent} event -
+    */
+   function onKeyDown(event)
+   {
+      if (localOptions.noKeys && event.code === 'Space')
+      {
+         event.preventDefault();
+      }
+
+      if (document.activeElement === summaryEl && event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
+    * matches.
     *
     * @param {KeyboardEvent} event -
     */
    function onKeyUp(event)
    {
-      if (localOptions.noKeys && event.key === ' ') { event.preventDefault(); }
+      if (localOptions.noKeys && event.code === 'Space')
+      {
+         event.preventDefault();
+      }
+
+      if (document.activeElement === summaryEl && event.code === keyCode)
+      {
+         handleOpenClose(event, true);
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 
 
@@ -304,7 +373,8 @@
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
-             on:keyup={onKeyUp}
+             on:keydown|capture={onKeyDown}
+             on:keyup|capture={onKeyUp}
              class:default-cursor={localOptions.chevronOnly}>
         <svg bind:this={svgEl} viewBox="0 0 24 24">
             <path
@@ -381,6 +451,10 @@
         margin: var(--tjs-summary-chevron-margin, 0 5px 0 0);
         transition: opacity 0.2s, transform 0.1s;
         transform: rotate(var(--tjs-summary-chevron-rotate-closed, -90deg));
+    }
+
+    summary:focus-visible {
+        outline: var(--tjs-folder-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
     }
 
     summary:hover svg {
