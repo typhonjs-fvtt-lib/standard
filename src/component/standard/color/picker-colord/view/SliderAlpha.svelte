@@ -4,9 +4,9 @@
 
    import {
       isFocused,
-      keyforward }          from '@typhonjs-fvtt/svelte-standard/action';
+      keyforward }          from '@typhonjs-svelte/lib/action';
 
-   import { KeyStore }      from '@typhonjs-fvtt/svelte-standard/store';
+   import { KeyStore }      from '@typhonjs-svelte/lib/store';
 
    import { easeInOutSin }  from '../util/transition.js';
 
@@ -20,10 +20,18 @@
    const stylesSliderIndicator = {}
 
    /**
+    * Capture all arrow keys.
+    *
     * @type {KeyStore}
     */
-   const keyStore = new KeyStore(sliderHorizontal ? ['ArrowRight', 'ArrowLeft'] : ['ArrowDown', 'ArrowUp'],
-    { preventDefault: true });
+   const keyStore = new KeyStore(['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp']);
+
+   /**
+    * Specific keys for either horizontal / vertical based on slider orientation to check.
+    *
+    * @type {string[]}
+    */
+   const targetKeys = sliderHorizontal ? ['ArrowRight', 'ArrowLeft'] : ['ArrowDown', 'ArrowUp'];
 
    /** @type {HTMLDivElement} */
    let sliderEl = void 0;
@@ -81,7 +89,7 @@
     */
    function move(keys)
    {
-      if (keys.anyPressed)
+      if (keys.anyPressed(targetKeys))
       {
          if (!focusMovementIntervalId)
          {

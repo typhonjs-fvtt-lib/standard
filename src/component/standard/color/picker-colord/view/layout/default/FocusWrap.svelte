@@ -2,7 +2,7 @@
    import { getContext }    from 'svelte';
    import { writable }      from 'svelte/store';
 
-   import { isFocused }     from '@typhonjs-fvtt/svelte-standard/action';
+   import { isFocused }     from '@typhonjs-svelte/lib/action';
 
    const internalState = getContext('#tjs-color-picker-state');
 

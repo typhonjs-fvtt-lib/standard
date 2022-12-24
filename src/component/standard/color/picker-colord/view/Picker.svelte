@@ -4,9 +4,9 @@
 
    import {
       isFocused,
-      keyforward }          from '@typhonjs-fvtt/svelte-standard/action';
+      keyforward }          from '@typhonjs-svelte/lib/action';
 
-   import { KeyStore }      from '@typhonjs-fvtt/svelte-standard/store';
+   import { KeyStore }      from '@typhonjs-svelte/lib/store';
 
    import { easeInOutSin }  from '../util/transition.js';
 
@@ -26,7 +26,7 @@
    /**
     * @type {KeyStore}
     */
-   const keyStore = new KeyStore(['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'], { preventDefault: true });
+   const keyStore = new KeyStore(['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp']);
 
    /** @type {boolean} */
    let isPointerDown = false;
@@ -91,7 +91,7 @@
     */
    function move(keys)
    {
-      if (keys.anyPressed)
+      if (keys.anyPressed())
       {
          if (!focusMovementIntervalId)
          {

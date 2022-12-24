@@ -28,6 +28,15 @@
       if (!$lockTextFormat) { activeTextState.next(); }
    }
 
+   function onKeydown(event)
+   {
+      if (event.code === 'Space')
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
    /**
     * Advances color format on `Space` key up.
     *
@@ -57,9 +66,10 @@
    <div class=input-attributes
         role=button
         aria-label="next color format"
-        tabindex=0
+        tabindex={!$lockTextFormat ? 0 : -1}
         class:lock-text-format={$lockTextFormat}
         on:click|preventDefault={onClick}
+        on:keydown={onKeydown}
         on:keyup={onKeyup}>
 
       {#each $activeTextState.inputData as input (input.pickerLabel)}
