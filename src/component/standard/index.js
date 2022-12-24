@@ -55,7 +55,6 @@ cssVariables.setProperties({
    '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
    '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
    '--tjs-icon-button-border-radius': '50%',
-   '--tjs-icon-button-clip-path': 'none',
    '--tjs-icon-button-diameter': '2em',
    '--tjs-icon-button-transition': 'background 0.2s ease-in-out, clip-path 0.2s ease-in-out'
 }, false);
