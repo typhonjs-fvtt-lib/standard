@@ -24,17 +24,45 @@
       hasAddons,
       hasAlpha,
       hasButtonBar,
-      hasTextInput
+      hasTextInput,
+      isOpen,
+      padding,
+      width,
    } = internalState.stores;
 
    /** @type {HTMLElement} */
-   let pickerEl;
+   let pickerEl, wrapperEl;
 
    // Set first focusable element for cyclic focus traversal in popup mode.
    onMount(() => $firstFocusEl = pickerEl);
+
+   /**
+    * This is a bit of magic number adjustment of internal `padding` store to compensate for the container width
+    * adjustment given that this layout below ~185px the container query layout expands the width of the sliders
+    * which expands the inner wrapper beyond the optional `width` amount. A padding offset is calculated from the
+    * parent container and this wrapper. This allows automatic adjustment to align container without a manual
+    * external padding option.
+    */
+   $: if (wrapperEl && $isOpen) {
+      const parentRect = wrapperEl.parentElement.getBoundingClientRect();
+      const wrapperRect = wrapperEl.getBoundingClientRect();
+
+      const widthNum = Number.parseFloat($width);
+
+      if (widthNum > 185 && parentRect.width >= wrapperRect.width)
+      {
+         wrapperEl.style.width = '100%';
+         $padding = `0`;
+      }
+      else
+      {
+         wrapperEl.style.width = 'max-content';
+         $padding = `0 calc(${wrapperRect.width}px - ${parentRect.width}px) 0 0`;
+      }
+   }
 </script>
 
-<div class=tjs-color-picker-wrapper>
+<div bind:this={wrapperEl} class=tjs-color-picker-wrapper>
     <section class=main>
         <Picker bind:pickerEl />
         <SliderHue />

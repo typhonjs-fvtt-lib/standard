@@ -95,8 +95,6 @@ export class InternalState
 
       this.#externalData.lockTextFormat = typeof opts.lockTextFormat === 'boolean' ? opts.lockTextFormat : false;
 
-      this.#externalData.padding = typeof opts.padding === 'string' ? opts.padding : '0';
-
       this.#externalData.precision = Number.isInteger(opts.precision) ? opts.precision : 0;
 
       this.#externalData.width = Number.isInteger(opts.width) ? `${opts.width}px` : opts.width;
@@ -106,6 +104,8 @@ export class InternalState
       this.#internalData.hasAddons = this.#externalData.hasAddons && this.#addonState.size > 0;
 
       this.#internalData.isOpen = !this.#externalData.isPopup;
+
+      this.#internalData.padding = '0';
 
       const externalData = writable(this.#externalData);
       const internalData = writable(this.#internalData);
@@ -120,13 +120,13 @@ export class InternalState
          inputName: propertyStore(externalData, 'inputName'),
          isPopup: propertyStore(externalData, 'isPopup'),
          lockTextFormat: propertyStore(externalData, 'lockTextFormat'),
-         padding: propertyStore(externalData, 'padding'),
          precision: propertyStore(externalData, 'precision'),
          width: propertyStore(externalData, 'width'),
 
          firstFocusEl: writable(void 0),
          hasAddons: propertyStore(internalData, 'hasAddons'),
-         isOpen: propertyStore(internalData, 'isOpen')
+         isOpen: propertyStore(internalData, 'isOpen'),
+         padding: propertyStore(internalData, 'padding')
       }
 
       this.#colorState = new ColorState(this, color, opts);
@@ -292,8 +292,6 @@ export class InternalState
 
       this.#stores.lockTextFormat.set(typeof opts.lockTextFormat === 'boolean' ? opts.lockTextFormat : false);
 
-      this.#stores.padding.set(opts.padding ? opts.padding : '0');
-
       this.#stores.precision.set(Number.isInteger(opts.precision) ? opts.precision : 0);
 
       this.#stores.width.set(Number.isInteger(opts.width) ? `${opts.width}px` : opts.width);
@@ -367,11 +365,6 @@ export class InternalState
          throw new TypeError(`'options.lockTextFormat' is not a boolean.`);
       }
 
-      if (opts.padding !== void 0 && typeof opts.padding !== 'string')
-      {
-         throw new TypeError(`'options.padding' is not a string.`);
-      }
-
       if (opts.precision !== void 0 && (!Number.isInteger(opts.precision) || opts.precision < 0))
       {
          throw new TypeError(`'options.precision' must be an integer >= 0.`);
@@ -432,9 +425,6 @@ export class InternalState
  *
  * @property {boolean} [lockTextFormat=false] - When true text input format can not be changed from current format.
  *
- * @property {string} [padding] - A valid CSS dimension to provide offset padding as necessary depending on layout.
- *                                      IE the default layout when below 235px wide needs make up padding on the right.
- *
  * @property {number} [precision=0] - A positive integer defining rounding precision.
  *
  * @property {import('svelte/store').Writable<string|object>} [store] - An external store to update current color.
@@ -451,6 +441,8 @@ export class InternalState
  * @property {boolean} hasAddons - true when external options `hasAddons` is true and there are addons loaded.
  *
  * @property {boolean} isOpen - Is the color picker in the open state.
+ *
+ * @property {string} [padding] - A padding style to add to the main container to compensate for any layout adjustments.
  */
 
 /**
@@ -494,8 +486,6 @@ export class InternalState
  *
  * @property {import('svelte/store').Writable<boolean>} lockTextFormat - See {@link TJSColordPickerOptions.lockTextFormat}
  *
- * @property {import('svelte/store').Writable<string>} padding - See {@link TJSColordPickerOptions.padding}
- *
  * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
  *
  * @property {import('svelte/store').Writable<string>} width - See {@link TJSColordPickerOptions.width}
@@ -506,4 +496,6 @@ export class InternalState
  * @property {import('svelte/store').Writable<boolean>} hasAddons - See {@link PickerInternalData.hasAddons}
  *
  * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
+ *
+ * @property {import('svelte/store').Writable<string>} padding - See {@link PickerInternalData.padding}
  */

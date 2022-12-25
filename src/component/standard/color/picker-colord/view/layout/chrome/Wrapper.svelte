@@ -25,16 +25,28 @@
       hasAlpha,
       hasButtonBar,
       hasTextInput,
+      isOpen,
+      padding,
+      width
    } = internalState.stores;
 
    /** @type {HTMLElement} */
-   let pickerEl;
+   let pickerEl, wrapperEl;
 
    // Set first focusable element for cyclic focus traversal in popup mode.
    onMount(() => $firstFocusEl = pickerEl);
+
+   /**
+    * This is a bit of magic number adjustment of internal `padding` store to compensate for the container width
+    * adjustment that the default layout sets. In this case just for a sanity case padding needs to be set to '0' if
+    * in the case that layout first was the default layout then switched to "chrome".
+    */
+   $: if (wrapperEl && $isOpen) {
+      $padding = `0`;
+   }
 </script>
 
-<div class=tjs-color-picker-wrapper>
+<div bind:this={wrapperEl} class=tjs-color-picker-wrapper>
     <Picker bind:pickerEl />
     <div class=tjs-color-picker-wrapper-body>
         <section class=sliders>

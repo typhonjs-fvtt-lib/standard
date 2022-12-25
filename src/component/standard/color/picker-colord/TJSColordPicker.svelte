@@ -272,7 +272,7 @@
     {#if $isPopup}
         <Input bind:inputEl />
     {/if}
-    <MainLayout bind:containerEl />
+    <MainLayout bind:containerEl {inputEl} />
 </span>
 
 <style>
