@@ -28,16 +28,29 @@
 
 <style>
     .tjs-color-picker-input {
-        margin: 0;
-        padding: 0;
+        margin: var(--tjs-color-picker-input-margin, 0);
+        padding: var(--tjs-color-picker-input-padding, 0);
+        flex-shrink: 0;
+
         border: none;
         width: var(--tjs-color-picker-input-width, 32px);
         height: var(--tjs-color-picker-input-height, var(--tjs-input-height, 26px));
-        flex-shrink: 0;
-        cursor: pointer;
+
+        cursor: var(--tjs-color-picker-input-cursor, pointer);
 
         background: var(--tjs-checkerboard-background-10);
         border-radius: var(--tjs-color-picker-input-border-radius, var(--tjs-input-border-radius, 0.25em));
+        clip-path: var(--tjs-color-picker-input-clip-path, none);
+
+        transition: var(--tjs-color-picker-input-transition, var(--tjs-input-transition));
+    }
+
+    .tjs-color-picker-input:focus {
+        clip-path: var(--tjs-color-picker-input-clip-path-focus, none);
+    }
+
+    .tjs-color-picker-input:hover {
+        clip-path: var(--tjs-color-picker-input-clip-path-hover, none);
     }
 
     .tjs-color-picker-input-inner {
