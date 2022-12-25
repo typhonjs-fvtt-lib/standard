@@ -52,8 +52,8 @@
    export let efx = void 0;
    export let keyCode = void 0;
    export let onPress = void 0;
-   export let onClickPropagate = void 0;
    export let onContextClick = void 0;
+   export let onClickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
 
@@ -65,12 +65,14 @@
     typeof efx === 'function' ? efx : () => {};
    $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :
     typeof keyCode === 'string' ? keyCode : 'Enter';
+
    $: onPress = isObject(button) && typeof button.onPress === 'function' ? button.onPress :
     typeof onPress === 'function' ? onPress : void 0;
-   $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
    $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
     typeof onContextClick === 'function' ? onContextClick : void 0;
+
+   $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
+    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
    let hslColor;
 
@@ -97,7 +99,10 @@
       }
    }
 
-   function onContextClickHandler(event)
+   /**
+    * @param {MouseEvent}   event -
+    */
+   function onContextMenu(event)
    {
       if (typeof onContextClick === 'function') { onContextClick(hslColor); }
 
@@ -147,7 +152,7 @@
      style:--tjs-icon-button-background={hslColor}>
     <div class=tjs-color-button-inner
          on:click={onClick}
-         on:contextmenu={onContextClickHandler}
+         on:contextmenu={onContextMenu}
          on:keydown={onKeydown}
          on:keyup={onKeyup}
          on:click
