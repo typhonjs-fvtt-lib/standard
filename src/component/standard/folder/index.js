@@ -36,8 +36,9 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {object} [styles] - Additional styles to apply.
  *
- * @property {(event?: MouseEvent|KeyboardEvent) => void} [onPress] - Callback when summary clicked or focused / key up
- *                                                                    handled.
+ * @property {() => void} [onClose] - Callback when folder closed.
+ *
+ * @property {() => void} [onOpen] - Callback when folder opened.
  *
  * @property {(event?: MouseEvent) => void} [onContextMenu] - Callback for context menu click.
  */

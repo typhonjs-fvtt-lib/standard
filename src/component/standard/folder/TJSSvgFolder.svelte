@@ -98,7 +98,11 @@
    import { writable }          from 'svelte/store';
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+
+   import {
+      isWritableStore,
+      subscribeIgnoreFirst }    from '@typhonjs-svelte/lib/store';
+
    import {
       isObject,
       isSvelteComponent }       from '@typhonjs-svelte/lib/util';
@@ -111,29 +115,31 @@
    export let folder = void 0;
 
    /** @type {string} */
-   export let id = isObject(folder) && typeof folder.id === 'string' ? folder.id : void 0;
+   export let id = void 0;
 
    /** @type {string} */
-   export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
+   export let label = void 0;
 
    /** @type {string} */
-   export let keyCode = isObject(folder) && typeof folder.keyCode === 'string' ? folder.keyCode : 'Enter';
+   export let keyCode = void 0;
 
    /** @type {TJSFolderOptions} */
-   export let options = isObject(folder) && isObject(folder.options) ? folder.options : {};
+   export let options = void 0;
 
    /** @type {import('svelte/store').Writable<boolean>} */
-   export let store = isObject(folder) && isWritableStore(folder.store) ? folder.store : writable(false);
+   export let store = void 0;
 
    /** @type {object} */
-   export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
+   export let styles = void 0;
+
+   /** @type {() => void} */
+   export let onClose = void 0;
+
+   /** @type {() => void} */
+   export let onOpen = void 0;
 
    /** @type {(event?: MouseEvent) => void} */
-   export let onPress = isObject(folder) && typeof folder.onPress === 'function' ? folder.onPress : () => null;
-
-   /** @type {(event?: MouseEvent) => void} */
-   export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
-    () => null;
+   export let onContextMenu = void 0;
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
@@ -142,12 +148,16 @@
    }
 
    let detailsEl, labelEl, summaryEl, svgEl;
+   let storeUnsubscribe;
 
    $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
     typeof id === 'string' ? id : void 0;
 
    $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
     typeof label === 'string' ? label : '';
+
+   $: keyCode = isObject(folder) && typeof folder.keyCode === 'string' ? folder.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
 
    $: {
       options = isObject(folder) && isObject(folder.options) ? folder.options :
@@ -157,14 +167,33 @@
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
-   $: store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
-    isWritableStore(store) ? store : writable(false);
+   $: {
+      store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
+       isWritableStore(store) ? store : writable(false);
+
+      if (typeof storeUnsubscribe === 'function') { storeUnsubscribe(); }
+
+      // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
+      // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
+      // `createEventDispatcher`.
+      storeUnsubscribe = subscribeIgnoreFirst(store, ((value) =>
+      {
+         if (detailsEl)
+         {
+            detailsEl.dispatchEvent(createEvent(value ? 'open' : 'close'));
+            detailsEl.dispatchEvent(createEvent(value ? 'openAny' : 'closeAny', true));
+         }
+      }));
+   }
 
    $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
     isObject(styles) ? styles : void 0;
 
-   $: onPress = isObject(folder) && typeof folder.onPress === 'function' ? folder.onPress :
-    typeof onPress === 'function' ? onPress : () => null;
+   $: onClose = isObject(folder) && typeof folder.onClose === 'function' ? folder.onClose :
+    typeof onClose === 'function' ? onClose : void 0;
+
+   $: onOpen = isObject(folder) && typeof folder.onOpen === 'function' ? folder.onOpen :
+    typeof onOpen === 'function' ? onOpen : void 0;
 
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
@@ -185,6 +214,8 @@
       visible = true;
    }
 
+   onDestroy(() => storeUnsubscribe());
+
    /**
     * Create a CustomEvent with details object containing relevant element and props.
     *
@@ -197,7 +228,7 @@
    function createEvent(type, bubbles = false)
    {
       return new CustomEvent(type, {
-         detail: {element: detailsEl, folder, id, label, store},
+         detail: { element: detailsEl, folder, id, label, store },
          bubbles
       });
    }
@@ -227,7 +258,15 @@
          }
 
          $store = !$store;
-         onPress(event);
+
+         if ($store && typeof onOpen === 'function')
+         {
+            onOpen();
+         }
+         else if (typeof onClose === 'function')
+         {
+            onClose();
+         }
 
          event.preventDefault();
          event.stopPropagation();
@@ -248,7 +287,7 @@
    /**
     * Detects whether the summary click came from a pointer / mouse device or the keyboard. If from the keyboard and
     * the active element is `summaryEl` then no action is taken and `onKeyDown` will handle the key event to open /
-    * close the details element.
+    * close the detail element.
     *
     * @param {PointerEvent|MouseEvent} event
     */
@@ -313,7 +352,6 @@
       }
    }
 
-
    /**
     * Handle receiving bubbled event from summary or content to close details / content.
     */
@@ -335,35 +373,22 @@
 
       store.set(true);
    }
-
-   // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
-   // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
-   // `createEventDispatcher`.
-   const unsubscribe = store.subscribe((value) =>
-   {
-      if (detailsEl)
-      {
-         detailsEl.dispatchEvent(createEvent(value ? 'open' : 'close'));
-         detailsEl.dispatchEvent(createEvent(value ? 'openAny' : 'closeAny', true));
-      }
-   });
-
-   onDestroy(unsubscribe);
 </script>
 
-<details class=tjs-folder
+<details class=tjs-svg-folder
          bind:this={detailsEl}
+
+         on:close={onLocalClose}
+         on:closeAny={onLocalClose}
+         on:open={onLocalOpen}
+         on:openAny={onLocalOpen}
+
          on:click
          on:keydown
          on:open
          on:close
          on:openAny
          on:closeAny
-
-         on:close={onLocalClose}
-         on:closeAny={onLocalClose}
-         on:open={onLocalOpen}
-         on:openAny={onLocalOpen}
 
          use:toggleDetails={{ store, clickActive: false }}
          use:applyStyles={styles}
@@ -435,6 +460,8 @@
         padding: var(--tjs-summary-padding, 4px) 0;
         user-select: none;
         width: var(--tjs-summary-width, fit-content);
+
+        transition: var(--tjs-summary-transition, background 0.1s);
     }
 
     .default-cursor {
@@ -449,8 +476,8 @@
         cursor: var(--tjs-summary-cursor, pointer);
         opacity: var(--tjs-summary-chevron-opacity, 0.2);
         margin: var(--tjs-summary-chevron-margin, 0 5px 0 0);
-        transition: opacity 0.2s, transform 0.1s;
-        transform: rotate(var(--tjs-summary-chevron-rotate-closed, -90deg));
+        transition: var(--tjs-summary-chevron-transition, opacity 0.2s, transform 0.1s);
+        transform: var(--tjs-summary-chevron-rotate-closed, rotate(-90deg));
     }
 
     summary:focus-visible {

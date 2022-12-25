@@ -95,7 +95,11 @@
    import { writable }          from 'svelte/store';
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+
+   import {
+      isWritableStore,
+      subscribeIgnoreFirst }    from '@typhonjs-svelte/lib/store';
+
    import {
       isObject,
       isSvelteComponent }       from '@typhonjs-svelte/lib/util';
@@ -108,32 +112,37 @@
    export let folder = void 0;
 
    /** @type {string} */
-   export let id = isObject(folder) && typeof folder.id === 'string' ? folder.id : void 0;
+   export let id = void 0;
 
    /** @type {string} */
-   export let iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen : void 0;
+   export let iconOpen = void 0;
 
    /** @type {string} */
-   export let iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed : void 0;
+   export let iconClosed = void 0;
 
    /** @type {string} */
-   export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
+   export let label = void 0;
+
+   /** @type {string} */
+   export let keyCode = void 0;
 
    /** @type {TJSFolderOptions} */
-   export let options = isObject(folder) && isObject(folder.options) ? folder.options : {};
+   export let options = void 0;
 
    /** @type {import('svelte/store').Writable<boolean>} */
-   export let store = isObject(folder) && isWritableStore(folder.store) ? folder.store : writable(false);
+   export let store = void 0;
 
    /** @type {object} */
-   export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
+   export let styles = void 0;
+
+   /** @type {() => void} */
+   export let onClose = void 0;
+
+   /** @type {() => void} */
+   export let onOpen = void 0;
 
    /** @type {(event?: MouseEvent) => void} */
-   export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
-
-   /** @type {(event?: MouseEvent) => void} */
-   export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
-    () => null;
+   export let onContextMenu = void 0;
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
@@ -142,19 +151,23 @@
    }
 
    let detailsEl, iconEl, labelEl, summaryEl;
+   let storeUnsubscribe;
    let currentIcon;
 
    $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
     typeof id === 'string' ? id : void 0;
 
-   $: iconOpen = isObject(folder) && folder.iconOpen === 'string' ? folder.iconOpen :
-    typeof iconOpen === 'string' ? iconOpen : void 0;
+   $: iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen :
+       typeof iconOpen === 'string' ? iconOpen : void 0;
 
-   $: iconClosed = isObject(folder) && folder.iconClosed === 'string' ? folder.iconClosed :
-    typeof iconClosed === 'string' ? iconClosed : void 0;
+   $: iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed :
+       typeof iconClosed === 'string' ? iconClosed : void 0;
 
    $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
     typeof label === 'string' ? label : '';
+
+   $: keyCode = isObject(folder) && typeof folder.keyCode === 'string' ? folder.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
 
    $: {
       options = isObject(folder) && isObject(folder.options) ? folder.options :
@@ -164,14 +177,33 @@
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
-   $: store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
-    isWritableStore(store) ? store : writable(false);
+   $: {
+      store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
+       isWritableStore(store) ? store : writable(false);
+
+      if (typeof storeUnsubscribe === 'function') { storeUnsubscribe(); }
+
+      // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
+      // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
+      // `createEventDispatcher`.
+      storeUnsubscribe = subscribeIgnoreFirst(store, ((value) =>
+      {
+         if (detailsEl)
+         {
+            detailsEl.dispatchEvent(createEvent(value ? 'open' : 'close'));
+            detailsEl.dispatchEvent(createEvent(value ? 'openAny' : 'closeAny', true));
+         }
+      }));
+   }
 
    $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
     isObject(styles) ? styles : void 0;
 
-   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
-    typeof onClick === 'function' ? onClick : () => null;
+   $: onClose = isObject(folder) && typeof folder.onClose === 'function' ? folder.onClose :
+    typeof onClose === 'function' ? onClose : void 0;
+
+   $: onOpen = isObject(folder) && typeof folder.onOpen === 'function' ? folder.onOpen :
+    typeof onOpen === 'function' ? onOpen : void 0;
 
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
@@ -198,6 +230,8 @@
       visible = true;
    }
 
+   onDestroy(() => storeUnsubscribe());
+
    /**
     * Create a CustomEvent with details object containing relevant element and props.
     *
@@ -210,19 +244,27 @@
    function createEvent(type, bubbles = false)
    {
       return new CustomEvent(type, {
-         detail: {element: detailsEl, folder, id, label, store},
+         detail: { element: detailsEl, folder, id, label, store },
          bubbles
       });
-    }
+   }
 
-   function onClickSummary(event)
+   /**
+    * Handles opening / closing the details element from either click or keyboard event when summary focused.
+    *
+    * @param {KeyboardEvent|MouseEvent} event -
+    *
+    * @param {boolean} [fromKeyboard=false] - True when event is coming from keyboard. This is used to ignore the
+    * chevronOnly click event handling.
+    */
+   function handleOpenClose(event, fromKeyboard = false)
    {
       const target = event.target;
 
-      if (target === summaryEl || target === iconEl || target === labelEl ||
+      if (target === summaryEl || target === labelEl || target === iconEl ||
        target.querySelector('.summary-click') !== null)
       {
-         if (localOptions.chevronOnly && target !== iconEl)
+         if (!fromKeyboard && localOptions.chevronOnly && target !== iconEl)
          {
             event.preventDefault();
             event.stopPropagation();
@@ -230,7 +272,15 @@
          }
 
          $store = !$store;
-         onClick(event);
+
+         if ($store && typeof onOpen === 'function')
+         {
+            onOpen();
+         }
+         else if (typeof onClose === 'function')
+         {
+            onClose();
+         }
 
          event.preventDefault();
          event.stopPropagation();
@@ -249,15 +299,72 @@
    }
 
    /**
+    * Detects whether the summary click came from a pointer / mouse device or the keyboard. If from the keyboard and
+    * the active element is `summaryEl` then no action is taken and `onKeyDown` will handle the key event to open /
+    * close the detail element.
+    *
+    * @param {PointerEvent|MouseEvent} event
+    */
+   function onClickSummary(event)
+   {
+      // Firefox sends a `click` event / non-standard response so check for mozInputSource equaling 6 (keyboard) or
+      // a negative pointerId from Chromium and prevent default. This allows `onKeyUp` to handle any open / close
+      // action.
+      if (document.activeElement === summaryEl && (event?.pointerId === -1 || event?.mozInputSource === 6))
+      {
+         event.preventDefault();
+         event.stopPropagation();
+         return;
+      }
+
+      handleOpenClose(event);
+   }
+
+   /**
     * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
+    * matches.
+    *
+    * @param {KeyboardEvent} event -
+    */
+   function onKeyDown(event)
+   {
+      if (localOptions.noKeys && event.code === 'Space')
+      {
+         event.preventDefault();
+      }
+
+      if (document.activeElement === summaryEl && event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
+    * matches.
     *
     * @param {KeyboardEvent} event -
     */
    function onKeyUp(event)
    {
-      if (localOptions.noKeys && event.key === ' ') { event.preventDefault(); }
-   }
+      if (localOptions.noKeys && event.code === 'Space')
+      {
+         event.preventDefault();
+      }
 
+      if (document.activeElement === summaryEl && event.code === keyCode)
+      {
+         handleOpenClose(event, true);
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
 
    /**
     * Handle receiving bubbled event from summary or content to close details / content.
@@ -280,35 +387,22 @@
 
       store.set(true);
    }
-
-   // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
-   // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
-   // `createEventDispatcher`.
-   const unsubscribe = store.subscribe((value) =>
-   {
-      if (detailsEl)
-      {
-         detailsEl.dispatchEvent(createEvent(value ? 'open' : 'close'));
-         detailsEl.dispatchEvent(createEvent(value ? 'openAny' : 'closeAny', true));
-      }
-   });
-
-   onDestroy(unsubscribe);
 </script>
 
 <details class=tjs-icon-folder
          bind:this={detailsEl}
+
+         on:close={onLocalClose}
+         on:closeAny={onLocalClose}
+         on:open={onLocalOpen}
+         on:openAny={onLocalOpen}
+
          on:click
          on:keydown
          on:open
          on:close
          on:openAny
          on:closeAny
-
-         on:close={onLocalClose}
-         on:closeAny={onLocalClose}
-         on:open={onLocalOpen}
-         on:openAny={onLocalOpen}
 
          use:toggleDetails={{ store, clickActive: false }}
          use:applyStyles={styles}
@@ -318,7 +412,8 @@
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
-             on:keyup={onKeyUp}
+             on:keydown|capture={onKeyDown}
+             on:keyup|capture={onKeyUp}
              class:default-cursor={localOptions.chevronOnly}>
         {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
@@ -373,7 +468,7 @@
         user-select: none;
         width: var(--tjs-summary-width, fit-content);
 
-        transition: background 0.1s;
+        transition: var(--tjs-summary-transition, background 0.1s);
     }
 
     summary i {
@@ -382,7 +477,7 @@
         opacity: var(--tjs-summary-chevron-opacity, 1);
         margin: var(--tjs-summary-chevron-margin, 0 0 0 0.25em);
         width: var(--tjs-summary-chevron-width, 1.65em);
-        transition: opacity 0.2s;
+        transition: var(--tjs-summary-chevron-transition, opacity 0.2s, transform 0.1s);
     }
 
     summary:hover i {
