@@ -142,7 +142,7 @@
    export let onOpen = void 0;
 
    /** @type {(event?: MouseEvent) => void} */
-   export let onContextMenu = void 0;
+   export let onContextClick = void 0;
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
@@ -205,8 +205,8 @@
    $: onOpen = isObject(folder) && typeof folder.onOpen === 'function' ? folder.onOpen :
     typeof onOpen === 'function' ? onOpen : void 0;
 
-   $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
-    typeof onContextMenu === 'function' ? onContextMenu : () => null;
+   $: onContextClick = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
+    typeof onContextClick === 'function' ? onContextClick : () => null;
 
    $:
    {
@@ -411,7 +411,7 @@
          data-closing='false'>
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
-             on:contextmenu={onContextMenu}
+             on:contextmenu={onContextClick}
              on:keydown|capture={onKeyDown}
              on:keyup|capture={onKeyUp}
              class:default-cursor={localOptions.chevronOnly}>
