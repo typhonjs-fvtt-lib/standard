@@ -54,6 +54,7 @@
    export let keyCode = void 0;
    export let onPress = void 0;
    export let onClose = void 0;
+   export let onContextClick = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
 
@@ -78,6 +79,8 @@
     typeof onPress === 'function' ? onPress : void 0;
    $: onClose = isObject(button) && typeof button.onClose === 'function' ? button.onClose :
     typeof onClose === 'function' ? onClose : void 0;
+   $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
+    typeof onContextClick === 'function' ? onContextClick : void 0;
 
    $: onClosePropagate = isObject(button) && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false;
@@ -104,6 +107,20 @@
       if (typeof onPress === 'function') { onPress(selected); }
 
       dispatch('press', { selected });
+
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * @param {MouseEvent}   event -
+    */
+   function onContextMenu(event)
+   {
+      if (typeof onContextClick === 'function') { onContextClick(); }
 
       if (!onClickPropagate)
       {
@@ -178,7 +195,6 @@
          event.stopPropagation();
       }
    }
-
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -188,9 +204,11 @@
      use:applyStyles={styles}>
    <a class:selected
       on:click={onClick}
+      on:contextmenu={onContextMenu}
       on:keydown={onKeydown}
       on:keyup={onKeyup}
       on:click
+      on:contextmenu
       role=button
       tabindex=0
       title={localize(titleCurrent)}

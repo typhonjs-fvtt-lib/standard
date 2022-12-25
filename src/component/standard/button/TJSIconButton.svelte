@@ -50,6 +50,7 @@
    export let efx = void 0;
    export let keyCode = void 0;
    export let onPress = void 0;
+   export let onContextClick = void 0;
    export let onClickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
@@ -64,8 +65,12 @@
     typeof efx === 'function' ? efx : () => {};
    $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :
     typeof keyCode === 'string' ? keyCode : 'Enter';
+
    $: onPress = isObject(button) && typeof button.onPress === 'function' ? button.onPress :
     typeof onPress === 'function' ? onPress : void 0;
+   $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
+    typeof onContextClick === 'function' ? onContextClick : void 0;
+
    $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
@@ -79,6 +84,20 @@
       if (typeof onPress === 'function') { onPress(); }
 
       dispatch('press');
+
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * @param {MouseEvent}   event -
+    */
+   function onContextMenu(event)
+   {
+      if (typeof onContextClick === 'function') { onContextClick(); }
 
       if (!onClickPropagate)
       {
@@ -123,9 +142,11 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class=tjs-icon-button use:applyStyles={styles}>
     <a on:click={onClick}
+       on:contextmenu={onContextMenu}
        on:keydown={onKeydown}
        on:keyup={onKeyup}
        on:click
+       on:contextmenu
        role=button
        tabindex=0
        title={localize(title)}
