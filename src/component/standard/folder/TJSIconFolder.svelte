@@ -480,6 +480,10 @@
         transition: var(--tjs-summary-chevron-transition, opacity 0.2s, transform 0.1s);
     }
 
+    summary:focus-visible {
+        outline: var(--tjs-folder-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+    }
+
     summary:hover i {
         opacity: var(--tjs-summary-chevron-opacity-hover, 1);
     }
