@@ -11,6 +11,7 @@
     * --tjs-label-padding - 0
     * --tjs-label-transition - global default: 'background 200ms linear'
     */
+   import { createEventDispatcher } from 'svelte';
 
    import { applyStyles }     from '@typhonjs-svelte/lib/action';
    import { localize }        from '@typhonjs-svelte/lib/helper';
@@ -27,10 +28,14 @@
    export let store = void 0;
    export let styles = void 0;
    export let efx = void 0;
-   export let onClick = void 0;
+   export let keyCode = void 0;
+   export let onPress = void 0;
    export let onClose = void 0;
+   export let onContextClick = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
+
+   const dispatch = createEventDispatcher();
 
    $: text = isObject(label) && typeof label.text === 'string' ? label.text :
     typeof text === 'string' ? text : void 0;
@@ -46,11 +51,15 @@
     typeof styles === 'object' ? styles : void 0;
    $: efx = isObject(label) && typeof label.efx === 'function' ? label.efx :
     typeof efx === 'function' ? efx : () => {};
+   $: keyCode = isObject(label) && typeof label.keyCode === 'string' ? label.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
 
-   $: onClick = isObject(label) && typeof label.onClick === 'function' ? label.onClick :
-    typeof onClick === 'function' ? onClick : void 0;
+   $: onPress = isObject(label) && typeof label.onPress === 'function' ? label.onPress :
+    typeof onPress === 'function' ? onPress : void 0;
    $: onClose = isObject(label) && typeof label.onClose === 'function' ? label.onClose :
     typeof onClose === 'function' ? onClose : void 0;
+   $: onContextClick = isObject(label) && typeof label.onContextClick === 'function' ? label.onContextClick :
+    typeof onContextClick === 'function' ? onContextClick : void 0;
 
    $: onClosePropagate = isObject(label) && typeof label.onClosePropagate === 'boolean' ? label.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false
@@ -64,12 +73,19 @@
    // Chose the current title when `selected` changes; if there is no `titleSelected` fallback to `title`.
    $: titleCurrent = selected && titleSelected !== '' ? titleSelected : title
 
-   function onClickHandler(event)
+   /**
+    * Handle click event.
+    *
+    * @param {MouseEvent}    event -
+    */
+   function onClick(event)
    {
       selected = !selected;
       if (store) { store.set(selected); }
 
-      if (typeof onClick === 'function') { onClick(selected); }
+      if (typeof onPress === 'function') { onPress(selected); }
+
+      dispatch('press', { selected });
 
       if (!onClickPropagate)
       {
@@ -109,15 +125,73 @@
          event.stopPropagation();
       }
    }
+
+   /**
+    * @param {MouseEvent}   event -
+    */
+   function onContextMenu(event)
+   {
+      if (typeof onContextClick === 'function') { onContextClick(); }
+
+      if (!onClickPropagate)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * Consume / stop propagation of key down when key codes match.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onKeydown(event)
+   {
+      if (event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * Handle press event if key codes match.
+    *
+    * @param {KeyboardEvent}    event -
+    */
+   function onKeyup(event)
+   {
+      if (event.code === keyCode)
+      {
+         selected = !selected;
+         if (store) { store.set(selected); }
+
+         if (typeof onPress === 'function') { onPress(selected); }
+
+         dispatch('press', { selected });
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
 </script>
 
-<div on:click={onClickDiv}
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class=tjs-toggle-label
+     on:click={onClickDiv}
      on:close={onCloseHandler}
      title={localize(titleCurrent)}
-     use:applyStyles={styles}
-     role=presentation>
+     use:applyStyles={styles}>
    <slot name=outer />
-   <span on:click={onClickHandler} use:efx class:selected role=presentation>
+   <span class:selected
+         on:click={onClick}
+         on:contextmenu={onContextMenu}
+         on:keydown={onKeydown}
+         on:keyup={onKeyup}
+         on:click
+         role=button
+         tabindex=0
+         use:efx>
       <slot name=left />
       {#if comp}
          <svelte:component this={comp}/>
@@ -158,6 +232,10 @@
       padding: var(--tjs-label-padding, 0 0.25em);
       transform-style: preserve-3d;
       transition: var(--tjs-label-transition);
+   }
+
+   span:focus-visible {
+      outline: var(--tjs-label-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
    }
 
    span:hover {
