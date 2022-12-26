@@ -196,6 +196,7 @@
       {#if comp}
          <svelte:component this={comp}/>
       {:else if typeof text === 'string'}
+         <!-- svelte-ignore a11y-missing-attribute -->
          <a role=presentation>{localize(text)}</a>
       {/if}
       <slot name=right />

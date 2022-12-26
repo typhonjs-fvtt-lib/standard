@@ -202,6 +202,7 @@
      on:click={onClickDiv}
      on:close={onCloseHandler}
      use:applyStyles={styles}>
+   <!-- svelte-ignore a11y-missing-attribute -->
    <a class:selected
       on:click={onClick}
       on:contextmenu={onContextMenu}

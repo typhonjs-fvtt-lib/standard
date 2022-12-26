@@ -141,6 +141,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class=tjs-icon-button use:applyStyles={styles}>
+    <!-- svelte-ignore a11y-missing-attribute -->
     <a on:click={onClick}
        on:contextmenu={onContextMenu}
        on:keydown={onKeydown}

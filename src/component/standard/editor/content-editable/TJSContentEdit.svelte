@@ -517,6 +517,7 @@
          role=presentation>
         {@html enrichedContent}
         {#if editorButton}
+            <!-- svelte-ignore a11y-missing-attribute -->
             <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
         {/if}
     </div>
