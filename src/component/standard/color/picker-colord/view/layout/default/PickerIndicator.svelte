@@ -17,8 +17,6 @@
 
         box-sizing: border-box;
         box-shadow: 0 0 4px black, inset 0 0 4px black;
-
-        transition: outline 0.2s ease-in-out;
     }
 
     .tjs-picker-indicator.focused {
