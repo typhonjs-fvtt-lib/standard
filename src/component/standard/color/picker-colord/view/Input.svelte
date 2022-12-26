@@ -49,6 +49,10 @@
         clip-path: var(--tjs-color-picker-input-clip-path-focus, none);
     }
 
+    .tjs-color-picker-input:focus-visible {
+        outline: var(--tjs-color-picker-input-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+    }
+
     .tjs-color-picker-input:hover {
         clip-path: var(--tjs-color-picker-input-clip-path-hover, none);
     }
