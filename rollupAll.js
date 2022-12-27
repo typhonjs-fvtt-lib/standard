@@ -18,6 +18,7 @@ const s_LOCAL_EXTERNAL = [
 
    '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
    '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/dev-tools',
+   '@typhonjs-fvtt/svelte-standard/plugin/data', '@typhonjs-fvtt/svelte-standard/plugin/system',
    '@typhonjs-fvtt/svelte-standard/prosemirror', '@typhonjs-fvtt/svelte-standard/store',
 ];
 
@@ -56,7 +57,7 @@ const rollupConfigs = [
          input: 'src/dev-tools/prosemirror/index.js',
          external: s_LOCAL_EXTERNAL,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/action'] }),
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror'] }),
             resolve(),
             commonjs()
          ]
@@ -67,6 +68,42 @@ const rollupConfigs = [
          generatedCode: { constBindings: true },
          plugins: outputPlugins,
          sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/plugin/data/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: [`@typhonjs-fvtt/svelte-standard/plugin/data`] }),
+            resolve()
+         ]
+      },
+      output: {
+         file: '_dist/plugin/data/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         // paths: externalPathsNPM,
+         plugins: outputPlugins,
+         sourcemap,
+      }
+   },
+   {
+      input: {
+         input: 'src/plugin/system/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: [`@typhonjs-fvtt/svelte-standard/plugin/system`] }),
+            resolve()
+         ]
+      },
+      output: {
+         file: '_dist/plugin/system/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         // paths: externalPathsNPM,
+         plugins: outputPlugins,
+         sourcemap,
       }
    },
    {
