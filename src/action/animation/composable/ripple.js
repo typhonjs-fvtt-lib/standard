@@ -74,7 +74,10 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
          ],
          duration);
 
-         animation.onfinish = () => span.remove();
+         animation.onfinish = () =>
+         {
+            if (span && span.isConnected) { span.remove(); }
+         }
       }
 
       /**

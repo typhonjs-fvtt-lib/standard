@@ -60,7 +60,7 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
          animation.onfinish = () =>
          {
             clientX = clientY = -1;
-            span.remove();
+            if (span && span.isConnected) { span.remove(); }
             span = void 0;
          }
       }
