@@ -177,7 +177,7 @@ export class UIControl
       {
          for (const setting of settings.topLevel)
          {
-            const current = game.settings.get(setting.namespace, setting.key);
+            const current = globalThis.game.settings.get(setting.namespace, setting.key);
             if (current === setting.initialValue) { continue; }
 
             requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
@@ -193,7 +193,7 @@ export class UIControl
             {
                for (const setting of folder.settings)
                {
-                  const current = game.settings.get(setting.namespace, setting.key);
+                  const current = globalThis.game.settings.get(setting.namespace, setting.key);
                   if (current === setting.initialValue) { continue; }
 
                   requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
@@ -228,7 +228,7 @@ export class UIControl
 
       const uiSettings = [];
 
-      const canConfigure = game.user.can('SETTINGS_MODIFY');
+      const canConfigure = globalThis.game.user.can('SETTINGS_MODIFY');
 
       for (const setting of this.#settings)
       {
@@ -330,7 +330,7 @@ export class UIControl
             filePicker,
             range,
             store,
-            initialValue: game.settings.get(setting.namespace, setting.key),
+            initialValue: globalThis.game.settings.get(setting.namespace, setting.key),
             scope: setting.scope,
             requiresReload: typeof setting.requiresReload === 'boolean' ? setting.requiresReload : false,
             buttonData,
@@ -437,7 +437,7 @@ export class UIControl
       if (!reload) { return; }
 
       // Reload all connected clients. Note: Foundry v9 might not support this event.
-      if ( world && game.user.isGM ) { game.socket.emit('reload'); }
+      if ( world && globalThis.game.user.isGM ) { globalThis.game.socket.emit('reload'); }
 
       // Reload locally.
       window.location.reload();

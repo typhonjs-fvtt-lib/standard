@@ -20,7 +20,7 @@ export class FoundryStyles
 
       let sheet;
 
-      const foundryStyleSheet = foundry.utils.getRoute('/css/style.css');
+      const foundryStyleSheet = globalThis.foundry.utils.getRoute('/css/style.css');
 
       // Find the core Foundry stylesheet.
       for (const styleSheet of styleSheets)

@@ -47,8 +47,8 @@ export class TinyMCEHelper
          help ? ' | help' : ''}`;
 
       const config = {
-         content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
-          CONFIG.TinyMCE.content_css,
+         content_css: Array.isArray(contentCSS) ? globalThis.CONFIG.TinyMCE.content_css.concat(contentCSS) :
+          globalThis.CONFIG.TinyMCE.content_css,
          content_style: contentStyle,
          [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
@@ -117,8 +117,8 @@ export class TinyMCEHelper
           help ? ' | help' : ''}`;
 
       const config = {
-         content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
-          CONFIG.TinyMCE.content_css,
+         content_css: Array.isArray(contentCSS) ? globalThis.CONFIG.TinyMCE.content_css.concat(contentCSS) :
+          globalThis.CONFIG.TinyMCE.content_css,
          content_style: contentStyle,
          [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
          plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
@@ -205,8 +205,8 @@ export class TinyMCEHelper
             }
          },
 
-         content_css: Array.isArray(contentCSS) ? CONFIG.TinyMCE.content_css.concat(contentCSS) :
-          CONFIG.TinyMCE.content_css,
+         content_css: Array.isArray(contentCSS) ? globalThis.CONFIG.TinyMCE.content_css.concat(contentCSS) :
+          globalThis.CONFIG.TinyMCE.content_css,
          content_style: contentStyle,
          contextmenu: false,  // Prefer default browser context menu
          [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
@@ -292,7 +292,7 @@ export class TinyMCEHelper
       if (stripStyleFormat)
       {
          // Only add custom / secret if user is GM.
-         if (game.user.isGM)
+         if (globalThis.game.user.isGM)
          {
             style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
          }
@@ -300,12 +300,12 @@ export class TinyMCEHelper
       else
       {
          // Save any top level format categories added by external modules.
-         const notCoreFormats = CONFIG.TinyMCE.style_formats.filter((e) => e.title !== 'Custom');
+         const notCoreFormats = globalThis.CONFIG.TinyMCE.style_formats.filter((e) => e.title !== 'Custom');
 
          style_formats.push(...notCoreFormats);
 
          // Only add custom / secret if user is GM.
-         if (game.user.isGM)
+         if (globalThis.game.user.isGM)
          {
             style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
          }

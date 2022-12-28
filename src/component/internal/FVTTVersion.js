@@ -2,7 +2,7 @@ let isV10 = false;
 
 Hooks.once('init', () =>
 {
-   isV10 = !foundry.utils.isNewerVersion(10, game.version ?? game?.data?.version);
+   isV10 = !globalThis.foundry.utils.isNewerVersion(10, globalThis.game.version ?? globalThis.game?.data?.version);
 });
 
 export class FVTTVersion

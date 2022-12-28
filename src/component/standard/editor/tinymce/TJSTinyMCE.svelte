@@ -276,7 +276,7 @@
     */
    $: if (options.document !== void 0)
    {
-      if (!(options.document instanceof foundry.abstract.Document))
+      if (!(options.document instanceof globalThis.foundry.abstract.Document))
       {
          throw new TypeError(`TJSTinyMCE error: 'options.document' is not a Foundry document.`);
       }
@@ -313,7 +313,7 @@
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 ? foundry.utils.getProperty($doc, options.fieldName) :
+      content = $doc !== void 0 ? globalThis.foundry.utils.getProperty($doc, options.fieldName) :
        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.

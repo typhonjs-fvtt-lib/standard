@@ -269,24 +269,24 @@ export class TJSGameSettings
          for (const entry of onchangeFunctions) { entry(value); }
       };
 
-      game.settings.register(namespace, key, { ...options, config: foundryConfig, onChange });
+      globalThis.game.settings.register(namespace, key, { ...options, config: foundryConfig, onChange });
 
       // Set new store value with existing setting or default value.
-      const targetStore = store ? store : this.#getStore(key, game.settings.get(namespace, key));
+      const targetStore = store ? store : this.#getStore(key, globalThis.game.settings.get(namespace, key));
 
       // If a store instance is passed into register then initialize it with game settings data.
       if (store)
       {
          this.#stores.set(key, targetStore);
-         store.set(game.settings.get(namespace, key));
+         store.set(globalThis.game.settings.get(namespace, key));
       }
 
       const storeHandler = async (value) =>
       {
-         if (!gateSet && game.settings.get(namespace, key) !== value)
+         if (!gateSet && globalThis.game.settings.get(namespace, key) !== value)
          {
             gateSet = true;
-            await game.settings.set(namespace, key, value);
+            await globalThis.game.settings.set(namespace, key, value);
          }
 
          gateSet = false;

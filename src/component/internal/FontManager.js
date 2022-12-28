@@ -22,19 +22,19 @@ export class FontManager
          /**
           * @deprecated since v10.
           */
-         const legacyFamilies = CONFIG._fontFamilies.reduce((obj, f) =>
+         const legacyFamilies = globalThis.CONFIG._fontFamilies.reduce((obj, f) =>
          {
             obj[f] = { editor: true, fonts: [] };
             return obj;
          }, {});
 
-         fonts.push(foundry.utils.duplicate(CONFIG.fontDefinitions));
-         fonts.push(foundry.utils.duplicate(game.settings.get('core', 'fonts')));
+         fonts.push(globalThis.foundry.utils.duplicate(globalThis.CONFIG.fontDefinitions));
+         fonts.push(globalThis.foundry.utils.duplicate(globalThis.game.settings.get('core', 'fonts')));
          fonts.push(legacyFamilies);
       }
       else
       {
-         const legacyFamilies = CONFIG.fontFamilies.reduce((obj, f) =>
+         const legacyFamilies = globalThis.CONFIG.fontFamilies.reduce((obj, f) =>
          {
             obj[f] = { editor: true, fonts: [] };
             return obj;
