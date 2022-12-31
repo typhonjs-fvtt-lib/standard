@@ -195,16 +195,7 @@ export class TJSGameSettings
           `TJSGameSettings - register: 'setting.store' attribute is not a writable store.`);
       }
 
-      // TODO: Remove deprecation warning and fully remove support for `moduleId` in a future TRL release.
-      if (typeof setting.moduleId === 'string')
-      {
-         console.warn(
-          `TJSGameSettings - register deprecation warning: 'moduleId' should be replaced with 'namespace'.`);
-         console.warn(`'moduleId' will cease to work in a future update of TRL / TJSGameSettings.`);
-      }
-
-      // TODO: Remove nullish coalescing operator in a future TRL release.
-      const namespace = setting.namespace ?? setting.moduleId;
+      const namespace = setting.namespace;
       const key = setting.key;
       const folder = setting.folder;
 
@@ -334,11 +325,10 @@ export class TJSGameSettings
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings is not an object.`);
          }
 
-         // TODO: Uncomment when deprecation for 'moduleId' is removed in future TRL release.
-         // if (typeof entry.namespace !== 'string')
-         // {
-         //    throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'namespace' attribute.`);
-         // }
+         if (typeof entry.namespace !== 'string')
+         {
+            throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'namespace' attribute.`);
+         }
 
          if (typeof entry.key !== 'string')
          {
