@@ -97,8 +97,14 @@
 
       const stackingContextRect = result?.node.getBoundingClientRect();
 
+console.log(`!! MainLayout - updatePosition - 0 - result: `, result);
+console.log(`!! MainLayout - stackingContextRect - 1 - stackingContextRect: `, stackingContextRect);
+
       const nodeRect = node.getBoundingClientRect();
       const inputRect = inputEl.getBoundingClientRect();
+
+console.log(`!! MainLayout - stackingContextRect - 2 - nodeRect: `, nodeRect);
+console.log(`!! MainLayout - stackingContextRect - 3 - inputRect: `, inputRect);
 
       // Check to make sure that the menu width does not exceed the right side of the stacking context element.
       // If not open to the right.
@@ -116,7 +122,7 @@
       let applyTop;
 
       // Test if popup fits inside stacking context downward.
-      if (inputRect.y + inputRect.height + nodeRect.height > stackingContextRect.height)
+      if (inputRect.y + inputRect.height + nodeRect.height > (stackingContextRect.y + stackingContextRect.height))
       {
          // Only adjust to top if it actually fits upward otherwise apply top / downward
          applyTop = inputRect.y - nodeRect.height <= stackingContextRect.y;
