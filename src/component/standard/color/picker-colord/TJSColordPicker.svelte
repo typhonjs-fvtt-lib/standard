@@ -19,6 +19,7 @@
    import { isWritableStore }   from '@typhonjs-svelte/lib/store';
 
    import {
+      A11yHelper,
       ClipboardAccess,
       isObject }                from '@typhonjs-svelte/lib/util';
 
@@ -67,6 +68,9 @@
       hslHueString,
       hslaString,
    } = colorState.stores;
+
+   // Provides options to `A11yHelper.getFocusableElements` to ignore FocusWrap by CSS class.
+   const s_IGNORE_CLASSES = { ignoreClasses: ['tjs-color-picker-last-focus'] };
 
    onDestroy(() => internalState.destroy());
 
@@ -242,14 +246,9 @@
             if (internalState.isOpen && event.shiftKey &&
              (containerEl === document.activeElement || $firstFocusEl === document.activeElement))
             {
-               const allFocusable = spanEl.querySelectorAll('[tabindex]:not([tabindex="-1"])');
-
-               if (allFocusable.length > 2)
-               {
-                  // Select two elements back as the last focusable element is `FocusWrap`.
-                  const lastFocusable = allFocusable[allFocusable.length - 2];
-                  lastFocusable.focus();
-               }
+               // Collect all focusable elements from `elementRoot` and ignore TJSFocusWrap.
+               const lastFocusEl = A11yHelper.getLastFocusableElement(containerEl, s_IGNORE_CLASSES);
+               if (lastFocusEl instanceof HTMLElement) { lastFocusEl.focus(); }
 
                event.preventDefault();
                event.stopImmediatePropagation();
