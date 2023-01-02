@@ -1,6 +1,8 @@
 import { writable }        from 'svelte/store';
 
-import { isIterable }      from '@typhonjs-svelte/lib/util';
+import {
+   isIterable,
+   isObject }              from '@typhonjs-svelte/lib/util';
 
 import {
    isWritableStore,
@@ -44,7 +46,7 @@ export class TJSGameSettings
    /**
     * Creates a new GSWritableStore for the given key.
     *
-    * @param {string}   initialValue - An initial value to set to new stores.
+    * @param {*}  initialValue - An initial value to set to new stores.
     *
     * @returns {GSWritableStore} The new GSWritableStore.
     */
@@ -54,9 +56,9 @@ export class TJSGameSettings
    }
 
    /**
-    * Provides a generator to return stored settings data.
+    * Provides an iterator / generator to return stored settings data.
     *
-    * @returns {Generator<*, void, *>}
+    * @returns {Generator<GameSetting, void, *>}
     */
    *[Symbol.iterator]()
    {
@@ -120,7 +122,7 @@ export class TJSGameSettings
 
       const store = this.#getStore(key);
 
-      return { subscribe: store.subscribe, get: store.get };
+      return { subscribe: store.subscribe };
    }
 
    /**
@@ -174,12 +176,12 @@ export class TJSGameSettings
     */
    register(setting, coreConfig = true)
    {
-      if (typeof setting !== 'object')
+      if (!isObject(setting))
       {
          throw new TypeError(`TJSGameSettings - register: setting is not an object.`);
       }
 
-      if (typeof setting.options !== 'object')
+      if (!isObject(setting.options))
       {
          throw new TypeError(`TJSGameSettings - register: 'setting.options' attribute is not an object.`);
       }
@@ -320,7 +322,7 @@ export class TJSGameSettings
 
       for (const entry of settings)
       {
-         if (typeof entry !== 'object')
+         if (!isObject(entry))
          {
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings is not an object.`);
          }
@@ -335,7 +337,7 @@ export class TJSGameSettings
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'key' attribute.`);
          }
 
-         if (typeof entry.options !== 'object')
+         if (!isObject(entry.options))
          {
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'options' attribute.`);
          }

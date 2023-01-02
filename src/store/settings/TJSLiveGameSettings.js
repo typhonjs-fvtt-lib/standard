@@ -5,8 +5,8 @@ import { TJSGameSettings } from './TJSGameSettings.js';
  * Accessors are provided to directly get / set current setting data. Using a setter will update the setting and backing
  * store.
  *
- * TJSLiveGameSettings is also a readable Svelte store essentially providing a customized derived store of all settings
- * tracked.
+ * TJSLiveGameSettings is also a readable Svelte store essentially providing a customizable derived store of all
+ * settings tracked.
  *
  * Note: When using from JS a second subscriber function argument is the key that was updated.
  * From Svelte: Use 'lastKey' accessor to retrieve the last updated key.
@@ -14,7 +14,7 @@ import { TJSGameSettings } from './TJSGameSettings.js';
 export class TJSLiveGameSettings
 {
    /**
-    * Stores the current game setting value.
+    * Stores the current parsed game setting data.
     *
     * @type {{}}
     */
@@ -28,7 +28,7 @@ export class TJSLiveGameSettings
    #gameSettings = new Map();
 
    /**
-    * Stores the subscribers.
+    * Stores readable subscribers of this instance.
     *
     * Note: When using from JS a second argument is the key that was updated.
     * From Svelte: Use 'lastKey' accessor to retrieve the last updated key.
@@ -45,7 +45,8 @@ export class TJSLiveGameSettings
    #lastKey = void 0;
 
    /**
-    * Creates a live binding against the setting stores
+    * Creates a live binding against the setting stores. All settings are configured by default, but can also be
+    * filtered by setting key with inclusive / exclusive Sets.
     *
     * @param {TJSGameSettings}   gameSettings - A game settings instance to subscribe to...
     *
@@ -120,6 +121,8 @@ export class TJSLiveGameSettings
                }
                else
                {
+                  // Note: TJSGameSettings stores will type check data against the setting config and will throw
+                  // a type error if `data` doesn't match.
                   this.#gameSettings.get(key).store.set(data);
                }
             }
