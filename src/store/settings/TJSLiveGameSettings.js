@@ -125,8 +125,6 @@ export class TJSLiveGameSettings
                }
                else
                {
-                  // Note: TJSGameSettings stores will type check data against the setting config and will throw
-                  // a type error if `data` doesn't match.
                   this.#gameSettings.get(key).store.set(data);
                }
             }

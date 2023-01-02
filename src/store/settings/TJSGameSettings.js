@@ -11,19 +11,25 @@ import {
 import { UIControl }       from './UIControl.js';
 
 /**
- * Registers game settings and creates a backing Svelte store for each setting. It is possible to add multiple
- * `onChange` callbacks on registration.
+ * Registers game settings and creates a backing Svelte store for each setting. The Svelte store will update the
+ * Foundry game settings and vice versa when changes occur to the Foundry game settings the updated data is set to the
+ * store.
+ *
+ * Note: It is possible to add multiple `onChange` callbacks on registration.
+ *
+ * TODO: A possible future extension is to offer type checking against the setting type by creating a customized
+ * writable store that has an overloaded `set` method to provide type checking.
  */
 export class TJSGameSettings
 {
    /** @type {string} */
    #namespace;
 
-   /** @type {GameSetting[]} */
+   /** @type {GameSettingData[]} */
    #settings = [];
 
    /**
-    * @type {Map<string, GSWritableStore>}
+    * @type {Map<string, import('svelte/store').Writable>}
     */
    #stores = new Map();
 
@@ -44,11 +50,11 @@ export class TJSGameSettings
    }
 
    /**
-    * Creates a new GSWritableStore for the given key.
+    * Creates a new writable for the given key.
     *
     * @param {*}  initialValue - An initial value to set to new stores.
     *
-    * @returns {GSWritableStore} The new GSWritableStore.
+    * @returns {import('svelte/store').Writable} The new writable.
     */
    static #createStore(initialValue)
    {
@@ -58,7 +64,7 @@ export class TJSGameSettings
    /**
     * Provides an iterator / generator to return stored settings data.
     *
-    * @returns {Generator<GameSetting, void, *>}
+    * @returns {Generator<GameSettingData, void, *>}
     */
    *[Symbol.iterator]()
    {
@@ -85,13 +91,13 @@ export class TJSGameSettings
    }
 
    /**
-    * Gets a store from the GSWritableStore Map or creates a new store for the key.
+    * Gets a store from the `stores` Map or creates a new store for the key.
     *
     * @param {string}   key - Key to lookup in stores map.
     *
     * @param {string}   [initialValue] - An initial value to set to new stores.
     *
-    * @returns {GSWritableStore} The store for the given key.
+    * @returns {import('svelte/store').Writable} The store for the given key.
     */
    #getStore(key, initialValue)
    {
@@ -110,7 +116,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {GSReadableStore|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Readable|undefined} The associated store for the given game setting key.
     */
    getReadableStore(key)
    {
@@ -130,7 +136,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {GSWritableStore|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Writable|undefined} The associated store for the given game setting key.
     */
    getStore(key)
    {
@@ -142,7 +148,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {GSWritableStore|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Writable|undefined} The associated store for the given game setting key.
     */
    getWritableStore(key)
    {
@@ -388,9 +394,11 @@ export class TJSGameSettings
  */
 
 /**
- * @typedef {import('svelte/store').Writable} GSWritableStore - The backing Svelte store; writable w/ get method attached.
- */
-
-/**
- * @typedef {import('svelte/store').Readable} GSReadableStore - The backing Svelte store; readable w/ get method attached.
+ * @typedef {GameSettingOptions} GameSettingData - Stores the primary TJS game setting keys w/ GameSettingOptions.
+ *
+ * @property {string} namespace - The setting namespace; usually the ID of the module / system.
+ *
+ * @property {string} key - The setting key to register.
+ *
+ * @property {string} folder - The name of the TJSSvgFolder to put this setting in to group them.
  */
