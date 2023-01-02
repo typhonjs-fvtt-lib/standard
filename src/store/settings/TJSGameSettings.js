@@ -368,9 +368,11 @@ export class TJSGameSettings
  *
  * @property {string} name - The displayed name of the setting.
  *
- * @property {Function} [onChange] - An onChange callback to directly receive callbacks from Foundry on setting change.
+ * @property {Function|Iterable<Function>} [onChange] - An onChange callback function or iterable list of callbacks to
+ *                                                      directly receive callbacks from Foundry on setting change.
  *
- * @property {{min: number, max: number, step: number}} [range] - If range is specified, the resulting setting will be a range slider.
+ * @property {{min: number, max: number, step: number}} [range] - If range is specified, the resulting setting will be
+ *                                                                a range slider.
  *
  * @property {boolean} [requiresReload=false] - If true then a prompt to reload after changes occurs.
  *
