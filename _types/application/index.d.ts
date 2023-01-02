@@ -5,7 +5,7 @@ declare class TJSContextMenu {
     /**
      * Stores any active context menu.
      */
-    static "__#256052@#contextMenu": any;
+    static "__#256049@#contextMenu": any;
     /**
      * Creates and manages a game wide context menu.
      *

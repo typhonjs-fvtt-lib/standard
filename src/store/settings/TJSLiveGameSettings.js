@@ -5,6 +5,10 @@ import { TJSGameSettings } from './TJSGameSettings.js';
  * Accessors are provided to directly get / set current setting data. Using a setter will update the setting and backing
  * store.
  *
+ * Note: You can create a JSDoc / `@typedef` to apply with `@type` and achieve typing support in IDEs for the
+ * customizable live settings instance. Please see the example at the end of this source file on how to accomplish this
+ * task.
+ *
  * TJSLiveGameSettings is also a readable Svelte store essentially providing a customizable derived store of all
  * settings tracked.
  *
@@ -255,3 +259,16 @@ export class TJSLiveGameSettings
       for (let cntr = 0; cntr < subscriptions.length; cntr++) { subscriptions[cntr](this, key); }
    }
 }
+
+// Example of creating a typedef to type your specific live game settings instance. Add all relevant `@property`
+// entries.
+//
+// /**
+//  * @typdef {TJSLiveGameSettings} MyLiveGameSettings - Extend TJSLiveGameSettings and name this anything.
+//  *
+//  * @property {boolean} myBooleanSetting - Add property / type entries for setting keys associated w/ accessors.
+//  */
+//
+// /** @type {MyLiveGameSettings} */
+// const liveGameSettings = new TJSLiveGameSettings(gameSettings);
+// liveGameSettings.myBooleanSetting iss now typed as a boolean.
