@@ -461,7 +461,8 @@ export class UIControl
  *
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
  *
- * @property {SessionStorage} [storage] - TRL SessionStorage instance to serialize folder state and scrollbar position.
+ * @property {TJSSessionStorage} [storage] - TRL TJSSessionStorage instance to serialize folder state and scrollbar
+ *                                           position.
  */
 
 /**

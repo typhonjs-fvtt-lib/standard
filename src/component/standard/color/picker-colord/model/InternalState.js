@@ -45,9 +45,9 @@ export class InternalState
    #internalData = {};
 
    /**
-    * External SessionStorage instance.
+    * External TJSSessionStorage instance.
     *
-    * @type {SessionStorage}
+    * @type {TJSSessionStorage}
     */
    #sessionStorage;
 
@@ -61,7 +61,7 @@ export class InternalState
     *
     * @param {TJSColordPickerOptions}  options -
     *
-    * @param {SessionStorage}          sessionStorage - External SessionStorage instance.
+    * @param {TJSSessionStorage}       sessionStorage - External TJSSessionStorage instance.
     */
    constructor(color, options, sessionStorage)
    {
@@ -181,7 +181,7 @@ export class InternalState
    }
 
    /**
-    * @returns {SessionStorage}
+    * @returns {TJSSessionStorage}
     */
    get sessionStorage()
    {
