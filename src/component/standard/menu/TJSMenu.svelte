@@ -11,6 +11,8 @@
     * --tjs-menu-z-index - 100
     */
 
+   import { onMount }      from 'svelte';
+
    import { quintOut }     from 'svelte/easing';
 
    import { localize }     from '@typhonjs-svelte/lib/helper';
@@ -90,6 +92,12 @@
 
    // Stores if this context menu is closed.
    let closed = false;
+
+   // ----------------------------------------------------------------------------------------------------------------
+
+   onMount(() => menuEl.focus());
+
+   // ----------------------------------------------------------------------------------------------------------------
 
    /**
     * Provides a custom transform allowing inspection of the element to change positioning styles based on the
@@ -192,7 +200,7 @@
 <svelte:body on:pointerdown={onClose} on:wheel={onClose}/>
 
 <!-- bind to 'window' to close menu when browser window is blurred. -->
-<svelte:window on:blur={onWindowBlur}/>
+<!--<svelte:window on:blur={onWindowBlur}/>-->
 
 <nav class=tjs-menu
      bind:this={menuEl}
@@ -200,7 +208,9 @@
      use:efx
      on:click|preventDefault|stopPropagation={() => null}
      on:keydown|preventDefault|stopPropagation={() => null}
-     on:wheel|preventDefault|stopPropagation={() => null}>
+     on:wheel|preventDefault|stopPropagation={() => null}
+     tabindex=-1
+   >
    <section class=tjs-menu-items>
       <div on:click|preventDefault|stopPropagation={onClick} role=presentation>
          <slot />
@@ -212,11 +222,17 @@
                <svelte:component this={item.class} />
             </div>
          {:else if item['#type'] === 'icon'}
-            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)} role=presentation>
+            <div class="tjs-menu-item tjs-menu-item-button"
+                 on:click|preventDefault|stopPropagation={() => onClick(item)}
+                 role=button
+                 tabindex=0>
                <i class={item.icon}></i>{localize(item.label)}
             </div>
          {:else if item['#type'] === 'image'}
-            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={() => onClick(item)} role=presentation>
+            <div class="tjs-menu-item tjs-menu-item-button"
+                 on:click|preventDefault|stopPropagation={() => onClick(item)}
+                 role=button
+                 tabindex=0>
                <img src={item.image} alt={item.alt}>{localize(item.label)}
             </div>
          {:else if item['#type'] === 'separator-hr'}
@@ -256,11 +272,6 @@
       line-height: 2em;
    }
 
-   .tjs-menu div.tjs-menu-item:hover {
-      color: var(--tjs-menu-item-hover-color, #FFF);
-      text-shadow: 0 0 4px var(--tjs-menu-item-hover-text-shadow-color, red);
-   }
-
    .tjs-menu section.tjs-menu-items hr {
       margin-block-start: 0;
       margin-block-end: 0;
@@ -269,14 +280,28 @@
       border-bottom: 1px solid var(--tjs-menu-hr-border-bottom-color, #444);
    }
 
-   .tjs-menu div.tjs-menu-item i {
-      width: 1em;
-      margin-right: 0.25em;
+   .tjs-menu .tjs-menu-item i {
+      text-align: center;
+      width: 1.25em;
    }
 
-   .tjs-menu div.tjs-menu-item img {
-      width: 1em;
-      height: 1em;
-      margin-right: 0.25em;
+   .tjs-menu .tjs-menu-item img {
+      width: 1.25em;
+      height: 1.25em;
+   }
+
+   .tjs-menu-item-button {
+      display: flex;
+      gap: 0.25em;
+   }
+
+   .tjs-menu-item-button:hover {
+      color: var(--tjs-menu-item-hover-color, #FFF);
+      text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-anchor-text-shadow-focus-hover, 0 0 8px red));
+   }
+
+   .tjs-menu-item-button:focus-visible {
+      color: var(--tjs-menu-item-hover-color, #FFF);
+      text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-anchor-text-shadow-focus-hover, 0 0 8px red));
    }
 </style>
