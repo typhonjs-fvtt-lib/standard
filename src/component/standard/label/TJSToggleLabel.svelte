@@ -1,14 +1,19 @@
 <script>
    /**
     * --tjs-label-background
+    * --tjs-label-background-focus
     * --tjs-label-background-hover
     * --tjs-label-background-selected
+    * --tjs-label-border
     * --tjs-label-border-radius
     * --tjs-label-font-size - inherit
     * --tjs-label-font-weight - inherit
     * --tjs-label-font-family - inherit
     * --tjs-label-overflow - hidden
     * --tjs-label-padding - 0
+    * --tjs-label-text-shadow-focus - undefined; default: --tjs-anchor-text-shadow-focus-hover
+    * --tjs-label-text-shadow-hover - undefined; default: --tjs-anchor-text-shadow-focus-hover
+    * --tjs-label-text-shadow-selected - undefined; default: --tjs-anchor-text-shadow-focus-hover
     * --tjs-label-transition - global default: 'background 200ms linear'
     */
    import { createEventDispatcher } from 'svelte';
@@ -66,6 +71,7 @@
    $: onClickPropagate = isObject(label) && typeof label.onClickPropagate === 'boolean' ? label.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
+   let spanEl;
    let selected = false;
 
    $: if (store) { selected = $store; }
@@ -118,6 +124,12 @@
       if (store) { store.set(false); }
 
       if (typeof onClose === 'function') { onClose(selected); }
+
+      // The close event was triggered from a key press, so focus the anchor element / button.
+      if (typeof event?.detail?.keypress === 'boolean' && event.detail.keypress && spanEl?.isConnected)
+      {
+         spanEl.focus();
+      }
 
       if (!onClosePropagate)
       {
@@ -183,7 +195,8 @@
      title={localize(titleCurrent)}
      use:applyStyles={styles}>
    <slot name=outer />
-   <span class:selected
+   <span bind:this={spanEl}
+         class:selected
          on:click={onClick}
          on:contextmenu={onContextMenu}
          on:keydown={onKeydown}
@@ -225,6 +238,7 @@
       height: 100%;
 
       background: var(--tjs-label-background);
+      border: var(--tjs-label-border, none);
       border-radius: var(--tjs-label-border-radius);
       font-size: var(--tjs-label-font-size, inherit);
       font-weight: var(--tjs-label-font-weight, inherit);
@@ -235,15 +249,23 @@
       transition: var(--tjs-label-transition);
    }
 
+   span:focus {
+      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover));
+   }
+
    span:focus-visible {
+      background: var(--tjs-label-background-focus);
       outline: var(--tjs-label-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover));
    }
 
    span:hover {
       background: var(--tjs-label-background-hover);
+      text-shadow: var(--tjs-label-text-shadow-hover, var(--tjs-anchor-text-shadow-focus-hover));
    }
 
    span.selected {
       background: var(--tjs-label-background-selected);
+      text-shadow: var(--tjs-label-text-shadow-selected, var(--tjs-anchor-text-shadow-focus-hover));
    }
 </style>

@@ -4,8 +4,8 @@
     * --tjs-menu-border - 1px solid #000
     * --tjs-menu-box-shadow - 0 0 2px #000
     * --tjs-menu-color - #EEE
-    * --tjs-menu-hr-border-top-color - #555
-    * --tjs-menu-hr-border-bottom-color - #444
+    * --tjs-menu-hr-border-bottom - 1px solid #555
+    * --tjs-menu-hr-border-top - 1px solid #444
     * --tjs-menu-item-hover-color - #FFF
     * --tjs-menu-item-hover-text-shadow-color - red
     * --tjs-menu-z-index - 100
@@ -30,6 +30,7 @@
    export let offset = void 0;
    export let styles = void 0;
    export let efx = void 0;
+   export let keyCode = void 0;
    export let transitionOptions = void 0;
 
    let allItems;
@@ -83,6 +84,9 @@
 
    $: efx = isObject(menu) && typeof menu.efx === 'function' ? menu.efx :
     typeof efx === 'function' ? efx : () => {};
+
+   $: keyCode = isObject(menu) && typeof menu.keyCode === 'string' ? menu.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
 
    $: transitionOptions = isObject(menu) && isObject(menu.transitionOptions) ? menu.transitionOptions :
      isObject(transitionOptions) ? transitionOptions : { duration: 200, easing: quintOut };
@@ -183,6 +187,59 @@
       }
    }
 
+   function onKeydownMenu(event)
+   {
+      // Handle menu item keyCode selection.
+      if (event.code === keyCode)
+      {
+         event.stopPropagation();
+         return;
+      }
+
+      switch(event.code)
+      {
+         case 'Escape':
+            if (!closed)
+            {
+               closed = true;
+               menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: true } }));
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+
+         case 'Tab':
+            event.stopPropagation();
+            break;
+
+         default:
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+      }
+   }
+
+   function onKeyupItem(event, item)
+   {
+      if (event.code === keyCode)
+      {
+         const callback = item?.onClick ?? item?.onclick;
+
+         if (typeof callback === 'function') { callback(item); }
+
+         if (!closed)
+         {
+            closed = true;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: true } }));
+         }
+      }
+   }
+
    /**
     * Closes menu when browser window is blurred.
     */
@@ -207,7 +264,7 @@
      transition:animate
      use:efx
      on:click|preventDefault|stopPropagation={() => null}
-     on:keydown|preventDefault|stopPropagation={() => null}
+     on:keydown={onKeydownMenu}
      on:wheel|preventDefault|stopPropagation={() => null}
      tabindex=-1
    >
@@ -224,6 +281,7 @@
          {:else if item['#type'] === 'icon'}
             <div class="tjs-menu-item tjs-menu-item-button"
                  on:click|preventDefault|stopPropagation={() => onClick(item)}
+                 on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
                  role=button
                  tabindex=0>
                <i class={item.icon}></i>{localize(item.label)}
@@ -231,6 +289,7 @@
          {:else if item['#type'] === 'image'}
             <div class="tjs-menu-item tjs-menu-item-button"
                  on:click|preventDefault|stopPropagation={() => onClick(item)}
+                 on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
                  role=button
                  tabindex=0>
                <img src={item.image} alt={item.alt}>{localize(item.label)}
@@ -275,9 +334,9 @@
    .tjs-menu section.tjs-menu-items hr {
       margin-block-start: 0;
       margin-block-end: 0;
-      margin: 0 0.15em;
-      border-top: 1px solid var(--tjs-menu-hr-border-top-color, #555);
-      border-bottom: 1px solid var(--tjs-menu-hr-border-bottom-color, #444);
+      margin: 0.5em 0.25em;
+      border-top: var(--tjs-menu-hr-border-top, 1px solid #555);
+      border-bottom: var(--tjs-menu-hr-border-bottom, 1px solid #444);
    }
 
    .tjs-menu .tjs-menu-item i {
