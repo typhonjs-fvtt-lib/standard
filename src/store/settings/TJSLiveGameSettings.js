@@ -82,7 +82,7 @@ export class TJSLiveGameSettings
 
          if (typeof this[key] === 'function' || key === 'lastKey')
          {
-            console.log(`TJSLiveGameSettings warning: key (${key}) shadows a function. Skipping key.`);
+            console.warn(`TJSLiveGameSettings warning: key (${key}) shadows a function. Skipping key.`);
          }
 
          const store = gameSettings.getStore(key);
