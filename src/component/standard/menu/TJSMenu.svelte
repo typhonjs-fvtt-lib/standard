@@ -119,6 +119,10 @@
    // Stores if this context menu is closed.
    let closed = false;
 
+   // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keypress` for
+   // close event.
+   let hasKeyboardFocus = false;
+
    // ----------------------------------------------------------------------------------------------------------------
 
    onMount(() =>
@@ -136,6 +140,7 @@
          if (firstFocusEl instanceof HTMLElement && !firstFocusEl.classList.contains('tjs-focus-wrap'))
          {
             firstFocusEl.focus();
+            hasKeyboardFocus = true;
          }
          else
          {
@@ -257,7 +262,7 @@
             if (!closed)
             {
                closed = true;
-               menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: true } }));
+               menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
             }
 
             event.preventDefault();
@@ -266,6 +271,7 @@
 
          case 'Tab':
             event.stopPropagation();
+            hasKeyboardFocus = true;
 
             // Handle reverse focus cycling with `<Shift-Tab>`.
             if (event.shiftKey)
@@ -318,7 +324,7 @@
             event.preventDefault();
             event.stopPropagation();
 
-            menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: true } }));
+            menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
          }
       }
    }
