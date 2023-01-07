@@ -1,6 +1,6 @@
 <script>
    /**
-    * --tjs-anchor-text-shadow-focus-hover: system default
+    * --tjs-default-text-shadow-focus-hover: system default
     * --tjs-comp-outline-focus-visible: undefined; global replacement for focus-visible outline.
     *
     * --tjs-button-background
@@ -186,7 +186,7 @@
     }
 
     a:focus {
-        text-shadow: var(--tjs-icon-button-text-shadow-focus, var(--tjs-button-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover)));
+        text-shadow: var(--tjs-icon-button-text-shadow-focus, var(--tjs-button-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover)));
         clip-path: var(--tjs-icon-button-clip-path-focus, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-focus, var(--tjs-button-clip-path, none))));
     }
 
@@ -198,7 +198,7 @@
     a:hover {
         background: var(--tjs-icon-button-background-hover, var(--tjs-button-background-hover));
         clip-path: var(--tjs-icon-button-clip-path-hover, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-hover, var(--tjs-button-clip-path, none))));
-        text-shadow: var(--tjs-icon-button-text-shadow-hover, var(--tjs-button-text-shadow-hover, var(--tjs-anchor-text-shadow-focus-hover)));
+        text-shadow: var(--tjs-icon-button-text-shadow-hover, var(--tjs-button-text-shadow-hover, var(--tjs-default-text-shadow-focus-hover)));
     }
 
     i {

@@ -11,9 +11,9 @@
     * --tjs-label-font-family - inherit
     * --tjs-label-overflow - hidden
     * --tjs-label-padding - 0
-    * --tjs-label-text-shadow-focus - undefined; default: --tjs-anchor-text-shadow-focus-hover
-    * --tjs-label-text-shadow-hover - undefined; default: --tjs-anchor-text-shadow-focus-hover
-    * --tjs-label-text-shadow-selected - undefined; default: --tjs-anchor-text-shadow-focus-hover
+    * --tjs-label-text-shadow-focus - undefined; default: --tjs-default-text-shadow-focus-hover
+    * --tjs-label-text-shadow-hover - undefined; default: --tjs-default-text-shadow-focus-hover
+    * --tjs-label-text-shadow-selected - undefined; default: --tjs-default-text-shadow-focus-hover
     * --tjs-label-transition - global default: 'background 200ms linear'
     */
    import { createEventDispatcher } from 'svelte';
@@ -250,22 +250,22 @@
    }
 
    span:focus {
-      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover));
+      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
    }
 
    span:focus-visible {
       background: var(--tjs-label-background-focus);
       outline: var(--tjs-label-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
-      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-anchor-text-shadow-focus-hover));
+      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
    }
 
    span:hover {
       background: var(--tjs-label-background-hover);
-      text-shadow: var(--tjs-label-text-shadow-hover, var(--tjs-anchor-text-shadow-focus-hover));
+      text-shadow: var(--tjs-label-text-shadow-hover, var(--tjs-default-text-shadow-focus-hover));
    }
 
    span.selected {
       background: var(--tjs-label-background-selected);
-      text-shadow: var(--tjs-label-text-shadow-selected, var(--tjs-anchor-text-shadow-focus-hover));
+      text-shadow: var(--tjs-label-text-shadow-selected, var(--tjs-default-text-shadow-focus-hover));
    }
 </style>

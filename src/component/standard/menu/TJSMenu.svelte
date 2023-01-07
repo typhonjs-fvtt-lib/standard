@@ -10,7 +10,7 @@
     * --tjs-menu-hr-border-bottom - fallback: --tjs-default-hr-border-bottom; default: 1px solid #555
     * --tjs-menu-hr-border-top - fallback: --tjs-default-hr-border-top; default: 1px solid #444
     * --tjs-menu-item-color-focus-hover - fallback: --tjs-default-color-focus-hover; default: #fff
-    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-anchor-text-shadow-focus-hover; default: red
+    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-default-text-shadow-focus-hover; default: red
     */
 
    import { onMount }      from 'svelte';
@@ -485,11 +485,11 @@
 
    .tjs-menu-item-button:hover {
       color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #fff));
-      text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-anchor-text-shadow-focus-hover, 0 0 8px red));
+      text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
    }
 
    .tjs-menu-item-button:focus-visible {
       color: var(--tjs-menu-item-color-focus-hover, #fff);
-      text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-anchor-text-shadow-focus-hover, 0 0 8px red));
+      text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
    }
 </style>
