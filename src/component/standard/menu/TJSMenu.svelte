@@ -1,14 +1,16 @@
 <script>
    /**
-    * --tjs-menu-background - #23221d
-    * --tjs-menu-border - 1px solid #000
-    * --tjs-menu-box-shadow - 0 0 2px #000
-    * --tjs-menu-color - #EEE
-    * --tjs-menu-hr-border-bottom - 1px solid #555
-    * --tjs-menu-hr-border-top - 1px solid #444
-    * --tjs-menu-item-hover-color - #FFF
-    * --tjs-menu-item-hover-text-shadow-color - red
-    * --tjs-menu-z-index - 100
+    * --tjs-menu-background - fallback: --tjs-comp-popup-background; default: #23221d
+    * --tjs-menu-border - fallback: --tjs-comp-popup-border; default: 1px solid #000
+    * --tjs-menu-box-shadow - fallback: --tjs-comp-popup-box-shadow; default: 0 0 2px #000
+    * --tjs-menu-color - fallback: --tjs-comp-popup-color; default: #eee
+    * --tjs-menu-z-index - fallback: --tjs-comp-popup-z-index; default: 100
+    *
+    * --tjs-menu-focus-indicator-color - fallback: --tjs-default-color-focus; default: white
+    * --tjs-menu-hr-border-bottom - fallback: --tjs-default-hr-border-bottom; default: 1px solid #555
+    * --tjs-menu-hr-border-top - fallback: --tjs-default-hr-border-top; default: 1px solid #444
+    * --tjs-menu-item-color-focus-hover - fallback: --tjs-default-color-focus-hover; default: #fff
+    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-anchor-text-shadow-focus-hover; default: red
     */
 
    import { onMount }      from 'svelte';
@@ -18,21 +20,41 @@
    import { localize }     from '@typhonjs-svelte/lib/helper';
    import { slideFade }    from '@typhonjs-svelte/lib/transition';
    import {
+      A11yHelper,
       getStackingContext,
       isIterable,
       isObject,
       isSvelteComponent }  from '@typhonjs-svelte/lib/util';
 
+   import { TJSFocusWrap } from '@typhonjs-fvtt/svelte/component/core';
+
    const s_DEFAULT_OFFSET = { x: 0, y: 0 };
 
+   // Provides options to `A11yHelper.getFocusableElements` to ignore TJSFocusWrap by CSS class.
+   const s_IGNORE_CLASSES = { ignoreClasses: ['tjs-focus-wrap'] };
+
+   /** @type {TJSMenuData} */
    export let menu = void 0;
+
+   /** @type {Iterable<TJSMenuItemData>} */
    export let items = void 0;
+
+   /** @type {{ x?: number, y?: number }} */
    export let offset = void 0;
+
+   /** @type {Record<string, string>} */
    export let styles = void 0;
+
+   /** @type {Function} */
    export let efx = void 0;
+
+   /** @type {string} */
    export let keyCode = void 0;
+
+   /** @type {{ duration: number, easing: Function }} */
    export let transitionOptions = void 0;
 
+   /** @type {Iterable<TJSMenuItemData>} */
    let allItems;
 
    $: {
@@ -99,7 +121,34 @@
 
    // ----------------------------------------------------------------------------------------------------------------
 
-   onMount(() => menuEl.focus());
+   onMount(() =>
+   {
+      const activeEl = document.activeElement;
+      const parentEl = menuEl.parentElement;
+
+      // Determine if the parent element to the menu contains the active element and that it is explicitly focused
+      // via `:focus-visible` / keyboard navigation. If so then explicitly focus the first menu item possible.
+      if (parentEl instanceof HTMLElement && activeEl instanceof HTMLElement && parentEl.contains(activeEl) &&
+        activeEl.matches(':focus-visible'))
+      {
+         const firstFocusEl = A11yHelper.getFirstFocusableElement(menuEl);
+
+         if (firstFocusEl instanceof HTMLElement && !firstFocusEl.classList.contains('tjs-focus-wrap'))
+         {
+            firstFocusEl.focus();
+         }
+         else
+         {
+            // Silently focus the menu element so that keyboard handling functions.
+            menuEl.focus();
+         }
+      }
+      else
+      {
+         // Silently focus the menu element so that keyboard handling functions.
+         menuEl.focus();
+      }
+   });
 
    // ----------------------------------------------------------------------------------------------------------------
 
@@ -152,11 +201,11 @@
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
     * transition and destroys the component.
     *
-    * @param {object} [item] - Item object to find on click callback function.
+    * @param {TJSMenuItemData} [item] - Menu item data.
     */
    function onClick(item)
    {
-      const callback = item?.onClick ?? item?.onclick;
+      const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
 
       if (typeof callback === 'function') { callback(item); }
 
@@ -187,6 +236,12 @@
       }
    }
 
+   /**
+    * Handle key commands for closing the menu ('Esc') and reverse focus cycling via 'Shift-Tab'. Also stop propagation
+    * for the key code assigned for menu item selection ('Enter').
+    *
+    * @param {KeyboardEvent}  event - KeyboardEvent.
+    */
    function onKeydownMenu(event)
    {
       // Handle menu item keyCode selection.
@@ -211,20 +266,48 @@
 
          case 'Tab':
             event.stopPropagation();
+
+            // Handle reverse focus cycling with `<Shift-Tab>`.
+            if (event.shiftKey)
+            {
+               // Collect all focusable elements from `elementRoot` and ignore TJSFocusWrap.
+               const allFocusable = A11yHelper.getFocusableElements(menuEl, s_IGNORE_CLASSES);
+
+               // Find first and last focusable elements.
+               const firstFocusEl = allFocusable.length > 0 ? allFocusable[0] : void 0;
+               const lastFocusEl = allFocusable.length > 0 ? allFocusable[allFocusable.length - 1] : void 0;
+
+               // Only cycle focus to the last keyboard focusable app element if `elementRoot` or first focusable
+               // element is the active element.
+               if (menuEl === document.activeElement || firstFocusEl === document.activeElement)
+               {
+                  if (lastFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
+
+                  event.preventDefault();
+               }
+            }
+
             break;
 
          default:
-            event.preventDefault();
+            // Any other key stop propagation preventing any global key handlers from responding.
             event.stopPropagation();
             break;
       }
    }
 
+   /**
+    * Handle key presses on menu items.
+    *
+    * @param {KeyboardEvent}     event - KeyboardEvent.
+    *
+    * @param {TJSMenuItemData}   item - Menu item data.
+    */
    function onKeyupItem(event, item)
    {
       if (event.code === keyCode)
       {
-         const callback = item?.onClick ?? item?.onclick;
+         const callback = item?.onPress ?? item?.onClick ?? item?.onclick;
 
          if (typeof callback === 'function') { callback(item); }
 
@@ -257,26 +340,30 @@
 <svelte:body on:pointerdown={onClose} on:wheel={onClose}/>
 
 <!-- bind to 'window' to close menu when browser window is blurred. -->
-<!--<svelte:window on:blur={onWindowBlur}/>-->
+<svelte:window on:blur={onWindowBlur}/>
 
 <nav class=tjs-menu
      bind:this={menuEl}
      transition:animate
      use:efx
-     on:click|preventDefault|stopPropagation={() => null}
      on:keydown={onKeydownMenu}
-     on:wheel|preventDefault|stopPropagation={() => null}
      tabindex=-1
    >
    <section class=tjs-menu-items>
-      <div on:click|preventDefault|stopPropagation={onClick} role=presentation>
-         <slot />
-      </div>
-      <slot name=before />
+      <!-- TJSMenu supports hosting a slot for menu content -->
+      <slot />
+
+      {#if $$slots.before}
+         <div class=tjs-menu-item>
+            <span class=tjs-menu-focus-indicator />
+            <slot name=before />
+         </div>
+      {/if}
       {#each allItems as item}
          {#if item['#type'] === 'class'}
             <div class=tjs-menu-item on:click|preventDefault|stopPropagation={onClick} role=presentation>
-               <svelte:component this={item.class} />
+               <span class=tjs-menu-focus-indicator />
+               <svelte:component this={item.class} {...(isObject(item.props) ? item.props : {})} />
             </div>
          {:else if item['#type'] === 'icon'}
             <div class="tjs-menu-item tjs-menu-item-button"
@@ -284,6 +371,7 @@
                  on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
                  role=button
                  tabindex=0>
+               <span class=tjs-menu-focus-indicator />
                <i class={item.icon}></i>{localize(item.label)}
             </div>
          {:else if item['#type'] === 'image'}
@@ -292,14 +380,21 @@
                  on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
                  role=button
                  tabindex=0>
-               <img src={item.image} alt={item.alt}>{localize(item.label)}
+               <span class=tjs-menu-focus-indicator />
+               <img src={item.image} alt={item.imageAlt}>{localize(item.label)}
             </div>
          {:else if item['#type'] === 'separator-hr'}
             <hr>
          {/if}
       {/each}
-      <slot name=after />
+      {#if $$slots.after}
+         <div class=tjs-menu-item>
+            <span class=tjs-menu-focus-indicator />
+            <slot name=after />
+         </div>
+      {/if}
    </section>
+   <TJSFocusWrap elementRoot={menuEl} />
 </nav>
 
 <style>
@@ -307,44 +402,78 @@
       position: absolute;
       width: max-content;
       height: max-content;
+      overflow: hidden;
 
-      background: var(--tjs-menu-background, #23221d);
-      border: var(--tjs-menu-border, 1px solid #000);
-      border-radius: var(--tjs-menu-border-radius, 5px);
-      box-shadow: var(--tjs-menu-box-shadow, 0 0 2px #000);
-      color: var(--tjs-menu-color, #EEE);
+      background: var(--tjs-menu-background, var(--tjs-comp-popup-background, #23221d));
+      border: var(--tjs-menu-border, var(--tjs-comp-popup-border, 1px solid #000));
+      border-radius: var(--tjs-menu-border-radius, var(--tjs-comp-popup-border-radius, 5px));
+      box-shadow: var(--tjs-menu-box-shadow, var(--tjs-comp-popup-box-shadow, 0 0 2px #000));
+      color: var(--tjs-menu-color, var(--tjs-comp-popup-color, #eee));
 
       text-align: start;
 
-      z-index: var(--tjs-menu-z-index, 100);
+      z-index: var(--tjs-menu-z-index, var(--tjs-comp-popup-z-index, 100));
    }
 
-   .tjs-menu section.tjs-menu-items {
+   .tjs-menu:focus-visible {
+      outline: 2px solid transparent;
+   }
+
+   .tjs-menu-items {
       margin: 0;
       padding: 0;
    }
 
-   .tjs-menu div.tjs-menu-item {
+   .tjs-menu-items hr {
+      margin-block-start: 0;
+      margin-block-end: 0;
+      margin: 0 0.25em;
+      border-top: var(--tjs-menu-hr-border-top, var(--tjs-default-hr-border-top, 1px solid #555));
+      border-bottom: var(--tjs-menu-hr-border-bottom, var(--tjs-default-hr-border-bottom, 1px solid #444));
+   }
+
+   .tjs-menu-item {
       display: flex;
       align-items: center;
-      padding: 0 0.5em;
+      padding: 0 0.5em 0 0;
       line-height: 2em;
    }
 
-   .tjs-menu section.tjs-menu-items hr {
-      margin-block-start: 0;
-      margin-block-end: 0;
-      margin: 0.5em 0.25em;
-      border-top: var(--tjs-menu-hr-border-top, 1px solid #555);
-      border-bottom: var(--tjs-menu-hr-border-bottom, 1px solid #444);
+   /* Disable default outline for focus visible / within */
+   .tjs-menu-item:focus-within, .tjs-menu-item:focus-visible {
+      outline: none;
    }
 
-   .tjs-menu .tjs-menu-item i {
+   /* Enable focus indicator for focus-within */
+   /* Note: the use of `has` pseudo-selector that requires a child with :focus-visible */
+   .tjs-menu-item:focus-within:has(:focus-visible) .tjs-menu-focus-indicator {
+      background: var(--tjs-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
+   }
+
+   /* Fallback for browsers that don't support 'has'; any user interaction including mouse will trigger */
+   @supports not (selector(:has(*))) {
+      .tjs-menu-item:focus-within .tjs-menu-focus-indicator {
+         background: var(--tjs-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
+      }
+   }
+
+   /* Enable focus indicator for focus visible */
+   .tjs-menu-item:focus-visible .tjs-menu-focus-indicator {
+      background: var(--tjs-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
+   }
+
+   .tjs-menu-focus-indicator {
+      display: flex;
+      align-self: stretch;
+      width: 0.25em;
+   }
+
+   .tjs-menu-item i {
       text-align: center;
       width: 1.25em;
    }
 
-   .tjs-menu .tjs-menu-item img {
+   .tjs-menu-item img {
       width: 1.25em;
       height: 1.25em;
    }
@@ -355,12 +484,12 @@
    }
 
    .tjs-menu-item-button:hover {
-      color: var(--tjs-menu-item-hover-color, #FFF);
+      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #fff));
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-anchor-text-shadow-focus-hover, 0 0 8px red));
    }
 
    .tjs-menu-item-button:focus-visible {
-      color: var(--tjs-menu-item-hover-color, #FFF);
+      color: var(--tjs-menu-item-color-focus-hover, #fff);
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-anchor-text-shadow-focus-hover, 0 0 8px red));
    }
 </style>
