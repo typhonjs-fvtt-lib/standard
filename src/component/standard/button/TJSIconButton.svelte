@@ -1,7 +1,7 @@
 <script>
    /**
     * --tjs-default-text-shadow-focus-hover: system default
-    * --tjs-comp-outline-focus-visible: undefined; global replacement for focus-visible outline.
+    * --tjs-default-outline-focus-visible: undefined; global replacement for focus-visible outline.
     *
     * --tjs-button-background
     * --tjs-button-background-focus
@@ -192,7 +192,7 @@
 
     a:focus-visible {
         background: var(--tjs-icon-button-background-focus, var(--tjs-button-background-focus));
-        outline: var(--tjs-icon-button-outline-focus, var(--tjs-button-outline-focus, var(--tjs-comp-outline-focus-visible, revert)));
+        outline: var(--tjs-icon-button-outline-focus, var(--tjs-button-outline-focus, var(--tjs-default-outline-focus-visible, revert)));
     }
 
     a:hover {

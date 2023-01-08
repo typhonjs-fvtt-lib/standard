@@ -504,7 +504,7 @@
     }
 
     summary:focus-visible {
-        outline: var(--tjs-folder-summary-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+        outline: var(--tjs-folder-summary-outline-focus, var(--tjs-default-outline-focus-visible, revert));
     }
 
     summary:focus-visible .label {

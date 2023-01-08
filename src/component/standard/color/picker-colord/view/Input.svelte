@@ -50,7 +50,7 @@
     }
 
     .tjs-color-picker-input:focus-visible {
-        outline: var(--tjs-color-picker-input-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+        outline: var(--tjs-color-picker-input-outline-focus, var(--tjs-default-outline-focus-visible, revert));
     }
 
     .tjs-color-picker-input:hover {

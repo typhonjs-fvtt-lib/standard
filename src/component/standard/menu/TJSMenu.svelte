@@ -1,10 +1,10 @@
 <script>
    /**
-    * --tjs-menu-background - fallback: --tjs-comp-popup-background; default: #23221d
-    * --tjs-menu-border - fallback: --tjs-comp-popup-border; default: 1px solid #000
-    * --tjs-menu-box-shadow - fallback: --tjs-comp-popup-box-shadow; default: 0 0 2px #000
-    * --tjs-menu-color - fallback: --tjs-comp-popup-color; default: #eee
-    * --tjs-menu-z-index - fallback: --tjs-comp-popup-z-index; default: 100
+    * --tjs-menu-background - fallback: --tjs-default-popup-background; default: #23221d
+    * --tjs-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
+    * --tjs-menu-box-shadow - fallback: --tjs-default-popup-box-shadow; default: 0 0 2px #000
+    * --tjs-menu-color - fallback: --tjs-default-popup-color; default: #eee
+    * --tjs-menu-z-index - fallback: --tjs-default-popup-z-index; default: 100
     *
     * --tjs-menu-focus-indicator-color - fallback: --tjs-default-color-focus; default: white
     * --tjs-menu-focus-indicator-width - 0.25em
@@ -413,15 +413,15 @@
       height: max-content;
       overflow: hidden;
 
-      background: var(--tjs-menu-background, var(--tjs-comp-popup-background, #23221d));
-      border: var(--tjs-menu-border, var(--tjs-comp-popup-border, 1px solid #000));
-      border-radius: var(--tjs-menu-border-radius, var(--tjs-comp-popup-border-radius, 5px));
-      box-shadow: var(--tjs-menu-box-shadow, var(--tjs-comp-popup-box-shadow, 0 0 2px #000));
-      color: var(--tjs-menu-color, var(--tjs-comp-popup-color, #eee));
+      background: var(--tjs-menu-background, var(--tjs-default-popup-background, #23221d));
+      border: var(--tjs-menu-border, var(--tjs-default-popup-border, 1px solid #000));
+      border-radius: var(--tjs-menu-border-radius, var(--tjs-default-popup-border-radius, 5px));
+      box-shadow: var(--tjs-menu-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));
+      color: var(--tjs-menu-color, var(--tjs-default-popup-color, #eee));
 
       text-align: start;
 
-      z-index: var(--tjs-menu-z-index, var(--tjs-comp-popup-z-index, 100));
+      z-index: var(--tjs-menu-z-index, var(--tjs-default-popup-z-index, 100));
    }
 
    .tjs-menu:focus-visible {

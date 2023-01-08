@@ -20,7 +20,7 @@
     }
 
     .tjs-picker-indicator.focused {
-        outline: var(--tjs-color-picker-outline-focus, var(--tjs-comp-outline-focus-visible, 2px solid red));
+        outline: var(--tjs-color-picker-outline-focus, var(--tjs-default-outline-focus-visible, 2px solid red));
     }
 
     @container tjs-color-picker-container (min-width: 0) {

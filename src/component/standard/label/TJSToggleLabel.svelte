@@ -256,7 +256,7 @@
 
    span:focus-visible {
       background: var(--tjs-toggle-label-background-focus);
-      outline: var(--tjs-toggle-label-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+      outline: var(--tjs-toggle-label-outline-focus, var(--tjs-default-outline-focus-visible, revert));
       text-shadow: var(--tjs-toggle-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
    }
 
