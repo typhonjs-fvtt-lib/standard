@@ -1,13 +1,25 @@
 <script>
-   import { writable }  from 'svelte/store';
+   /**
+    * Provides a convenient scrollable container / DIV that always allows keyboard scroll navigation by stopping
+    * propagation of page up / down key events when the active element is or is contained by the container.
+    *
+    * Auto serialization of scroll state is handled by providing a store / `scrollTop`.
+    *
+    * A main slot is provided for a content component, but a fallback allows a child content component to be defined
+    * by the `class` and `props` fields in {@link TJSScrollContainerData}.
+    */
+
+   import { writable }     from 'svelte/store';
 
    import {
       applyScrolltop,
-      applyStyles }     from '@typhonjs-fvtt/runtime/svelte/action';
+      applyStyles }        from '@typhonjs-fvtt/runtime/svelte/action';
 
    import {
-      isObject }        from '@typhonjs-fvtt/runtime/svelte/util';
+      isObject,
+      isSvelteComponent }  from '@typhonjs-fvtt/runtime/svelte/util';
 
+   /** @type {TJSScrollContainerData} */
    export let container = void 0;
 
    /** @type {import('svelte/store').Writable<number>} */
@@ -22,9 +34,18 @@
    $: styles = isObject(container) && isObject(container.styles) ? container.styles :
     isObject(styles) ? styles : void 0;
 
+   $: child = isObject(container) && isSvelteComponent(container.class) ? container.class : void 0;
+   $: props = isObject(container) && isObject(container.props) ? container.props : {};
+
    /** @type {HTMLElement} */
    let containerEl;
 
+   /**
+    * Stops propagation against any global key handlers when focus is inside the container for page up / down key
+    * events.
+    *
+    * @param {KeyboardEvent}  event - A KeyboardEvent.
+    */
    function onKeydown(event)
    {
       switch (event.code)
@@ -44,6 +65,12 @@
       }
    }
 
+   /**
+    * Stops propagation against any global key handlers when focus is inside the container for page up / down key
+    * events.
+    *
+    * @param {KeyboardEvent}  event - A KeyboardEvent.
+    */
    function onKeyup(event)
    {
       switch (event.code)
@@ -54,7 +81,6 @@
             const activeEl = document.activeElement;
             if (activeEl === containerEl || containerEl.contains(activeEl))
             {
-               // Stop propagation against any global key handlers when focus is inside the container.
                event.stopPropagation();
             }
 
@@ -86,7 +112,11 @@
      use:applyStyles={styles}
      tabindex=-1
 >
-   <slot />
+   <slot>
+      {#if child}
+         <svelte:component this={child} {...props} />
+      {/if}
+   </slot>
 </div>
 
 <style>
