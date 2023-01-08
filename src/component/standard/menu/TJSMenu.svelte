@@ -17,6 +17,7 @@
 
    import { quintOut }     from 'svelte/easing';
 
+   import { applyStyles }  from '@typhonjs-svelte/lib/action';
    import { localize }     from '@typhonjs-svelte/lib/helper';
    import { slideFade }    from '@typhonjs-svelte/lib/transition';
    import {
@@ -351,6 +352,7 @@
 <nav class=tjs-menu
      bind:this={menuEl}
      transition:animate
+     use:applyStyles={styles}
      use:efx
      on:keydown={onKeydownMenu}
      tabindex=-1
