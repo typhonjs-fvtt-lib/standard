@@ -1,20 +1,20 @@
 <script>
    /**
-    * --tjs-label-background
-    * --tjs-label-background-focus
-    * --tjs-label-background-hover
-    * --tjs-label-background-selected
-    * --tjs-label-border
-    * --tjs-label-border-radius
-    * --tjs-label-font-size - inherit
-    * --tjs-label-font-weight - inherit
-    * --tjs-label-font-family - inherit
-    * --tjs-label-overflow - hidden
-    * --tjs-label-padding - 0
-    * --tjs-label-text-shadow-focus - undefined; default: --tjs-default-text-shadow-focus-hover
-    * --tjs-label-text-shadow-hover - undefined; default: --tjs-default-text-shadow-focus-hover
-    * --tjs-label-text-shadow-selected - undefined; default: --tjs-default-text-shadow-focus-hover
-    * --tjs-label-transition - global default: 'background 200ms linear'
+    * --tjs-toggle-label-background
+    * --tjs-toggle-label-background-focus
+    * --tjs-toggle-label-background-hover
+    * --tjs-toggle-label-background-selected
+    * --tjs-toggle-label-border
+    * --tjs-toggle-label-border-radius
+    * --tjs-toggle-label-font-size - inherit
+    * --tjs-toggle-label-font-weight - inherit
+    * --tjs-toggle-label-font-family - inherit
+    * --tjs-toggle-label-overflow - hidden
+    * --tjs-toggle-label-padding - 0
+    * --tjs-toggle-label-text-shadow-focus - undefined; default: --tjs-default-text-shadow-focus-hover
+    * --tjs-toggle-label-text-shadow-hover - undefined; default: --tjs-default-text-shadow-focus-hover
+    * --tjs-toggle-label-text-shadow-selected - undefined; default: --tjs-default-text-shadow-focus-hover
+    * --tjs-toggle-label-transition - global default: 'background 200ms linear'
     */
    import { createEventDispatcher } from 'svelte';
 
@@ -36,7 +36,7 @@
    export let keyCode = void 0;
    export let onPress = void 0;
    export let onClose = void 0;
-   export let onContextClick = void 0;
+   export let onContextMenu = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
 
@@ -63,8 +63,8 @@
     typeof onPress === 'function' ? onPress : void 0;
    $: onClose = isObject(label) && typeof label.onClose === 'function' ? label.onClose :
     typeof onClose === 'function' ? onClose : void 0;
-   $: onContextClick = isObject(label) && typeof label.onContextClick === 'function' ? label.onContextClick :
-    typeof onContextClick === 'function' ? onContextClick : void 0;
+   $: onContextMenu = isObject(label) && typeof label.onContextMenu === 'function' ? label.onContextMenu :
+    typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
    $: onClosePropagate = isObject(label) && typeof label.onClosePropagate === 'boolean' ? label.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false
@@ -141,9 +141,9 @@
    /**
     * @param {MouseEvent}   event -
     */
-   function onContextMenu(event)
+   function onContextMenuPress(event)
    {
-      if (typeof onContextClick === 'function') { onContextClick(); }
+      if (typeof onContextMenu === 'function') { onContextMenu(); }
 
       if (!onClickPropagate)
       {
@@ -198,10 +198,11 @@
    <span bind:this={spanEl}
          class:selected
          on:click={onClick}
-         on:contextmenu={onContextMenu}
+         on:contextmenu={onContextMenuPress}
          on:keydown={onKeydown}
          on:keyup={onKeyup}
          on:click
+         on:contextmenu
          role=button
          tabindex=0
          use:efx>
@@ -229,43 +230,43 @@
       position: relative;
 
       display: flex;
-      justify-content: var(--tjs-label-justify-content, center);
-      align-items: var(--tjs-label-align-items, center);
+      justify-content: var(--tjs-toggle-label-justify-content, center);
+      align-items: var(--tjs-toggle-label-align-items, center);
 
       pointer-events: initial;
 
       width: 100%;
       height: 100%;
 
-      background: var(--tjs-label-background);
-      border: var(--tjs-label-border, none);
-      border-radius: var(--tjs-label-border-radius);
-      font-size: var(--tjs-label-font-size, inherit);
-      font-weight: var(--tjs-label-font-weight, inherit);
-      font-family: var(--tjs-label-font-family, inherit);
-      overflow: var(--tjs-label-overflow, hidden);
-      padding: var(--tjs-label-padding, 0 0.25em);
+      background: var(--tjs-toggle-label-background);
+      border: var(--tjs-toggle-label-border, none);
+      border-radius: var(--tjs-toggle-label-border-radius);
+      font-size: var(--tjs-toggle-label-font-size, inherit);
+      font-weight: var(--tjs-toggle-label-font-weight, inherit);
+      font-family: var(--tjs-toggle-label-font-family, inherit);
+      overflow: var(--tjs-toggle-label-overflow, hidden);
+      padding: var(--tjs-toggle-label-padding, 0 0.25em);
       transform-style: preserve-3d;
-      transition: var(--tjs-label-transition);
+      transition: var(--tjs-toggle-label-transition);
    }
 
    span:focus {
-      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
+      text-shadow: var(--tjs-toggle-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
    }
 
    span:focus-visible {
-      background: var(--tjs-label-background-focus);
-      outline: var(--tjs-label-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
-      text-shadow: var(--tjs-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
+      background: var(--tjs-toggle-label-background-focus);
+      outline: var(--tjs-toggle-label-outline-focus, var(--tjs-comp-outline-focus-visible, revert));
+      text-shadow: var(--tjs-toggle-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
    }
 
    span:hover {
-      background: var(--tjs-label-background-hover);
-      text-shadow: var(--tjs-label-text-shadow-hover, var(--tjs-default-text-shadow-focus-hover));
+      background: var(--tjs-toggle-label-background-hover);
+      text-shadow: var(--tjs-toggle-label-text-shadow-hover, var(--tjs-default-text-shadow-focus-hover));
    }
 
    span.selected {
-      background: var(--tjs-label-background-selected);
-      text-shadow: var(--tjs-label-text-shadow-selected, var(--tjs-default-text-shadow-focus-hover));
+      background: var(--tjs-toggle-label-background-selected);
+      text-shadow: var(--tjs-toggle-label-text-shadow-selected, var(--tjs-default-text-shadow-focus-hover));
    }
 </style>

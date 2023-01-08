@@ -54,7 +54,7 @@
    export let keyCode = void 0;
    export let onPress = void 0;
    export let onClose = void 0;
-   export let onContextClick = void 0;
+   export let onContextMenu = void 0;
    export let onClickPropagate = void 0;
    export let onClosePropagate = void 0;
 
@@ -79,8 +79,8 @@
     typeof onPress === 'function' ? onPress : void 0;
    $: onClose = isObject(button) && typeof button.onClose === 'function' ? button.onClose :
     typeof onClose === 'function' ? onClose : void 0;
-   $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
-    typeof onContextClick === 'function' ? onContextClick : void 0;
+   $: onContextMenu = isObject(button) && typeof button.onContextMenu === 'function' ? button.onContextMenu :
+    typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
    $: onClosePropagate = isObject(button) && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
     typeof onClosePropagate === 'boolean' ? onClosePropagate : false;
@@ -119,9 +119,9 @@
    /**
     * @param {MouseEvent}   event -
     */
-   function onContextMenu(event)
+   function onContextMenuPress(event)
    {
-      if (typeof onContextClick === 'function') { onContextClick(); }
+      if (typeof onContextMenu === 'function') { onContextMenu(); }
 
       if (!onClickPropagate)
       {
@@ -213,7 +213,7 @@
    <a bind:this={anchorEl}
       class:selected
       on:click={onClick}
-      on:contextmenu={onContextMenu}
+      on:contextmenu={onContextMenuPress}
       on:keydown={onKeydown}
       on:keyup={onKeyup}
       on:click

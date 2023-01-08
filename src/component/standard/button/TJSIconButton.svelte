@@ -50,7 +50,7 @@
    export let efx = void 0;
    export let keyCode = void 0;
    export let onPress = void 0;
-   export let onContextClick = void 0;
+   export let onContextMenu = void 0;
    export let onClickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
@@ -68,8 +68,8 @@
 
    $: onPress = isObject(button) && typeof button.onPress === 'function' ? button.onPress :
     typeof onPress === 'function' ? onPress : void 0;
-   $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
-    typeof onContextClick === 'function' ? onContextClick : void 0;
+   $: onContextMenu = isObject(button) && typeof button.onContextMenu === 'function' ? button.onContextMenu :
+    typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
    $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
@@ -95,9 +95,9 @@
    /**
     * @param {MouseEvent}   event -
     */
-   function onContextMenu(event)
+   function onContextMenuPress(event)
    {
-      if (typeof onContextClick === 'function') { onContextClick(); }
+      if (typeof onContextMenu === 'function') { onContextMenu(); }
 
       if (!onClickPropagate)
       {
@@ -143,7 +143,7 @@
 <div class=tjs-icon-button use:applyStyles={styles}>
     <!-- svelte-ignore a11y-missing-attribute -->
     <a on:click={onClick}
-       on:contextmenu={onContextMenu}
+       on:contextmenu={onContextMenuPress}
        on:keydown={onKeydown}
        on:keyup={onKeyup}
        on:click
