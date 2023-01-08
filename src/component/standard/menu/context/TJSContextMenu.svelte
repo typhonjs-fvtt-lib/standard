@@ -1,20 +1,52 @@
 <script>
-   import { createEventDispatcher } from 'svelte';
+   import {
+      createEventDispatcher,
+      onMount }                     from 'svelte';
+
    import { current_component }     from 'svelte/internal';
 
+   import { applyStyles }           from '@typhonjs-svelte/lib/action';
    import { localize }              from '@typhonjs-svelte/lib/helper';
    import { slideFade }             from '@typhonjs-svelte/lib/transition';
-   import { outroAndDestroy }       from '@typhonjs-svelte/lib/util';
+
+   import {
+      A11yHelper,
+      isIterable,
+      isObject,
+      isSvelteComponent,
+      outroAndDestroy }             from '@typhonjs-svelte/lib/util';
+
+   import { TJSFocusWrap }          from '@typhonjs-fvtt/svelte/component/core';
+
+   export let menu = void 0;
 
    export let id = '';
+
    export let x = 0;
+
    export let y = 0;
+
    export let items = [];
+
    export let zIndex = 10000;
+
+   /** @type {Record<string, string>} */
+   export let styles = void 0;
+
+   /** @type {string} */
+   export let keyCode = void 0;
+
+   /** @type {{ duration: number, easing: Function }} */
    export let transitionOptions = void 0;
 
-   // Bound to the nav element / menu.
-   let menuEl;
+   $: styles = isObject(menu) && isObject(menu.styles) ? menu.styles :
+    isObject(styles) ? styles : void 0;
+
+   $: keyCode = isObject(menu) && typeof menu.keyCode === 'string' ? menu.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
+
+   // Provides options to `A11yHelper.getFocusableElements` to ignore TJSFocusWrap by CSS class.
+   const s_IGNORE_CLASSES = { ignoreClasses: ['tjs-focus-wrap'] };
 
    // Store this component reference.
    const local = current_component;
@@ -22,8 +54,47 @@
    // Dispatches `close` event.
    const dispatch = createEventDispatcher();
 
+   // Bound to the nav element / menu.
+   let menuEl;
+
    // Stores if this context menu is closed.
    let closed = false;
+
+   // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keypress` for
+   // close event.
+   let hasKeyboardFocus = false;
+
+   let keyboardFocus = false;
+
+   // ----------------------------------------------------------------------------------------------------------------
+
+   onMount(() =>
+   {
+      // Determine if the parent element to the menu contains the active element and that it is explicitly focused
+      // via `:focus-visible` / keyboard navigation. If so then explicitly focus the first menu item possible.
+      if (keyboardFocus)
+      {
+         const firstFocusEl = A11yHelper.getFirstFocusableElement(menuEl);
+
+         if (firstFocusEl instanceof HTMLElement && !firstFocusEl.classList.contains('tjs-focus-wrap'))
+         {
+            firstFocusEl.focus();
+            hasKeyboardFocus = true;
+         }
+         else
+         {
+            // Silently focus the menu element so that keyboard handling functions.
+            menuEl.focus();
+         }
+      }
+      else
+      {
+         // Silently focus the menu element so that keyboard handling functions.
+         menuEl.focus();
+      }
+   });
+
+   // ----------------------------------------------------------------------------------------------------------------
 
    /**
     * Provides a custom animate callback allowing inspection of the element to change positioning styles based on the
@@ -52,11 +123,13 @@
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
     * transition and destroys the component.
     *
-    * @param {function} callback - Function to invoke on click.
+    * @param {object} item - Function to invoke on click.
     */
-   function onClick(callback)
+   function onClick(item)
    {
-      if (typeof callback === 'function') { callback(); }
+      const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
+
+      if (typeof callback === 'function') { callback(item); }
 
       if (!closed)
       {
@@ -91,6 +164,98 @@
    }
 
    /**
+    * Handle key commands for closing the menu ('Esc') and reverse focus cycling via 'Shift-Tab'. Also stop propagation
+    * for the key code assigned for menu item selection ('Enter').
+    *
+    * @param {KeyboardEvent}  event - KeyboardEvent.
+    */
+   function onKeydownMenu(event)
+   {
+      // Handle menu item keyCode selection.
+      if (event.code === keyCode)
+      {
+         event.stopPropagation();
+         return;
+      }
+
+      switch(event.code)
+      {
+         case 'ContextMenu':
+         case 'Escape':
+            if (!closed)
+            {
+               closed = true;
+               dispatch('close');
+               outroAndDestroy(local);
+               // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+
+         case 'Tab':
+            event.stopPropagation();
+            hasKeyboardFocus = true;
+
+            // Handle reverse focus cycling with `<Shift-Tab>`.
+            if (event.shiftKey)
+            {
+               // Collect all focusable elements from `elementRoot` and ignore TJSFocusWrap.
+               const allFocusable = A11yHelper.getFocusableElements(menuEl, s_IGNORE_CLASSES);
+
+               // Find first and last focusable elements.
+               const firstFocusEl = allFocusable.length > 0 ? allFocusable[0] : void 0;
+               const lastFocusEl = allFocusable.length > 0 ? allFocusable[allFocusable.length - 1] : void 0;
+
+               // Only cycle focus to the last keyboard focusable app element if `elementRoot` or first focusable
+               // element is the active element.
+               if (menuEl === document.activeElement || firstFocusEl === document.activeElement)
+               {
+                  if (lastFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
+
+                  event.preventDefault();
+               }
+            }
+
+            break;
+
+         default:
+            // Any other key stop propagation preventing any global key handlers from responding.
+            event.stopPropagation();
+            break;
+      }
+   }
+
+   /**
+    * Handle key presses on menu items.
+    *
+    * @param {KeyboardEvent}     event - KeyboardEvent.
+    *
+    * @param {TJSMenuItemData}   item - Menu item data.
+    */
+   function onKeyupItem(event, item)
+   {
+      if (event.code === keyCode)
+      {
+         if (!closed)
+         {
+            closed = true;
+            dispatch('close');
+            outroAndDestroy(local);
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+         }
+
+         const callback = item?.onPress ?? item?.onClick ?? item?.onclick;
+         if (typeof callback === 'function') { callback(item); }
+      }
+   }
+
+   /**
     * Closes context menu when browser window is blurred.
     */
    function onWindowBlur()
@@ -112,22 +277,27 @@
 
 <nav id={id}
      class=tjs-context-menu
-     transition:animate
      bind:this={menuEl}
-     style="z-index: {zIndex}"
      on:click|preventDefault|stopPropagation={() => null}
-     on:keydown|preventDefault|stopPropagation={() => null}>
+     on:keydown={onKeydownMenu}
+     style:z-index={zIndex}
+     transition:animate
+     use:applyStyles={styles}
+     tabindex=-1>
     <ol class=tjs-context-items>
         <slot name="before"/>
         {#each items as item}
             <li class=tjs-context-item
-                on:click|preventDefault|stopPropagation={() => onClick(item.onclick)}
-                role=presentation>
+                on:click|preventDefault|stopPropagation={() => onClick(item)}
+                on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
+                role=menuitem
+                tabindex=0>
                    <i class={item.icon}></i>{localize(item.label)}
             </li>
         {/each}
         <slot name="after"/>
     </ol>
+    <TJSFocusWrap elementRoot={menuEl} />
 </nav>
 
 <style>
@@ -144,6 +314,10 @@
         border-radius: 5px;
         color: var(--color-text-light-primary, var(--typhonjs-color-text-secondary, #EEE));
         text-align: start;
+    }
+
+    .tjs-context-menu:focus-visible {
+        outline: 2px solid transparent;
     }
 
     .tjs-context-menu ol.tjs-context-items {
