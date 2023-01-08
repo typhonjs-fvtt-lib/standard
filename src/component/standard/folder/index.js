@@ -40,7 +40,7 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {() => void} [onOpen] - Callback when folder opened.
  *
- * @property {(event?: MouseEvent) => void} [onContextClick] - Callback for context menu click.
+ * @property {(event?: MouseEvent) => void} [onContextMenu] - Callback for context menu.
  */
 
 /**
