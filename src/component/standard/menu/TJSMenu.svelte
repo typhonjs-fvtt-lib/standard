@@ -30,11 +30,6 @@
 
    import { TJSFocusWrap } from '@typhonjs-fvtt/svelte/component/core';
 
-   const s_DEFAULT_OFFSET = { x: 0, y: 0 };
-
-   // Provides options to `A11yHelper.getFocusableElements` to ignore TJSFocusWrap by CSS class.
-   const s_IGNORE_CLASSES = { ignoreClasses: ['tjs-focus-wrap'] };
-
    /** @type {TJSMenuData} */
    export let menu = void 0;
 
@@ -55,6 +50,11 @@
 
    /** @type {{ duration: number, easing: Function }} */
    export let transitionOptions = void 0;
+
+   const s_DEFAULT_OFFSET = { x: 0, y: 0 };
+
+   // Provides options to `A11yHelper.getFocusableElements` to ignore TJSFocusWrap by CSS class.
+   const s_IGNORE_CLASSES = { ignoreClasses: ['tjs-focus-wrap'] };
 
    /** @type {Iterable<TJSMenuItemData>} */
    let allItems;
@@ -315,7 +315,7 @@
    {
       if (event.code === keyCode)
       {
-         const callback = item?.onPress ?? item?.onClick ?? item?.onclick;
+         const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
 
          if (typeof callback === 'function') { callback(item); }
 
@@ -352,10 +352,10 @@
 
 <nav class=tjs-menu
      bind:this={menuEl}
+     on:keydown={onKeydownMenu}
      transition:animate
      use:applyStyles={styles}
      use:efx
-     on:keydown={onKeydownMenu}
      tabindex=-1
    >
    <section class=tjs-menu-items>
@@ -378,7 +378,7 @@
             <div class="tjs-menu-item tjs-menu-item-button"
                  on:click|preventDefault|stopPropagation={() => onClick(item)}
                  on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
-                 role=button
+                 role=menuitem
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
                <i class={item.icon}></i>{localize(item.label)}
@@ -387,7 +387,7 @@
             <div class="tjs-menu-item tjs-menu-item-button"
                  on:click|preventDefault|stopPropagation={() => onClick(item)}
                  on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
-                 role=button
+                 role=menuitem
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
                <img src={item.image} alt={item.imageAlt}>{localize(item.label)}
