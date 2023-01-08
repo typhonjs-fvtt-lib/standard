@@ -91,14 +91,13 @@ cssVariables.setProperties({
 }
 
 cssVariables.setProperties({
-   '--tjs-label-transition': 'background 200ms linear'
+   '--tjs-toggle-label-transition': 'background 200ms ease-in-out'
 }, false);
 
 cssVariables.setProperties({
    '--tjs-menu-border': '1px solid var(--color-border-dark, #000)',
    '--tjs-menu-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
-   '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)',
-   '--tjs-menu-item-hover-text-shadow-color': 'var(--color-text-hyperlink, red)',
+   '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)'
 }, false);
 
 // Handle `PopOut!` module hooks to allow applications to popout to their own browser window -------------------------

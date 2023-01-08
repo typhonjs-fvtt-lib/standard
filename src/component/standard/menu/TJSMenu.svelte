@@ -7,10 +7,11 @@
     * --tjs-menu-z-index - fallback: --tjs-comp-popup-z-index; default: 100
     *
     * --tjs-menu-focus-indicator-color - fallback: --tjs-default-color-focus; default: white
+    * --tjs-menu-focus-indicator-width - 0.25em
     * --tjs-menu-hr-border-bottom - fallback: --tjs-default-hr-border-bottom; default: 1px solid #555
     * --tjs-menu-hr-border-top - fallback: --tjs-default-hr-border-top; default: 1px solid #444
     * --tjs-menu-item-color-focus-hover - fallback: --tjs-default-color-focus-hover; default: #fff
-    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-default-text-shadow-focus-hover; default: red
+    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-default-text-shadow-focus-hover; default: 0 0 8px var(--color-shadow-primary)
     */
 
    import { onMount }      from 'svelte';
@@ -473,7 +474,7 @@
    .tjs-menu-focus-indicator {
       display: flex;
       align-self: stretch;
-      width: 0.25em;
+      width: var(--tjs-menu-focus-indicator-width, 0.25em);
    }
 
    .tjs-menu-item i {

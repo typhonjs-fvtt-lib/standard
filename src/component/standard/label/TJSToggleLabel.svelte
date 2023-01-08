@@ -14,7 +14,7 @@
     * --tjs-toggle-label-text-shadow-focus - undefined; default: --tjs-default-text-shadow-focus-hover
     * --tjs-toggle-label-text-shadow-hover - undefined; default: --tjs-default-text-shadow-focus-hover
     * --tjs-toggle-label-text-shadow-selected - undefined; default: --tjs-default-text-shadow-focus-hover
-    * --tjs-toggle-label-transition - global default: 'background 200ms linear'
+    * --tjs-toggle-label-transition - global default: 'background 200ms ease-in-out'
     */
    import { createEventDispatcher } from 'svelte';
 
