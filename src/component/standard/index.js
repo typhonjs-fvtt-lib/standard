@@ -6,6 +6,7 @@ import {
 
 export *             from './button/index.js';
 export *             from './color/index.js';
+export *             from './container/index.js';
 export *             from './editor/index.js';
 export *             from './folder/index.js';
 export *             from './form/index.js';
