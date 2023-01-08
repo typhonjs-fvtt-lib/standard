@@ -284,15 +284,16 @@
      transition:animate
      use:applyStyles={styles}
      tabindex=-1>
-    <ol class=tjs-context-items>
+    <ol class=tjs-context-menu-items>
         <slot name="before"/>
         {#each items as item}
-            <li class=tjs-context-item
+            <li class=tjs-context-menu-item
                 on:click|preventDefault|stopPropagation={() => onClick(item)}
                 on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
                 role=menuitem
                 tabindex=0>
-                   <i class={item.icon}></i>{localize(item.label)}
+                <span class=tjs-context-menu-focus-indicator />
+                <i class={item.icon}></i>{localize(item.label)}
             </li>
         {/each}
         <slot name="after"/>
@@ -304,11 +305,14 @@
     .tjs-context-menu {
         position: fixed;
         width: fit-content;
-        font-size: 14px;
-        box-shadow: 0 0 10px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));
         height: max-content;
+        overflow: hidden;
+
         min-width: 20px;
         max-width: 360px;
+
+        font-size: 14px;
+        box-shadow: 0 0 10px var(--color-shadow-dark, var(--typhonjs-color-shadow, #000));
         background: var(--typhonjs-color-content-window, #23221d);
         border: 1px solid var(--color-border-dark, var(--typhonjs-color-border, #000));
         border-radius: 5px;
@@ -320,23 +324,60 @@
         outline: 2px solid transparent;
     }
 
-    .tjs-context-menu ol.tjs-context-items {
+    .tjs-context-menu-items {
         list-style: none;
         margin: 0;
         padding: 0;
     }
 
-    .tjs-context-menu li.tjs-context-item {
-        padding: 0 0.5em;
+    .tjs-context-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25em;
         line-height: 2em;
+        padding: 0 0.5em 0 0;
     }
 
-    .tjs-context-menu li.tjs-context-item:hover {
-        color: var(--typhonjs-color-text-primary, #FFF);
-        text-shadow: 0 0 4px var(--color-text-hyperlink, var(--typhonjs-color-accent-tertiary, red));
+    /* Disable default outline for focus visible / within */
+    .tjs-context-menu-item:focus-within, .tjs-context-menu-item:focus-visible {
+        outline: none;
     }
 
-    .tjs-context-menu li.tjs-context-item > i {
-        margin-right: 5px;
+    .tjs-context-menu-item:focus-visible .tjs-context-menu-focus-indicator {
+        background: var(--tjs-context-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
+    }
+
+    /* Enable focus indicator for focus-within */
+    /* Note: the use of `has` pseudo-selector that requires a child with :focus-visible */
+    .tjs-context-menu-item:focus-within:has(:focus-visible) .tjs-context-menu-focus-indicator {
+        background: var(--tjs-context-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
+    }
+
+    /* Fallback for browsers that don't support 'has'; any user interaction including mouse will trigger */
+    @supports not (selector(:has(*))) {
+        .tjs-context-menu-item:focus-within .tjs-context-menu-focus-indicator {
+            background: var(--tjs-context-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
+        }
+    }
+
+    .tjs-context-menu-item i {
+        text-align: center;
+        width: 1.25em;
+    }
+
+    .tjs-context-menu-item:hover {
+        color: var(--tjs-context-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #fff));
+        text-shadow: var(--tjs-context-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
+    }
+
+    .tjs-context-menu-item:focus-visible {
+        color: var(--tjs-context-menu-item-color-focus-hover, #fff);
+        text-shadow: var(--tjs-context-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
+    }
+
+    .tjs-context-menu-focus-indicator {
+        display: flex;
+        align-self: stretch;
+        width: var(--tjs-context-menu-focus-indicator-width, 0.25em);
     }
 </style>
