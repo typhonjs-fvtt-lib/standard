@@ -36,6 +36,8 @@
    /** @type {string} */
    export let keyCode = void 0;
 
+   export let focusOptions = void 0;
+
    /** @type {{ duration: number, easing: Function }} */
    export let transitionOptions = void 0;
 
@@ -62,24 +64,22 @@
 
    // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keypress` for
    // close event.
-   let hasKeyboardFocus = false;
-
-   let keyboardFocus = false;
+   // let hasKeyboardFocus = false;
 
    // ----------------------------------------------------------------------------------------------------------------
 
    onMount(() =>
    {
-      // Determine if the parent element to the menu contains the active element and that it is explicitly focused
-      // via `:focus-visible` / keyboard navigation. If so then explicitly focus the first menu item possible.
+      const keyboardFocus = focusOptions?.source === 'keyboard';
+
+      // If the focus options designate that the source of the context menu came from the keyboard then focus the first
+      // menu item on mount.
       if (keyboardFocus)
       {
          const firstFocusEl = A11yHelper.getFirstFocusableElement(menuEl);
-
          if (firstFocusEl instanceof HTMLElement && !firstFocusEl.classList.contains('tjs-focus-wrap'))
          {
             firstFocusEl.focus();
-            hasKeyboardFocus = true;
          }
          else
          {
@@ -178,25 +178,10 @@
          return;
       }
 
-      switch(event.code)
+      switch (event.code)
       {
-         case 'ContextMenu':
-         case 'Escape':
-            if (!closed)
-            {
-               closed = true;
-               dispatch('close');
-               outroAndDestroy(local);
-               // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-            break;
-
          case 'Tab':
             event.stopPropagation();
-            hasKeyboardFocus = true;
 
             // Handle reverse focus cycling with `<Shift-Tab>`.
             if (event.shiftKey)
@@ -228,6 +213,41 @@
    }
 
    /**
+    * Handle key commands for closing the menu ('Esc') and reverse focus cycling via 'Shift-Tab'. Also stop propagation
+    * for the key code assigned for menu item selection ('Enter').
+    *
+    * @param {KeyboardEvent}  event - KeyboardEvent.
+    */
+   function onKeyupMenu(event)
+   {
+      switch (event.code)
+      {
+         case 'ContextMenu':
+         case 'Escape':
+            event.preventDefault();
+            event.stopPropagation();
+
+            if (!closed)
+            {
+               closed = true;
+               dispatch('close');
+               outroAndDestroy(local);
+
+               if (isObject(focusOptions))
+               {
+                  if (focusOptions.focusEl instanceof HTMLElement && focusOptions.focusEl.isConnected)
+                  {
+                     focusOptions.focusEl.focus();
+                  }
+               }
+
+               // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+            }
+            break;
+      }
+   }
+
+   /**
     * Handle key presses on menu items.
     *
     * @param {KeyboardEvent}     event - KeyboardEvent.
@@ -250,7 +270,7 @@
             // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
          }
 
-         const callback = item?.onPress ?? item?.onClick ?? item?.onclick;
+         const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
          if (typeof callback === 'function') { callback(item); }
       }
    }
@@ -280,6 +300,7 @@
      bind:this={menuEl}
      on:click|preventDefault|stopPropagation={() => null}
      on:keydown={onKeydownMenu}
+     on:keyup={onKeyupMenu}
      style:z-index={zIndex}
      transition:animate
      use:applyStyles={styles}
@@ -289,7 +310,7 @@
         {#each items as item}
             <li class=tjs-context-menu-item
                 on:click|preventDefault|stopPropagation={() => onClick(item)}
-                on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
+                on:keyup={(event) => onKeyupItem(event, item)}
                 role=menuitem
                 tabindex=0>
                 <span class=tjs-context-menu-focus-indicator />
