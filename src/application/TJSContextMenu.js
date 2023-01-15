@@ -1,4 +1,6 @@
-import { TJSContextMenu as TJSContextMenuImpl }  from '@typhonjs-fvtt/svelte-standard/component';
+import { TJSContextMenu as TJSContextMenuImpl } from '@typhonjs-fvtt/svelte-standard/component';
+
+import { A11yHelper }                           from '@typhonjs-svelte/lib/util';
 
 /**
  * Provides game wide menu functionality.
@@ -11,19 +13,28 @@ export class TJSContextMenu
    static #contextMenu = void 0;
 
    /**
-    * Creates and manages a game wide context menu.
+    * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
+    * DOM event as it is processed for the location of the context menu to display. Likewise a FocusOptions object is
+    * generated that allows focus to be returned to the source location. You may supply a default focus target as a
+    * fallback.
     *
     * @param {object}      opts - Optional parameters.
     *
-    * @param {string}      [opts.id] - A custom CSS ID to add to the menu.
+    * @param {string}      [opts.id] - A custom CSS ID to add to the menu. This CSS style targeting.
     *
-    * @param {KeyboardEvent|MouseEvent}  [opts.event] - The source MouseEvent or KeyboardEvent
+    * @param {KeyboardEvent|MouseEvent}  [opts.event] - The source MouseEvent or KeyboardEvent.
     *
-    * @param {number}      [opts.x] - X position for the top / left of the menu.
+    * @param {boolean}     [opts.focusDebug] - When true the associated FocusOptions object will log focus target data
+    *                                          when applied.
     *
-    * @param {number}      [opts.y] - Y position for the top / left of the menu.
+    * @param {HTMLElement|string} [opts.focusEl] - A specific HTMLElement or selector string as the default focus
+    *                                              target.
     *
-    * @param {object[]}    opts.items - Menu items to display.
+    * @param {number}      [opts.x] - X position override for the top / left of the menu.
+    *
+    * @param {number}      [opts.y] - Y position override for the top / left of the menu.
+    *
+    * @param {object[]}    [opts.items] - Menu items to display.
     *
     * @param {number}      [opts.zIndex=10000] - Z-index for context menu.
     *
@@ -33,7 +44,8 @@ export class TJSContextMenu
     *
     * @param {Record<string, string>}  [opts.styles] - Optional inline styles to apply.
     */
-   static create({ id = '', event, focusEl, x, y, items = [], zIndex = 10000, duration = 200, easing, styles } = {})
+   static create({ id = '', event, focusDebug = false, focusEl, x, y, items = [], zIndex = 10000, duration = 200,
+    easing, styles } = {})
    {
       if (this.#contextMenu !== void 0) { return; }
 
@@ -42,9 +54,12 @@ export class TJSContextMenu
          throw new Error (`TJSContextMenu.create error: No event or absolute X / Y position not defined.`);
       }
 
-      const focusOptions = this.getFocusOptions({ event, x, y, focusEl });
+      if (event !== void 0 && !(event instanceof KeyboardEvent) && !(event instanceof MouseEvent))
+      {
+         throw new TypeError(`TJSContextMenu.create error: 'event' is not a KeyboardEvent or MouseEvent.`);
+      }
 
-console.log(`!! TJSContextMenu - create - 0 - focusOptions: `, focusOptions);
+      const focusOptions = A11yHelper.getFocusOptions({ event, x, y, focusEl, debug: focusDebug });
 
       // Filter items for any condition that prevents display.
       const filteredItems = items.filter((item) => item.condition === void 0 ? true :
@@ -69,101 +84,5 @@ console.log(`!! TJSContextMenu - create - 0 - focusOptions: `, focusOptions);
       // Register an event listener to remove any active context menu if closed from a menu selection or pointer
       // down event to `document.body`.
       this.#contextMenu.$on('close', () => { this.#contextMenu = void 0; });
-   }
-
-   /**
-    * @param {object} options - Options
-    *
-    * @param {KeyboardEvent|MouseEvent}   [options.event] -
-    *
-    * @param {number}   [options.x] -
-    *
-    * @param {number}   [options.y] -
-    *
-    * @param {HTMLElement|string} [options.focusEl] -
-    *
-    * @returns {{}}
-    *
-    * @see https://bugzilla.mozilla.org/show_bug.cgi?id=1426671
-    * @see https://bugzilla.mozilla.org/show_bug.cgi?id=314314
-    */
-   static getFocusOptions({ event, x, y, focusEl } = {})
-   {
-      if (focusEl !== void 0 && focusEl instanceof HTMLElement && typeof focusEl !== 'string')
-      {
-         throw new TypeError(
-          `A11yHelper.getFocusOptions error: 'focusEl' is not a HTMLElement or string.`);
-      }
-
-      // Handle the case when no event is provided and x, y, or focusEl is explicitly defined.
-      if (event === void 0)
-      {
-         if (typeof x !== 'number')
-         {
-            throw new TypeError(`A11yHelper.getFocusOptions error: 'event' not defined and 'x' is not a number.`);
-         }
-
-         if (typeof y !== 'number')
-         {
-            throw new TypeError(`A11yHelper.getFocusOptions error: 'event' not defined and 'y' is not a number.`);
-         }
-
-         return {
-            x,
-            y,
-            focusEl
-         }
-      }
-
-      if (!(event instanceof KeyboardEvent) && !(event instanceof MouseEvent))
-      {
-         throw new TypeError(`A11yHelper.getFocusOptions error: 'event' is not a KeyboardEvent or MouseEvent.`);
-      }
-
-      if (x !== void 0 && typeof x !== 'number')
-      {
-         throw new TypeError(`A11yHelper.getFocusOptions error: 'x' is not a number.`);
-      }
-
-      if (y !== void 0 && typeof y !== 'number')
-      {
-         throw new TypeError(`A11yHelper.getFocusOptions error: 'y' is not a number.`);
-      }
-
-      /** @type {HTMLElement} */
-      const targetEl = event.target;
-
-      if (!(targetEl instanceof HTMLElement))
-      {
-         throw new TypeError(`A11yHelper.getFocusOptions error: 'event.target' is not an HTMLElement.`);
-      }
-
-      const result = {};
-
-console.log(`!! TJSContextMenu - getFocusOptions - 0`)
-      // TODO: Verify that touch long press / contextmenu is detected by button being 2.
-      // Assume a keyboard source if `event.button` is not 2.
-      if (event?.button !== 2)
-      {
-console.log(`!! TJSContextMenu - getFocusOptions - A`)
-
-         // Firefox currently (1/23) does not correctly determine the location of a keyboard originated
-         // context menu location, so calculate position from middle of the event target.
-
-         const rect = targetEl.getBoundingClientRect();
-         result.x = x ?? rect.left + (rect.width / 2);
-         result.y = y ?? rect.top + (rect.height / 2);
-         result.focusEl = focusEl ?? targetEl;
-         result.source = 'keyboard'
-      }
-      else
-      {
-console.log(`!! TJSContextMenu - getFocusOptions - B`)
-         result.x = x ?? event.pageX;
-         result.y = y ?? event.pageY;
-         result.focusEl = focusEl;
-      }
-
-      return result;
    }
 }

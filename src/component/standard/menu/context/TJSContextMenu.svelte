@@ -129,7 +129,15 @@
    {
       const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
 
-      if (typeof callback === 'function') { callback(item); }
+      if (typeof callback === 'function')
+      {
+         callback(item, { focusOptions });
+      }
+      else
+      {
+         A11yHelper.applyFocusOptions(focusOptions)
+         focusOptions = void 0;
+      }
 
       if (!closed)
       {
@@ -233,15 +241,8 @@
                dispatch('close');
                outroAndDestroy(local);
 
-               if (isObject(focusOptions))
-               {
-                  if (focusOptions.focusEl instanceof HTMLElement && focusOptions.focusEl.isConnected)
-                  {
-                     focusOptions.focusEl.focus();
-                  }
-               }
-
-               // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+               A11yHelper.applyFocusOptions(focusOptions)
+               focusOptions = void 0;
             }
             break;
       }
@@ -266,12 +267,18 @@
 
             event.preventDefault();
             event.stopPropagation();
-
-            // menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
          }
 
          const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
-         if (typeof callback === 'function') { callback(item); }
+         if (typeof callback === 'function')
+         {
+            callback(item, { focusOptions });
+         }
+         else
+         {
+            A11yHelper.applyFocusOptions(focusOptions)
+            focusOptions = void 0;
+         }
       }
    }
 
@@ -285,6 +292,9 @@
          dispatch('close');
          closed = true;
          outroAndDestroy(local);
+
+         A11yHelper.applyFocusOptions(focusOptions)
+         focusOptions = void 0;
       }
    }
 </script>
