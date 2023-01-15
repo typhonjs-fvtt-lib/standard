@@ -173,6 +173,16 @@ fs.writeJSONSync(`./_dist/application/package.json`, {
    type: 'module'
 });
 
+let compFiles = await getFileList({ dir: './_dist/application' });
+for (const compFile of compFiles)
+{
+   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/')
+   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
+   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
+   fs.writeFileSync(compFile, fileData);
+}
+
 await generateTSDef({
    main: './_dist/application/index.js',
    output: './_types/application/index.d.ts'
@@ -190,7 +200,7 @@ fs.writeJSONSync(`./_dist/component/standard/package.json`, {
    type: 'module'
 });
 
-let compFiles = await getFileList({ dir: './_dist/component' });
+compFiles = await getFileList({ dir: './_dist/component' });
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
