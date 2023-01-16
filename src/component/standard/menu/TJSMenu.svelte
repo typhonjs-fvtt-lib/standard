@@ -260,20 +260,8 @@
 
       switch(event.code)
       {
-         case 'Escape':
-            if (!closed)
-            {
-               closed = true;
-               menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
-            }
-
-            event.preventDefault();
-            event.stopPropagation();
-            break;
-
          case 'Tab':
             event.stopPropagation();
-            hasKeyboardFocus = true;
 
             // Handle reverse focus cycling with `<Shift-Tab>`.
             if (event.shiftKey)
@@ -305,11 +293,34 @@
    }
 
    /**
+    * Handle key commands for closing the menu ('Esc') and reverse focus cycling via 'Shift-Tab'. Also stop propagation
+    * for the key code assigned for menu item selection ('Enter').
+    *
+    * @param {KeyboardEvent}  event - KeyboardEvent.
+    */
+   function onKeyupMenu(event)
+   {
+      switch (event.code)
+      {
+         case 'Escape':
+            if (!closed)
+            {
+               closed = true;
+               menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            break;
+      }
+   }
+
+   /**
     * Handle key presses on menu items.
     *
     * @param {KeyboardEvent}     event - KeyboardEvent.
     *
-    * @param {TJSMenuItemData}   item - Menu item data.
+    * @param {TJSMenuItemData}   [item] - Menu item data.
     */
    function onKeyupItem(event, item)
    {
@@ -352,57 +363,71 @@
 
 <nav class=tjs-menu
      bind:this={menuEl}
-     on:keydown={onKeydownMenu}
+     on:click|preventDefault|stopPropagation={() => null}
+     on:keydown|stopPropagation={onKeydownMenu}
+     on:keyup|preventDefault|stopPropagation={onKeyupMenu}
      transition:animate
      use:applyStyles={styles}
      use:efx
      tabindex=-1
    >
-   <section class=tjs-menu-items>
+   <ol class=tjs-menu-items>
       <!-- TJSMenu supports hosting a slot for menu content -->
       <slot />
 
       {#if $$slots.before}
-         <div class=tjs-menu-item>
+         <li class=tjs-menu-item
+             on:click={() => onClick()}
+             on:keyup={(event) => onKeyupItem(event)}
+             role=menuitem
+             tabindex=0>
             <span class=tjs-menu-focus-indicator />
             <slot name=before />
-         </div>
+         </li>
       {/if}
       {#each allItems as item}
          {#if item['#type'] === 'class'}
-            <div class=tjs-menu-item on:click|preventDefault|stopPropagation={onClick} role=presentation>
+            <li class=tjs-menu-item
+                on:click={() => onClick(item)}
+                on:keyup={(event) => onKeyupItem(event, item)}
+                role=menuitem
+                tabindex=0>
                <span class=tjs-menu-focus-indicator />
                <svelte:component this={item.class} {...(isObject(item.props) ? item.props : {})} />
-            </div>
+            </li>
          {:else if item['#type'] === 'icon'}
-            <div class="tjs-menu-item tjs-menu-item-button"
-                 on:click|preventDefault|stopPropagation={() => onClick(item)}
-                 on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
+            <li class="tjs-menu-item tjs-menu-item-button"
+                 on:click={() => onClick(item)}
+                 on:keyup={(event) => onKeyupItem(event, item)}
                  role=menuitem
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
                <i class={item.icon}></i>{localize(item.label)}
-            </div>
+            </li>
          {:else if item['#type'] === 'image'}
-            <div class="tjs-menu-item tjs-menu-item-button"
-                 on:click|preventDefault|stopPropagation={() => onClick(item)}
-                 on:keyup|preventDefault|stopPropagation={(event) => onKeyupItem(event, item)}
+            <li class="tjs-menu-item tjs-menu-item-button"
+                 on:click={() => onClick(item)}
+                 on:keyup={(event) => onKeyupItem(event, item)}
                  role=menuitem
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
                <img src={item.image} alt={item.imageAlt}>{localize(item.label)}
-            </div>
+            </li>
          {:else if item['#type'] === 'separator-hr'}
             <hr>
          {/if}
       {/each}
       {#if $$slots.after}
-         <div class=tjs-menu-item>
+         <li class=tjs-menu-item
+             on:click={() => onClick()}
+             on:keyup={(event) => onKeyupItem(event)}
+             role=menuitem
+             tabindex=0>
             <span class=tjs-menu-focus-indicator />
             <slot name=after />
-         </div>
+         </li>
       {/if}
-   </section>
+   </ol>
    <TJSFocusWrap elementRoot={menuEl} />
 </nav>
 

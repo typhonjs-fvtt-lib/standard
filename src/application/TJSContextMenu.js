@@ -1,6 +1,10 @@
 import { TJSContextMenu as TJSContextMenuImpl } from '@typhonjs-fvtt/svelte-standard/component';
 
-import { A11yHelper }                           from '@typhonjs-svelte/lib/util';
+import {
+   A11yHelper,
+   isIterable,
+   isObject,
+   isSvelteComponent }                          from '@typhonjs-svelte/lib/util';
 
 /**
  * Provides game wide menu functionality.
@@ -20,9 +24,15 @@ export class TJSContextMenu
     *
     * @param {object}      opts - Optional parameters.
     *
-    * @param {string}      [opts.id] - A custom CSS ID to add to the menu. This CSS style targeting.
+    * @param {string}      [opts.id] - A custom CSS ID to add to the menu. This allows CSS style targeting.
     *
     * @param {KeyboardEvent|MouseEvent}  [opts.event] - The source MouseEvent or KeyboardEvent.
+    *
+    * @param {number}      [opts.x] - X position override for the top / left of the menu.
+    *
+    * @param {number}      [opts.y] - Y position override for the top / left of the menu.
+    *
+    * @param {Iterable<TJSContextMenuItemData>} [opts.items] - Menu items to display.
     *
     * @param {boolean}     [opts.focusDebug] - When true the associated FocusOptions object will log focus target data
     *                                          when applied.
@@ -30,22 +40,18 @@ export class TJSContextMenu
     * @param {HTMLElement|string} [opts.focusEl] - A specific HTMLElement or selector string as the default focus
     *                                              target.
     *
-    * @param {number}      [opts.x] - X position override for the top / left of the menu.
+    * @param {string}      [opts.keyCode='Enter'] - Key to select menu items.
     *
-    * @param {number}      [opts.y] - Y position override for the top / left of the menu.
+    * @param {Record<string, string>}  [opts.styles] - Optional inline styles to apply.
     *
-    * @param {object[]}    [opts.items] - Menu items to display.
-    *
-    * @param {number}      [opts.zIndex=10000] - Z-index for context menu.
+    * @param {number}      [opts.zIndex=Number.MAX_SAFE_INTEGER - 100] - Z-index for context menu.
     *
     * @param {number}      [opts.duration] - Transition option for duration of transition.
     *
     * @param {Function}    [opts.easing] - Transition option for easing function.
-    *
-    * @param {Record<string, string>}  [opts.styles] - Optional inline styles to apply.
     */
-   static create({ id = '', event, focusDebug = false, focusEl, x, y, items = [], zIndex = 10000, duration = 200,
-    easing, styles } = {})
+   static create({ id = '', event, x, y, items, focusDebug = false, focusEl, keyCode = 'Enter', styles,
+    zIndex = Number.MAX_SAFE_INTEGER - 100, duration = 200, easing, } = {})
    {
       if (this.#contextMenu !== void 0) { return; }
 
@@ -62,8 +68,8 @@ export class TJSContextMenu
       const focusOptions = A11yHelper.getFocusOptions({ event, x, y, focusEl, debug: focusDebug });
 
       // Filter items for any condition that prevents display.
-      const filteredItems = items.filter((item) => item.condition === void 0 ? true :
-       typeof item.condition === 'function' ? item.condition() : item.condition);
+      // const filteredItems = items.filter((item) => item.condition === void 0 ? true :
+      //  typeof item.condition === 'function' ? item.condition() : item.condition);
 
       // Create the new context menu with the last click x / y point.
       this.#contextMenu = new TJSContextMenuImpl({
@@ -73,11 +79,12 @@ export class TJSContextMenu
             id,
             x: focusOptions.x,
             y: focusOptions.y,
-            items: filteredItems,
-            zIndex,
+            items: this.#processItems(items),
             focusOptions,
+            keyCode,
+            styles,
             transitionOptions: { duration, easing },
-            styles
+            zIndex
          }
       });
 
@@ -85,4 +92,79 @@ export class TJSContextMenu
       // down event to `document.body`.
       this.#contextMenu.$on('close', () => { this.#contextMenu = void 0; });
    }
+
+   /**
+    * @param {Iterable<TJSContextMenuItemData>} items -
+    */
+   static #processItems(items)
+   {
+      if (!isIterable(items)) { throw new TypeError(`TJSContextMenu error: 'items' is not an iterable list.`); }
+
+      const tempList = items;
+      const tempItems = [];
+
+      let cntr = -1;
+
+      for (const item of tempList)
+      {
+         cntr++;
+         if (!isObject(item)) { throw new TypeError(`TJSContextMenu error: 'item[${cntr}]' is not an object.`); }
+
+         // Filter items for any condition that prevents display.
+         if (typeof item.condition === 'function' && !item.condition()) { continue; }
+         if (typeof item.condition === 'boolean' && !item.condition) { continue; }
+
+         let type;
+
+         if (isSvelteComponent(item.class)) { type = 'class'; }
+         else if (typeof item.icon === 'string') { type = 'icon'; }
+         else if (typeof item.image === 'string') { type = 'image'; }
+         else if (typeof item.separator === 'string')
+         {
+            if (item.separator !== 'hr')
+            {
+               throw new Error (
+                `TJSContextMenu error: 'item[${cntr}]' has unknown separator type; only 'hr' is currently supported.`)
+            }
+
+            type = 'separator-hr';
+         }
+
+         if (type === void 0) { throw new TypeError(`TJSContextMenu error: Unknown type for 'item[${cntr}]'.`); }
+
+         tempItems.push({ ...item, '#type': type });
+      }
+
+      return tempItems;
+   }
 }
+
+/**
+ * @typedef {object} TJSContextMenuItemData
+ *
+ * @property {Function} [callback] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
+ * @property {Function} [onclick] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
+ * @property {Function} [onClick] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
+ * @property {Function} [onPress] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
+ *
+ * @property {boolean|Function} [condition] - If a boolean and false or a function that invoked returns a falsy value
+ *                                            this item is not added.
+ *
+ *
+ * @property {Function} [class] - A Svelte component class.
+ *
+ * @property {object} [props] - An object passed on as props for any Svelte component.
+ *
+ *
+ * @property {string} [icon] - A string containing icon classes.
+ *
+ *
+ * @property {string} [image] - An image icon path.
+ *
+ * @property {string} [imageAlt] - An image 'alt' text description.
+ *
+ *
+ * @property {string} [label] - A text string that is passed through localization.
+ *
+ * @property {'hr'} [separator] - A menu item separator; only 'hr' supported.
+ */

@@ -28,7 +28,7 @@
 
    export let items = [];
 
-   export let zIndex = 10000;
+   export let zIndex = Number.MAX_SAFE_INTEGER - 100;
 
    /** @type {Record<string, string>} */
    export let styles = void 0;
@@ -309,25 +309,46 @@
      class=tjs-context-menu
      bind:this={menuEl}
      on:click|preventDefault|stopPropagation={() => null}
-     on:keydown={onKeydownMenu}
-     on:keyup={onKeyupMenu}
+     on:keydown|stopPropagation={onKeydownMenu}
+     on:keyup|preventDefault|stopPropagation={onKeyupMenu}
      style:z-index={zIndex}
      transition:animate
      use:applyStyles={styles}
      tabindex=-1>
+
     <ol class=tjs-context-menu-items>
-        <slot name="before"/>
         {#each items as item}
-            <li class=tjs-context-menu-item
-                on:click|preventDefault|stopPropagation={() => onClick(item)}
-                on:keyup={(event) => onKeyupItem(event, item)}
-                role=menuitem
-                tabindex=0>
-                <span class=tjs-context-menu-focus-indicator />
-                <i class={item.icon}></i>{localize(item.label)}
-            </li>
+            {#if item['#type'] === 'class'}
+                <li class=tjs-context-menu-item
+                    on:click={() => onClick(item)}
+                    on:keyup={(event) => onKeyupItem(event, item)}
+                    role=menuitem
+                    tabindex=0>
+                    <span class=tjs-context-menu-focus-indicator />
+                    <svelte:component this={item.class} {...(isObject(item.props) ? item.props : {})} />
+                </li>
+            {:else if item['#type'] === 'icon'}
+                <li class="tjs-context-menu-item tjs-context-menu-item-button"
+                    on:click={() => onClick(item)}
+                    on:keyup={(event) => onKeyupItem(event, item)}
+                    role=menuitem
+                    tabindex=0>
+                    <span class=tjs-context-menu-focus-indicator />
+                    <i class={item.icon}></i>{localize(item.label)}
+                </li>
+            {:else if item['#type'] === 'image'}
+                <li class="tjs-context-menu-item tjs-context-menu-item-button"
+                    on:click={() => onClick(item)}
+                    on:keyup={(event) => onKeyupItem(event, item)}
+                    role=menuitem
+                    tabindex=0>
+                    <span class=tjs-context-menu-focus-indicator />
+                    <img src={item.image} alt={item.imageAlt}>{localize(item.label)}
+                </li>
+            {:else if item['#type'] === 'separator-hr'}
+                <hr>
+            {/if}
         {/each}
-        <slot name="after"/>
     </ol>
     <TJSFocusWrap elementRoot={menuEl} />
 </nav>
@@ -361,10 +382,18 @@
         padding: 0;
     }
 
+    .tjs-context-menu-items hr {
+        margin-block-start: 0;
+        margin-block-end: 0;
+        margin: 0 0.25em;
+        border-top: var(--tjs-context-menu-hr-border-top, var(--tjs-default-hr-border-top, 1px solid #555));
+        border-bottom: var(--tjs-context-menu-hr-border-bottom, var(--tjs-default-hr-border-bottom, 1px solid #444));
+    }
+
     .tjs-context-menu-item {
         display: flex;
         align-items: center;
-        gap: 0.25em;
+        /*gap: 0.25em;*/
         line-height: 2em;
         padding: 0 0.5em 0 0;
     }
@@ -394,6 +423,16 @@
     .tjs-context-menu-item i {
         text-align: center;
         width: 1.25em;
+    }
+
+    .tjs-context-menu-item img {
+        width: 1.25em;
+        height: 1.25em;
+    }
+
+    .tjs-context-menu-item-button {
+        display: flex;
+        gap: 0.25em;
     }
 
     .tjs-context-menu-item:hover {
