@@ -30,10 +30,7 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
 /**
  * @typedef {object} TJSMenuItemData
  *
- * @property {Function} [callback] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
- * @property {Function} [onclick] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
- * @property {Function} [onClick] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
- * @property {Function} [onPress] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
+ * @property {(item: TJSMenuItemData) => void} [onPress] - A single callback function to invoke.
  *
  * @property {boolean|Function} [condition] - If a boolean and false or a function that invoked returns a falsy value
  *                                            this item is not added.

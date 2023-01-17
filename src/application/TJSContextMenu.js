@@ -4,10 +4,16 @@ import {
    A11yHelper,
    isIterable,
    isObject,
-   isSvelteComponent }                          from '@typhonjs-svelte/lib/util';
+   isSvelteComponent }        from '@typhonjs-svelte/lib/util';
 
 /**
- * Provides a browser window wide context menu functionality.
+ * Provides and manages browser window wide context menu functionality. The best way to create a context menu is to
+ * attach the source KeyboardEvent or MouseEvent / PointerEvent as data in {@link TJSContextMenu.create}. This allows
+ * proper keyboard handling across browsers supporting the context menu key. A FocusOptions data object is generated
+ * which allows tracking of the source element that triggered the context menu allowing focus to return to the source
+ * when the context menu is closed. This FocusOptions object is also forwarded on through the `onPress` callback and
+ * is intended to be supplied as `SvelteApplication` options particularly for modal dialogs allowing focus to return
+ * to the original source after the modal dialog is closed.
  */
 export class TJSContextMenu
 {
@@ -20,7 +26,7 @@ export class TJSContextMenu
     * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
     * DOM event as it is processed for the location of the context menu to display. Likewise, a FocusOptions object is
     * generated that allows focus to be returned to the source location. You may supply a default focus target as a
-    * fallback.
+    * fallback via `focusEl`.
     *
     * @param {object}      opts - Optional parameters.
     *
@@ -67,10 +73,6 @@ export class TJSContextMenu
 
       const focusOptions = A11yHelper.getFocusOptions({ event, x, y, focusEl, debug: focusDebug });
 
-      // Filter items for any condition that prevents display.
-      // const filteredItems = items.filter((item) => item.condition === void 0 ? true :
-      //  typeof item.condition === 'function' ? item.condition() : item.condition);
-
       // Create the new context menu with the last click x / y point.
       this.#contextMenu = new TJSContextMenuImpl({
          target: document.body,
@@ -94,7 +96,11 @@ export class TJSContextMenu
    }
 
    /**
-    * @param {Iterable<TJSContextMenuItemData>} items -
+    * Processes menu item data for conditions and evaluating the type of menu item.
+    *
+    * @param {Iterable<TJSContextMenuItemData>} items - Menu item data.
+    *
+    * @returns {object[]} Processed menu items.
     */
    static #processItems(items)
    {
@@ -140,16 +146,16 @@ export class TJSContextMenu
 }
 
 /**
- * @typedef {object} TJSContextMenuItemData
+ * @typedef {object} TJSContextMenuItemData - Defines a menu item entry. Depending on the item data that is passed
+ * into the menu you can define 4 types of items: 'icon / label', 'image / label', 'class / Svelte component', and
+ * 'separator / hr'. A single callback function `onPress` is supported.
  *
- * @property {Function} [callback] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
- * @property {Function} [onclick] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
- * @property {Function} [onClick] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
- * @property {Function} [onPress] - A single callback function to invoke. onPress -> callback -> onClick -> onclick
+ * @property {(item: TJSContextMenuItemData, object) => void} [onPress] - A callback function that receives the selected
+ * item data and an object containing the FocusOptions data that can be passed to any Application / particularly modal
+ * dialogs returning focus when closed.
  *
- * @property {boolean|Function} [condition] - If a boolean and false or a function that invoked returns a falsy value
- *                                            this item is not added.
- *
+ * @property {boolean|(() => boolean)} [condition] - If a boolean and false or a function that invoked returns a falsy value
+ *           this item is not added.
  *
  * @property {Function} [class] - A Svelte component class.
  *

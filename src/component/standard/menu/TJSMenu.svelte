@@ -280,7 +280,7 @@
     */
    function onClick(item)
    {
-      const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
+      const callback = item?.onPress;
 
       if (typeof callback === 'function') { callback(item); }
 
@@ -394,7 +394,7 @@
    {
       if (event.code === keyCode)
       {
-         const callback = item?.onPress ?? item?.callback ?? item?.onClick ?? item?.onclick;
+         const callback = item?.onPress;
 
          if (typeof callback === 'function') { callback(item); }
 
