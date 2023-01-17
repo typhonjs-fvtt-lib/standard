@@ -17,9 +17,7 @@
     * `id`: Anything used for an ID.
     * `label`: The label name of the folder; string.
     * `store`: The store tracking the open / close state: writable<boolean>
-    *
-    * The final prop is `styles` which follows the `applyStyles` action; see `applyStyles` or `StylesProperties`
-    * component for more information. This is an object that applies inline styles.
+    * `styles`: Styles to be applied inline via `applyStyles` action.
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Events: There are several events that are fired and / or bubbled up through parents. There are four
