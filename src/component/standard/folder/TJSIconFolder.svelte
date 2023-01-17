@@ -71,11 +71,13 @@
     * Summary element (focus visible):
     * --tjs-folder-summary-outline-focus - fallback: --tjs-default-outline-focus-visible; default: revert
     *
-    * An optional inline focus visible indicator can be configured which by default does not display:
-    * --tjs-folder-summary-focus-indicator-align-self: stretch
-    * --tjs-folder-summary-focus-indicator-color: undefined
-    * --tjs-folder-summary-focus-indicator-height: undefined
-    * --tjs-folder-summary-focus-indicator-width: 0
+    * A keyboard focus indicator is defined by the following CSS variables:
+    * --tjs-folder-summary-focus-indicator-align-self - fallback: --tjs-default-focus-indicator-align-self; default: stretch
+    * --tjs-folder-summary-focus-indicator-background - fallback: --tjs-default-focus-indicator-background; default: white
+    * --tjs-folder-summary-focus-indicator-border - fallback: --tjs-default-focus-indicator-border; default: undefined
+    * --tjs-folder-summary-focus-indicator-border-radius - fallback: --tjs-default-focus-indicator-border-radius; default: 0.1em
+    * --tjs-folder-summary-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
+    * --tjs-folder-summary-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     *
     * Summary icon / chevron element (attributes follow `--tjs-folder-summary-chevron-`):
     *
@@ -512,7 +514,7 @@
     }
 
     summary:focus-visible .tjs-folder-focus-indicator {
-        background: var(--tjs-folder-summary-focus-indicator-color);
+        background: var(--tjs-folder-summary-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
     }
 
     summary:hover i {
@@ -520,9 +522,11 @@
     }
 
     .tjs-folder-focus-indicator {
-        align-self: var(--tjs-folder-summary-focus-indicator-align-self, stretch);
-        height: var(--tjs-folder-summary-focus-indicator-height);
-        flex: 0 0 var(--tjs-folder-summary-focus-indicator-width, 0);
+        align-self: var(--tjs-folder-summary-focus-indicator-align-self, var(--tjs-default-focus-indicator-align-self, stretch));
+        border: var(--tjs-folder-summary-focus-indicator-border, var(--tjs-default-focus-indicator-border));
+        border-radius: var(--tjs-folder-summary-focus-indicator-border-radius, var(--tjs-default-focus-indicator-border-radius, 0.1em));
+        flex: 0 0 var(--tjs-folder-summary-focus-indicator-width, var(--tjs-default-focus-indicator-width, 0.25em));
+        height: var(--tjs-folder-summary-focus-indicator-height, var(--tjs-default-focus-indicator-height));
     }
 
     .default-cursor {
