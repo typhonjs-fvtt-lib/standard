@@ -20,7 +20,7 @@
     * `styles`: Styles to be applied inline via `applyStyles` action.
     *
     * ----------------------------------------------------------------------------------------------------------------
-    * Events: There are several events that are fired and / or bubbled up through parents. There are four
+    * Events: There are several events that are fired and / or bubbled up through parent elements. There are four
     * custom events that pass a details object including: `the details element, id, label, and store`.
     *
     * The following events are bubbled up such that assigning a listener in any parent component receives them
@@ -40,9 +40,7 @@
     * attributes for `id` and `label`.
     *
     * There are several local CSS variables that you can use to change the appearance dynamically. Either use
-    * CSS props or pass in a `styles` object w/ key / value props to set to the details. Another alternative is using
-    * `StyleProperties` component which wraps a section in locally defined CSS variables. Useful for a large group of
-    * folders where the goal is changing the appearance of all of them as a group.
+    * CSS props or pass in a `styles` object w/ key / value props to set to the details element.
     *
     * The following CSS variables are supported, but not defined by default.
     *

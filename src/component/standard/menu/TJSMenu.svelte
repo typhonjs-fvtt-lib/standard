@@ -1,17 +1,85 @@
 <script>
    /**
-    * --tjs-menu-background - fallback: --tjs-default-popup-background; default: #23221d
-    * --tjs-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
+    * TJSMenu provides a menu component that can be slotted into toggle components like TJSToggleIconButton and
+    * TJSToggleLabel.
+    *
+    * TJSMenu supports a flexible data driven way to construct the menu items. Depending on the item data that is passed
+    * into the menu you can define 4 types of items: 'icon / label', 'image / label', 'class / Svelte component', and
+    * 'separator / hr'. TJSMenu also accepts a main slot allowing the entire menu contents to be replaced with a custom
+    * component as well as named slots `before` and `after` which place named components before or after the main menu
+    * data driven items.
+    *
+    * ----------------------------------------------------------------------------------------------------------------
+    * Exported props include:
+    * `menu` ({@link TJSMenuData}): An object defining all properties of a menu including potentially data driven
+    * minimal Svelte configuration objects (`slotAfter`, `slotBefore`, and `slotDefault`) providing default
+    * component implementations.
+    *
+    * Or in lieu of passing the folder object you can assign these props directly:
+    * `items`: An iterable list of {@link TJSMenuItemData}; defines data driven menu items.
+    * `offset`: Optional X / Y offsets for the menu display.
+    * `styles`: Styles to be applied inline via `applyStyles` action.
+    * `efx`: Currently unused; for any future action effects.
+    * `keyCode`: The key code to activate menu items.
+    * `transitionOptions`: Custom transition options for duration and easing function.
+    *
+    * ----------------------------------------------------------------------------------------------------------------
+    * Events: There is a single that is fired and bubbled up through parent elements:
+    * `close`- Fired when the menu closes allowing any parent components to update state.
+    *
+    * ----------------------------------------------------------------------------------------------------------------
+    * Styling: To style this component use `.tjs-menu` as the base selector.
+    *
+    * There are several local CSS variables that you can use to change the appearance dynamically. Either use
+    * CSS props or pass in a `styles` object w/ key / value props to set to the details. The default fallback variables
+    * target both TJSMenu and TJSContextMenu. The few `popup` defaults target first level overlaid components inside an
+    * application.
+    *
+    * The following CSS variables are supported, but not defined by default.
+    * --tjs-menu-background - fallback: --tjs-default-menu-background; default: #23221d
+    * --tjs-menu-border - fallback: --tjs-default-menu-border; default: 1px solid #000
+    * --tjs-menu-border-radius - fallback: --tjs-default-menu-border-radius; default: 5px
     * --tjs-menu-box-shadow - fallback: --tjs-default-popup-box-shadow; default: 0 0 2px #000
-    * --tjs-menu-color - fallback: --tjs-default-popup-color; default: #eee
+    * --tjs-menu-color - fallback: --tjs-default-menu-color; default: #eee
+    * --tjs-menu-max-width - fallback: --tjs-default-menu-max-width; default: 360px
+    * --tjs-menu-min-width - fallback: --tjs-default-menu-min-width; default: 20px
     * --tjs-menu-z-index - fallback: --tjs-default-popup-z-index; default: 100
     *
-    * --tjs-menu-focus-indicator-color - fallback: --tjs-default-color-focus; default: white
-    * --tjs-menu-focus-indicator-width - 0.25em
-    * --tjs-menu-hr-border-bottom - fallback: --tjs-default-hr-border-bottom; default: 1px solid #555
-    * --tjs-menu-hr-border-top - fallback: --tjs-default-hr-border-top; default: 1px solid #444
+    * The following CSS variables define attributes for the data driven menu items.
+    *
+    * All menu items:
+    * --tjs-menu-item-line-height - fallback: --tjs-default-menu-item-line-height; default: 2em
+    * --tjs-menu-item-padding - fallback: --tjs-default-menu-item-padding; default: 0 0.5em 0 0
+    *
+    * Icon / Image menu items (considered a button item):
+    * --tjs-menu-item-button-gap - fallback: --tjs-default-menu-item-button-gap; default: 0.25em
     * --tjs-menu-item-color-focus-hover - fallback: --tjs-default-color-focus-hover; default: #fff
-    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-default-text-shadow-focus-hover; default: 0 0 8px var(--color-shadow-primary)
+    * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-default-text-shadow-focus-hover; default: 0 0 8px red
+    *
+    * Specific targeting for the label of button items (allows control of wrapping / set `white-space` to `nowrap`):
+    * --tjs-menu-item-label-overflow - fallback: --tjs-default-menu-item-label-overflow; default: hidden
+    * --tjs-menu-item-label-text-overflow - fallback: --tjs-default-menu-item-label-text-overflow; default: ellipsis
+    * --tjs-menu-item-label-white-space - fallback: --tjs-default-menu-item-label-white-space; default: undefined
+    *
+    * Icon menu item:
+    * --tjs-menu-item-icon-width - fallback: --tjs-default-menu-item-icon-width; default: 1.25em
+    *
+    * Image menu item:
+    * --tjs-menu-item-image-width - fallback: --tjs-default-menu-item-image-width; default: 1.25em
+    * --tjs-menu-item-image-height - fallback: --tjs-default-menu-item-image-height; default: 1.25em
+    *
+    * Separator / HR:
+    * --tjs-menu-hr-margin - fallback: --tjs-default-hr-margin; default: 0 0.25em
+    * --tjs-menu-hr-border-top - fallback: --tjs-default-hr-border-top; default: 1px solid #555
+    * --tjs-menu-hr-border-bottom - fallback: --tjs-default-hr-border-bottom; default: 1px solid #444
+    *
+    * The following CSS variables define the keyboard / a11y focus indicator for menu items:
+    * --tjs-menu-focus-indicator-align-self - fallback: --tjs-default-focus-indicator-align-self; default: stretch
+    * --tjs-menu-focus-indicator-background - fallback: --tjs-default-focus-indicator-background; default: white
+    * --tjs-menu-focus-indicator-border - fallback: --tjs-default-focus-indicator-border; default: undefined
+    * --tjs-menu-focus-indicator-border-radius - fallback: --tjs-default-focus-indicator-border-radius; default: 0.1em
+    * --tjs-menu-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
+    * --tjs-menu-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     */
 
    import { onMount }      from 'svelte';
@@ -373,7 +441,11 @@
    >
    <ol class=tjs-menu-items>
       <!-- TJSMenu supports hosting a slot for menu content -->
-      <slot />
+      <slot>
+         {#if isSvelteComponent(menu?.slotDefault?.class)}
+            <svelte:component this={menu.slotDefault.class} {...(isObject(menu?.slotDefault?.props) ? menu.slotDefault.props : {})} />
+         {/if}
+      </slot>
 
       {#if $$slots.before}
          <li class=tjs-menu-item
@@ -402,7 +474,8 @@
                  role=menuitem
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
-               <i class={item.icon}></i>{localize(item.label)}
+               <i class={item.icon}></i>
+               <span class=tjs-menu-item-label>{localize(item.label)}</span>
             </li>
          {:else if item['#type'] === 'image'}
             <li class="tjs-menu-item tjs-menu-item-button"
@@ -411,7 +484,8 @@
                  role=menuitem
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
-               <img src={item.image} alt={item.imageAlt}>{localize(item.label)}
+               <img src={item.image} alt={item.imageAlt}>
+               <span class=tjs-menu-item-label>{localize(item.label)}</span>
             </li>
          {:else if item['#type'] === 'separator-hr'}
             <hr>
@@ -438,14 +512,17 @@
       height: max-content;
       overflow: hidden;
 
-      background: var(--tjs-menu-background, var(--tjs-default-popup-background, #23221d));
-      border: var(--tjs-menu-border, var(--tjs-default-popup-border, 1px solid #000));
-      border-radius: var(--tjs-menu-border-radius, var(--tjs-default-popup-border-radius, 5px));
+      background: var(--tjs-menu-background, var(--tjs-default-menu-background, #23221d));
+      border: var(--tjs-menu-border, var(--tjs-default-menu-border, 1px solid #000));
+      border-radius: var(--tjs-menu-border-radius, var(--tjs-default-menu-border-radius, 5px));
       box-shadow: var(--tjs-menu-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));
-      color: var(--tjs-menu-color, var(--tjs-default-popup-color, #eee));
+      color: var(--tjs-menu-color, var(--tjs-default-menu-color, #eee));
+      max-width: var(--tjs-menu-max-width, var(--tjs-default-menu-max-width, 360px));
+      min-width: var(--tjs-menu-min-width, var(--tjs-default-menu-min-width, 20px));
 
       text-align: start;
 
+      /* Defines z-index in local stacking context */
       z-index: var(--tjs-menu-z-index, var(--tjs-default-popup-z-index, 100));
    }
 
@@ -461,7 +538,7 @@
    .tjs-menu-items hr {
       margin-block-start: 0;
       margin-block-end: 0;
-      margin: 0 0.25em;
+      margin: var(--tjs-menu-hr-margin, var(--tjs-default-hr-margin, 0 0.25em));
       border-top: var(--tjs-menu-hr-border-top, var(--tjs-default-hr-border-top, 1px solid #555));
       border-bottom: var(--tjs-menu-hr-border-bottom, var(--tjs-default-hr-border-bottom, 1px solid #444));
    }
@@ -469,8 +546,8 @@
    .tjs-menu-item {
       display: flex;
       align-items: center;
-      padding: 0 0.5em 0 0;
-      line-height: 2em;
+      line-height: var(--tjs-menu-item-line-height, var(--tjs-default-menu-item-line-height, 2em));
+      padding: var(--tjs-menu-item-padding, var(--tjs-default-menu-item-padding, 0 0.5em 0 0));
    }
 
    /* Disable default outline for focus visible / within */
@@ -478,43 +555,18 @@
       outline: none;
    }
 
-   /* Enable focus indicator for focus-within */
-   /* Note: the use of `has` pseudo-selector that requires a child with :focus-visible */
-   .tjs-menu-item:focus-within:has(:focus-visible) .tjs-menu-focus-indicator {
-      background: var(--tjs-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
-   }
-
-   /* Fallback for browsers that don't support 'has'; any user interaction including mouse will trigger */
-   @supports not (selector(:has(*))) {
-      .tjs-menu-item:focus-within .tjs-menu-focus-indicator {
-         background: var(--tjs-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
-      }
-   }
-
-   /* Enable focus indicator for focus visible */
-   .tjs-menu-item:focus-visible .tjs-menu-focus-indicator {
-      background: var(--tjs-menu-focus-indicator-color, var(--tjs-default-color-focus, white));
-   }
-
-   .tjs-menu-focus-indicator {
-      display: flex;
-      align-self: stretch;
-      width: var(--tjs-menu-focus-indicator-width, 0.25em);
-   }
-
    .tjs-menu-item i {
       text-align: center;
-      width: 1.25em;
+      width: var(--tjs-menu-item-icon-width, var(--tjs-default-menu-item-icon-width, 1.25em));
    }
 
    .tjs-menu-item img {
-      width: 1.25em;
-      height: 1.25em;
+      width: var(--tjs-menu-item-image-width, var(--tjs-default-menu-item-image-width, 1.25em));
+      height: var(--tjs-menu-item-image-height, var(--tjs-default-menu-item-image-height, 1.25em));
    }
 
    .tjs-menu-item-button {
-      display: flex;
-      gap: 0.25em;
+      gap: var(--tjs-menu-item-button-gap, var(--tjs-default-menu-item-button-gap, 0.25em));
    }
 
    .tjs-menu-item-button:hover {
@@ -523,7 +575,39 @@
    }
 
    .tjs-menu-item-button:focus-visible {
-      color: var(--tjs-menu-item-color-focus-hover, #fff);
+      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #fff));
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
+   }
+
+   .tjs-menu-focus-indicator {
+      align-self: var(--tjs-menu-focus-indicator-align-self, var(--tjs-default-focus-indicator-align-self, stretch));
+      border: var(--tjs-menu-focus-indicator-border, var(--tjs-default-focus-indicator-border));
+      border-radius: var(--tjs-menu-focus-indicator-border-radius, var(--tjs-default-focus-indicator-border-radius, 0.1em));
+      height: var(--tjs-menu-focus-indicator-height, var(--tjs-default-focus-indicator-height));
+      width: var(--tjs-menu-focus-indicator-width, var(--tjs-default-focus-indicator-width, 0.25em));
+   }
+
+   /* Enable focus indicator for focus-within */
+   /* Note: the use of `has` pseudo-selector that requires a child with :focus-visible */
+   .tjs-menu-item:focus-within:has(:focus-visible) .tjs-menu-focus-indicator {
+      background: var(--tjs-menu-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
+   }
+
+   /* Fallback for browsers that don't support 'has'; any user interaction including mouse will trigger */
+   @supports not (selector(:has(*))) {
+      .tjs-menu-item:focus-within .tjs-menu-focus-indicator {
+         background: var(--tjs-menu-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
+      }
+   }
+
+   /* Enable focus indicator for focus visible */
+   .tjs-menu-item:focus-visible .tjs-menu-focus-indicator {
+      background: var(--tjs-menu-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
+   }
+
+   .tjs-menu-item-label {
+      overflow: var(--tjs-menu-item-label-overflow, var(--tjs-default-menu-item-label-overflow, hidden));
+      text-overflow: var(--tjs-menu-item-label-text-overflow, var(--tjs-default-menu-item-label-text-overflow, ellipsis));
+      white-space: var(--tjs-menu-item-label-white-space, var(--tjs-default-menu-item-label-white-space));
    }
 </style>

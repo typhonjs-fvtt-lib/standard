@@ -1,20 +1,30 @@
-export { default as TJSMenu }          from './TJSMenu.svelte';
-export { default as TJSContextMenu }   from './context/TJSContextMenu.svelte';
+export { default as TJSMenu }             from './TJSMenu.svelte';
+export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.svelte';
 
 /**
  * @typedef {object} TJSMenuData
  *
- * @property {Iterable<TJSMenuItemData>} [items] -
+ * @property {Iterable<TJSMenuItemData>} [items] - The data driven menu items.
  *
- * @property {{ x?: number, y?: number }} [offset] -
+ * @property {{ x?: number, y?: number }} [offset] - Optional X / Y offsets for the menu display.
  *
- * @property {Record<string, string>}   [styles] -
+ * @property {{ class: Function, props?: object }} [slotAfter] - A minimal Svelte config defining a menu item component
+ *           after the main data driven menu items.
  *
- * @property {Function}  [efx] -
+ * @property {{ class: Function, props?: object }} [slotAfter] - A minimal Svelte config defining a menu item component
+ *           before the main data driven menu items.
  *
- * @property {string}  [keyCode='Enter'] -
+ * @property {{ class: Function, props?: object }} [slotDefault] - A minimal Svelte config defining the default content
+ *           component replacing the data driven menu items.
  *
- * @property {{ duration: number, easing: Function }}  [transitionOptions={ duration: 200, easing: quintOut }] -
+ * @property {Record<string, string>}   [styles] - Styles to be applied inline.
+ *
+ * @property {Function}  [efx] - Currently unused; for any future action effects.
+ *
+ * @property {string}  [keyCode='Enter'] - The key code to activate menu items.
+ *
+ * @property {{ duration: number, easing: Function }}  [transitionOptions={ duration: 200, easing: Function }] - Custom
+ *           transition options for duration and easing function. The default easing function is `quintOut`.
  */
 
 /**

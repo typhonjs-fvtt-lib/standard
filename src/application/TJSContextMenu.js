@@ -1,4 +1,4 @@
-import { TJSContextMenu as TJSContextMenuImpl } from '@typhonjs-fvtt/svelte-standard/component';
+import { TJSContextMenuImpl } from '@typhonjs-fvtt/svelte-standard/component';
 
 import {
    A11yHelper,
@@ -7,7 +7,7 @@ import {
    isSvelteComponent }                          from '@typhonjs-svelte/lib/util';
 
 /**
- * Provides game wide menu functionality.
+ * Provides a browser window wide context menu functionality.
  */
 export class TJSContextMenu
 {
@@ -18,7 +18,7 @@ export class TJSContextMenu
 
    /**
     * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
-    * DOM event as it is processed for the location of the context menu to display. Likewise a FocusOptions object is
+    * DOM event as it is processed for the location of the context menu to display. Likewise, a FocusOptions object is
     * generated that allows focus to be returned to the source location. You may supply a default focus target as a
     * fallback.
     *
