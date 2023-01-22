@@ -12,10 +12,10 @@
 
    export let control = void 0;
 
-   setContext('pcControl', control)
+   setContext('#pcControl', control)
 
-   const controls = getContext('pclControls');
-   const selectedDragAPI = getContext('pclSelectedDragAPI');
+   const controls = getContext('#pclControls');
+   const selectedDragAPI = getContext('#pclSelectedDragAPI');
 
    const { enabled } = controls.stores;
 

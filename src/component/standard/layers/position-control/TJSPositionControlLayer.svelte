@@ -16,8 +16,8 @@
    export let boundingRect = void 0;
    export let validate = true;
 
-   setContext('pclControls', controls);
-   setContext('pclSelectedDragAPI', selectedDragAPI);
+   setContext('#pclControls', controls);
+   setContext('#pclSelectedDragAPI', selectedDragAPI);
 
    $: controls.boundingRect = boundingRect;
    $: controls.validate = validate
