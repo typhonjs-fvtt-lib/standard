@@ -172,7 +172,7 @@
     */
    export let options = {};
 
-   const positionStore = getContext('external').application.position;
+   const positionStore = getContext('#external').application.position;
 
    const dispatch = createEventDispatcher();
 

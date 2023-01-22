@@ -44,7 +44,7 @@
 
    const dispatch = createEventDispatcher();
 
-   const external = getContext('external');
+   const external = getContext('#external');
 
    const internalState = new InternalState(color, options, external?.sessionStorage);
 
