@@ -19,7 +19,7 @@
     * `styles`: Styles to be applied inline via `applyStyles` action.
     * `efx`: Currently unused; for any future action effects.
     * `keyCode`: The key code to activate menu items.
-    * `focusOptions`: A `FocusOptions` object containing the target element to return focus to on close.
+    * `focusSource`: A `A11yFocusSource` object containing the target element to return focus to on close.
     * `transitionOptions`: Custom transition options for duration and easing function.
     *
     * ----------------------------------------------------------------------------------------------------------------
@@ -115,7 +115,7 @@
    /** @type {string} */
    export let keyCode = void 0;
 
-   export let focusOptions = void 0;
+   export let focusSource = void 0;
 
    /** @type {{ duration: number, easing: Function }} */
    export let transitionOptions = void 0;
@@ -149,7 +149,7 @@
 
    onMount(() =>
    {
-      const keyboardFocus = focusOptions?.source === 'keyboard';
+      const keyboardFocus = focusSource?.source === 'keyboard';
 
       // If the focus options designate that the source of the context menu came from the keyboard then focus the first
       // menu item on mount.
@@ -210,12 +210,12 @@
 
       if (typeof callback === 'function')
       {
-         callback(item, { focusOptions });
+         callback(item, { focusSource });
       }
       else
       {
-         A11yHelper.applyFocusOptions(focusOptions)
-         focusOptions = void 0;
+         A11yHelper.applyFocusSource(focusSource)
+         focusSource = void 0;
       }
 
       if (!closed)
@@ -320,8 +320,8 @@
                dispatch('close');
                outroAndDestroy(local);
 
-               A11yHelper.applyFocusOptions(focusOptions)
-               focusOptions = void 0;
+               A11yHelper.applyFocusSource(focusSource)
+               focusSource = void 0;
             }
             break;
       }
@@ -351,12 +351,12 @@
          const callback = item?.onPress;
          if (typeof callback === 'function')
          {
-            callback(item, { focusOptions });
+            callback(item, { focusSource });
          }
          else
          {
-            A11yHelper.applyFocusOptions(focusOptions)
-            focusOptions = void 0;
+            A11yHelper.applyFocusSource(focusSource)
+            focusSource = void 0;
          }
       }
    }
@@ -372,8 +372,8 @@
          closed = true;
          outroAndDestroy(local);
 
-         A11yHelper.applyFocusOptions(focusOptions)
-         focusOptions = void 0;
+         A11yHelper.applyFocusSource(focusSource)
+         focusSource = void 0;
       }
    }
 </script>
