@@ -165,6 +165,7 @@
    /** @type {TJSFolderOptions} */
    const localOptions = {
       chevronOnly: false,
+      focusIndicator: false,
       noKeys: false
    }
 
@@ -192,6 +193,7 @@
        isObject(options) ? options : {};
 
       if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
+      if (typeof options?.focusIndicator === 'boolean') { localOptions.focusIndicator = options.focusIndicator; }
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
@@ -436,7 +438,9 @@
              class:default-cursor={localOptions.chevronOnly}>
         {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
-        <div class=tjs-folder-focus-indicator />
+        {#if localOptions.focusIndicator}
+            <div class=tjs-folder-focus-indicator />
+        {/if}
 
         <slot name=label>
             {#if isSvelteComponent(folder?.slotLabel?.class)}

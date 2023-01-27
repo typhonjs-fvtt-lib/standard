@@ -6,10 +6,11 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {boolean} [chevronOnly=false] - When true only clicks on the folder chevron open / close the summary.
  *
- *
+ * @property {boolean} [focusIndicator=false] - When true a `focus-visible` focus indicator is inserted between the
+ *           chevron and summary label. This is a useful a11y focus indicator when `outline` isn't suitable.
  *
  * @property {boolean} [noKeys=false] - When true keyboard events do not control the details open / close state.
- *                                      This is useful when embedding an input element in the summary.
+ *           This is useful when embedding an input element in the summary.
  */
 
 /**
@@ -20,6 +21,12 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  * @property {string} [label] -
  *
  * @property {string} [keyCode='Enter'] - Defines the key event code to open / close summary when focused.
+ *
+ * @property {() => void} [onClose] - Callback when folder closed.
+ *
+ * @property {() => void} [onOpen] - Callback when folder opened.
+ *
+ * @property {(event?: MouseEvent) => void} [onContextMenu] - Callback for context menu.
  *
  * @property {TJSFolderOptions} [options] - Additional folder options.
  *
@@ -35,12 +42,6 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  * @property {import('svelte/store').Writable<boolean>} [store] - Folder open / close store.
  *
  * @property {object} [styles] - Additional styles to apply.
- *
- * @property {() => void} [onClose] - Callback when folder closed.
- *
- * @property {() => void} [onOpen] - Callback when folder opened.
- *
- * @property {(event?: MouseEvent) => void} [onContextMenu] - Callback for context menu.
  */
 
 /**

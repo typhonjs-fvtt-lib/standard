@@ -164,6 +164,7 @@
    /** @type {TJSFolderOptions} */
    const localOptions = {
       chevronOnly: false,
+      focusIndicator: false,
       noKeys: false
    }
 
@@ -184,6 +185,7 @@
        isObject(options) ? options : {};
 
       if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
+      if (typeof options?.focusIndicator === 'boolean') { localOptions.focusIndicator = options.focusIndicator; }
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
@@ -431,7 +433,9 @@
             />
         </svg>
 
-        <div class=tjs-folder-focus-indicator />
+        {#if localOptions.focusIndicator}
+           <div class=tjs-folder-focus-indicator />
+        {/if}
 
         <slot name=label>
             {#if isSvelteComponent(folder?.slotLabel?.class)}
