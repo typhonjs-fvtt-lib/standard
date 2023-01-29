@@ -286,7 +286,14 @@ export class InternalState
 
       const newIsPopup = typeof opts.isPopup === 'boolean' ? opts.isPopup : true;
 
-      this.#stores.isPopup.set(newIsPopup);
+      // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
+      if (newIsPopup !== currentIsPopup)
+      {
+         this.#stores.isOpen.set(!newIsPopup);
+
+         // The open state must take effect before changing popup mode, so defer to next tick.
+         setTimeout(() => this.#stores.isPopup.set(newIsPopup), 0);
+      }
 
       if (opts.layout !== this.#externalData.layout) { this.#stores.components.set(this.#prepareComponents(opts)); }
 
@@ -299,9 +306,6 @@ export class InternalState
       // Internal data -----------------------------------------------------------------------------------------------
 
       this.#stores.hasAddons.set(this.#externalData.hasAddons && this.#addonState.size > 0);
-
-      // Only reset `isOpen` if external `options.isPopup` has changed. When isPopup is false isOpen must be true.
-      if (newIsPopup !== currentIsPopup) { this.#stores.isOpen.set(!newIsPopup); }
 
       // Update color state options (color format / type) ------------------------------------------------------------
 

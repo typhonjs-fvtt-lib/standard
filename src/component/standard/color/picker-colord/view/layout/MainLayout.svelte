@@ -41,7 +41,6 @@
       // Early out if pointer down on container element or child element of wrapper.
       if (containerEl !== null && (event.target === containerEl || containerEl.contains(event.target))) { return; }
 
-
       // Remove listener.
       document.body.removeEventListener('pointerdown', onPointerDown);
 
@@ -71,7 +70,7 @@
     *
     * @param {HTMLElement} node - Container element.
     *
-    * @returns {undefined} No transition object is returned.
+    * @returns {object} A minimal transition object is returned.
     */
    function updatePosition(node)
    {
@@ -83,7 +82,7 @@
          node.style.left = null;
          node.style.right = null;
 
-         return;
+         return { delay: 0, duration: 0 };
       }
 
       // Find parent stacking context. This usually is `window-app` or it could be the browser window.
@@ -92,7 +91,7 @@
       if (!(result?.node instanceof HTMLElement))
       {
          console.warn(`'TJSColordPicker.updatePosition warning: Could not locate parent stacking context element.`);
-         return;
+         return { delay: 0, duration: 0 };
       }
 
       const stackingContextRect = result?.node.getBoundingClientRect();
@@ -136,13 +135,15 @@
          node.style.removeProperty('top');
          node.style.bottom = `${inputRect.height}px`;
       }
+
+      return { delay: 0, duration: 0 };
    }
 </script>
 
 <!-- Conditional is required to trigger transition to correct positioning when in popup mode -->
 {#if $isOpen}
 <main class=tjs-color-picker-main-layout
-      transition:updatePosition
+      in:updatePosition
       on:pointerdown|stopPropagation={onPointerDownLocal}
       class:isOpen={$isOpen}
       class:isPopup={$isPopup}
