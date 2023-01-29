@@ -26,6 +26,7 @@
       hasButtonBar,
       hasTextInput,
       isOpen,
+      isPopup,
       padding,
       width,
    } = internalState.stores;
@@ -42,27 +43,37 @@
     * which expands the inner wrapper beyond the optional `width` amount. A padding offset is calculated from the
     * parent container and this wrapper. This allows automatic adjustment to align container without a manual
     * external padding option.
+    *
+    * Note: `requestAnimationFrame` is used for Firefox support where `getBoundingClientRect` does not always return
+    * the correct results right after mount. They are correct by the `rAF` callback. Also, the use of adding / removing
+    * `width-100` class for 100% or without `max-content` is used over inline styles as for a currently unknown reason
+    * if you modify inline styles Svelte triggers the reactive statement again.
     */
-   $: if (wrapperEl && $isOpen) {
-      const parentRect = wrapperEl.parentElement.getBoundingClientRect();
-      const wrapperRect = wrapperEl.getBoundingClientRect();
-
-      const widthNum = Number.parseFloat($width);
-
-      if (widthNum > 185 && parentRect.width >= wrapperRect.width)
+   $: if ($isOpen) {
+      requestAnimationFrame(() =>
       {
-         wrapperEl.style.width = '100%';
-         $padding = `0`;
-      }
-      else
-      {
-         wrapperEl.style.width = 'max-content';
-         $padding = `0 calc(${wrapperRect.width}px - ${parentRect.width}px) 0 0`;
-      }
+         const parentRect = wrapperEl.parentElement.getBoundingClientRect();
+         const wrapperRect = wrapperEl.getBoundingClientRect();
+
+         const widthNum = Number.parseFloat($width);
+
+         if (widthNum > 185 && parentRect.width >= wrapperRect.width)
+         {
+            wrapperEl.classList.add('width-100');
+            $padding = `0`;
+         }
+         else
+         {
+            wrapperEl.classList.remove('width-100');
+            $padding = `0 calc(${wrapperRect.width}px - ${parentRect.width}px) 0 0`;
+         }
+      });
    }
 </script>
 
-<div bind:this={wrapperEl} class=tjs-color-picker-wrapper>
+<div bind:this={wrapperEl}
+     class="tjs-color-picker-wrapper width-100"
+     class:pop-up={$isPopup}>
     <section class=main>
         <Picker bind:pickerEl />
         <SliderHue />
@@ -90,6 +101,10 @@
         display: flex;
     }
 
+    .tjs-color-picker-wrapper.width-100 {
+        width: 100%;
+    }
+
     .extra {
         display: flex;
         flex-direction: column;
@@ -111,6 +126,10 @@
         height: max-content;
 
         --tjs-icon-button-diameter: 2em;
+    }
+
+    .tjs-color-picker-wrapper.pop-up {
+        box-shadow: var(--tjs-color-picker-wrapper-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));
     }
 
     @container tjs-color-picker-container (min-width: 0) {

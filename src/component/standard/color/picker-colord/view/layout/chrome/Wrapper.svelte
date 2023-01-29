@@ -26,6 +26,7 @@
       hasButtonBar,
       hasTextInput,
       isOpen,
+      isPopup,
       padding,
       width
    } = internalState.stores;
@@ -46,7 +47,9 @@
    }
 </script>
 
-<div bind:this={wrapperEl} class=tjs-color-picker-wrapper>
+<div bind:this={wrapperEl}
+     class=tjs-color-picker-wrapper
+     class:pop-up={$isPopup}>
     <Picker bind:pickerEl />
     <div class=tjs-color-picker-wrapper-body>
         <section class=sliders>
@@ -84,6 +87,10 @@
         height: max-content;
 
         --tjs-icon-button-diameter: 2em;
+    }
+
+    .tjs-color-picker-wrapper.pop-up {
+        box-shadow: var(--tjs-color-picker-wrapper-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));
     }
 
     .extra, .sliders, .tjs-color-picker-wrapper-body {
