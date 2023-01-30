@@ -112,8 +112,8 @@
     * // @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
     * //          characters that can be entered.
     *
-    * // @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
-    * //          paragraph.
+    * @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
+    *           paragraph.
     *
     * @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
     *
@@ -408,20 +408,32 @@
       {
          let preventDefault = false;
 
-         if (event.key === 'Escape')
+         switch (event.code)
          {
-            destroyEditor();
-            preventDefault = true;
-         }
-         else if (event.key === 'Enter' && typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
-         {
-            saveEditor();
-            preventDefault = true;
-         }
-         else if (event.key === 's' && (event.ctrlKey || event.metaKey))
-         {
-            saveEditor();
-            preventDefault = true;
+            case 'Enter':
+               if (typeof options?.preventEnterKey === 'boolean' && options.preventEnterKey)
+               {
+                  preventDefault = true;
+               }
+               else if (typeof options?.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
+               {
+                  saveEditor();
+                  preventDefault = true;
+               }
+               break;
+
+            case 'Escape':
+               destroyEditor();
+               preventDefault = true;
+               break;
+
+            case 'KeyS':
+               if (event.ctrlKey || event.metaKey)
+               {
+                  saveEditor();
+                  preventDefault = true;
+               }
+               break;
          }
 
          if (preventDefault)
@@ -514,7 +526,7 @@ console.trace();
          use:applyStyles={options.styles}
          on:blur={onBlur}
          on:drop|preventDefault|stopPropagation={onDrop}
-         on:keydown|capture={onKeydown}
+         on:keydown={onKeydown}
          on:paste|preventDefault={onPaste}>
         {@html content}
     </div>
