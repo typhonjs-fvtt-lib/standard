@@ -65,7 +65,7 @@ export class MCEImpl
 
    static keydownHandler(editor, event, options, saveEditor, content)
    {
-      switch (event.key)
+      switch (event.code)
       {
          case 'Enter':
             // Handles `preventEnterKey` option.
