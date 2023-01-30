@@ -574,7 +574,7 @@
         <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
     {/if}
     <div bind:this={editorContentEl}
-         class=editor-content>
+         class="editor-content tjs-editor-content">
         {#if !editorActive}
             {@html enrichedContent}
         {/if}
