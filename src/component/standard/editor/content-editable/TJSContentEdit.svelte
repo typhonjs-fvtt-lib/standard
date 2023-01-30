@@ -465,7 +465,7 @@
       if (typeof text === 'string')
       {
          text = CEImpl.pastePreprocess(editorEl, text, options, maxCharacterLength);
-console.log(`!! TJSContentEdit - onPaste - text: `, text)
+
          CEImpl.insertTextAtCursor(text);
       }
 

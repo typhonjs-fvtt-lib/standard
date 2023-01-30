@@ -126,8 +126,6 @@ export class CEImpl
          const bodyLength = editorEl.innerText.length;
          const selectionLength = globalThis.getSelection().getRangeAt(0).toString().length;
 
-console.log(`!! CEImpl - pastePreprocess - 0 - bodyLength: ${bodyLength}; selectionLength: ${selectionLength}; content: `, content);
-
          if (selectionLength > 0)
          {
             // Only need to consider reducing content when the content length > selection length.
@@ -148,8 +146,6 @@ console.log(`!! CEImpl - pastePreprocess - 0 - bodyLength: ${bodyLength}; select
                content = content.substring(0, remainingLength);
             }
          }
-
-console.log(`!! CEImpl - pastePreprocess - 1 - content: `, content);
 
          text = content;
       }
