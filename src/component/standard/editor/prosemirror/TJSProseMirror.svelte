@@ -108,8 +108,17 @@
     *
     * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
     *
-    * // @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to load
-    * //          specific to this editor.
+    * @property {Object<string, string>}   [styles] - Additional CSS property names and values to set as inline styles.
+    *           This is useful for dynamically overriding any built in styles and in particular setting CSS variables
+    *           supported.
+    */
+
+   /**
+    * The following options likely won't be implemented for the ProseMirror component as they involve significant
+    * effort in modifying ProseMirror which is not trivial at all without potentially weeks of work.
+    *
+    * // @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to
+    * //         load specific to this editor.
     *
     * // @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
     * //          characters that can be entered.
@@ -125,10 +134,6 @@
     * // @property {boolean}   [saveOnEnterKey=false] - When true saves the editor state when the enter key is pressed.
     * //          This is useful when configuring the editor for single line entry. For an automatic setup for single
     * //          line entry refer to {@link TinyMCEHelper.optionsSingleLine}.
-    *
-    * @property {Object<string, string>}   [styles] - Additional CSS property names and values to set as inline styles.
-    *           This is useful for dynamically overriding any built in styles and in particular setting CSS variables
-    *           supported.
     */
 
    /**
