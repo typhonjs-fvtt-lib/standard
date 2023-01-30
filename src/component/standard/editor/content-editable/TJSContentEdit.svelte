@@ -115,8 +115,8 @@
     * // @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
     * //          paragraph.
     *
-    * // @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
-    * //
+    * @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
+    *
     * @property {boolean}   [saveOnBlur=false] - When true any loss of focus / blur from the editor saves the editor
     *           state.
     *
@@ -438,6 +438,13 @@
     */
    function onPaste(event)
    {
+      if (typeof options?.preventPaste === 'boolean' && options.preventPaste)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+         return;
+      }
+
       let text = event.clipboardData.getData('text/plain');
 
       if (typeof text === 'string')
@@ -447,10 +454,7 @@
          if (FVTTVersion.isV10 && s_UUID_REGEX.test(text))
          {
             const uuidDoc = globalThis.fromUuidSync(text);
-            if (uuidDoc)
-            {
-                text = `@UUID[${text}]{${uuidDoc.name}}`;
-            }
+            if (uuidDoc) { text = `@UUID[${text}]{${uuidDoc.name}}`; }
          }
 
          CEImpl.insertTextAtCursor(text);
