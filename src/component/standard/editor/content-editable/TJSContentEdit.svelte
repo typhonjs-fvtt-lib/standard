@@ -352,7 +352,12 @@
     */
    function onBlur(event)
    {
-      if (typeof options.saveOnBlur === 'boolean' && !options.saveOnBlur) { return; }
+      if (typeof options.saveOnBlur === 'boolean' && !options.saveOnBlur)
+      {
+         if (editorActive) { destroyEditor(true); }
+
+         return;
+      }
 
       if (editorActive) { saveEditor(); }
    }
@@ -468,6 +473,7 @@
     */
    function saveEditor()
    {
+console.trace();
       if (editorActive)
       {
          let data = editorEl.innerHTML;
