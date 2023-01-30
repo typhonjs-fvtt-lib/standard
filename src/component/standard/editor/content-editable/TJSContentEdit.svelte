@@ -109,8 +109,8 @@
     *
     * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
     *
-    * // @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
-    * //          characters that can be entered.
+    * @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
+    *           characters that can be entered.
     *
     * @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
     *           paragraph.
@@ -138,7 +138,6 @@
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
    import { CEImpl }        from './CEImpl.js';
-   import { FVTTVersion }   from '../../../internal/FVTTVersion';
 
    /** @type {string} */
    export let content = '';
@@ -152,13 +151,6 @@
     * @type {TJSContentEditOptions}
     */
    export let options = {};
-
-   /**
-    * Defines a regex to check for the shape of a raw Foundry document UUID.
-    *
-    * @type {RegExp}
-    */
-   const s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
 
    const dispatch = createEventDispatcher();
 
@@ -411,13 +403,13 @@
          switch (event.code)
          {
             case 'Enter':
-               if (typeof options?.preventEnterKey === 'boolean' && options.preventEnterKey)
-               {
-                  preventDefault = true;
-               }
-               else if (typeof options?.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
+               if (typeof options?.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
                {
                   saveEditor();
+                  preventDefault = true;
+               }
+               else if (typeof options?.preventEnterKey === 'boolean' && options.preventEnterKey)
+               {
                   preventDefault = true;
                }
                break;
@@ -434,6 +426,12 @@
                   preventDefault = true;
                }
                break;
+         }
+
+         // Prevent key down when limiting max character length, but allow certain control keys through.
+         if (maxCharacterLength !== void 0 && editorEl.innerText.length >= maxCharacterLength)
+         {
+            preventDefault |= CEImpl.isValidKeyForMaxCharacterLength(event);
          }
 
          if (preventDefault)
@@ -466,14 +464,8 @@
 
       if (typeof text === 'string')
       {
-         // Check if pasted test matches the shape of a UUID. If so do a lookup and if a document is retrieved build
-         // a UUID.
-         if (FVTTVersion.isV10 && s_UUID_REGEX.test(text))
-         {
-            const uuidDoc = globalThis.fromUuidSync(text);
-            if (uuidDoc) { text = `@UUID[${text}]{${uuidDoc.name}}`; }
-         }
-
+         text = CEImpl.pastePreprocess(editorEl, text, options, maxCharacterLength);
+console.log(`!! TJSContentEdit - onPaste - text: `, text)
          CEImpl.insertTextAtCursor(text);
       }
 
