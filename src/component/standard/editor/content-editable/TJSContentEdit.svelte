@@ -138,7 +138,7 @@
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
    import { CEImpl }        from './CEImpl.js';
-   import {FVTTVersion} from "../../../internal/FVTTVersion";
+   import { FVTTVersion }   from '../../../internal/FVTTVersion';
 
    /** @type {string} */
    export let content = '';
@@ -485,7 +485,6 @@
     */
    function saveEditor()
    {
-console.trace();
       if (editorActive)
       {
          let data = editorEl.innerHTML;
