@@ -38,19 +38,17 @@
     * --tjs-input-number-webkit-outer-spin-button-opacity
     */
 
-   import { writable }  from 'svelte/store';
+   import { writable }      from 'svelte/store';
 
-   import {
-      applyStyles,
-      autoBlur }        from '@typhonjs-svelte/lib/action';
+   import { applyStyles }   from '@typhonjs-svelte/lib/action';
 
-   import { localize }  from '@typhonjs-svelte/lib/helper';
+   import { localize }      from '@typhonjs-svelte/lib/helper';
 
    import {
       isReadableStore,
-      isWritableStore } from '@typhonjs-svelte/lib/store';
+      isWritableStore }     from '@typhonjs-svelte/lib/store';
 
-   import { isObject }  from '@typhonjs-svelte/lib/util';
+   import { isObject }      from '@typhonjs-svelte/lib/util';
 
    export let input = void 0;
    export let disabled = void 0;
@@ -163,7 +161,6 @@
            max={max}
            min={min}
            step={step}
-           use:autoBlur
            {placeholder}
            {disabled}
            on:focusin={onFocusIn}

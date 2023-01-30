@@ -34,9 +34,7 @@
    import { onMount }         from 'svelte';
    import { writable }        from 'svelte/store';
 
-   import {
-      applyStyles,
-      autoBlur }              from '@typhonjs-svelte/lib/action';
+   import { applyStyles }     from '@typhonjs-svelte/lib/action';
    import { isWritableStore } from '@typhonjs-svelte/lib/store';
 
    export let select = void 0;
@@ -67,7 +65,7 @@
 
 <div on:change class=tjs-select-container use:efx use:applyStyles={styles}>
    <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
-   <select on:change class=tjs-select bind:value={$store} use:autoBlur>
+   <select on:change class=tjs-select bind:value={$store}>
       {#each options as option}
          <option class=tjs-select-option value={option.value}>
             {option.label}

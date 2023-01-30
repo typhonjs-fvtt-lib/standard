@@ -36,9 +36,7 @@
 
    import { writable }          from 'svelte/store';
 
-   import {
-      applyStyles,
-      autoBlur }                from '@typhonjs-svelte/lib/action';
+   import { applyStyles }       from '@typhonjs-svelte/lib/action';
 
    import { localize }          from '@typhonjs-svelte/lib/helper';
 
@@ -163,7 +161,6 @@
            bind:this={inputEl}
            bind:value={$store}
            class:is-value-invalid={!$storeIsValid}
-           use:autoBlur
            {placeholder}
            {disabled}
            on:focusin={onFocusIn}
