@@ -401,7 +401,7 @@
     */
    function onKeydown(event)
    {
-      if (editorActive && (event.key === 'Escape' || (event.key === 's' && (event.ctrlKey || event.metaKey))))
+      if (editorActive && (event.code === 'Escape' || (event.code === 'KeyS' && (event.ctrlKey || event.metaKey))))
       {
          event.preventDefault();
          event.stopPropagation();

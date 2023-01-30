@@ -124,15 +124,16 @@
     */
    function onKeyDown(event)
    {
-      if (localOptions.blurOnEnterKey && event.key === 'Enter')
+      if (localOptions.blurOnEnterKey && event.code === 'Enter')
       {
          event.preventDefault();
          event.stopPropagation();
 
-         inputEl.blur(); return;
+         inputEl.blur();
+         return;
       }
 
-      if (event.key === 'Escape')
+      if (event.code === 'Escape')
       {
          if (localOptions.cancelOnEscKey && typeof initialValue === 'string')
          {

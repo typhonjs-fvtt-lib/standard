@@ -128,7 +128,7 @@
     */
    function onKeyDown(event)
    {
-      if (localOptions.blurOnEnterKey && event.key === 'Enter')
+      if (localOptions.blurOnEnterKey && event.code === 'Enter')
       {
          event.preventDefault();
          event.stopPropagation();
@@ -137,7 +137,7 @@
          return;
       }
 
-      if (event.key === 'Escape')
+      if (event.code === 'Escape')
       {
          if (localOptions.cancelOnEscKey && (initialValue === null || typeof initialValue === 'number'))
          {
