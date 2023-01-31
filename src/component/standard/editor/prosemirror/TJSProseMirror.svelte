@@ -91,6 +91,8 @@
     * @property {boolean}   [clickToEdit=false] - When true the edit button is not shown and a click on the editor
     *           content initializes the editor.
     *
+    * @property {boolean}   [collaborate=false] - Enables ProseMirror collaboration; requires a document to be set.
+    *
     * @property {foundry.abstract.Document}   [document] - Set to a Foundry document to load and save content from it.
     *           Requires `fieldName` to be set.
     *

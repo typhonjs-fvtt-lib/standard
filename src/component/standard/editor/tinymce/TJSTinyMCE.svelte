@@ -34,7 +34,6 @@
     * --tjs-editor-border-radius - 0
     * --tjs-editor-height - 100%
     * --tjs-editor-margin - 0
-    * --tjs-editor-overflow - auto
     * --tjs-editor-width - 100%
     *
     * `.editor` HTMLDivElement; properties available when activated:

@@ -46,7 +46,7 @@
     * --tjs-editor-inactive-hover-outline - unset
     * --tjs-editor-inactive-hover-user-select - text
     *
-    * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
+    * `.editor` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
     * --tjs-editor-content-color - #000
     * --tjs-editor-content-font-family - "Signika"
@@ -55,29 +55,10 @@
     * --tjs-editor-content-overflow - auto
     * --tjs-editor-content-padding - 0
     *
-    * `.editor-container` HTMLDivElement; when editing - removes default margins.
-    * ---------------------------------
-    * --tjs-editor-container-margin - 0
-    *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
     * ---------------------------------
     * --tjs-editor-edit-right - 5px
     * --tjs-editor-edit-top - 0
-    *
-    * Various TinyMCE `tox` toolbar elements; Defines the toolbar / menu.
-    * ---------------------------------
-    * --tjs-editor-menu-item-background-active - #dee0e2 - This targets the auxiliary TMCE menus.
-    * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
-    * --tjs-editor-toolbar-border-radius - 6px
-    * --tjs-editor-toolbar-button-background - none
-    * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
-    * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
-    * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813))
-    * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888))
-    * --tjs-editor-toolbar-padding - 0 2px
-    * --tjs-editor-toolbar-separator-border - 1px solid var(--color-text-light-3, #ccc)
-    * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
-    * --tjs-editor-toolbar-width - 100%
     */
 
    /**
@@ -543,6 +524,7 @@
         border-radius: var(--tjs-editor-border-radius, 0);
         height: var(--tjs-editor-height, 100%);
         margin: var(--tjs-editor-margin, 0);
+        overflow: var(--tjs-editor-content-overflow, var(--tjs-editor-overflow, auto));
         width: var(--tjs-editor-width, 100%);
 
         color: var(--tjs-editor-content-color, #000);
