@@ -114,8 +114,9 @@
     */
 
    /**
-    * The following options likely won't be implemented for the ProseMirror component as they involve significant
-    * effort in modifying ProseMirror which is not trivial at all without potentially weeks of work.
+    * The following options that both {@link TJSTinyMCE} and {@link TJSContentEdit} support likely won't be implemented
+    * for the ProseMirror component as they involve significant effort in modifying ProseMirror which is not trivial at
+    * all without potentially weeks of work or entirely replacing the built-in Foundry ProseMirror toolbar / support.
     *
     * // @property {Object<FontFamilyDefinition>}    [fonts] - An additional object defining module / custom fonts to
     * //         load specific to this editor.
@@ -132,8 +133,7 @@
     * //          state.
     *
     * // @property {boolean}   [saveOnEnterKey=false] - When true saves the editor state when the enter key is pressed.
-    * //          This is useful when configuring the editor for single line entry. For an automatic setup for single
-    * //          line entry refer to {@link TinyMCEHelper.optionsSingleLine}.
+    * //          This is useful when configuring the editor for single line entry.
     */
 
    /**
