@@ -30,10 +30,11 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
 /**
  * @typedef {object} TJSMenuItemData
  *
- * @property {(item: TJSMenuItemData) => void} [onPress] - A single callback function to invoke.
+ * @property {(item: TJSMenuItemData, options: object) => void} [onPress] - A callback function to invoke; second
+ *           parameter includes any focus source options to pass to potential new application.
  *
  * @property {boolean|Function} [condition] - If a boolean and false or a function that invoked returns a falsy value
- *                                            this item is not added.
+ *           this item is not added.
  *
  *
  * @property {Function} [class] - A Svelte component class.

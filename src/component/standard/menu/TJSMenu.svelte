@@ -189,6 +189,9 @@
    // Stores if this context menu is closed.
    let closed = false;
 
+   // Stores any associated `focusSource` options to pass to menu callbacks when menu was activated by keys.
+   let focusOptions = void 0;
+
    // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keypress` for
    // close event.
    let hasKeyboardFocus = false;
@@ -211,6 +214,13 @@
          {
             firstFocusEl.focus();
             hasKeyboardFocus = true;
+
+            // Set focus source to activeEl and pass to menu item callbacks.
+            focusOptions = {
+               focusSource: {
+                  focusEl: [activeEl]
+               }
+            };
          }
          else
          {
@@ -282,7 +292,7 @@
    {
       const callback = item?.onPress;
 
-      if (typeof callback === 'function') { callback(item); }
+      if (typeof callback === 'function') { callback(item, focusOptions); }
 
       if (!closed)
       {
@@ -396,7 +406,7 @@
       {
          const callback = item?.onPress;
 
-         if (typeof callback === 'function') { callback(item); }
+         if (typeof callback === 'function') { callback(item, focusOptions); }
 
          if (!closed)
          {
