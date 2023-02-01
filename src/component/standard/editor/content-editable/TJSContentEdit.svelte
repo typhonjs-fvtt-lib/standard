@@ -39,6 +39,11 @@
     * --tjs-editor-active-outline - unset
     * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
     *
+    * `.editor` HTMLDivElement; properties available when inactive, but manually focused:
+    * ---------------------------------
+    * --tjs-editor-inactive-box-shadow-focus-visible - fallback: --tjs-default-box-shadow-focus-visible
+    * --tjs-editor-inactive-outline-focus-visible - fallback: --tjs-default-outline-focus-visible; default: revert
+    *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
     * --tjs-editor-inactive-hover-cursor - text
@@ -89,6 +94,8 @@
     * @property {string}    [fieldName] - A field name to load and save to / from associated document. IE `a.b.c`.
     *
     * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
+    *
+    * @property {string}    [keyCode='Enter'] - Defines the key event code to activate the editor when focused.
     *
     * @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
     *           characters that can be entered.
@@ -153,6 +160,12 @@
    /** @type {HTMLDivElement} */
    let editorEl;
 
+   /** @type {string} */
+   let keyCode;
+
+   /** @type {boolean} */
+   let keyFocused = false;
+
    /** @type {number} */
    let maxCharacterLength;
 
@@ -177,6 +190,11 @@
     */
    $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
        !clickToEdit;
+
+   /**
+    * Allows another KeyboardEvent.code to be used to activate the editor.
+    */
+   $: keyCode = typeof options.keyCode === 'string' ? options.keyCode : 'Enter';
 
    /**
     * Updates maxCharacterLength; this does not reactively alter content or the active editor content.
@@ -293,6 +311,18 @@
          // Post on next micro-task to allow any event propagation for `Escape` key to trigger first.
          setTimeout(() => editorActive = false, 0);
 
+         // If the editor was initialized by keyboard action then focus it after a short delay to allow the template
+         // to update.
+         if (keyFocused)
+         {
+            keyFocused = false;
+
+            setTimeout(() =>
+            {
+               if (editorEl instanceof HTMLElement && editorEl?.isConnected) { editorEl.focus(); }
+            }, 100);
+         }
+
          if (fireCancel) { dispatch('editor:cancel'); }
       }
    }
@@ -342,10 +372,7 @@
     */
    function onClick(event)
    {
-      if (!editorActive && clickToEdit)
-      {
-         initEditor();
-      }
+      if (!editorActive && clickToEdit) { initEditor(); }
    }
 
    /**
@@ -375,7 +402,7 @@
     *
     * @param {KeyboardEvent}    event - A keyboard event from `.editor`.
     */
-   function onKeydown(event)
+   function onKeydownActive(event)
    {
       if (editorActive)
       {
@@ -420,6 +447,40 @@
             event.preventDefault();
             event.stopPropagation();
          }
+      }
+   }
+
+   /**
+    * Consume / stop propagation of key down when key codes match.
+    *
+    * @param {KeyboardEvent}    event - A KeyboardEvent.
+    */
+   function onKeydownInactive(event)
+   {
+      if (event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * Handle activating the editor if key codes match.
+    *
+    * @param {KeyboardEvent}    event - A KeyboardEvent.
+    */
+   function onKeyupInactive(event)
+   {
+      if (event.code === keyCode)
+      {
+         if (!editorActive)
+         {
+            keyFocused = true;
+            initEditor();
+         }
+
+         event.preventDefault();
+         event.stopPropagation();
       }
    }
 
@@ -498,8 +559,9 @@
          use:applyStyles={options.styles}
          on:blur={onBlur}
          on:drop|preventDefault|stopPropagation={onDrop}
-         on:keydown={onKeydown}
-         on:paste|preventDefault={onPaste}>
+         on:keydown={onKeydownActive}
+         on:paste|preventDefault={onPaste}
+         role=textbox>
         {@html content}
     </div>
 {:else}
@@ -507,8 +569,11 @@
          class="editor tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
          class:click-to-edit={clickToEdit}
          on:click={onClick}
+         on:keydown={onKeydownInactive}
+         on:keyup={onKeyupInactive}
          use:applyStyles={options.styles}
-         role=presentation>
+         role=textbox
+         tabindex=0>
         {@html enrichedContent}
         {#if editorButton}
             <!-- svelte-ignore a11y-missing-attribute -->
@@ -524,6 +589,7 @@
         border-radius: var(--tjs-editor-border-radius, 0);
         height: var(--tjs-editor-height, 100%);
         margin: var(--tjs-editor-margin, 0);
+        outline-offset: var(--tjs-editor-outline-offset, 0.25em);
         overflow: var(--tjs-editor-content-overflow, var(--tjs-editor-overflow, auto));
         width: var(--tjs-editor-width, 100%);
 
@@ -550,12 +616,28 @@
     /**
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered.
      */
-    .tjs-editor:not(.editor-active):hover {
-        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
-        outline: var(--tjs-editor-inactive-hover-outline, unset);
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+    .tjs-editor:not(.editor-active):focus-visible {
+        box-shadow: var(--tjs-editor-inactive-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
+        outline: var(--tjs-editor-inactive-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
 
         transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    }
+
+    /**
+     * Defines cursor and box-shadow / outline when the editor is inactive and hovered, but not manually focused.
+     */
+    .tjs-editor:not(.editor-active):not(:focus-visible):hover {
+        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
+        outline: var(--tjs-editor-inactive-hover-outline, unset);
+
+        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    }
+
+    /**
+     * Defines user-select when the editor is inactive and hovered.
+     */
+    .tjs-editor:not(.editor-active):hover {
+        user-select: var(--tjs-editor-inactive-hover-user-select, text);
     }
 
     /**
