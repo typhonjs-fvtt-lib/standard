@@ -25,7 +25,11 @@
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Events: There is a single that is fired and bubbled up through parent elements:
-    * `close`- Fired when the menu closes allowing any parent components to update state.
+    *
+    * `close:popup` - A CustomEvent fired when the menu closes allowing any parent components to update state. The
+    *                 `detail` data may have two optional fields of data including `keyboardFocus` / boolean if the
+    *                 close action originated from keyboard navigation and the other is `target` / HTMLElement that is
+    *                 the original event target for the close action.
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Styling: To style this component use `.tjs-menu` as the base selector.
@@ -192,8 +196,8 @@
    // Stores any associated `focusSource` options to pass to menu callbacks when menu was activated by keys.
    let focusOptions = void 0;
 
-   // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keypress` for
-   // close event.
+   // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keyboardFocus`
+   // for close event.
    let hasKeyboardFocus = false;
 
    // ----------------------------------------------------------------------------------------------------------------
@@ -297,13 +301,14 @@
       if (!closed)
       {
          closed = true;
-         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+         menuEl.dispatchEvent(new CustomEvent('close:popup', { bubbles: true, cancelable: true }));
       }
    }
 
    /**
-    * Determines if a pointer pressed to the document body closes the menu. If the click occurs outside the
-    * menu then fire the `close` event and run the outro transition then destroy the component.
+    * Determines if a pointer event is pressed outside the menu which closes the menu. Use a bubbling custom event
+    * `close:popup` and attach the original target. The TRL application shells will respond to this event to handle
+    * any additional automatic focus management.
     *
     * @param {PointerEvent}   event - Pointer event from document body click.
     */
@@ -317,7 +322,12 @@
       if (!closed)
       {
          closed = true;
-         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+
+         menuEl.dispatchEvent(new CustomEvent('close:popup', {
+            bubbles: true,
+            cancelable: true,
+            detail: { target: event.target }
+         }));
       }
    }
 
@@ -384,7 +394,8 @@
             if (!closed)
             {
                closed = true;
-               menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+               menuEl.dispatchEvent(new CustomEvent('close:popup',
+                { bubbles: true, cancelable: true, detail: { keyboardFocus: hasKeyboardFocus } }));
             }
 
             event.preventDefault();
@@ -415,7 +426,8 @@
             event.preventDefault();
             event.stopPropagation();
 
-            menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true, detail: { keypress: hasKeyboardFocus } }));
+            menuEl.dispatchEvent(new CustomEvent('close:popup',
+             { bubbles: true, cancelable: true, detail: { keyboardFocus: hasKeyboardFocus } }));
          }
       }
    }
@@ -428,7 +440,7 @@
       if (!closed)
       {
          closed = true;
-         menuEl.dispatchEvent(new CustomEvent('close', { bubbles: true }));
+         menuEl.dispatchEvent(new CustomEvent('close:popup', { bubbles: true, cancelable: true }));
       }
    }
 </script>
@@ -444,6 +456,8 @@
      on:click|preventDefault|stopPropagation={() => null}
      on:keydown|stopPropagation={onKeydownMenu}
      on:keyup|preventDefault|stopPropagation={onKeyupMenu}
+     on:pointerdown|stopPropagation={() => null}
+     on:pointerup|stopPropagation={() => null}
      transition:animate
      use:applyStyles={styles}
      use:efx

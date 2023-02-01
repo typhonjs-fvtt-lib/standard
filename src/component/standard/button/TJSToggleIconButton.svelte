@@ -56,7 +56,6 @@
    export let onClose = void 0;
    export let onContextMenu = void 0;
    export let onClickPropagate = void 0;
-   export let onClosePropagate = void 0;
 
    const dispatch = createEventDispatcher();
 
@@ -82,8 +81,6 @@
    $: onContextMenu = isObject(button) && typeof button.onContextMenu === 'function' ? button.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
-   $: onClosePropagate = isObject(button) && typeof button.onClosePropagate === 'boolean' ? button.onClosePropagate :
-    typeof onClosePropagate === 'boolean' ? onClosePropagate : false;
    $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
@@ -146,9 +143,9 @@
    }
 
    /**
-    * Handles `close` event from any children elements.
+    * Handles `close:popup` event from any children components like TJSMenu.
     */
-   function onCloseHandler(event)
+   function onClosePopup(event)
    {
       selected = false;
       if (store) { store.set(false); }
@@ -156,15 +153,12 @@
       if (typeof onClose === 'function') { onClose(selected); }
 
       // The close event was triggered from a key press, so focus the anchor element / button.
-      if (typeof event?.detail?.keypress === 'boolean' && event.detail.keypress && anchorEl?.isConnected)
+      if (typeof event?.detail?.keyboardFocus === 'boolean' && event.detail.keyboardFocus && anchorEl?.isConnected)
       {
          anchorEl.focus();
-      }
 
-      if (!onClosePropagate)
-      {
-         event.preventDefault();
          event.stopPropagation();
+         event.preventDefault();
       }
    }
 
@@ -207,7 +201,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div class=tjs-toggle-icon-button
      on:click={onClickDiv}
-     on:close={onCloseHandler}
+     on:close:popup={onClosePopup}
      use:applyStyles={styles}>
    <!-- svelte-ignore a11y-missing-attribute -->
    <a bind:this={anchorEl}
