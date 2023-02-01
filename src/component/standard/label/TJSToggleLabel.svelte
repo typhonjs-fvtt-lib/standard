@@ -1,7 +1,7 @@
 <script>
    /**
     * --tjs-toggle-label-background
-    * --tjs-toggle-label-background-focus
+    * --tjs-toggle-label-background-focus-visible
     * --tjs-toggle-label-background-hover
     * --tjs-toggle-label-background-selected
     * --tjs-toggle-label-border
@@ -255,9 +255,8 @@
    }
 
    span:focus-visible {
-      background: var(--tjs-toggle-label-background-focus);
-      outline: var(--tjs-toggle-label-outline-focus, var(--tjs-default-outline-focus-visible, revert));
-      text-shadow: var(--tjs-toggle-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
+      background: var(--tjs-toggle-label-background-focus-visible);
+      outline: var(--tjs-toggle-label-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
    }
 
    span:hover {

@@ -129,6 +129,6 @@
    }
 
    .tjs-scroll-container:focus-visible {
-      outline: var(--tjs-scroll-container-outline-focus, var(--tjs-default-a11y-outline-focus, 2px solid transparent));
+      outline: var(--tjs-scroll-container-outline-focus-visible, var(--tjs-default-a11y-outline-focus-visible, 2px solid transparent));
    }
 </style>

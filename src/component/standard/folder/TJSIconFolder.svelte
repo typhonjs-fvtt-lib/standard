@@ -65,7 +65,7 @@
     * --tjs-folder-summary-width: fit-content; wraps content initially, set to 100% or other width measurement
     *
     * Summary element (focus visible):
-    * --tjs-folder-summary-outline-focus - fallback: --tjs-default-outline-focus-visible; default: revert
+    * --tjs-folder-summary-outline-focus-visible - fallback: --tjs-default-outline-focus-visible; default: revert
     *
     * A keyboard focus indicator is defined by the following CSS variables:
     * --tjs-folder-summary-focus-indicator-align-self - fallback: --tjs-default-focus-indicator-align-self; default: stretch
@@ -94,7 +94,7 @@
     * --tjs-folder-summary-label-width: fit-content
     *
     * Default label (focus visible):
-    * --tjs-folder-summary-label-text-shadow-focus - fallback: --tjs-default-text-shadow-focus-hover; default: revert
+    * --tjs-folder-summary-label-text-shadow-focus-visible - fallback: --tjs-default-text-shadow-focus-hover; default: revert
     *
     * Contents element (attributes follow `--tjs-folder-contents-`):
     * --tjs-folder-contents-background-blend-mode: initial
@@ -506,11 +506,11 @@
     }
 
     summary:focus-visible {
-        outline: var(--tjs-folder-summary-outline-focus, var(--tjs-default-outline-focus-visible, revert));
+        outline: var(--tjs-folder-summary-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
     }
 
     summary:focus-visible .label {
-        text-shadow: var(--tjs-folder-summary-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover, revert));
+        text-shadow: var(--tjs-folder-summary-label-text-shadow-focus-visible, var(--tjs-default-text-shadow-focus-hover, revert));
     }
 
     summary:focus-visible .tjs-folder-focus-indicator {

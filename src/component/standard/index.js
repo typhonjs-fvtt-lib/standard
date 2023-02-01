@@ -41,7 +41,7 @@ cssVariables.setProperties({
 
 cssVariables.setProperties({
    '--tjs-icon-button-background': 'none',
-   '--tjs-icon-button-background-focus': 'var(--tjs-icon-button-background-hover)',
+   '--tjs-icon-button-background-focus-visible': 'var(--tjs-icon-button-background-hover)',
    '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
    '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
    '--tjs-icon-button-border-radius': '50%',

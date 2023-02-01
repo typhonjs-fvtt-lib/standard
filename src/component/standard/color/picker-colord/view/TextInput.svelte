@@ -95,7 +95,7 @@
     }
 
     .input-attributes:focus-visible {
-       outline: var(--tjs-color-picker-outline-focus, var(--tjs-default-outline-focus-visible, revert));
+       outline: var(--tjs-color-picker-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
     }
 
     .input-attributes.lock-text-format {

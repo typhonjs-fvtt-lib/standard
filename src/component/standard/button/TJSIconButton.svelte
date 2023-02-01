@@ -4,7 +4,7 @@
     * --tjs-default-outline-focus-visible: undefined; global replacement for focus-visible outline.
     *
     * --tjs-button-background
-    * --tjs-button-background-focus
+    * --tjs-button-background-focus-visible
     * --tjs-button-background-hover
     * --tjs-button-background-selected
     * --tjs-button-border
@@ -15,13 +15,13 @@
     * --tjs-button-clip-path-focus
     * --tjs-button-cursor
     * --tjs-button-diameter
-    * --tjs-button-outline-focus
+    * --tjs-button-outline-focus-visible
     * --tjs-button-text-shadow-focus: undefined
     * --tjs-button-text-shadow-hover: undefined
     * --tjs-button-transition
     *
     * --tjs-icon-button-background
-    * --tjs-icon-button-background-focus
+    * --tjs-icon-button-background-focus-visible
     * --tjs-icon-button-background-hover
     * --tjs-icon-button-background-selected
     * --tjs-icon-button-border
@@ -32,7 +32,7 @@
     * --tjs-icon-button-clip-path-hover
     * --tjs-icon-button-cursor
     * --tjs-icon-button-diameter
-    * --tjs-icon-button-outline-focus
+    * --tjs-icon-button-outline-focus-visible
     * --tjs-icon-button-text-shadow-focus: undefined
     * --tjs-icon-button-text-shadow-hover: undefined
     * --tjs-icon-button-transition
@@ -191,8 +191,8 @@
     }
 
     a:focus-visible {
-        background: var(--tjs-icon-button-background-focus, var(--tjs-button-background-focus));
-        outline: var(--tjs-icon-button-outline-focus, var(--tjs-button-outline-focus, var(--tjs-default-outline-focus-visible, revert)));
+        background: var(--tjs-icon-button-background-focus-visible, var(--tjs-button-background-focus-visible));
+        outline: var(--tjs-icon-button-outline-focus-visible, var(--tjs-button-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert)));
     }
 
     a:hover {

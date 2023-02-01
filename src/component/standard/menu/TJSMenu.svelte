@@ -527,7 +527,7 @@
    }
 
    .tjs-menu:focus-visible {
-      outline: 2px solid transparent;
+      outline: var(--tjs-default-a11y-outline-focus-visible, 2px solid transparent);
    }
 
    .tjs-menu-items {
