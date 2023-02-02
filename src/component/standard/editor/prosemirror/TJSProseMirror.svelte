@@ -56,10 +56,10 @@
     *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
-    * --tjs-editor-inactive-hover-cursor - text
-    * --tjs-editor-inactive-hover-box-shadow - unset
-    * --tjs-editor-inactive-hover-outline - unset
-    * --tjs-editor-inactive-hover-user-select - text
+    * --tjs-editor-inactive-cursor-hover - text
+    * --tjs-editor-inactive-box-shadow-hover - unset
+    * --tjs-editor-inactive-outline-hover - unset
+    * --tjs-editor-inactive-user-select-hover - text
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -72,8 +72,8 @@
     *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
     * ---------------------------------
-    * --tjs-editor-edit-right - 5px
-    * --tjs-editor-edit-top - 0
+    * --tjs-editor-edit-button-right - 5px
+    * --tjs-editor-edit-button-top - 0
     *
     * .editor-menu; Defines the toolbar / menu.
     * ---------------------------------
@@ -579,8 +579,8 @@
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered, but not manually focused.
      */
     .tjs-editor:not(.editor-active):not(:focus-visible):hover {
-        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
-        outline: var(--tjs-editor-inactive-hover-outline, unset);
+        box-shadow: var(--tjs-editor-inactive-box-shadow-hover, unset);
+        outline: var(--tjs-editor-inactive-outline-hover, unset);
 
         transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
@@ -589,7 +589,7 @@
      * Defines user-select when the editor is inactive and hovered.
      */
     .tjs-editor:not(.editor-active):hover {
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+        user-select: var(--tjs-editor-inactive-user-select-hover, text);
     }
 
     /**
@@ -597,7 +597,7 @@
      * via showing the text cursor across the whole editor element.
      */
     .tjs-editor.click-to-edit:not(.editor-active):hover {
-        cursor: var(--tjs-editor-inactive-hover-cursor, text);
+        cursor: var(--tjs-editor-inactive-cursor-hover, text);
     }
 
     .editor-content {
@@ -609,8 +609,8 @@
     }
 
     .editor-edit {
-        right: var(--tjs-editor-edit-right, 5px);
-        top: var(--tjs-editor-edit-top, 0);
+        right: var(--tjs-editor-edit-button-right, 5px);
+        top: var(--tjs-editor-edit-button-top, 0);
     }
 
     .editor-enriched {
@@ -619,7 +619,7 @@
 
     /* Controls whether the editor content text is selectable when the editor is inactive. */
     .tjs-editor:not(.editor-active) .editor-enriched {
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+        user-select: var(--tjs-editor-inactive-user-select-hover, text);
     }
 
     /* Don't add an initial margin top to first paragraph element in `.editor-content`. */

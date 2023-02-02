@@ -49,10 +49,10 @@
     *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
-    * --tjs-editor-inactive-hover-cursor - text
-    * --tjs-editor-inactive-hover-box-shadow - unset
-    * --tjs-editor-inactive-hover-outline - unset
-    * --tjs-editor-inactive-hover-user-select - text
+    * --tjs-editor-inactive-cursor-hover - text
+    * --tjs-editor-inactive-box-shadow-hover - unset
+    * --tjs-editor-inactive-outline-hover - unset
+    * --tjs-editor-inactive-user-select-hover - text
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -69,12 +69,12 @@
     *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
     * ---------------------------------
-    * --tjs-editor-edit-right - 5px
-    * --tjs-editor-edit-top - 0
+    * --tjs-editor-edit-button-right - 5px
+    * --tjs-editor-edit-button-top - 0
     *
     * Various TinyMCE `tox` toolbar elements; Defines the toolbar / menu.
     * ---------------------------------
-    * --tjs-editor-menu-item-background-active - #dee0e2 - This targets the auxiliary TMCE menus.
+    * --tjs-editor-menu-item-active-background - #dee0e2 - This targets the auxiliary TMCE menus.
     * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
     * --tjs-editor-toolbar-border-radius - 6px
     * --tjs-editor-toolbar-button-background - none
@@ -82,8 +82,8 @@
     * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
     * --tjs-editor-toolbar-button-disabled-color - rgba(34, 47, 62, .5)
     * --tjs-editor-toolbar-box-shadow - 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%)
-    * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813))
-    * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888))
+    * --tjs-editor-toolbar-chevron-active-color - var(--color-text-dark-primary, #191813))
+    * --tjs-editor-toolbar-chevron-inactive-color - var(--color-text-light-7, #888))
     * --tjs-editor-toolbar-padding - 0 2px
     * --tjs-editor-toolbar-separator-border - 1px solid var(--color-text-light-3, #ccc)
     * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
@@ -685,8 +685,8 @@
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered, but not manually focused.
      */
     .tjs-editor:not(.editor-active):not(:focus-visible):hover {
-        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
-        outline: var(--tjs-editor-inactive-hover-outline, unset);
+        box-shadow: var(--tjs-editor-inactive-box-shadow-hover, unset);
+        outline: var(--tjs-editor-inactive-outline-hover, unset);
 
         transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
@@ -695,7 +695,7 @@
      * Defines user-select when the editor is inactive and hovered.
      */
     .tjs-editor:not(.editor-active):hover {
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+        user-select: var(--tjs-editor-inactive-user-select-hover, text);
     }
 
     /**
@@ -703,17 +703,17 @@
      * via showing the text cursor across the whole editor element.
      */
     .tjs-editor.click-to-edit:not(.editor-active):hover {
-        cursor: var(--tjs-editor-inactive-hover-cursor, text);
+        cursor: var(--tjs-editor-inactive-cursor-hover, text);
     }
 
     .editor-edit {
-        right: var(--tjs-editor-edit-right, 5px);
-        top: var(--tjs-editor-edit-top, 0);
+        right: var(--tjs-editor-edit-button-right, 5px);
+        top: var(--tjs-editor-edit-button-top, 0);
     }
 
     /* Controls whether the editor content text is selectable when the editor is inactive. */
     .tjs-editor:not(.editor-active) .editor-content {
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+        user-select: var(--tjs-editor-inactive-user-select-hover, text);
     }
 
     /* Don't add an initial margin top to first paragraph element in `.editor-content`. */
@@ -826,17 +826,17 @@
 
     /* Handles the select chevron inactive color */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn .tox-tbtn__select-chevron svg) {
-        fill: var(--tjs-editor-toolbar-chevron-inactive, var(--color-text-light-7, #888));
+        fill: var(--tjs-editor-toolbar-chevron-inactive-color, var(--color-text-light-7, #888));
     }
 
     /* Handles the select chevron active hover color */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:not(.tox-tbtn--disabled):hover .tox-tbtn__select-chevron svg) {
-        fill: var(--tjs-editor-toolbar-chevron-active, var(--color-text-dark-primary, #191813));
+        fill: var(--tjs-editor-toolbar-chevron-active-color, var(--color-text-dark-primary, #191813));
     }
 
     /* Handles the select chevron menu active color */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--active:not(.tox-tbtn--disabled) .tox-tbtn__select-chevron svg) {
-        fill: var(--tjs-editor-toolbar-chevron-active, var(--color-text-dark-primary, #191813));
+        fill: var(--tjs-editor-toolbar-chevron-active-color, var(--color-text-dark-primary, #191813));
     }
 
     /* Handles this components toolbar select button width */
@@ -858,19 +858,19 @@
     }
 
     :global(.tox.tox-tinymce-aux .tox-collection--list .tox-collection__item--active) {
-        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
     }
 
     /* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button */
     :global(.tox.tox-tinymce-aux .tox-tbtn:focus) {
-        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
     }
 
     :global(.tox.tox-tinymce-aux .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
     }
 
     :global(.tox.tox-tinymce-aux .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-menu-item-background-active, #dee0e2);
+        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
     }
 </style>
