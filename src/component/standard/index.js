@@ -92,7 +92,7 @@ cssVariables.setProperties({
 }
 
 cssVariables.setProperties({
-   '--tjs-toggle-label-transition': 'background 200ms ease-in-out'
+   '--tjs-toggle-label-transition': 'background 0.2s ease-in-out'
 }, false);
 
 cssVariables.setProperties({

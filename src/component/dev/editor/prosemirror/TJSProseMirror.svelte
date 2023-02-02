@@ -507,21 +507,17 @@
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
-        box-shadow: var(--tjs-editor-active-box-shadow, unset);
-        outline: var(--tjs-editor-active-outline, unset);
+        box-shadow: var(--tjs-editor-active-box-shadow);
+        outline: var(--tjs-editor-active-outline);
         overflow: var(--tjs-editor-active-overflow, unset);
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
 
     /**
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered.
      */
     .tjs-editor:not(.editor-active):hover {
-        box-shadow: var(--tjs-editor-inactive-box-shadow-hover, unset);
-        outline: var(--tjs-editor-inactive-outline-hover, unset);
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+        box-shadow: var(--tjs-editor-inactive-box-shadow-hover);
+        outline: var(--tjs-editor-inactive-outline-hover);
     }
 
     /**
