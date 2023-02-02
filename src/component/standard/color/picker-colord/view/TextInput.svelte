@@ -95,7 +95,9 @@
     }
 
     .input-attributes:focus-visible {
+       box-shadow: var(--tjs-color-picker-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
        outline: var(--tjs-color-picker-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+       transition: var(--tjs-color-picker-transition-focus-visible, var(--tjs-default-transition-focus-visible));
     }
 
     .input-attributes.lock-text-format {

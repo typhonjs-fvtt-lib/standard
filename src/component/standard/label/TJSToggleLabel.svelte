@@ -6,6 +6,7 @@
     * --tjs-toggle-label-background-selected
     * --tjs-toggle-label-border
     * --tjs-toggle-label-border-radius
+    * --tjs-toggle-label-box-shadow-focus-visible - fallback: --tjs-default-box-shadow-focus-visible
     * --tjs-toggle-label-font-size - inherit
     * --tjs-toggle-label-font-weight - inherit
     * --tjs-toggle-label-font-family - inherit
@@ -15,6 +16,7 @@
     * --tjs-toggle-label-text-shadow-hover - undefined; default: --tjs-default-text-shadow-focus-hover
     * --tjs-toggle-label-text-shadow-selected - undefined; default: --tjs-default-text-shadow-focus-hover
     * --tjs-toggle-label-transition - global default: 'background 200ms ease-in-out'
+    * --tjs-toggle-label-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
     */
    import { createEventDispatcher } from 'svelte';
 
@@ -250,7 +252,9 @@
 
    span:focus-visible {
       background: var(--tjs-toggle-label-background-focus-visible);
+      box-shadow: var(--tjs-toggle-label-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
       outline: var(--tjs-toggle-label-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+      transition: var(--tjs-toggle-label-transition-focus-visible, var(--tjs-default-transition-focus-visible));
    }
 
    span:hover {

@@ -10,6 +10,7 @@
     * --tjs-button-border
     * --tjs-button-border-radius
     * --tjs-button-border-width
+    * --tjs-button-box-shadow-focus-visible
     * --tjs-button-clip-path
     * --tjs-button-clip-path-hover
     * --tjs-button-clip-path-focus
@@ -19,6 +20,7 @@
     * --tjs-button-text-shadow-focus: undefined
     * --tjs-button-text-shadow-hover: undefined
     * --tjs-button-transition
+    * --tjs-button-transition-focus-visible
     *
     * --tjs-icon-button-background
     * --tjs-icon-button-background-focus-visible
@@ -27,6 +29,7 @@
     * --tjs-icon-button-border
     * --tjs-icon-button-border-radius
     * --tjs-icon-button-border-width
+    * --tjs-icon-button-box-shadow-focus-visible
     * --tjs-icon-button-clip-path
     * --tjs-icon-button-clip-path-focus
     * --tjs-icon-button-clip-path-hover
@@ -36,6 +39,7 @@
     * --tjs-icon-button-text-shadow-focus: undefined
     * --tjs-icon-button-text-shadow-hover: undefined
     * --tjs-icon-button-transition
+    * --tjs-icon-button-transition-focus-visible
     */
    import { createEventDispatcher } from 'svelte';
 
@@ -192,7 +196,9 @@
 
     a:focus-visible {
         background: var(--tjs-icon-button-background-focus-visible, var(--tjs-button-background-focus-visible));
+        box-shadow: var(--tjs-icon-button-box-shadow-focus-visible, var(--tjs-button-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible)));
         outline: var(--tjs-icon-button-outline-focus-visible, var(--tjs-button-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert)));
+        transition: var(--tjs-icon-button-transition-focus-visible, var(--tjs-button-transition-focus-visible, var(--tjs-default-transition-focus-visible)));
     }
 
     a:hover {

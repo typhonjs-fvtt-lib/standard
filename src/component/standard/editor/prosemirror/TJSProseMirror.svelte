@@ -41,6 +41,7 @@
     * --tjs-editor-height - 100%
     * --tjs-editor-margin - 0
     * --tjs-editor-overflow - auto
+    * --tjs-editor-transition
     * --tjs-editor-width - 100%
     *
     * `.editor` HTMLDivElement; properties available when activated:
@@ -53,6 +54,7 @@
     * ---------------------------------
     * --tjs-editor-inactive-box-shadow-focus-visible - fallback: --tjs-default-box-shadow-focus-visible
     * --tjs-editor-inactive-outline-focus-visible - fallback: --tjs-default-outline-focus-visible; default: revert
+    * --tjs-editor-inactive-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
     *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
@@ -547,6 +549,7 @@
         margin: var(--tjs-editor-margin, 0);
         outline-offset: var(--tjs-editor-outline-offset, 0.25em);
         overflow: var(--tjs-editor-overflow, auto);
+        transition: var(--tjs-editor-transition);
         width: var(--tjs-editor-width, 100%);
 
         /* For Firefox. */
@@ -558,11 +561,9 @@
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
-        box-shadow: var(--tjs-editor-active-box-shadow, unset);
-        outline: var(--tjs-editor-active-outline, unset);
+        box-shadow: var(--tjs-editor-active-box-shadow);
+        outline: var(--tjs-editor-active-outline);
         overflow: var(--tjs-editor-active-overflow, unset);
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
 
     /**
@@ -571,18 +572,15 @@
     .tjs-editor:not(.editor-active):focus-visible {
         box-shadow: var(--tjs-editor-inactive-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
         outline: var(--tjs-editor-inactive-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+        transition: var(--tjs-editor-inactive-transition-focus-visible, var(--tjs-default-transition-focus-visible));
     }
 
     /**
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered, but not manually focused.
      */
     .tjs-editor:not(.editor-active):not(:focus-visible):hover {
-        box-shadow: var(--tjs-editor-inactive-box-shadow-hover, unset);
-        outline: var(--tjs-editor-inactive-outline-hover, unset);
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+        box-shadow: var(--tjs-editor-inactive-box-shadow-hover);
+        outline: var(--tjs-editor-inactive-outline-hover);
     }
 
     /**

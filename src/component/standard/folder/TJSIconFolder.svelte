@@ -65,7 +65,9 @@
     * --tjs-folder-summary-width: fit-content; wraps content initially, set to 100% or other width measurement
     *
     * Summary element (focus visible):
+    * --tjs-folder-summary-box-shadow-focus-visible - fallback: --tjs-default-box-shadow-focus-visible
     * --tjs-folder-summary-outline-focus-visible - fallback: --tjs-default-outline-focus-visible; default: revert
+    * --tjs-folder-summary-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
     *
     * A keyboard focus indicator is defined by the following CSS variables:
     * --tjs-folder-summary-focus-indicator-align-self - fallback: --tjs-default-focus-indicator-align-self; default: stretch
@@ -108,7 +110,6 @@
     * If neither `--tjs-folder-contents-padding` or `--tjs-folder-summary-font-size` is defined the default is
     * `1em * 0.8`.
     */
-
    import { onDestroy }         from 'svelte';
    import { writable }          from 'svelte/store';
 
@@ -506,7 +507,9 @@
     }
 
     summary:focus-visible {
+        box-shadow: var(--tjs-folder-summary-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
         outline: var(--tjs-folder-summary-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+        transition: var(--tjs-folder-summary-transition-focus-visible, var(--tjs-default-transition-focus-visible));
     }
 
     summary:focus-visible .label {
