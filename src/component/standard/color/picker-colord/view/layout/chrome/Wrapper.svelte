@@ -80,7 +80,7 @@
         display: flex;
 
         background: var(--tjs-color-picker-wrapper-background, white);
-        border: var(--tjs-color-picker-wrapper-border, 1px solid black);
+        border: var(--tjs-color-picker-wrapper-border, var(--tjs-default-popup-border, 1px solid black));
         margin: var(--tjs-color-picker-wrapper-margin, 0);
 
         width: 100%;
@@ -131,7 +131,7 @@
         }
 
         .tjs-color-picker-wrapper {
-            border-radius: max(4px, 2cqw);
+            border-radius: max(var(--tjs-color-picker-wrapper-border-radius, var(--tjs-default-popup-border-radius)), 2cqw);
             gap: max(2px, 2.5cqw);
         }
 

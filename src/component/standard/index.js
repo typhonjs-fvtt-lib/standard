@@ -96,9 +96,22 @@ cssVariables.setProperties({
 }, false);
 
 cssVariables.setProperties({
-   '--tjs-menu-border': '1px solid var(--color-border-dark, #000)',
-   '--tjs-menu-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
-   '--tjs-menu-color': 'var(--color-text-light-primary, #EEE)'
+   // Any component with color changes for focus / hover; see: TJSMenu / TJSContextMenu
+   '--tjs-default-color-focus-hover': 'var(--color-text-light-highlight, #f0f0e0)',
+
+   // Default color for menus; see TJSMenu / TJSContextMenu
+   '--tjs-default-menu-color': 'var(--color-text-light-primary, #b5b3a4)',
+
+   // `popup` is for components that are slightly elevated, but connected to an application;
+   // see: TJSMenu / TJSColordPicker
+   '--tjs-default-popup-border': '1px solid var(--color-border-dark, #000)',
+   '--tjs-default-popup-border-radius': '5px',
+   '--tjs-default-popup-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
+
+   // `popover` is for components that are elevated and independent; see: TJSContextMenu
+   '--tjs-default-popover-border': '1px solid var(--color-border-dark, #000)',
+   '--tjs-default-popover-border-radius': '5px',
+   '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
 }, false);
 
 // Handle `PopOut!` module hooks to allow applications to popout to their own browser window -------------------------

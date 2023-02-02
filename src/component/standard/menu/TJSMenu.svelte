@@ -41,8 +41,8 @@
     *
     * The following CSS variables are supported, but not defined by default.
     * --tjs-menu-background - fallback: --tjs-default-menu-background; default: #23221d
-    * --tjs-menu-border - fallback: --tjs-default-menu-border; default: 1px solid #000
-    * --tjs-menu-border-radius - fallback: --tjs-default-menu-border-radius; default: 5px
+    * --tjs-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
+    * --tjs-menu-border-radius - fallback: --tjs-default-popup-border-radius; default: 5px
     * --tjs-menu-box-shadow - fallback: --tjs-default-popup-box-shadow; default: 0 0 2px #000
     * --tjs-menu-color - fallback: --tjs-default-menu-color; default: #eee
     * --tjs-menu-max-width - fallback: --tjs-default-menu-max-width; default: 360px
@@ -537,10 +537,10 @@
       overflow: hidden;
 
       background: var(--tjs-menu-background, var(--tjs-default-menu-background, #23221d));
-      border: var(--tjs-menu-border, var(--tjs-default-menu-border, 1px solid #000));
-      border-radius: var(--tjs-menu-border-radius, var(--tjs-default-menu-border-radius, 5px));
+      border: var(--tjs-menu-border, var(--tjs-default-popup-border, 1px solid #000));
+      border-radius: var(--tjs-menu-border-radius, var(--tjs-default-popup-border-radius, 5px));
       box-shadow: var(--tjs-menu-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));
-      color: var(--tjs-menu-color, var(--tjs-default-menu-color, #eee));
+      color: var(--tjs-menu-color, var(--tjs-default-menu-color, #b5b3a4));
       max-width: var(--tjs-menu-max-width, var(--tjs-default-menu-max-width, 360px));
       min-width: var(--tjs-menu-min-width, var(--tjs-default-menu-min-width, 20px));
 
@@ -594,12 +594,12 @@
    }
 
    .tjs-menu-item-button:hover {
-      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #fff));
+      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #f0f0e0));
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
    }
 
    .tjs-menu-item-button:focus-visible {
-      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #fff));
+      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #f0f0e0));
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
    }
 
