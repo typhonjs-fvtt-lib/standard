@@ -84,6 +84,7 @@
     * --tjs-menu-focus-indicator-border-radius - fallback: --tjs-default-focus-indicator-border-radius; default: 0.1em
     * --tjs-menu-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
     * --tjs-menu-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
+    * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     */
 
    import { onMount }      from 'svelte';
@@ -628,6 +629,7 @@
       border-radius: var(--tjs-menu-focus-indicator-border-radius, var(--tjs-default-focus-indicator-border-radius, 0.1em));
       height: var(--tjs-menu-focus-indicator-height, var(--tjs-default-focus-indicator-height));
       width: var(--tjs-menu-focus-indicator-width, var(--tjs-default-focus-indicator-width, 0.25em));
+      transition: var(--tjs-menu-focus-indicator-transition, var(--tjs-default-focus-indicator-transition));
    }
 
    /* Enable focus indicator for focus-within */

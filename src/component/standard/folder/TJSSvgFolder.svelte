@@ -75,6 +75,7 @@
     * --tjs-folder-summary-focus-indicator-border - fallback: --tjs-default-focus-indicator-border; default: undefined
     * --tjs-folder-summary-focus-indicator-border-radius - fallback: --tjs-default-focus-indicator-border-radius; default: 0.1em
     * --tjs-folder-summary-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
+    * --tjs-folder-summary-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     * --tjs-folder-summary-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     *
     * Summary SVG / chevron element (attributes follow `--tjs-folder-summary-chevron-`):
@@ -532,6 +533,7 @@
         border-radius: var(--tjs-folder-summary-focus-indicator-border-radius, var(--tjs-default-focus-indicator-border-radius, 0.1em));
         flex: 0 0 var(--tjs-folder-summary-focus-indicator-width, var(--tjs-default-focus-indicator-width, 0.25em));
         height: var(--tjs-folder-summary-focus-indicator-height, var(--tjs-default-focus-indicator-height));
+        transition: var(--tjs-folder-summary-focus-indicator-transition, var(--tjs-default-focus-indicator-transition));
     }
 
     details[open] > summary {
