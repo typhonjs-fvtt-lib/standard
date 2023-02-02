@@ -108,6 +108,9 @@
    /** @type {Iterable<TJSMenuItemData>} */
    export let items = void 0;
 
+   /** @type {HTMLElement|string} */
+   export let focusEl = void 0;
+
    /** @type {{ x?: number, y?: number }} */
    export let offset = void 0;
 
@@ -172,6 +175,9 @@
       allItems = tempItems;
    }
 
+   $: focusEl = isObject(menu) && A11yHelper.isFocusSource(menu.focusEl) ? menu.focusEl :
+    A11yHelper.isFocusSource(focusEl) ? focusEl : void 0;
+
    $: offset = isObject(menu) && isObject(menu.offset) ? menu.offset :
     isObject(offset) ? offset : s_DEFAULT_OFFSET;
 
@@ -218,24 +224,37 @@
          {
             firstFocusEl.focus();
             hasKeyboardFocus = true;
-
-            // Set focus source to activeEl and pass to menu item callbacks.
-            focusOptions = {
-               focusSource: {
-                  focusEl: [activeEl]
-               }
-            };
          }
          else
          {
             // Silently focus the menu element so that keyboard handling functions.
             menuEl.focus();
          }
+
+         // Menu opened by keyboard navigation; set focus source to activeEl and pass to menu item callbacks.
+         focusOptions = {
+            focusSource: {
+               focusEl: [activeEl]
+            }
+         };
+
+         // Append any optional focus source from `focusEl` prop.
+         if (focusEl) { focusOptions.focusSource.focusEl.push(focusEl); }
       }
       else
       {
          // Silently focus the menu element so that keyboard handling functions.
          menuEl.focus();
+
+         // Create focus source from optional `focusEl` prop.
+         if (focusEl)
+         {
+            focusOptions = {
+               focusSource: {
+                  focusEl: [focusEl]
+               }
+            };
+         }
       }
    });
 
