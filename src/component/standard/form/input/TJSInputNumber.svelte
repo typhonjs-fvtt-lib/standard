@@ -1,35 +1,44 @@
 <script>
    /**
-    * A generic input type has issues w/ 2-way binding w/ Svelte.
-    * https://github.com/sveltejs/svelte/issues/3921
-    *
-    * A "hack" is used to set the type on the input element: `{...{ type }}`
-    *
-    * Only use this component for text inputs presently. More work to come.
+    * A number input type.
     *
     * --tjs-input-appearance
+    * --tjs-input-background
     * --tjs-input-border
     * --tjs-input-border-radius
-    * --tjs-input-background
+    * --tjs-input-box-shadow-focus
+    * --tjs-input-box-shadow-focus-visible
+    * --tjs-input-caret-color
     * --tjs-input-cursor
     * --tjs-input-flex
     * --tjs-input-height
     * --tjs-input-padding
-    * --tjs-input-placeholder-color;
+    * --tjs-input-placeholder-color
+    * --tjs-input-outline-focus-visible
+    * --tjs-input-outline-offset
+    * --tjs-input-overflow
     * --tjs-input-text-align
+    * --tjs-input-transition-focus-visible
     * --tjs-input-value-invalid-color
     * --tjs-input-width
     *
     * --tjs-input-number-appearance
+    * --tjs-input-number-background
     * --tjs-input-number-border
     * --tjs-input-number-border-radius
-    * --tjs-input-number-background
+    * --tjs-input-number-box-shadow-focus
+    * --tjs-input-number-box-shadow-focus-visible
+    * --tjs-input-number-caret-color
     * --tjs-input-number-cursor
     * --tjs-input-number-flex
     * --tjs-input-number-height
+    * --tjs-input-number-outline-focus-visible
+    * --tjs-input-number-outline-offset
+    * --tjs-input-number-overflow
     * --tjs-input-number-padding
     * --tjs-input-number-placeholder-color
     * --tjs-input-number-text-align
+    * --tjs-input-number-transition-focus-visible
     * --tjs-input-number-value-invalid-color
     * --tjs-input-number-width
     *
@@ -172,7 +181,7 @@
     .tjs-input-container {
         display: block;
         pointer-events: none;
-        overflow: hidden;
+        overflow: var(--tjs-input-number-overflow, var(--tjs-input-overflow, hidden));
         transform-style: preserve-3d;
 
         background: var(--tjs-input-number-background, var(--tjs-input-background));
@@ -191,7 +200,6 @@
         pointer-events: initial;
         display: inline-block;
         position: relative;
-        overflow: hidden;
 
         appearance: var(--tjs-input-number-appearance, var(--tjs-input-appearance, inherit));
 
@@ -206,14 +214,26 @@
         padding: var(--tjs-input-number-padding, var(--tjs-input-padding, initial));
 
         color: inherit;
+        caret-color: var(--tjs-input-number-caret-color, var(--tjs-input-caret-color));
         font-family: inherit;
         font-size: inherit;
         line-height: inherit;
+        outline-offset: var(--tjs-input-number-outline-offset, var(--tjs-input-outline-offset));
         text-align: var(--tjs-input-number-text-align, var(--tjs-input-text-align));
 
         cursor: var(--tjs-input-number-cursor, var(--tjs-input-cursor, text));
 
         transform: translateZ(1px);
+    }
+
+    input:focus {
+        box-shadow: var(--tjs-input-number-box-shadow-focus, var(--tjs-input-box-shadow-focus, unset));
+    }
+
+    input:focus-visible {
+        box-shadow: var(--tjs-input-number-box-shadow-focus-visible, var(--tjs-input-box-shadow-focus-visible, unset));
+        outline: var(--tjs-input-number-outline-focus-visible, var(--tjs-input-outline-focus-visible));
+        transition: var(--tjs-input-number-transition-focus-visible, var(--tjs-input-transition-focus-visible));
     }
 
     input::placeholder {

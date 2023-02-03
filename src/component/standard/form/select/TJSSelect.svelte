@@ -1,22 +1,39 @@
 <script>
    /**
     * --tjs-input-appearance
+    * --tjs-input-background
     * --tjs-input-border
     * --tjs-input-border-radius
-    * --tjs-input-background
+    * --tjs-input-box-shadow-focus
+    * --tjs-input-box-shadow-focus-visible
     * --tjs-input-cursor
     * --tjs-input-flex
     * --tjs-input-height
+    * --tjs-input-outline-focus-visible
+    * --tjs-input-outline-offset
+    * --tjs-input-overflow
+    * --tjs-input-text-overflow
+    * --tjs-input-transition-focus-visible
     * --tjs-input-width
     *
     * --tjs-select-appearance
+    * --tjs-select-background
     * --tjs-select-border
     * --tjs-select-border-radius
-    * --tjs-select-background
+    * --tjs-select-box-shadow-focus
+    * --tjs-select-box-shadow-focus-visible
     * --tjs-select-cursor
     * --tjs-select-flex
     * --tjs-select-height
+    * --tjs-select-outline-focus-visible
+    * --tjs-select-outline-offset
+    * --tjs-select-overflow
+    * --tjs-select-text-overflow
+    * --tjs-select-transition-focus-visible
     * --tjs-select-width
+    *
+    * --tjs-select-option-background; fallback: --tjs-default-popup-background; default: #23221d
+    * --tjs-select-option-color; fallback: --tjs-default-menu-color; default: #b5b3a4
     */
 
    /**
@@ -78,7 +95,7 @@
    .tjs-select-container {
       pointer-events: none;
       display: block;
-      overflow: hidden;
+      overflow: var(--tjs-select-overflow, var(--tjs-input-overflow, hidden));
       transform-style: preserve-3d;
 
       background: var(--tjs-select-background, var(--tjs-input-background));
@@ -93,7 +110,6 @@
       pointer-events: initial;
       display: inline-block;
       position: relative;
-      overflow: hidden;
 
       appearance: var(--tjs-select-appearance, var(--tjs-input-appearance, inherit));
 
@@ -111,7 +127,9 @@
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
+      outline-offset: var(--tjs-select-outline-offset, var(--tjs-input-outline-offset));
       text-align: var(--tjs-select-text-align, var(--tjs-input-text-align));
+      text-overflow: var(--tjs-select-text-overflow, var(--tjs-input-text-overflow, ellipsis));
 
       cursor: var(--tjs-select-cursor, var(--tjs-input-cursor));
 
@@ -119,7 +137,17 @@
    }
 
    select option {
-      background: var(--tjs-select-option-background, var(--tjs-select-option-background));
-      color: inherit;
+      background: var(--tjs-select-option-background, var(--tjs-default-popup-background, #23221d));
+      color: var(--tjs-select-option-color, var(--tjs-default-menu-color, #b5b3a4));
+   }
+
+   select:focus {
+      box-shadow: var(--tjs-select-box-shadow-focus, var(--tjs-input-box-shadow-focus, unset));
+   }
+
+   select:focus-visible {
+      box-shadow: var(--tjs-select-box-shadow-focus-visible, var(--tjs-input-box-shadow-focus-visible, unset));
+      outline: var(--tjs-select-outline-focus-visible, var(--tjs-input-outline-focus-visible));
+      transition: var(--tjs-select-transition-focus-visible, var(--tjs-input-transition-focus-visible));
    }
 </style>

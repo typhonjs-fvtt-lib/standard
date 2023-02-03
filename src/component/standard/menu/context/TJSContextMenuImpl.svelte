@@ -35,10 +35,10 @@
     * other elements browser wide.
     *
     * The following CSS variables are supported, but not defined by default.
-    * --tjs-context-menu-background - fallback: --tjs-default-menu-background; default: #23221d
-    * --tjs-context-menu-border - fallback: --tjs-default-popover-border; default: 1px solid #000
-    * --tjs-context-menu-border-radius - fallback: --tjs-default-popover-border-radius; default: 5px
-    * --tjs-context-menu-box-shadow - fallback: --tjs-default-popover-box-shadow; default: 0 0 2px #000
+    * --tjs-context-menu-background - fallback: --tjs-default-menu-background; fallback: --tjs-default-popup-background; default: #23221d
+    * --tjs-context-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
+    * --tjs-context-menu-border-radius - fallback: --tjs-default-popup-border-radius; default: 5px
+    * --tjs-context-menu-box-shadow - fallback: --tjs-default-popup-box-shadow; default: 0 0 2px #000
     * --tjs-context-menu-color - fallback: --tjs-default-menu-color; default: #eee
     * --tjs-context-menu-max-width - fallback: --tjs-default-menu-max-width; default: 360px
     * --tjs-context-menu-min-width - fallback: --tjs-default-menu-min-width; default: 20px
@@ -442,7 +442,7 @@
         height: max-content;
         overflow: hidden;
 
-        background: var(--tjs-context-menu-background, var(--tjs-default-menu-background, #23221d));
+        background: var(--tjs-context-menu-background, var(--tjs-default-menu-background, var(--tjs-default-popup-background, #23221d)));
         border: var(--tjs-context-menu-border, var(--tjs-default-popover-border, 1px solid #000));
         border-radius: var(--tjs-context-menu-border-radius, var(--tjs-default-popover-border-radius, 5px));
         box-shadow: var(--tjs-context-menu-box-shadow, var(--tjs-default-popover-box-shadow, 0 0 10px #000));

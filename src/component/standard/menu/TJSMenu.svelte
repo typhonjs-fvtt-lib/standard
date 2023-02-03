@@ -40,7 +40,7 @@
     * application.
     *
     * The following CSS variables are supported, but not defined by default.
-    * --tjs-menu-background - fallback: --tjs-default-menu-background; default: #23221d
+    * --tjs-menu-background - fallback: --tjs-default-menu-background; fallback: --tjs-default-popup-background; default: #23221d
     * --tjs-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
     * --tjs-menu-border-radius - fallback: --tjs-default-popup-border-radius; default: 5px
     * --tjs-menu-box-shadow - fallback: --tjs-default-popup-box-shadow; default: 0 0 2px #000
@@ -556,7 +556,7 @@
       height: max-content;
       overflow: hidden;
 
-      background: var(--tjs-menu-background, var(--tjs-default-menu-background, #23221d));
+      background: var(--tjs-menu-background, var(--tjs-default-menu-background, var(--tjs-default-popup-background, #23221d)));
       border: var(--tjs-menu-border, var(--tjs-default-popup-border, 1px solid #000));
       border-radius: var(--tjs-menu-border-radius, var(--tjs-default-popup-border-radius, 5px));
       box-shadow: var(--tjs-menu-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));

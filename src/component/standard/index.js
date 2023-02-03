@@ -77,20 +77,6 @@ cssVariables.setProperties({
    }
 }
 
-{
-   /**
-    * Select options related: TJSSelect,
-    */
-   const props = FoundryStyles.getProperties('option, optgroup');
-
-   if (typeof props === 'object')
-   {
-      cssVariables.setProperties({
-         '--tjs-select-option-background': 'background' in props ? props.background : 'var(--color-bg-option)'
-      }, false);
-   }
-}
-
 cssVariables.setProperties({
    '--tjs-toggle-label-transition': 'background 0.2s ease-in-out'
 }, false);
@@ -104,6 +90,7 @@ cssVariables.setProperties({
 
    // `popup` is for components that are slightly elevated, but connected to an application;
    // see: TJSMenu / TJSColordPicker
+   '--tjs-default-popup-background': 'var(--color-text-dark-header, #23221d)',
    '--tjs-default-popup-border': '1px solid var(--color-border-dark, #000)',
    '--tjs-default-popup-border-radius': '5px',
    '--tjs-default-popup-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
