@@ -173,21 +173,21 @@
         display: block;
         position: relative;
 
-        flex: 0 0 var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
-        height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
-        width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
+        flex: 0 0 var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
+        height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
+        width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
 
         align-self: center;
         text-align: center;
 
         background: var(--tjs-checkerboard-background-10);
-        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius, 50%));
 
         cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
 
         clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
 
-        transition: var(--tjs-icon-button-transition, var(--tjs-button-transition));
+        transition: var(--tjs-icon-button-transition, var(--tjs-button-transition, background 0.2s ease-in-out, clip-path 0.2s ease-in-out));
         transform-style: preserve-3d;
     }
 
@@ -198,7 +198,7 @@
         background: var(--tjs-icon-button-background, var(--tjs-button-background));
 
         border: var(--tjs-icon-button-border, var(--tjs-button-border));
-        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius, 50%));
         border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
 
         z-index: 0;
@@ -219,7 +219,7 @@
         height: 100%;
 
         overflow: hidden;
-        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius, 50%));
 
         transform: translateZ(1px);
     }

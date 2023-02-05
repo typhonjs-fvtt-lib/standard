@@ -143,7 +143,7 @@
         }
 
         .tjs-color-picker-wrapper {
-            border-radius: max(var(--tjs-color-picker-wrapper-border-radius, var(--tjs-default-popup-border-radius)), 2cqw);
+            border-radius: max(var(--tjs-color-picker-wrapper-border-radius, var(--tjs-default-popup-border-radius, 5px)), 2cqw);
             gap: max(4px, 2.5cqw);
             padding: 2cqw;
         }

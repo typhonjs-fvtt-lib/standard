@@ -243,10 +243,11 @@
       overflow: var(--tjs-toggle-label-overflow, hidden);
       padding: var(--tjs-toggle-label-padding, 0 0.25em);
       transform-style: preserve-3d;
-      transition: var(--tjs-toggle-label-transition);
+      transition: var(--tjs-toggle-label-transition, background 0.2s ease-in-out);
    }
 
    span:focus {
+      background: var(--tjs-toggle-label-background-focus);
       text-shadow: var(--tjs-toggle-label-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover));
    }
 

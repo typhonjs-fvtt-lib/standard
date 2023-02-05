@@ -4,6 +4,7 @@
     * --tjs-default-outline-focus-visible: undefined; global replacement for focus-visible outline.
     *
     * --tjs-button-background
+    * --tjs-button-background-focus
     * --tjs-button-background-focus-visible
     * --tjs-button-background-hover
     * --tjs-button-background-selected
@@ -23,6 +24,7 @@
     * --tjs-button-transition-focus-visible
     *
     * --tjs-icon-button-background
+    * --tjs-icon-button-background-focus
     * --tjs-icon-button-background-focus-visible
     * --tjs-icon-button-background-hover
     * --tjs-icon-button-background-selected
@@ -164,9 +166,9 @@
     div {
         pointer-events: none;
         display: block;
-        flex: 0 0 var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
-        height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
-        width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter));
+        flex: 0 0 var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
+        height: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
+        width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
         align-self: center;
         text-align: center;
     }
@@ -176,7 +178,7 @@
         display: inline-block;
         background: var(--tjs-icon-button-background, var(--tjs-button-background));
         border: var(--tjs-icon-button-border, var(--tjs-button-border));
-        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius, 50%));
         border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
         cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
         position: relative;
@@ -185,11 +187,12 @@
         transform-style: preserve-3d;
         width: 100%;
         height: 100%;
-        transition: var(--tjs-icon-button-transition, var(--tjs-button-transition));
+        transition: var(--tjs-icon-button-transition, var(--tjs-button-transition, background 0.2s ease-in-out, clip-path 0.2s ease-in-out));
         text-decoration: none;
     }
 
     a:focus {
+        background: var(--tjs-icon-button-background-focus, var(--tjs-button-background-focus));
         text-shadow: var(--tjs-icon-button-text-shadow-focus, var(--tjs-button-text-shadow-focus, var(--tjs-default-text-shadow-focus-hover)));
         clip-path: var(--tjs-icon-button-clip-path-focus, var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path-focus, var(--tjs-button-clip-path, none))));
     }
@@ -213,7 +216,7 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius));
+        border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius, 50%));
         transform: translateZ(1px);
     }
 </style>
