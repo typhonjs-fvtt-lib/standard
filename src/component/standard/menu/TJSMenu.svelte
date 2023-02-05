@@ -44,7 +44,7 @@
     * --tjs-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
     * --tjs-menu-border-radius - fallback: --tjs-default-popup-border-radius; default: 5px
     * --tjs-menu-box-shadow - fallback: --tjs-default-popup-box-shadow; default: 0 0 2px #000
-    * --tjs-menu-color - fallback: --tjs-default-menu-color; default: #eee
+    * --tjs-menu-primary-color - fallback: --tjs-default-menu-primary-color; fallback: --tjs-default-popup-primary-color; default: #b5b3a4
     * --tjs-menu-max-width - fallback: --tjs-default-menu-max-width; default: 360px
     * --tjs-menu-min-width - fallback: --tjs-default-menu-min-width; default: 20px
     * --tjs-menu-z-index - fallback: --tjs-default-popup-z-index; default: 100
@@ -57,7 +57,7 @@
     *
     * Icon / Image menu items (considered a button item):
     * --tjs-menu-item-button-gap - fallback: --tjs-default-menu-item-button-gap; default: 0.25em
-    * --tjs-menu-item-color-focus-hover - fallback: --tjs-default-color-focus-hover; default: #fff
+    * --tjs-menu-item-highlight-color - fallback: --tjs-default-menu-highlight-color; fallback: --tjs-default-popup-highlight-color; default: #f0f0e0
     * --tjs-menu-item-text-shadow-focus-hover - fallback: --tjs-default-text-shadow-focus-hover; default: 0 0 8px red
     *
     * Specific targeting for the label of button items (allows control of wrapping / set `white-space` to `nowrap`):
@@ -560,7 +560,7 @@
       border: var(--tjs-menu-border, var(--tjs-default-popup-border, 1px solid #000));
       border-radius: var(--tjs-menu-border-radius, var(--tjs-default-popup-border-radius, 5px));
       box-shadow: var(--tjs-menu-box-shadow, var(--tjs-default-popup-box-shadow, 0 0 2px #000));
-      color: var(--tjs-menu-color, var(--tjs-default-menu-color, #b5b3a4));
+      color: var(--tjs-menu-primary-color, var(--tjs-default-menu-primary-color, var(--tjs-default-popup-primary-color, #b5b3a4)));
       max-width: var(--tjs-menu-max-width, var(--tjs-default-menu-max-width, 360px));
       min-width: var(--tjs-menu-min-width, var(--tjs-default-menu-min-width, 20px));
 
@@ -614,12 +614,12 @@
    }
 
    .tjs-menu-item-button:hover {
-      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #f0f0e0));
+      color: var(--tjs-menu-item-highlight-color, var(--tjs-default-menu-highlight-color, var(--tjs-default-popup-highlight-color, #f0f0e0)));
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
    }
 
    .tjs-menu-item-button:focus-visible {
-      color: var(--tjs-menu-item-color-focus-hover, var(--tjs-default-color-focus-hover, #f0f0e0));
+      color: var(--tjs-menu-item-highlight-color, var(--tjs-default-menu-highlight-color, var(--tjs-default-popup-highlight-color, #f0f0e0)));
       text-shadow: var(--tjs-menu-item-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, 0 0 8px red));
    }
 

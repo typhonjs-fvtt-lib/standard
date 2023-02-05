@@ -79,8 +79,9 @@
         flex-direction: column;
         display: flex;
 
-        background: var(--tjs-color-picker-wrapper-background, white);
+        background: var(--tjs-color-picker-wrapper-background, var(--tjs-default-popup-background, #23221d));
         border: var(--tjs-color-picker-wrapper-border, var(--tjs-default-popup-border, 1px solid black));
+        color: var(--tjs-color-picker-wrapper-primary-color, var(--tjs-default-popup-primary-color, #b5b3a4));
         margin: var(--tjs-color-picker-wrapper-margin, 0);
 
         width: 100%;

@@ -33,7 +33,7 @@
     * --tjs-select-width
     *
     * --tjs-select-option-background; fallback: --tjs-default-popup-background; default: #23221d
-    * --tjs-select-option-color; fallback: --tjs-default-menu-color; default: #b5b3a4
+    * --tjs-select-option-color; fallback: --tjs-default-popup-primary-color; default: #b5b3a4
     */
 
    /**
@@ -138,7 +138,7 @@
 
    select option {
       background: var(--tjs-select-option-background, var(--tjs-default-popup-background, #23221d));
-      color: var(--tjs-select-option-color, var(--tjs-default-menu-color, #b5b3a4));
+      color: var(--tjs-select-option-color, var(--tjs-default-popup-primary-color, #b5b3a4));
    }
 
    select:focus {

@@ -71,17 +71,13 @@ cssVariables.setProperties({
 }
 
 cssVariables.setProperties({
-   // Any component with color changes for focus / hover; see: TJSMenu / TJSContextMenu
-   '--tjs-default-color-focus-hover': 'var(--color-text-light-highlight, #f0f0e0)',
-
-   // Default color for menus; see TJSMenu / TJSContextMenu
-   '--tjs-default-menu-color': 'var(--color-text-light-primary, #b5b3a4)',
-
    // `popup` is for components that are slightly elevated, but connected to an application;
-   // see: TJSMenu / TJSColordPicker
+   // see: TJSMenu / TJSContextMenu / TJSColordPicker
    '--tjs-default-popup-background': 'var(--color-text-dark-header, #23221d)',
    '--tjs-default-popup-border': '1px solid var(--color-border-dark, #000)',
    '--tjs-default-popup-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
+   '--tjs-default-popup-primary-color': 'var(--color-text-light-primary, #b5b3a4)',
+   '--tjs-default-popup-highlight-color': 'var(--color-text-light-highlight, #f0f0e0)',
 
    // `popover` is for components that are elevated and independent; see: TJSContextMenu
    '--tjs-default-popover-border': '1px solid var(--color-border-dark, #000)',
