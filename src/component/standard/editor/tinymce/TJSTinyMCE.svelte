@@ -340,37 +340,6 @@
    }
 
    /**
-    * Separated into a standalone method so applying async value to enriched content doesn't double trigger a reactive
-    * statement twice.
-    *
-    * @param {string}   content - Content prop.
-    *
-    * @param {boolean}  enrichContent - `options.enrichContent` or default of `true.
-    *
-    * @returns {Promise<void>}
-    */
-   async function onContentChanged(content, enrichContent)
-   {
-      if (typeof content === 'string')
-      {
-         if (enrichContent)
-         {
-            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
-         }
-         else
-         {
-            enrichedContent = content;
-         }
-      }
-      else
-      {
-         enrichedContent = '';
-      }
-
-      dispatch('editor:enrichedContent', { enrichedContent });
-   }
-
-   /**
     * When the component is destroyed if the editor is active then save editor content otherwise destroy editor.
     */
    onDestroy(() =>
@@ -523,6 +492,37 @@
    function onClick(event)
    {
       if (!editorActive && clickToEdit) { initEditor(); }
+   }
+
+   /**
+    * Separated into a standalone method so applying async value to enriched content doesn't double trigger a reactive
+    * statement twice.
+    *
+    * @param {string}   content - Content prop.
+    *
+    * @param {boolean}  enrichContent - `options.enrichContent` or default of `true.
+    *
+    * @returns {Promise<void>}
+    */
+   async function onContentChanged(content, enrichContent)
+   {
+      if (typeof content === 'string')
+      {
+         if (enrichContent)
+         {
+            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
+         }
+         else
+         {
+            enrichedContent = content;
+         }
+      }
+      else
+      {
+         enrichedContent = '';
+      }
+
+      dispatch('editor:enrichedContent', { enrichedContent });
    }
 
    /**
