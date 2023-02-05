@@ -40,13 +40,8 @@ cssVariables.setProperties({
 // -------------------------------------------------------------------------------------------------------------------
 
 cssVariables.setProperties({
-   '--tjs-icon-button-background': 'none',
-   '--tjs-icon-button-background-focus-visible': 'var(--tjs-icon-button-background-hover)',
    '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
    '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
-   '--tjs-icon-button-border-radius': '50%',
-   '--tjs-icon-button-diameter': '2em',
-   '--tjs-icon-button-transition': 'background 0.2s ease-in-out, clip-path 0.2s ease-in-out'
 }, false);
 
 {
@@ -71,15 +66,9 @@ cssVariables.setProperties({
 
          // Set directly / no lookup:
          '--tjs-input-border-color': 'var(--color-border-light-tertiary)',
-         '--tjs-input-border-width': '1px',
-         '--tjs-input-value-invalid-color': 'red'
       }, false);
    }
 }
-
-cssVariables.setProperties({
-   '--tjs-toggle-label-transition': 'background 0.2s ease-in-out'
-}, false);
 
 cssVariables.setProperties({
    // Any component with color changes for focus / hover; see: TJSMenu / TJSContextMenu
@@ -92,12 +81,10 @@ cssVariables.setProperties({
    // see: TJSMenu / TJSColordPicker
    '--tjs-default-popup-background': 'var(--color-text-dark-header, #23221d)',
    '--tjs-default-popup-border': '1px solid var(--color-border-dark, #000)',
-   '--tjs-default-popup-border-radius': '5px',
    '--tjs-default-popup-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
 
    // `popover` is for components that are elevated and independent; see: TJSContextMenu
    '--tjs-default-popover-border': '1px solid var(--color-border-dark, #000)',
-   '--tjs-default-popover-border-radius': '5px',
    '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
 }, false);
 
