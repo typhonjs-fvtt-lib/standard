@@ -79,6 +79,8 @@ export class CrudArrayObjectStore extends ArrayObjectStore
             data: store.toJSON()
          });
       }
+
+      return store;
    }
 
    /**

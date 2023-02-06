@@ -22,7 +22,7 @@ import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
  *
  * @param {number}   [opts.debounce=undefined] - Add a debounce to incoming events in milliseconds.
  *
- * @returns Function - Actual action.
+ * @returns {Function} Actual action.
  */
 export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', events = ['click', 'keyup'],
  keyCode = 'Enter', debounce } = {})
@@ -77,7 +77,7 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
          animation.onfinish = () =>
          {
             if (span && span.isConnected) { span.remove(); }
-         }
+         };
       }
 
       /**
@@ -121,5 +121,5 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
             }
          }
       };
-   }
+   };
 }

@@ -16,7 +16,7 @@ export class FoundryStyles
    {
       this.#initialized = true;
 
-      const styleSheets = Array.from(document.styleSheets).filter((sheet) => sheet.href !== null);
+      const styleSheets = Array.from(document.styleSheets).filter((entry) => entry.href !== null);
 
       let sheet;
 
@@ -27,7 +27,11 @@ export class FoundryStyles
       {
          let url;
 
-         try { url = new URL(styleSheet.href); } catch (err) { continue; }
+         try
+         {
+            url = new URL(styleSheet.href);
+         }
+         catch (err) { continue; }
 
          if (typeof url.pathname === 'string' && url.pathname === foundryStyleSheet)
          {

@@ -1,5 +1,5 @@
 // Protect for absent global `ProseMirror` on Foundry v9.
-const ProseMirrorKeyMaps = globalThis.ProseMirror ? ProseMirror.ProseMirrorKeyMaps : class {};
+const ProseMirrorKeyMaps = globalThis.ProseMirror ? globalThis.ProseMirror.ProseMirrorKeyMaps : class {};
 
 /**
  * Provides an additional key mapping to `Escape` to destroy / cancel the active editor.
@@ -10,7 +10,7 @@ export class TJSKeyMaps extends ProseMirrorKeyMaps
 
    /**
     * @param {Schema}   schema - The ProseMirror schema to build keymaps for.
-
+    *
     * @param {object}   [options] - Additional options to configure the plugin's behaviour.
     *
     * @param {Function} [options.onSave] - A function to call when Ctrl+S is pressed.
@@ -31,7 +31,7 @@ export class TJSKeyMaps extends ProseMirrorKeyMaps
     */
    buildMapping()
    {
-      const mapping = super.buildMapping()
+      const mapping = super.buildMapping();
 
       // Add onQuit callback if defined.
       if (this.#onQuit)

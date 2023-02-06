@@ -72,7 +72,7 @@ export class AlphaState
                label: 'transparency channel color'
             }
          }
-      }
+      };
    }
 
    /**
@@ -102,7 +102,7 @@ export class AlphaState
       if (typeof value !== 'number') { throw new TypeError(`AlphaState 'set' error: 'value' is not a number.`); }
 
       // Validate that input values; (0-1).
-      if (value === Number.NaN) { value = 1; }
+      if (Number.isNaN(value)) { value = 1; }
       if (value < 0) { value = 0; }
       if (value > 1) { value = 1; }
 

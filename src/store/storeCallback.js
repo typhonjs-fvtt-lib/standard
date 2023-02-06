@@ -25,7 +25,8 @@ export function storeCallback(store, setCallback)
 
    /** @type {import('svelte/store').Writable<T>} */
    return {
-      set: (value) => {
+      set: (value) =>
+      {
          store.set(value);
          setCallback(store, value);
       },

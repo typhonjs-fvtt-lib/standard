@@ -207,7 +207,7 @@ export class TJSLiveGameSettings
     *
     * @protected
     */
-   _update(key) {}
+   _update(key) {}   // eslint-disable-line no-unused-vars
 
    /**
     * Returns an iterator / generator of all values.

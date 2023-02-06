@@ -12,7 +12,7 @@ export class SavedColorsState
    /** @type {InternalState} */
    #internalState;
 
-   #sessionStore
+   #sessionStore;
 
    /**
     * Stores the subscribers.

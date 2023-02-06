@@ -140,7 +140,7 @@ export class ColorState
          hslString: tempStoreHslString.set,
          hslaString: tempStoreHslaString.set,
          hslHueString: tempStoreHslHueString.set,
-      }
+      };
 
       // Writable stores
       this.#stores.alpha = writable(this.#data.alpha);
@@ -272,7 +272,7 @@ export class ColorState
    /**
     * Returns initial color when in popup mode and container is openend.
     *
-    * @returns {string|Object} Initial color before popup.
+    * @returns {string|object} Initial color before popup.
     */
    getPopupColor()
    {
@@ -295,8 +295,8 @@ export class ColorState
          const newHsv = colordInstance.toHsv();
 
          this.#stores.hue.set(newHsv.h);
-         this.#stores.sv.set({ s: newHsv.s, v: newHsv.v })
-         this.#stores.alpha.set(newHsv.a)
+         this.#stores.sv.set({ s: newHsv.s, v: newHsv.v });
+         this.#stores.alpha.set(newHsv.a);
       }
       else
       {
@@ -364,7 +364,7 @@ export class ColorState
    {
       if (!colord(extColor).isValid())
       {
-         console.warn(`TJSColordPicker warning: 'color' prop set externally is not valid; '${extColor}'.`)
+         console.warn(`TJSColordPicker warning: 'color' prop set externally is not valid; '${extColor}'.`);
          return;
       }
 
@@ -470,6 +470,8 @@ class HsvColorParser
     *
     * @param {'object'|'string'}       [opts.formatType='string'] - Primitive type.
     *
+    * @param {number}                  [opts.hue] - Hue value.
+    *
     * @param {number}                  [opts.precision=0] - Primitive type.
     *
     * @returns {object|string} Converted color.
@@ -494,10 +496,12 @@ class HsvColorParser
             }
 
             case 'hsv':
+            {
                const newHsv = colordInstance.toHsv(precision);
                newHsv.h = ColorParser.round(hue, precision);
                result = newHsv;
                break;
+            }
 
             case 'rgb':
             {

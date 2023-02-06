@@ -162,7 +162,7 @@ export class RgbState
       if (typeof value !== 'number') { throw new TypeError(`RgbState 'set ${index}' error: 'value' is not a number.`); }
 
       // Validate that input values are between `0 - 255`.
-      if (value === Number.NaN) { value = 0; }
+      if (Number.isNaN(value)) { value = 0; }
       if (value < 0) { value = 0; }
       if (value > 255) { value = 255; }
 

@@ -9,4 +9,4 @@ import { components as chrome }  from './chrome/index.js';
 export const layout = {
    default: components,
    chrome
-}
+};

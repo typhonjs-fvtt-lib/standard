@@ -80,7 +80,7 @@ export class HexState
     */
    get hasAlpha()
    {
-      return false
+      return false;
    }
 
    /**
@@ -103,6 +103,8 @@ export class HexState
     * Returns whether all RGB components are the same value. If so when converted to HSV there is no
     * hue information, so a new hue value should not be set to maintain existing hue in the UI otherwise
     * it will be set to `0` which will always jump it to red.
+    *
+    * @param {object} rgb - RGB data to test.
     *
     * @returns {boolean} Are all RGB components the same.
     */

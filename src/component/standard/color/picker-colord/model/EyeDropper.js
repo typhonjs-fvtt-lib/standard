@@ -21,7 +21,8 @@ export class EyeDropper
     *
     * @returns {{onClick: ((function(): Promise<void>)|*), icon: string}} TJSIconButton data object.
     */
-   static buttonData(colorState) {
+   static buttonData(colorState)
+   {
       return {
          icon: 'fas fa-eye-dropper',
          keyCode: 'Space',
@@ -40,6 +41,6 @@ export class EyeDropper
             }
             catch (err) { /**/ }
          }
-      }
+      };
    }
 }

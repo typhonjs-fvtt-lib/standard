@@ -11,7 +11,7 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
  * @property {{ class: Function, props?: object }} [slotAfter] - A minimal Svelte config defining a menu item component
  *           after the main data driven menu items.
  *
- * @property {{ class: Function, props?: object }} [slotAfter] - A minimal Svelte config defining a menu item component
+ * @property {{ class: Function, props?: object }} [slotBefore] - A minimal Svelte config defining a menu item component
  *           before the main data driven menu items.
  *
  * @property {{ class: Function, props?: object }} [slotDefault] - A minimal Svelte config defining the default content

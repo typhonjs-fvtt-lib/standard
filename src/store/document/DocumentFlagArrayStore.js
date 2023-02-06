@@ -27,6 +27,8 @@ export class DocumentFlagArrayStore extends ArrayObjectStore
     *
     * @param {object}            params - Required parameters.
     *
+    * @param {foundry.abstract.Document} params.document - A document.
+    *
     * @param {string}            params.namespace - Flags 'namespace' field.
     *
     * @param {string}            params.key - Flags 'key' field.
@@ -50,7 +52,7 @@ export class DocumentFlagArrayStore extends ArrayObjectStore
       this.#key = key;
 
       this.#tjsDocument = new TJSDocument({ postDelete: this.clearEntries.bind(this) });
-      this.#tjsDocument.subscribe(this.#documentUpdate.bind(this))
+      this.#tjsDocument.subscribe(this.#documentUpdate.bind(this));
 
       this.document = document;
    }
@@ -70,13 +72,16 @@ export class DocumentFlagArrayStore extends ArrayObjectStore
     */
    get namespace() { return this.#namespace; }
 
+   /**
+    * @param {foundry.abstract.Document} document - New document to set.
+    */
    set document(document)
    {
       this.#tjsDocument.set(document);
 
       if (document)
       {
-         let data = document.getFlag(this.#namespace, this.#key);
+         const data = document.getFlag(this.#namespace, this.#key);
 
          if (Array.isArray(data))
          {

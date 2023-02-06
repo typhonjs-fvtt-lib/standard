@@ -33,7 +33,7 @@ export class ObjectEntryStore
       // If an id is missing then add it.
       if (typeof data.id !== 'string') { this.#data.id = uuidv4(); }
 
-      if (!uuidv4.isValid(data.id)) { throw new Error(`'data.id' (${data.id}) is not a valid UUIDv4 string.`)}
+      if (!uuidv4.isValid(data.id)) { throw new Error(`'data.id' (${data.id}) is not a valid UUIDv4 string.`); }
    }
 
    /**
@@ -43,7 +43,7 @@ export class ObjectEntryStore
     *
     * @param {ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
     */
-   static duplicate(data, arrayStore) {}
+   static duplicate(data, arrayStore) {}  // eslint-disable-line no-unused-vars
 
    /**
     * @returns {object}

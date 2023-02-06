@@ -154,7 +154,7 @@ export class TJSGameSettings
  *
  * @property {('client' | 'world')} [scope='client'] - Scope for setting.
  *
- * @property {Object|Function} type - A constructable object or function.
+ * @property {object|Function} type - A constructable object or function.
  */
 
 /**

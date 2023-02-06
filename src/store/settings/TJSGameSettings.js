@@ -289,7 +289,7 @@ export class TJSGameSettings
          }
 
          gateSet = false;
-      }
+      };
 
       // Subscribe to self to set associated game setting on updates after verifying that the new value does not match
       // existing game setting.
@@ -378,7 +378,7 @@ export class TJSGameSettings
  *
  * @property {('client' | 'world')} [scope='client'] - Scope for setting.
  *
- * @property {Object|Function} type - A constructable object or function.
+ * @property {object|Function} type - A constructable object or function.
  */
 
 /**

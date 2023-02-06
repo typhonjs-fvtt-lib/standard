@@ -45,7 +45,7 @@ export class TJSColordPickerSavedColors
          slotSummaryEnd: {
             class: SavedColorsSummaryEnd
          }
-      }
+      };
 
       this.#savedColorsState = new SavedColorsState(internalState);
    }

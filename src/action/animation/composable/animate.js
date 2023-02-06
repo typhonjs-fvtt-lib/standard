@@ -20,13 +20,14 @@ import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Element/animate
  * @see https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats
  *
- * @returns Function - Actual action.
+ * @returns {Function} Actual action.
  */
 export function animate({ duration = 600, keyframes = [], options, event = 'click', debounce } = {})
 {
    return (element) =>
    {
-      function createAnimation() {
+      function createAnimation()
+      {
          element.animate(keyframes, typeof options === 'object' && options !== null ? options : duration);
       }
 
@@ -38,5 +39,5 @@ export function animate({ duration = 600, keyframes = [], options, event = 'clic
       return {
          destroy: () => element.removeEventListener(event, eventFn)
       };
-   }
+   };
 }

@@ -11,7 +11,7 @@ import { ButtonState }     from './ButtonState.js';
 import { ColorState }      from './hsv/ColorState.js';
 import { EyeDropper }      from './EyeDropper.js';
 
-import { layout }          from '../view/layout/index.js'
+import { layout }          from '../view/layout/index.js';
 
 export class InternalState
 {
@@ -61,15 +61,15 @@ export class InternalState
     *
     * @param {TJSColordPickerOptions}  options -
     *
-    * @param {TJSSessionStorage}       sessionStorage - External TJSSessionStorage instance.
+    * @param {TJSSessionStorage}       tjsSessionStorage - External TJSSessionStorage instance.
     */
-   constructor(color, options, sessionStorage)
+   constructor(color, options, tjsSessionStorage)
    {
       const opts = isObject(options) ? options : {};
 
       this.#validateOptions(opts);
 
-      this.#sessionStorage = sessionStorage;
+      this.#sessionStorage = tjsSessionStorage;
 
       this.#buttonState = new ButtonState(this);
 
@@ -127,7 +127,7 @@ export class InternalState
          hasAddons: propertyStore(internalData, 'hasAddons'),
          isOpen: propertyStore(internalData, 'isOpen'),
          padding: propertyStore(internalData, 'padding')
-      }
+      };
 
       this.#colorState = new ColorState(this, color, opts);
    }
@@ -221,7 +221,7 @@ export class InternalState
    {
       let selectedVariant = {};
 
-      switch(opts.layout)
+      switch (opts.layout)
       {
          case 'chrome':
             this.#externalData.layout = 'chrome';
@@ -237,7 +237,7 @@ export class InternalState
       return {
          ...layout.default,
          ...(isObject(opts.components) ? opts.components : selectedVariant)
-      }
+      };
    }
 
    /**

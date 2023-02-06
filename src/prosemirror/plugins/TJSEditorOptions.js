@@ -73,7 +73,7 @@ export class TJSEditorOptions
          {
             const resolvedFrom = this.#minMax(0, minPos, maxPos);
             const resolvedEnd = this.#minMax(doc.content.size, minPos, maxPos);
-            transaction = tr.setSelection(TextSelection.create(doc, resolvedFrom, resolvedEnd))
+            transaction = tr.setSelection(TextSelection.create(doc, resolvedFrom, resolvedEnd));
             break;
          }
 
@@ -81,7 +81,7 @@ export class TJSEditorOptions
          {
             const resolvedFrom = this.#minMax(doc.content.size, minPos, maxPos);
             const resolvedEnd = this.#minMax(doc.content.size, minPos, maxPos);
-            transaction = tr.setSelection(TextSelection.create(doc, resolvedFrom, resolvedEnd))
+            transaction = tr.setSelection(TextSelection.create(doc, resolvedFrom, resolvedEnd));
             break;
          }
 
@@ -89,15 +89,15 @@ export class TJSEditorOptions
          {
             const resolvedFrom = this.#minMax(0, minPos, maxPos);
             const resolvedEnd = this.#minMax(0, minPos, maxPos);
-            transaction = tr.setSelection(TextSelection.create(doc, resolvedFrom, resolvedEnd))
+            transaction = tr.setSelection(TextSelection.create(doc, resolvedFrom, resolvedEnd));
             break;
          }
       }
 
       if (transaction)
       {
-         let newState = view.state.apply(transaction)
-         view.updateState(newState)
+         const newState = view.state.apply(transaction);
+         view.updateState(newState);
       }
    }
 

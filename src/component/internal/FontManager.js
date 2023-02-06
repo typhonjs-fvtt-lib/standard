@@ -11,7 +11,7 @@ export class FontManager
    /**
     * Collect all the font definitions and combine them.
     *
-    * @returns {Object<FontFamilyDefinition>[]}
+    * @returns {Object<FontFamilyDefinition>[]} Core font definitions.
     */
    static getCoreDefinitions()
    {
@@ -68,7 +68,7 @@ export class FontManager
          for (const fontEntry of definition.fonts)
          {
             // Collect URLs from FontDefinition.
-            const urls = fontEntry.urls.map(url => `url("${url}")`).join(', ');
+            const urls = fontEntry.urls.map((url) => `url("${url}")`).join(', ');
 
             // Note: 'font' contains 'FontFaceDescriptors' data.
             const fontFace = new FontFace(family, urls, fontEntry);
@@ -116,8 +116,7 @@ export class FontManager
    {
       // TODO sanity checks
 
-      const allFonts = fonts ? Array.isArray(fonts) ? fonts : [fonts]
-       : this.getCoreDefinitions();
+      const allFonts = fonts ? Array.isArray(fonts) ? fonts : [fonts] : this.getCoreDefinitions();
 
       const promises = [];
 
@@ -140,7 +139,7 @@ export class FontManager
          }
       }
 
-      const timeout = new Promise(resolve => setTimeout(resolve, ms));
+      const timeout = new Promise((resolve) => setTimeout(resolve, ms));
       const ready = Promise.all(promises).then(() => document.fonts.ready);
 
       return Promise.race([ready, timeout]);

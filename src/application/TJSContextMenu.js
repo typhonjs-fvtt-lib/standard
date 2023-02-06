@@ -63,7 +63,7 @@ export class TJSContextMenu
 
       if (!event && (typeof x !== 'number' || typeof y !== 'number'))
       {
-         throw new Error (`TJSContextMenu.create error: No event or absolute X / Y position not defined.`);
+         throw new Error(`TJSContextMenu.create error: No event or absolute X / Y position not defined.`);
       }
 
       if (event !== void 0 && !(event instanceof KeyboardEvent) && !(event instanceof MouseEvent))
@@ -129,8 +129,8 @@ export class TJSContextMenu
          {
             if (item.separator !== 'hr')
             {
-               throw new Error (
-                `TJSContextMenu error: 'item[${cntr}]' has unknown separator type; only 'hr' is currently supported.`)
+               throw new Error(
+                `TJSContextMenu error: 'item[${cntr}]' has unknown separator type; only 'hr' is currently supported.`);
             }
 
             type = 'separator-hr';

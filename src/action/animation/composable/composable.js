@@ -30,6 +30,6 @@ export function composable(...actions)
                if (typeof action.update === 'function') { action.update(parameters); }
             }
          }
-      }
+      };
    };
 }

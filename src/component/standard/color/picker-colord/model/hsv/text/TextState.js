@@ -43,12 +43,12 @@ export class TextState
       const colorStateAccess = {
          stores: colorState.stores,
          internalUpdate
-      }
+      };
 
       /** @type {TextStateAccess} */
       const textStateAccess = {
          updateColorInternal: this.#updateColorInternal.bind(this)
-      }
+      };
 
       this.#alphaState = new AlphaState(colorStateAccess, textStateAccess);
 
@@ -57,7 +57,7 @@ export class TextState
          hsl: new HslState(colorStateAccess, textStateAccess),
          hsv: new HsvState(colorStateAccess, textStateAccess),
          rgb: new RgbState(colorStateAccess, textStateAccess)
-      }
+      };
 
       this.#activeTextState = new ActiveTextState(this.#allState, colorState.format);
 

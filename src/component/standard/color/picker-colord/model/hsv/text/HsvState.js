@@ -148,7 +148,7 @@ export class HsvState
       if (typeof value !== 'number') { throw new TypeError(`HsvState 'set ${index}' error: 'value' is not a number.`); }
 
       // Validate that input values; h (0-360) / s & v (0 - 100).
-      if (value === Number.NaN) { value = 0; }
+      if (Number.isNaN(value)) { value = 0; }
       if (value < 0) { value = 0; }
 
       switch (index)

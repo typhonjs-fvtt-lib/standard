@@ -19,7 +19,7 @@
  *
  * @param {string}   [opts.selectors] - A valid CSS selectors string.
  *
- * @returns Function - Actual action.
+ * @returns {Function} Actual action.
  */
 export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 0.7)', selectors } = {})
 {
@@ -62,7 +62,7 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
             clientX = clientY = -1;
             if (span && span.isConnected) { span.remove(); }
             span = void 0;
-         }
+         };
       }
 
       function focusRipple()
@@ -124,16 +124,17 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
          clientY = e.clientY;
       }
 
-      targetEl.addEventListener('pointerdown', onPointerDown)
+      targetEl.addEventListener('pointerdown', onPointerDown);
       targetEl.addEventListener('blur', blurRipple);
       targetEl.addEventListener('focus', focusRipple);
 
       return {
-         destroy: () => {
+         destroy: () =>
+         {
             targetEl.removeEventListener('pointerdown', onPointerDown);
             targetEl.removeEventListener('blur', blurRipple);
             targetEl.removeEventListener('focus', focusRipple);
          }
       };
-   }
+   };
 }

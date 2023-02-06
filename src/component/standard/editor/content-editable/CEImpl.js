@@ -38,7 +38,7 @@ export class CEImpl
    static hasEnterKeyHandler(options)
    {
       return (typeof options.preventEnterKey === 'boolean' && options.preventEnterKey) ||
-       (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
+       (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey);
    }
 
    static insertTextAtCursor(text)
@@ -80,11 +80,11 @@ export class CEImpl
       if ((event.ctrlKey || event.metaKey) && (event.code === 'KeyA' || event.code === 'KeyC' ||
        event.code === 'KeyV' || event.code === 'KeyZ'))
       {
-         return false
+         return false;
       }
 
       // Allow certain control keys, but prevent all others.
-      if (!this.#MAX_KEY_ALLOWED.has(event.key)) { return true; }
+      return !this.#MAX_KEY_ALLOWED.has(event.key);
    }
 
    /**
@@ -161,7 +161,7 @@ export class CEImpl
       }
 
       return text;
-   };
+   }
 
    /**
     * Sets the initial selection based on `options.initialSelection`.
@@ -196,6 +196,7 @@ export class CEImpl
             break;
 
          case 'end':
+         {
             const lastElementChild = editorEl.lastElementChild;
             if (lastElementChild)
             {
@@ -205,8 +206,9 @@ export class CEImpl
                selection.addRange(range);
             }
             break;
-
+         }
          case 'start':
+         {
             const firstElementChild = editorEl.firstElementChild;
             if (firstElementChild)
             {
@@ -216,6 +218,7 @@ export class CEImpl
                selection.addRange(range);
             }
             break;
+         }
       }
    }
 }
