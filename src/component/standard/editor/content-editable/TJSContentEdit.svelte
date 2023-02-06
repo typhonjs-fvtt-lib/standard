@@ -17,8 +17,15 @@
     * Events: There are three events fired when the editor is canceled, saved, and started.
     * ---------------------------------
     * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
-    * `editor:enrichedContent` - Fired when content is enriched. Access data from `event.detail.enrichedContent`.
+    *
+    * `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
+    *                             `event.detail.document`.
+    *
+    * `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
+    *                            `event.detail.enrichedContent`.
+    *
     * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    *
     * `editor:start` - Fired when editing is started.
     *
     * The following CSS variables control the associated styles with the default values.
@@ -144,7 +151,7 @@
    const dispatch = createEventDispatcher();
 
    // Provides reactive updates for any associated Foundry document.
-   const doc = new TJSDocument();
+   const doc = new TJSDocument({ postDelete: onDocumentDeleted });
 
    /** @type {boolean} */
    let clickToEdit;
@@ -239,10 +246,11 @@
       {
          enrichedContent = '';
          content = '';
-         destroyEditor();
-      }
 
-      doc.set(void 0);
+         destroyEditor();
+
+         doc.set(void 0);
+      }
    }
 
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
@@ -374,6 +382,23 @@
       }
 
       dispatch('editor:enrichedContent', { enrichedContent });
+   }
+
+   /**
+    * Handles cleaning up the editor state after any associated document has been deleted.
+    *
+    * @param {foundry.abstract.Document} document - The deleted document.
+    */
+   function onDocumentDeleted(document)
+   {
+      options.document = void 0;
+
+      destroyEditor();
+
+      dispatch('editor:document:deleted', { document });
+
+      content = '';
+      enrichedContent = '';
    }
 
    /**
@@ -577,8 +602,8 @@
          tabindex=0>
         {@html enrichedContent}
         {#if editorButton}
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
+            <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
+            <a class=editor-edit on:click={() => initEditor()} role=button><i class="fas fa-edit"></i></a>
         {/if}
     </div>
 {/if}
