@@ -26,6 +26,9 @@ export function animate({ duration = 600, keyframes = [], options, event = 'clic
 {
    return (element) =>
    {
+      /**
+       * Creates WAAPI animation.
+       */
       function createAnimation()
       {
          element.animate(keyframes, typeof options === 'object' && options !== null ? options : duration);

@@ -65,7 +65,7 @@ export class TextState
    }
 
    /**
-    * @returns {ActiveTextState}
+    * @returns {ActiveTextState} Current active text state.
     */
    get activeState()
    {
@@ -73,7 +73,7 @@ export class TextState
    }
 
    /**
-    * @returns {AlphaState}
+    * @returns {AlphaState} Alpha text state.
     */
    get alpha()
    {
@@ -81,7 +81,7 @@ export class TextState
    }
 
    /**
-    * @returns {HexState}
+    * @returns {HexState} Hex text state.
     */
    get hex()
    {
@@ -89,7 +89,7 @@ export class TextState
    }
 
    /**
-    * @returns {HslState}
+    * @returns {HslState} HSL text state.
     */
    get hsl()
    {
@@ -97,7 +97,7 @@ export class TextState
    }
 
    /**
-    * @returns {HsvState}
+    * @returns {HsvState} HSV text state.
     */
    get hsv()
    {
@@ -105,7 +105,7 @@ export class TextState
    }
 
    /**
-    * @returns {RgbState}
+    * @returns {RgbState} RGB text state.
     */
    get rgb()
    {

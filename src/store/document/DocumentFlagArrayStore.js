@@ -12,7 +12,7 @@ export class DocumentFlagArrayStore extends ArrayObjectStore
    /**
     * @type {TJSDocument}
     */
-   #tjsDocument = new TJSDocument({ postDelete: this.clearEntries.bind(this) });
+   #tjsDocument = new TJSDocument({ delete: this.clearEntries.bind(this) });
 
    /** @type {string} */
    #key;
@@ -51,7 +51,7 @@ export class DocumentFlagArrayStore extends ArrayObjectStore
 
       this.#key = key;
 
-      this.#tjsDocument = new TJSDocument({ postDelete: this.clearEntries.bind(this) });
+      this.#tjsDocument = new TJSDocument({ delete: this.clearEntries.bind(this) });
       this.#tjsDocument.subscribe(this.#documentUpdate.bind(this));
 
       this.document = document;

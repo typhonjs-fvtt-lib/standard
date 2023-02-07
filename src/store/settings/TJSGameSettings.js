@@ -178,7 +178,7 @@ export class TJSGameSettings
     *                                   registering the setting with Foundry. This allows the settings to be displayed
     *                                   in the app itself, but removed from the standard Foundry configuration location.
     *
-    * @returns {Function} The specific store subscription handler assigned to the passed in store or
+    * @returns {Function} The specific store subscription handler assigned to the passed in store.
     */
    register(setting, coreConfig = true)
    {

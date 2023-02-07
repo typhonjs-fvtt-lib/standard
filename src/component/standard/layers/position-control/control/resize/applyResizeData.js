@@ -1,5 +1,16 @@
 import { hitboxCallback } from './constants.js';
 
+/**
+ * @param {string}   id - Control index.
+ *
+ * @param {number}   dX - delta X
+ *
+ * @param {number}   dY - delta Y
+ *
+ * @param {ControlStore}   control - ControlStore instance.
+ *
+ * @returns {object} Position update data.
+ */
 export function applyResizeData(id, dX, dY, control)
 {
    const data = hitboxCallback[id];

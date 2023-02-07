@@ -51,7 +51,7 @@ export class TJSColordPickerSavedColors
    }
 
    /**
-    * @returns {SavedColorsState}
+    * @returns {SavedColorsState} Gets SavedColorState data.
     */
    get savedColorsState()
    {

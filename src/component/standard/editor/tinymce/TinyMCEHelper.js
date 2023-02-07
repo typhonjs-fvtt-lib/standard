@@ -279,7 +279,8 @@ export class TinyMCEHelper
     *
     * @param {object[]} [additionalStyleFormats=[]] - Add additional style formats.
     *
-    * @returns {{title: string, items: [{classes: string, block: string, wrapper: boolean, title: string}]}[]}
+    * @returns {{title: string, items: [{classes: string, block: string, wrapper: boolean, title: string}]}[]} MCE
+    *          style formats configuration data.
     */
    static #getStyleFormats(basicFormats = false, stripStyleFormat = true, additionalStyleFormats = [])
    {

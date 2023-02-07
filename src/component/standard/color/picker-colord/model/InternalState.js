@@ -133,7 +133,7 @@ export class InternalState
    }
 
    /**
-    * @returns {AddOnState}
+    * @returns {AddOnState} Gets AddOnState data.
     */
    get addOnState()
    {
@@ -141,7 +141,7 @@ export class InternalState
    }
 
    /**
-    * @returns {ButtonState}
+    * @returns {ButtonState} Gets ButtonState data.
     */
    get buttonState()
    {
@@ -149,7 +149,7 @@ export class InternalState
    }
 
    /**
-    * @returns {ColorState}
+    * @returns {ColorState} Gets ColorState data.
     */
    get colorState()
    {
@@ -173,7 +173,7 @@ export class InternalState
    }
 
    /**
-    * @returns {number}
+    * @returns {number} Gets current `precision` data.
     */
    get precision()
    {
@@ -181,7 +181,7 @@ export class InternalState
    }
 
    /**
-    * @returns {TJSSessionStorage}
+    * @returns {TJSSessionStorage} Gets associated TJSSessionStorage instance.
     */
    get sessionStorage()
    {
@@ -189,7 +189,7 @@ export class InternalState
    }
 
    /**
-    * @returns {PickerStores}
+    * @returns {PickerStores} Gets the color picker stores.
     */
    get stores()
    {

@@ -51,6 +51,8 @@ export class TJSGameSettings
     * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
     *                                   registering the setting with Foundry. This allows the settings to be displayed
     *                                   in the app itself, but removed from the standard Foundry configuration location.
+    *
+    * @return {Function} The specific store subscription handler assigned to the passed in store.
     */
    register(setting, coreConfig = true)
    {

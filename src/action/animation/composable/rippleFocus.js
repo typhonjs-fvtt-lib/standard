@@ -32,6 +32,9 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
       let clientX = -1;
       let clientY = -1;
 
+      /**
+       * WAAPI ripple animation on blur.
+       */
       function blurRipple()
       {
          // When clicking outside the browser window or to another tab `document.activeElement` remains
@@ -65,6 +68,9 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
          };
       }
 
+      /**
+       * WAAPI ripple animation on focus.
+       */
       function focusRipple()
       {
          // If already focused and the span exists do not create another ripple effect.
@@ -117,7 +123,11 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
          });
       }
 
-      // Store the pointer down location for the origination of the ripple.
+      /**
+       * Store the pointer down location for the origination of the ripple.
+       *
+       * @param {PointerEvent} e - A PointerEvent.
+       */
       function onPointerDown(e)
       {
          clientX = e.clientX;

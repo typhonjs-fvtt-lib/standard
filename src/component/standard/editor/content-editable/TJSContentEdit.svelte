@@ -151,7 +151,7 @@
    const dispatch = createEventDispatcher();
 
    // Provides reactive updates for any associated Foundry document.
-   const doc = new TJSDocument({ postDelete: onDocumentDeleted });
+   const doc = new TJSDocument({ delete: onDocumentDeleted });
 
    /** @type {boolean} */
    let clickToEdit;

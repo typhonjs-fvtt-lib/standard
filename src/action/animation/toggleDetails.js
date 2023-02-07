@@ -29,7 +29,7 @@ export function toggleDetails(details, { store, clickActive = true } = {})
    let animation;
 
    /** @type {boolean} */
-   let open = details.open;
+   let open = details.open;  // eslint-disable-line no-shadow
 
    // The store sets initial open state and handles animation on further changes.
    const unsubscribe = subscribeFirstRest(store, (value) => { open = value; details.open = open; }, async (value) =>

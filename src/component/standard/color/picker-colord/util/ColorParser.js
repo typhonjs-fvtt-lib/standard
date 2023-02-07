@@ -42,7 +42,7 @@ export class ColorParser
     *
     * @param {number}   degrees - Degree value to clamp
     *
-    * @returns {number}
+    * @returns {number} Clamped hue.
     */
    static clampHue(degrees)
    {
@@ -51,9 +51,11 @@ export class ColorParser
    }
 
    /**
-    * @param {string} value - Hue numerical component
+    * @param {string} value - Hue numerical component.
     *
     * @param {string} [unit='deg'] - Hue unit if available.
+    *
+    * @returns {number} Numerical hue value.
     */
    static parseHue(value, unit = 'deg')
    {

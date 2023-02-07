@@ -189,7 +189,7 @@ export class ColorState
    }
 
    /**
-    * @returns {number}
+    * @returns {number} Alpha color data.
     */
    get alpha()
    {
@@ -197,7 +197,7 @@ export class ColorState
    }
 
    /**
-    * @returns {"hex"|"hsl"|"hsv"|"rgb"}
+    * @returns {"hex"|"hsl"|"hsv"|"rgb"} Color format.
     */
    get format()
    {
@@ -205,7 +205,7 @@ export class ColorState
    }
 
    /**
-    * @returns {"object"|"string"}
+    * @returns {"object"|"string"} Color format data type.
     */
    get formatType()
    {
@@ -213,7 +213,7 @@ export class ColorState
    }
 
    /**
-    * @returns {number}
+    * @returns {number} Color hue data.
     */
    get hue()
    {
@@ -229,7 +229,7 @@ export class ColorState
    }
 
    /**
-    * @returns {ColorStateStores}
+    * @returns {ColorStateStores} ColorState stores.
     */
    get stores()
    {
@@ -237,13 +237,16 @@ export class ColorState
    }
 
    /**
-    * @returns {{s: number, v: number}}
+    * @returns {{s: number, v: number}} Saturation / Value data.
     */
    get sv()
    {
       return this.#data.sv;
    }
 
+   /**
+    * Unsubscribe from stores.
+    */
    destroy()
    {
       for (const unsubscribe of this.#unsubscribe) { unsubscribe(); }
