@@ -28,11 +28,14 @@
       "builtinGlobals": true,
       "hoist": "all",
       "allow": [
+        "debounce",
         "document",
         "event",
         "name",
         "parent",
+        "Plugin",  // From ProseMirror
         "status",
+        "toolbar",
         "top"
       ]
     }]
