@@ -9,6 +9,14 @@
   - TJSContentEdit fully up to par w/ config options of TJSTinyMCE
   - TJSProseMirror handles most of the same config options, but not single line support (use TJSContentEdit).
 
+- Increased coherency of CSS variables across components.
+  - CSS default variables (used across all components when text is focused / hovered):
+    - `--tjs-default-text-shadow-focus-hover` -> default value:  '0 0 8px var(--color-shadow-primary)'
+  - Undefined universal CSS variables for focus visible support / keyboard navigation:
+    - `--tjs-default-outline-focus-visible`: Define `outline` for focused components.
+    - `--tjs-default-transition-focus-visible`: Optional `transition` to apply.
+    - `--tjs-default-box-shadow-focus-visible`: Optional box-shadow to apply instead of outline.
+
 - New TJSLiveGameSettings (Create dynamic live binding derived store for game settings)
 
 - New HSV / sRGB color picker component (complete, but pending container query support in Svelte).
