@@ -7,34 +7,57 @@
     *
     * Only use this component for text inputs presently. More work to come.
     *
+    * --tjs-input-appearance
+    * --tjs-input-background
     * --tjs-input-border
     * --tjs-input-border-radius
-    * --tjs-input-background
+    * --tjs-input-box-shadow-focus
+    * --tjs-input-box-shadow-focus-visible
+    * --tjs-input-caret-color
     * --tjs-input-cursor
+    * --tjs-input-flex
     * --tjs-input-height
     * --tjs-input-padding
-    * --tjs-input-placeholder-color;
+    * --tjs-input-placeholder-color
+    * --tjs-input-outline-focus-visible
+    * --tjs-input-outline-offset
+    * --tjs-input-overflow
     * --tjs-input-text-align
+    * --tjs-input-transition-focus-visible
+    * --tjs-input-value-invalid-color
     * --tjs-input-width
     *
+    * --tjs-input-text-appearance
+    * --tjs-input-text-background
     * --tjs-input-text-border
     * --tjs-input-text-border-radius
-    * --tjs-input-text-background
+    * --tjs-input-text-box-shadow-focus
+    * --tjs-input-text-box-shadow-focus-visible
+    * --tjs-input-text-caret-color
     * --tjs-input-text-cursor
+    * --tjs-input-text-flex
     * --tjs-input-text-height
+    * --tjs-input-text-outline-focus-visible
+    * --tjs-input-text-outline-offset
+    * --tjs-input-text-overflow
     * --tjs-input-text-padding
     * --tjs-input-text-placeholder-color
     * --tjs-input-text-text-align
+    * --tjs-input-text-transition-focus-visible
+    * --tjs-input-text-value-invalid-color
     * --tjs-input-text-width
     */
 
    import { writable }          from 'svelte/store';
 
-   import {
-      applyStyles,
-      autoBlur }                from '@typhonjs-svelte/lib/action';
+   import { applyStyles }       from '@typhonjs-svelte/lib/action';
+
    import { localize }          from '@typhonjs-svelte/lib/helper';
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+
+   import {
+      isReadableStore,
+      isWritableStore }         from '@typhonjs-svelte/lib/store';
+
    import { isObject }          from '@typhonjs-svelte/lib/util';
 
    export let input = void 0;
@@ -43,6 +66,7 @@
    export let options = void 0;
    export let placeholder = void 0;
    export let store = void 0;
+   export let storeIsValid = void 0;
    export let styles = void 0;
    export let efx = void 0;
 
@@ -61,7 +85,6 @@
       switch (type)
       {
          case 'email':
-         case 'number':
          case 'password':
          case 'search':
          case 'text':
@@ -70,7 +93,7 @@
 
          default:
             throw new Error(
-             `'TJSInputText only supports text input types: 'email', 'number', 'password', 'search', 'text', 'url'.`);
+             `'TJSInputText only supports text input types: 'email', 'password', 'search', 'text', 'url'.`);
       }
    }
 
@@ -92,6 +115,9 @@
    $: store = isObject(input) && isWritableStore(input.store) ? input.store :
     isWritableStore(store) ? store : writable(void 0);
 
+   $: storeIsValid = isObject(input) && isReadableStore(input.storeIsValid) ? input.storeIsValid :
+    isReadableStore(storeIsValid) ? storeIsValid : writable(true);
+
    $: styles = isObject(input) && isObject(input.styles) ? input.styles :
     typeof styles === 'object' ? styles : void 0;
 
@@ -112,18 +138,31 @@
     */
    function onKeyDown(event)
    {
-      if (localOptions.blurOnEnterKey && event.key === 'Enter') { inputEl.blur(); return; }
+      if (localOptions.blurOnEnterKey && event.code === 'Enter')
+      {
+         event.preventDefault();
+         event.stopPropagation();
 
-      if (event.key === 'Escape')
+         inputEl.blur();
+         return;
+      }
+
+      if (event.code === 'Escape')
       {
          if (localOptions.cancelOnEscKey && typeof initialValue === 'string')
          {
+            event.preventDefault();
+            event.stopPropagation();
+
             store.set(initialValue);
             initialValue = void 0;
             inputEl.blur();
          }
          else if (localOptions.clearOnEscKey)
          {
+            event.preventDefault();
+            event.stopPropagation();
+
             store.set('');
             inputEl.blur();
          }
@@ -136,7 +175,7 @@
            {...{ type }}
            bind:this={inputEl}
            bind:value={$store}
-           use:autoBlur
+           class:is-value-invalid={!$storeIsValid}
            {placeholder}
            {disabled}
            on:focusin={onFocusIn}
@@ -146,22 +185,29 @@
 
 <style>
     .tjs-input-container {
+        display: block;
+        overflow: var(--tjs-input-text-overflow, var(--tjs-input-overflow, hidden));
         pointer-events: none;
+        transform-style: preserve-3d;
+
         background: var(--tjs-input-text-background, var(--tjs-input-background));
         border-radius: var(--tjs-input-text-border-radius, var(--tjs-input-border-radius));
-        display: block;
-        overflow: hidden;
+        flex: var(--tjs-input-text-flex, var(--tjs-input-flex));
         margin: var(--tjs-input-text-margin, var(--tjs-input-margin));
         height: var(--tjs-input-text-height, var(--tjs-input-height));
         width: var(--tjs-input-text-width, var(--tjs-input-width));
-        transform-style: preserve-3d;
+    }
+
+    .is-value-invalid {
+        color: var(--tjs-input-text-value-invalid-color, var(--tjs-input-value-invalid-color, red));
     }
 
     input {
         pointer-events: initial;
         display: inline-block;
         position: relative;
-        overflow: hidden;
+
+        appearance: var(--tjs-input-text-appearance, var(--tjs-input-appearance, inherit));
 
         background: transparent;
 
@@ -174,14 +220,26 @@
         padding: var(--tjs-input-text-padding, var(--tjs-input-padding, initial));
 
         color: inherit;
+        caret-color: var(--tjs-input-text-caret-color, var(--tjs-input-caret-color));
         font-family: inherit;
         font-size: inherit;
         line-height: inherit;
+        outline-offset: var(--tjs-input-text-outline-offset, var(--tjs-input-outline-offset));
         text-align: var(--tjs-input-text-text-align, var(--tjs-input-text-align));
 
         cursor: var(--tjs-input-text-cursor, var(--tjs-input-cursor, text));
 
         transform: translateZ(1px);
+    }
+
+    input:focus {
+        box-shadow: var(--tjs-input-text-box-shadow-focus, var(--tjs-input-box-shadow-focus, unset));
+    }
+
+    input:focus-visible {
+        box-shadow: var(--tjs-input-text-box-shadow-focus-visible, var(--tjs-input-box-shadow-focus-visible, unset));
+        outline: var(--tjs-input-text-outline-focus-visible, var(--tjs-input-outline-focus-visible));
+        transition: var(--tjs-input-text-transition-focus-visible, var(--tjs-input-transition-focus-visible));
     }
 
     input::placeholder {

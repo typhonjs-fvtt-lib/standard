@@ -6,7 +6,7 @@ import { localize }     from '@typhonjs-fvtt/svelte/helper';
 
 import {
    isObject,
-   isSvelteComponent }  from '@typhonjs-fvtt/svelte/util';
+   isSvelteComponent }  from '@typhonjs-svelte/lib/util';
 
 import {
    ripple,
@@ -28,7 +28,7 @@ export class UIControl
    /** @type {boolean} */
    #showSettings = false;
 
-   /** @type {function} */
+   /** @type {Function} */
    #showSettingsSet;
 
    /** @type {{showSettings: import('svelte/store').Readable<boolean>}} */
@@ -91,7 +91,7 @@ export class UIControl
 
       if (options.props !== void 0 && !isObject(options.props))
       {
-         throw new TypeError(`'options.props' is not an object.`)
+         throw new TypeError(`'options.props' is not an object.`);
       }
 
       if (options.folder !== void 0)
@@ -177,7 +177,7 @@ export class UIControl
       {
          for (const setting of settings.topLevel)
          {
-            const current = game.settings.get(setting.namespace, setting.key);
+            const current = globalThis.game.settings.get(setting.namespace, setting.key);
             if (current === setting.initialValue) { continue; }
 
             requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
@@ -193,7 +193,7 @@ export class UIControl
             {
                for (const setting of folder.settings)
                {
-                  const current = game.settings.get(setting.namespace, setting.key);
+                  const current = globalThis.game.settings.get(setting.namespace, setting.key);
                   if (current === setting.initialValue) { continue; }
 
                   requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
@@ -228,7 +228,7 @@ export class UIControl
 
       const uiSettings = [];
 
-      const canConfigure = game.user.can('SETTINGS_MODIFY');
+      const canConfigure = globalThis.game.user.can('SETTINGS_MODIFY');
 
       for (const setting of this.#settings)
       {
@@ -261,7 +261,7 @@ export class UIControl
          }
 
          // Default to `String` if no type is provided.
-         let type = setting.type instanceof Function ? setting.type.name : 'String';
+         const type = setting.type instanceof Function ? setting.type.name : 'String';
 
          // Only configure file picker if setting type is a string.
          let filePicker;
@@ -277,7 +277,7 @@ export class UIControl
                icon: 'fas fa-file-import fa-fw',
                efx: efx === 'ripple' ? ripple() : void 0,
                title: 'FILES.BrowseTooltip',
-               styles: { 'margin-left': '0.25em'}
+               styles: { 'margin-left': '0.25em' }
             };
          }
 
@@ -301,11 +301,11 @@ export class UIControl
                efx: efx === 'ripple' ? rippleFocus() : void 0,
                type: componentType,
                options
-            }
+            };
          }
          else if (setting.type === Number)
          {
-            componentType = typeof setting.range === 'object' ? 'range' : 'number'
+            componentType = typeof setting.range === 'object' ? 'range' : 'number';
          }
 
          let inputData;
@@ -330,7 +330,7 @@ export class UIControl
             filePicker,
             range,
             store,
-            initialValue: game.settings.get(setting.namespace, setting.key),
+            initialValue: globalThis.game.settings.get(setting.namespace, setting.key),
             scope: setting.scope,
             requiresReload: typeof setting.requiresReload === 'boolean' ? setting.requiresReload : false,
             buttonData,
@@ -391,7 +391,7 @@ export class UIControl
             parsedSection.folder = {
                label,
                store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0
-            }
+            };
          }
          else if (isObject(section.folder))
          {
@@ -402,7 +402,7 @@ export class UIControl
                store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0,
                summaryEnd: section.folder.summaryEnd,
                styles: section.folder.styles
-            }
+            };
          }
 
          sections.push(parsedSection);
@@ -437,7 +437,7 @@ export class UIControl
       if (!reload) { return; }
 
       // Reload all connected clients. Note: Foundry v9 might not support this event.
-      if ( world && game.user.isGM ) { game.socket.emit('reload'); }
+      if (world && globalThis.game.user.isGM) { globalThis.game.socket.emit('reload'); }
 
       // Reload locally.
       window.location.reload();
@@ -461,7 +461,8 @@ export class UIControl
  *
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
  *
- * @property {SessionStorage} [storage] - TRL SessionStorage instance to serialize folder state and scrollbar position.
+ * @property {TJSSessionStorage} [storage] - TRL TJSSessionStorage instance to serialize folder state and scrollbar
+ *                                           position.
  */
 
 /**

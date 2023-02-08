@@ -584,7 +584,7 @@ class SelectedAPI
    }
 
    /**
-    * @returns {IterableIterator<Object>} Selected controls iterator.
+    * @returns {IterableIterator<object>} Selected controls iterator.
     */
    values()
    {

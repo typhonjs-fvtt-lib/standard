@@ -1,7 +1,7 @@
 <script>
    import { getContext } from 'svelte';
 
-   const control = getContext('pcControl');
+   const control = getContext('#pcControl');
 
    const { isPrimary, selected } = control.stores;
 </script>

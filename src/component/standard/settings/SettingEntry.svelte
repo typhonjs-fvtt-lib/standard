@@ -14,10 +14,11 @@
     * TODO: replace range input support below w/ TJSInputRange when available.
     */
 
+   import { TJSIconButton } from '../button/index.js';
+
    import {
-      TJSIconButton,
       TJSInput,
-      TJSSelect }   from '@typhonjs-fvtt/svelte-standard/component';
+      TJSSelect }           from '../form/index.js';
 
    /** @type {object} */
    export let setting = void 0;

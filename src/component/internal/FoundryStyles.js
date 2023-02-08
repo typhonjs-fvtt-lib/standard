@@ -16,18 +16,22 @@ export class FoundryStyles
    {
       this.#initialized = true;
 
-      const styleSheets = Array.from(document.styleSheets).filter((sheet) => sheet.href !== null);
+      const styleSheets = Array.from(document.styleSheets).filter((entry) => entry.href !== null);
 
       let sheet;
 
-      const foundryStyleSheet = foundry.utils.getRoute('/css/style.css');
+      const foundryStyleSheet = globalThis.foundry.utils.getRoute('/css/style.css');
 
       // Find the core Foundry stylesheet.
       for (const styleSheet of styleSheets)
       {
          let url;
 
-         try { url = new URL(styleSheet.href); } catch (err) { continue; }
+         try
+         {
+            url = new URL(styleSheet.href);
+         }
+         catch (err) { continue; }
 
          if (typeof url.pathname === 'string' && url.pathname === foundryStyleSheet)
          {

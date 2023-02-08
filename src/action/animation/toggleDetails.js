@@ -14,9 +14,9 @@ import { subscribeFirstRest } from '@typhonjs-svelte/lib/store';
  *
  * @param {object} opts - Options parameters.
  *
- * @param {import('svelte/store').Writable<boolean>} store - A boolean store.
+ * @param {import('svelte/store').Writable<boolean>} opts.store - A boolean store.
  *
- * @param {boolean} [clickActive] - When false click events are not handled.
+ * @param {boolean} [opts.clickActive] - When false click events are not handled.
  *
  * @returns {object} Destroy callback.
  */
@@ -29,10 +29,10 @@ export function toggleDetails(details, { store, clickActive = true } = {})
    let animation;
 
    /** @type {boolean} */
-   let open = details.open;
+   let open = details.open;  // eslint-disable-line no-shadow
 
    // The store sets initial open state and handles animation on further changes.
-   const unsubscribe = subscribeFirstRest(store, (value) => { open = value; details.open = open }, async (value) =>
+   const unsubscribe = subscribeFirstRest(store, (value) => { open = value; details.open = open; }, async (value) =>
    {
       open = value;
 

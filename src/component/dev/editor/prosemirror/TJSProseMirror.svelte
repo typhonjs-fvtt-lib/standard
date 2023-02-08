@@ -27,8 +27,15 @@
     * Events: There are three events fired when the editor is canceled, saved, and started.
     * ---------------------------------
     * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
-    * `editor:enrichedContent` - Fired when content is enriched. Access data from `event.detail.enrichedContent`.
+    *
+    * `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
+    *                             `event.detail.document`.
+    *
+    * `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
+    *                            `event.detail.enrichedContent`.
+    *
     * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    *
     * `editor:start` - Fired when editing is started.
     *
     * The following CSS variables control the associated styles with the default values.
@@ -51,10 +58,10 @@
     *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
-    * --tjs-editor-inactive-hover-cursor - text
-    * --tjs-editor-inactive-hover-box-shadow - unset
-    * --tjs-editor-inactive-hover-outline - unset
-    * --tjs-editor-inactive-hover-user-select - text
+    * --tjs-editor-inactive-cursor-hover - text
+    * --tjs-editor-inactive-box-shadow-hover - unset
+    * --tjs-editor-inactive-outline-hover - unset
+    * --tjs-editor-inactive-user-select-hover - text
     *
     * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
@@ -67,8 +74,8 @@
     *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
     * ---------------------------------
-    * --tjs-editor-edit-right - 5px
-    * --tjs-editor-edit-top - 0
+    * --tjs-editor-edit-button-right - 5px
+    * --tjs-editor-edit-button-top - 0
     *
     * .editor-menu; Defines the toolbar / menu.
     * ---------------------------------
@@ -168,7 +175,7 @@
    const dispatch = createEventDispatcher();
 
    // Provides reactive updates for any associated Foundry document.
-   const doc = new TJSDocument();
+   const doc = new TJSDocument({ delete: onDocumentDeleted });
 
    /** @type {boolean} */
    let clickToEdit;
@@ -218,7 +225,7 @@
     */
    $: if (options.document !== void 0)
    {
-      if (!(options.document instanceof foundry.abstract.Document))
+      if (!(options.document instanceof globalThis.foundry.abstract.Document))
       {
          throw new TypeError(`TJSProseMirror error: 'options.document' is not a Foundry document.`);
       }
@@ -246,51 +253,21 @@
       {
          enrichedContent = '';
          content = '';
-         destroyEditor();
-      }
 
-      doc.set(void 0);
+         destroyEditor();
+
+         doc.set(void 0);
+      }
    }
 
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 ? foundry.utils.getProperty($doc, options.fieldName) :
+      content = $doc !== void 0 ? globalThis.foundry.utils.getProperty($doc, options.fieldName) :
        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
       onContentChanged(content, typeof options.enrichContent === 'boolean' ? options.enrichContent : true);
-   }
-
-   /**
-    * Separated into a standalone method so applying async value to enriched content doesn't double trigger a reactive
-    * statement twice.
-    *
-    * @param {string}   content - Content prop.
-    *
-    * @param {boolean}  enrichContent - `options.enrichContent` or default of `true.
-    *
-    * @returns {Promise<void>}
-    */
-   async function onContentChanged(content, enrichContent)
-   {
-      if (typeof content === 'string')
-      {
-         if (enrichContent)
-         {
-            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
-         }
-         else
-         {
-            enrichedContent = content;
-         }
-      }
-      else
-      {
-         enrichedContent = '';
-      }
-
-      dispatch('editor:enrichedContent', { enrichedContent });
    }
 
    onDestroy(() =>
@@ -411,6 +388,54 @@
    }
 
    /**
+    * Separated into a standalone method so applying async value to enriched content doesn't double trigger a reactive
+    * statement twice.
+    *
+    * @param {string}   content - Content prop.
+    *
+    * @param {boolean}  enrichContent - `options.enrichContent` or default of `true.
+    *
+    * @returns {Promise<void>}
+    */
+   async function onContentChanged(content, enrichContent)
+   {
+      if (typeof content === 'string')
+      {
+         if (enrichContent)
+         {
+            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
+         }
+         else
+         {
+            enrichedContent = content;
+         }
+      }
+      else
+      {
+         enrichedContent = '';
+      }
+
+      dispatch('editor:enrichedContent', { enrichedContent });
+   }
+
+   /**
+    * Handles cleaning up the editor state after any associated document has been deleted.
+    *
+    * @param {foundry.abstract.Document} document - The deleted document.
+    */
+   function onDocumentDeleted(document)
+   {
+      options.document = void 0;
+
+      destroyEditor();
+
+      dispatch('editor:document:deleted', { document });
+
+      content = '';
+      enrichedContent = '';
+   }
+
+   /**
     * Prevents `Escape` key or `Ctrl-s` from propagating when the editor is active preventing the app from being closed.
     * The `Escape` key is used to close the active editor first. Foundry by default when `Ctrl-s` is pressed as of v10
     * scrolls the canvas down which is undesired when saving an editor as well.
@@ -419,7 +444,7 @@
     */
    function onKeydown(event)
    {
-      if (editorActive && (event.key === 'Escape' || (event.key === 's' && (event.ctrlKey || event.metaKey))))
+      if (editorActive && (event.code === 'Escape' || (event.code === 'KeyS' && (event.ctrlKey || event.metaKey))))
       {
          event.preventDefault();
          event.stopPropagation();
@@ -477,7 +502,8 @@
      on:keydown={onKeydown}
      role=presentation>
     {#if editorButton}
-        <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
+        <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
+        <a class=editor-edit on:click={() => initEditor()} role=button><i class="fas fa-edit"></i></a>
     {/if}
     {#if editorActive}
         <div bind:this={editorContentEl} class=editor-content />
@@ -507,21 +533,17 @@
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
-        box-shadow: var(--tjs-editor-active-box-shadow, unset);
-        outline: var(--tjs-editor-active-outline, unset);
+        box-shadow: var(--tjs-editor-active-box-shadow);
+        outline: var(--tjs-editor-active-outline);
         overflow: var(--tjs-editor-active-overflow, unset);
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
     }
 
     /**
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered.
      */
     .tjs-editor:not(.editor-active):hover {
-        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
-        outline: var(--tjs-editor-inactive-hover-outline, unset);
-
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+        box-shadow: var(--tjs-editor-inactive-box-shadow-hover);
+        outline: var(--tjs-editor-inactive-outline-hover);
     }
 
     /**
@@ -529,7 +551,7 @@
      * via showing the text cursor across the whole editor element.
      */
     .tjs-editor.click-to-edit:not(.editor-active):hover {
-        cursor: var(--tjs-editor-inactive-hover-cursor, text);
+        cursor: var(--tjs-editor-inactive-cursor-hover, text);
     }
 
     .editor-content {
@@ -541,8 +563,8 @@
     }
 
     .editor-edit {
-        right: var(--tjs-editor-edit-right, 5px);
-        top: var(--tjs-editor-edit-top, 0);
+        right: var(--tjs-editor-edit-button-right, 5px);
+        top: var(--tjs-editor-edit-button-top, 0);
     }
 
     .editor-enriched {
@@ -551,7 +573,7 @@
 
     /* Controls whether the editor content text is selectable when the editor is inactive. */
     .tjs-editor:not(.editor-active) .editor-enriched {
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+        user-select: var(--tjs-editor-inactive-user-select-hover, text);
     }
 
     /* Don't add an initial margin top to first paragraph element in `.editor-content`. */

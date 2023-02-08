@@ -8,8 +8,8 @@
 
    export let data = void 0;
 
-   const control = getContext('pcControl');
-   const controls = getContext('pclControls');
+   const control = getContext('#pcControl');
+   const controls = getContext('#pclControls');
 
    const capture = () => null;
 

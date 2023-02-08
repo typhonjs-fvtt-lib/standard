@@ -11,7 +11,7 @@ export class FontManager
    /**
     * Collect all the font definitions and combine them.
     *
-    * @returns {Object<FontFamilyDefinition>[]}
+    * @returns {Object<FontFamilyDefinition>[]} Core font definitions.
     */
    static getCoreDefinitions()
    {
@@ -22,19 +22,19 @@ export class FontManager
          /**
           * @deprecated since v10.
           */
-         const legacyFamilies = CONFIG._fontFamilies.reduce((obj, f) =>
+         const legacyFamilies = globalThis.CONFIG._fontFamilies.reduce((obj, f) =>
          {
             obj[f] = { editor: true, fonts: [] };
             return obj;
          }, {});
 
-         fonts.push(foundry.utils.duplicate(CONFIG.fontDefinitions));
-         fonts.push(foundry.utils.duplicate(game.settings.get('core', 'fonts')));
+         fonts.push(globalThis.foundry.utils.duplicate(globalThis.CONFIG.fontDefinitions));
+         fonts.push(globalThis.foundry.utils.duplicate(globalThis.game.settings.get('core', 'fonts')));
          fonts.push(legacyFamilies);
       }
       else
       {
-         const legacyFamilies = CONFIG.fontFamilies.reduce((obj, f) =>
+         const legacyFamilies = globalThis.CONFIG.fontFamilies.reduce((obj, f) =>
          {
             obj[f] = { editor: true, fonts: [] };
             return obj;
@@ -68,7 +68,7 @@ export class FontManager
          for (const fontEntry of definition.fonts)
          {
             // Collect URLs from FontDefinition.
-            const urls = fontEntry.urls.map(url => `url("${url}")`).join(', ');
+            const urls = fontEntry.urls.map((url) => `url("${url}")`).join(', ');
 
             // Note: 'font' contains 'FontFaceDescriptors' data.
             const fontFace = new FontFace(family, urls, fontEntry);
@@ -116,8 +116,7 @@ export class FontManager
    {
       // TODO sanity checks
 
-      const allFonts = fonts ? Array.isArray(fonts) ? fonts : [fonts]
-       : this.getCoreDefinitions();
+      const allFonts = fonts ? Array.isArray(fonts) ? fonts : [fonts] : this.getCoreDefinitions();
 
       const promises = [];
 
@@ -140,7 +139,7 @@ export class FontManager
          }
       }
 
-      const timeout = new Promise(resolve => setTimeout(resolve, ms));
+      const timeout = new Promise((resolve) => setTimeout(resolve, ms));
       const ready = Promise.all(promises).then(() => document.fonts.ready);
 
       return Promise.race([ready, timeout]);

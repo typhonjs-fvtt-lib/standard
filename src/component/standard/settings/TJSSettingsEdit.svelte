@@ -10,7 +10,7 @@
     * {@link TJSGameSettings.addSection}.
     *
     * The other prop `options` is an object instance defined by {@link TJSSettingsCreateOptions}. This allows you to
-    * associate a {@link SessionStorage} instance that automatically will track open / closed state of any section
+    * associate a {@link TJSSessionStorage} instance that automatically will track open / closed state of any section
     * folders configured along with the scrolling position of the scrollbar and define the `efx action` associated with
     * the TJS input elements used in
     *

@@ -1,6 +1,6 @@
 import {
    isObject,
-   uuidv4 }                   from '@typhonjs-fvtt/svelte/util';
+   uuidv4 }                   from '@typhonjs-svelte/lib/util';
 
 import { ArrayObjectStore }   from './ArrayObjectStore.js';
 
@@ -79,6 +79,8 @@ export class CrudArrayObjectStore extends ArrayObjectStore
             data: store.toJSON()
          });
       }
+
+      return store;
    }
 
    /**

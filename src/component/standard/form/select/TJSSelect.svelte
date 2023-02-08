@@ -1,18 +1,39 @@
 <script>
    /**
+    * --tjs-input-appearance
+    * --tjs-input-background
     * --tjs-input-border
     * --tjs-input-border-radius
-    * --tjs-input-background
+    * --tjs-input-box-shadow-focus
+    * --tjs-input-box-shadow-focus-visible
     * --tjs-input-cursor
+    * --tjs-input-flex
     * --tjs-input-height
+    * --tjs-input-outline-focus-visible
+    * --tjs-input-outline-offset
+    * --tjs-input-overflow
+    * --tjs-input-text-overflow
+    * --tjs-input-transition-focus-visible
     * --tjs-input-width
     *
+    * --tjs-select-appearance
+    * --tjs-select-background
     * --tjs-select-border
     * --tjs-select-border-radius
-    * --tjs-select-background
+    * --tjs-select-box-shadow-focus
+    * --tjs-select-box-shadow-focus-visible
     * --tjs-select-cursor
+    * --tjs-select-flex
     * --tjs-select-height
+    * --tjs-select-outline-focus-visible
+    * --tjs-select-outline-offset
+    * --tjs-select-overflow
+    * --tjs-select-text-overflow
+    * --tjs-select-transition-focus-visible
     * --tjs-select-width
+    *
+    * --tjs-select-option-background; fallback: --tjs-default-popup-background; default: #23221d
+    * --tjs-select-option-color; fallback: --tjs-default-popup-primary-color; default: #b5b3a4
     */
 
    /**
@@ -30,9 +51,7 @@
    import { onMount }         from 'svelte';
    import { writable }        from 'svelte/store';
 
-   import {
-      applyStyles,
-      autoBlur }              from '@typhonjs-svelte/lib/action';
+   import { applyStyles }     from '@typhonjs-svelte/lib/action';
    import { isWritableStore } from '@typhonjs-svelte/lib/store';
 
    export let select = void 0;
@@ -63,7 +82,7 @@
 
 <div on:change class=tjs-select-container use:efx use:applyStyles={styles}>
    <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
-   <select on:change class=tjs-select bind:value={$store} use:autoBlur>
+   <select on:change class=tjs-select bind:value={$store}>
       {#each options as option}
          <option class=tjs-select-option value={option.value}>
             {option.label}
@@ -75,21 +94,24 @@
 <style>
    .tjs-select-container {
       pointer-events: none;
+      display: block;
+      overflow: var(--tjs-select-overflow, var(--tjs-input-overflow, hidden));
+      transform-style: preserve-3d;
+
       background: var(--tjs-select-background, var(--tjs-input-background));
       border-radius: var(--tjs-select-border-radius, var(--tjs-input-border-radius));
-      display: block;
-      overflow: hidden;
+      flex: var(--tjs-select-flex, var(--tjs-input-flex));
       margin: var(--tjs-select-margin, var(--tjs-input-margin));
       height: var(--tjs-select-height, var(--tjs-input-height));
       width: var(--tjs-select-width, var(--tjs-input-width));
-      transform-style: preserve-3d;
    }
 
    select {
       pointer-events: initial;
       display: inline-block;
       position: relative;
-      overflow: hidden;
+
+      appearance: var(--tjs-select-appearance, var(--tjs-input-appearance, inherit));
 
       background: transparent;
 
@@ -105,7 +127,9 @@
       font-family: inherit;
       font-size: inherit;
       line-height: inherit;
+      outline-offset: var(--tjs-select-outline-offset, var(--tjs-input-outline-offset));
       text-align: var(--tjs-select-text-align, var(--tjs-input-text-align));
+      text-overflow: var(--tjs-select-text-overflow, var(--tjs-input-text-overflow, ellipsis));
 
       cursor: var(--tjs-select-cursor, var(--tjs-input-cursor));
 
@@ -113,7 +137,17 @@
    }
 
    select option {
-      background: var(--tjs-select-option-background, var(--tjs-select-option-background));
-      color: inherit;
+      background: var(--tjs-select-option-background, var(--tjs-default-popup-background, #23221d));
+      color: var(--tjs-select-option-color, var(--tjs-default-popup-primary-color, #b5b3a4));
+   }
+
+   select:focus {
+      box-shadow: var(--tjs-select-box-shadow-focus, var(--tjs-input-box-shadow-focus, unset));
+   }
+
+   select:focus-visible {
+      box-shadow: var(--tjs-select-box-shadow-focus-visible, var(--tjs-input-box-shadow-focus-visible, unset));
+      outline: var(--tjs-select-outline-focus-visible, var(--tjs-input-outline-focus-visible));
+      transition: var(--tjs-select-transition-focus-visible, var(--tjs-input-transition-focus-visible));
    }
 </style>

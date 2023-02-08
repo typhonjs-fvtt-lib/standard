@@ -1,13 +1,13 @@
 import {
    DynArrayReducer,
    isWritableStore,
-   subscribeIgnoreFirst }     from '@typhonjs-fvtt/svelte/store';
+   subscribeIgnoreFirst }     from '@typhonjs-svelte/lib/store';
 
 import {
    debounce,
    isObject,
    klona,
-   uuidv4 }                   from '@typhonjs-fvtt/svelte/util';
+   uuidv4 }                   from '@typhonjs-svelte/lib/util';
 
 import { ObjectEntryStore }   from './ObjectEntryStore.js';
 
@@ -74,7 +74,7 @@ export class ArrayObjectStore
          throw new TypeError(`'StoreClass' is not a writable store constructor.`);
       }
 
-      let hasIDGetter = false
+      let hasIDGetter = false;
 
       // Walk parent prototype chain. Check for descriptor at each prototype level.
       for (let o = StoreClass.prototype; o; o = Object.getPrototypeOf(o))
@@ -171,7 +171,7 @@ export class ArrayObjectStore
 
       if (this.#data.findIndex((entry) => entry.id === entryData.id) >= 0)
       {
-         throw new Error(`'entryData.id' (${entryData.id}) already in this ArrayObjectStore instance.`)
+         throw new Error(`'entryData.id' (${entryData.id}) already in this ArrayObjectStore instance.`);
       }
 
       const store = this.#createStore(entryData);
@@ -184,7 +184,7 @@ export class ArrayObjectStore
    /**
     * Add a new store entry from the given data.
     *
-    * @param {object}   entryData
+    * @param {object}   entryData -
     *
     * @returns {T} New store entry instance.
     */
@@ -297,7 +297,7 @@ export class ArrayObjectStore
     * Sets the children store data by 'id', adds new entry store instances, or removes entries that are no longer in the
     * update list.
     *
-    * @param {T[]}   updateList
+    * @param {T[]}   updateList -
     */
    set(updateList)
    {
@@ -321,7 +321,7 @@ export class ArrayObjectStore
 
          const id = updateData.id;
 
-         if (typeof id !== 'string') { throw new Error(`'updateData.id' is not a string.`)}
+         if (typeof id !== 'string') { throw new Error(`'updateData.id' is not a string.`); }
 
          const localIndex = data.findIndex((entry) => entry.id === id);
 

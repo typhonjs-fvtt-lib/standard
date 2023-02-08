@@ -1,6 +1,8 @@
 import { writable }        from 'svelte/store';
 
-import { isIterable }      from '@typhonjs-svelte/lib/util';
+import {
+   isIterable,
+   isObject }              from '@typhonjs-svelte/lib/util';
 
 import {
    isWritableStore,
@@ -9,19 +11,25 @@ import {
 import { UIControl }       from './UIControl.js';
 
 /**
- * Registers game settings and creates a backing Svelte store for each setting. It is possible to add multiple
- * `onChange` callbacks on registration.
+ * Registers game settings and creates a backing Svelte store for each setting. The Svelte store will update the
+ * Foundry game settings and vice versa when changes occur to the Foundry game settings the updated data is set to the
+ * store.
+ *
+ * Note: It is possible to add multiple `onChange` callbacks on registration.
+ *
+ * TODO: A possible future extension is to offer type checking against the setting type by creating a customized
+ * writable store that has an overloaded `set` method to provide type checking.
  */
 export class TJSGameSettings
 {
    /** @type {string} */
    #namespace;
 
-   /** @type {GameSetting[]} */
+   /** @type {GameSettingData[]} */
    #settings = [];
 
    /**
-    * @type {Map<string, GSWritableStore>}
+    * @type {Map<string, import('svelte/store').Writable>}
     */
    #stores = new Map();
 
@@ -42,11 +50,11 @@ export class TJSGameSettings
    }
 
    /**
-    * Creates a new GSWritableStore for the given key.
+    * Creates a new writable for the given key.
     *
-    * @param {string}   initialValue - An initial value to set to new stores.
+    * @param {*}  initialValue - An initial value to set to new stores.
     *
-    * @returns {GSWritableStore} The new GSWritableStore.
+    * @returns {import('svelte/store').Writable} The new writable.
     */
    static #createStore(initialValue)
    {
@@ -54,9 +62,9 @@ export class TJSGameSettings
    }
 
    /**
-    * Provides a generator to return stored settings data.
+    * Provides an iterator / generator to return stored settings data.
     *
-    * @returns {Generator<*, void, *>}
+    * @returns {Generator<GameSettingData, void, *>}
     */
    *[Symbol.iterator]()
    {
@@ -83,13 +91,13 @@ export class TJSGameSettings
    }
 
    /**
-    * Gets a store from the GSWritableStore Map or creates a new store for the key.
+    * Gets a store from the `stores` Map or creates a new store for the key.
     *
     * @param {string}   key - Key to lookup in stores map.
     *
     * @param {string}   [initialValue] - An initial value to set to new stores.
     *
-    * @returns {GSWritableStore} The store for the given key.
+    * @returns {import('svelte/store').Writable} The store for the given key.
     */
    #getStore(key, initialValue)
    {
@@ -108,7 +116,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {GSReadableStore|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Readable|undefined} The associated store for the given game setting key.
     */
    getReadableStore(key)
    {
@@ -120,7 +128,7 @@ export class TJSGameSettings
 
       const store = this.#getStore(key);
 
-      return { subscribe: store.subscribe, get: store.get };
+      return { subscribe: store.subscribe };
    }
 
    /**
@@ -128,7 +136,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {GSWritableStore|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Writable|undefined} The associated store for the given game setting key.
     */
    getStore(key)
    {
@@ -140,7 +148,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {GSWritableStore|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Writable|undefined} The associated store for the given game setting key.
     */
    getWritableStore(key)
    {
@@ -170,16 +178,16 @@ export class TJSGameSettings
     *                                   registering the setting with Foundry. This allows the settings to be displayed
     *                                   in the app itself, but removed from the standard Foundry configuration location.
     *
-    * @returns {Function} The specific store subscription handler assigned to the passed in store or
+    * @returns {Function} The specific store subscription handler assigned to the passed in store.
     */
    register(setting, coreConfig = true)
    {
-      if (typeof setting !== 'object')
+      if (!isObject(setting))
       {
          throw new TypeError(`TJSGameSettings - register: setting is not an object.`);
       }
 
-      if (typeof setting.options !== 'object')
+      if (!isObject(setting.options))
       {
          throw new TypeError(`TJSGameSettings - register: 'setting.options' attribute is not an object.`);
       }
@@ -195,16 +203,7 @@ export class TJSGameSettings
           `TJSGameSettings - register: 'setting.store' attribute is not a writable store.`);
       }
 
-      // TODO: Remove deprecation warning and fully remove support for `moduleId` in a future TRL release.
-      if (typeof setting.moduleId === 'string')
-      {
-         console.warn(
-          `TJSGameSettings - register deprecation warning: 'moduleId' should be replaced with 'namespace'.`);
-         console.warn(`'moduleId' will cease to work in a future update of TRL / TJSGameSettings.`);
-      }
-
-      // TODO: Remove nullish coalescing operator in a future TRL release.
-      const namespace = setting.namespace ?? setting.moduleId;
+      const namespace = setting.namespace;
       const key = setting.key;
       const folder = setting.folder;
 
@@ -269,28 +268,28 @@ export class TJSGameSettings
          for (const entry of onchangeFunctions) { entry(value); }
       };
 
-      game.settings.register(namespace, key, { ...options, config: foundryConfig, onChange });
+      globalThis.game.settings.register(namespace, key, { ...options, config: foundryConfig, onChange });
 
       // Set new store value with existing setting or default value.
-      const targetStore = store ? store : this.#getStore(key, game.settings.get(namespace, key));
+      const targetStore = store ? store : this.#getStore(key, globalThis.game.settings.get(namespace, key));
 
       // If a store instance is passed into register then initialize it with game settings data.
       if (store)
       {
          this.#stores.set(key, targetStore);
-         store.set(game.settings.get(namespace, key));
+         store.set(globalThis.game.settings.get(namespace, key));
       }
 
       const storeHandler = async (value) =>
       {
-         if (!gateSet && game.settings.get(namespace, key) !== value)
+         if (!gateSet && globalThis.game.settings.get(namespace, key) !== value)
          {
             gateSet = true;
-            await game.settings.set(namespace, key, value);
+            await globalThis.game.settings.set(namespace, key, value);
          }
 
          gateSet = false;
-      }
+      };
 
       // Subscribe to self to set associated game setting on updates after verifying that the new value does not match
       // existing game setting.
@@ -329,23 +328,22 @@ export class TJSGameSettings
 
       for (const entry of settings)
       {
-         if (typeof entry !== 'object')
+         if (!isObject(entry))
          {
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings is not an object.`);
          }
 
-         // TODO: Uncomment when deprecation for 'moduleId' is removed in future TRL release.
-         // if (typeof entry.namespace !== 'string')
-         // {
-         //    throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'namespace' attribute.`);
-         // }
+         if (typeof entry.namespace !== 'string')
+         {
+            throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'namespace' attribute.`);
+         }
 
          if (typeof entry.key !== 'string')
          {
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'key' attribute.`);
          }
 
-         if (typeof entry.options !== 'object')
+         if (!isObject(entry.options))
          {
             throw new TypeError(`TJSGameSettings - registerAll: entry in settings missing 'options' attribute.`);
          }
@@ -370,15 +368,17 @@ export class TJSGameSettings
  *
  * @property {string} name - The displayed name of the setting.
  *
- * @property {Function} [onChange] - An onChange callback to directly receive callbacks from Foundry on setting change.
+ * @property {Function|Iterable<Function>} [onChange] - An onChange callback function or iterable list of callbacks to
+ *                                                      directly receive callbacks from Foundry on setting change.
  *
- * @property {{min: number, max: number, step: number}} [range] - If range is specified, the resulting setting will be a range slider.
+ * @property {{min: number, max: number, step: number}} [range] - If range is specified, the resulting setting will be
+ *                                                                a range slider.
  *
  * @property {boolean} [requiresReload=false] - If true then a prompt to reload after changes occurs.
  *
  * @property {('client' | 'world')} [scope='client'] - Scope for setting.
  *
- * @property {Object|Function} type - A constructable object or function.
+ * @property {object|Function} type - A constructable object or function.
  */
 
 /**
@@ -396,9 +396,11 @@ export class TJSGameSettings
  */
 
 /**
- * @typedef {import('svelte/store').Writable} GSWritableStore - The backing Svelte store; writable w/ get method attached.
- */
-
-/**
- * @typedef {import('svelte/store').Readable} GSReadableStore - The backing Svelte store; readable w/ get method attached.
+ * @typedef {GameSettingOptions} GameSettingData - Stores the primary TJS game setting keys w/ GameSettingOptions.
+ *
+ * @property {string} namespace - The setting namespace; usually the ID of the module / system.
+ *
+ * @property {string} key - The setting key to register.
+ *
+ * @property {string} folder - The name of the TJSSvgFolder to put this setting in to group them.
  */

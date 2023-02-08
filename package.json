@@ -1,6 +1,6 @@
 {
   "name": "@typhonjs-fvtt/svelte-standard",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library.",
   "type": "module",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
@@ -29,6 +29,14 @@
       "types": "./_dist/dev-tools/prosemirror/index.d.ts",
       "import": "./_dist/dev-tools/prosemirror/index.js"
     },
+    "./plugin/data": {
+      "types": "./_dist/plugin/data/index.d.ts",
+      "import": "./_dist/plugin/data/index.js"
+    },
+    "./plugin/system": {
+      "types": "./_dist/plugin/system/index.d.ts",
+      "import": "./_dist/plugin/system/index.js"
+    },
     "./prosemirror/plugins": {
       "types": "./_dist/prosemirror/plugins/index.d.ts",
       "import": "./_dist/prosemirror/plugins/index.js"
@@ -40,24 +48,23 @@
     "./package.json": "./package.json"
   },
   "imports": {
-    "#internal": "./src/internal/index.js"
-  },
-  "dependencies": {
+    "#runtime/svelte/application": "@typhonjs-fvtt/runtime/svelte/application",
+    "#runtime/color/colord": "@typhonjs-fvtt/runtime/color/colord"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^4",
-    "@rollup/plugin-commonjs": "^23",
+    "@rollup/plugin-commonjs": "^24",
     "@rollup/plugin-node-resolve": "^15",
-    "@typhonjs-build-test/esm-d-ts": "^0.0.6",
+    "@typhonjs-build-test/esm-d-ts": "^0.0.8",
     "@typhonjs-config/eslint-config": "^0.3.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
-    "fs-extra": "^10",
-    "prosemirror-dev-toolkit": "^1.0.5",
+    "fs-extra": "^11",
+    "prosemirror-dev-toolkit": "^1.0.7",
     "prosemirror-state": "^1.4.2",
     "rollup": "^3",
-    "svelte": "3.52.0",
+    "svelte": "3.55.1",
     "upath": "^2"
   },
   "engines": {

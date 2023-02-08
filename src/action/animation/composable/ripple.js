@@ -15,23 +15,35 @@ import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
  *
  * @param {string}   [opts.background='rgba(255, 255, 255, 0.7)'] - A valid CSS background attribute.
  *
- * @param {string}   [opts.event='click'] - DOM event to bind element to respond with the ripple effect.
+ * @param {Iterable<string>}  [opts.events=['click', 'keyup']] - DOM event to bind element to respond with the ripple
+ *                                                                  effect.
+ *
+ * @param {string}   [opts.keyCode='Enter'] - Key code to trigger for any applicable key events.
  *
  * @param {number}   [opts.debounce=undefined] - Add a debounce to incoming events in milliseconds.
  *
- * @returns Function - Actual action.
+ * @returns {Function} Actual action.
  */
-export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', event = 'click', debounce } = {})
+export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)', events = ['click', 'keyup'],
+ keyCode = 'Enter', debounce } = {})
 {
    return (element) =>
    {
-      function createRipple(e) {
+      /**
+       * Creates the ripple effect.
+       *
+       * @param {MouseEvent|KeyboardEvent}   e -
+       */
+      function createRipple(e)
+      {
          const elementRect = element.getBoundingClientRect();
 
          const diameter = Math.max(elementRect.width, elementRect.height);
          const radius = diameter / 2;
-         const left = `${e.clientX - (elementRect.left + radius)}px`;
-         const top = `${e.clientY - (elementRect.top + radius)}px`;
+
+         // Find the adjusted click location relative to center or if no `clientX/Y` parameters choose center.
+         const left = e.clientX ? `${e.clientX - (elementRect.left + radius)}px` : '0';
+         const top = e.clientY ? `${e.clientY - (elementRect.top + radius)}px` : '0';
 
          const span = document.createElement('span');
 
@@ -62,15 +74,52 @@ export function ripple({ duration = 600, background = 'rgba(255, 255, 255, 0.7)'
          ],
          duration);
 
-         animation.onfinish = () => span.remove();
+         animation.onfinish = () =>
+         {
+            if (span && span.isConnected) { span.remove(); }
+         };
+      }
+
+      /**
+       * Handles any key event and only triggers the ripple effect if key code matches.
+       *
+       * @param {KeyboardEvent}  event -
+       */
+      function keyHandler(event)
+      {
+         if (event?.code === keyCode) { createRipple(event); }
       }
 
       const eventFn = Number.isInteger(debounce) && debounce > 0 ? debounceFn(createRipple, debounce) : createRipple;
+      const keyEventFn = Number.isInteger(debounce) && debounce > 0 ? debounceFn(keyHandler, debounce) : keyHandler;
 
-      element.addEventListener(event, eventFn);
+      for (const event of events)
+      {
+         if (['keydown', 'keyup'].includes(event))
+         {
+            element.addEventListener(event, keyEventFn);
+         }
+         else
+         {
+            element.addEventListener(event, eventFn);
+         }
+      }
 
       return {
-         destroy: () => element.removeEventListener(event, eventFn)
+         destroy: () =>
+         {
+            for (const event of events)
+            {
+               if (['keydown', 'keyup'].includes(event))
+               {
+                  element.removeEventListener(event, keyEventFn);
+               }
+               else
+               {
+                  element.removeEventListener(event, eventFn);
+               }
+            }
+         }
       };
-   }
+   };
 }

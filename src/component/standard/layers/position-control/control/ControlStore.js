@@ -71,6 +71,9 @@ export class ControlStore
 
    get isPrimary() { return this.#data.isPrimary; }
 
+   /**
+    * @returns {Position} Control position.
+    */
    get position() { return this.#position; }
 
    get resizing() { return this.#data.resizing; }

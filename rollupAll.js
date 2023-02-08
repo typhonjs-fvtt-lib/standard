@@ -16,7 +16,10 @@ const s_LOCAL_EXTERNAL = [
    'svelte', 'svelte/easing', 'svelte/internal', 'svelte/motion', 'svelte/store', 'svelte/transition',
    'svelte/types',
 
-   '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/component'
+   '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
+   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/dev-tools',
+   '@typhonjs-fvtt/svelte-standard/plugin/data', '@typhonjs-fvtt/svelte-standard/plugin/system',
+   '@typhonjs-fvtt/svelte-standard/prosemirror', '@typhonjs-fvtt/svelte-standard/store',
 ];
 
 // Defines potential output plugins to use conditionally if the .env file indicates the bundles should be
@@ -54,7 +57,7 @@ const rollupConfigs = [
          input: 'src/dev-tools/prosemirror/index.js',
          external: s_LOCAL_EXTERNAL,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/action'] }),
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror'] }),
             resolve(),
             commonjs()
          ]
@@ -65,6 +68,42 @@ const rollupConfigs = [
          generatedCode: { constBindings: true },
          plugins: outputPlugins,
          sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/plugin/data/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: [`@typhonjs-fvtt/svelte-standard/plugin/data`] }),
+            resolve()
+         ]
+      },
+      output: {
+         file: '_dist/plugin/data/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         // paths: externalPathsNPM,
+         plugins: outputPlugins,
+         sourcemap,
+      }
+   },
+   {
+      input: {
+         input: 'src/plugin/system/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: [`@typhonjs-fvtt/svelte-standard/plugin/system`] }),
+            resolve()
+         ]
+      },
+      output: {
+         file: '_dist/plugin/system/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         // paths: externalPathsNPM,
+         plugins: outputPlugins,
+         sourcemap,
       }
    },
    {
@@ -134,6 +173,16 @@ fs.writeJSONSync(`./_dist/application/package.json`, {
    type: 'module'
 });
 
+let compFiles = await getFileList({ dir: './_dist/application' });
+for (const compFile of compFiles)
+{
+   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
+   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/');
+   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/');
+   fs.writeFileSync(compFile, fileData);
+}
+
 await generateTSDef({
    main: './_dist/application/index.js',
    output: './_types/application/index.d.ts'
@@ -151,29 +200,12 @@ fs.writeJSONSync(`./_dist/component/standard/package.json`, {
    type: 'module'
 });
 
-let compFiles = await getFileList({ dir: './_dist/component/dev' });
+compFiles = await getFileList({ dir: './_dist/component' });
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
-   fs.writeFileSync(compFile, fileData);
-}
-
-compFiles = await getFileList({ dir: './_dist/component/internal' });
-for (const compFile of compFiles)
-{
-   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
-   fs.writeFileSync(compFile, fileData);
-}
-
-compFiles = await getFileList({ dir: './_dist/component/standard' });
-for (const compFile of compFiles)
-{
-   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/')
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/')
+   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
+   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/');
+   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/');
    fs.writeFileSync(compFile, fileData);
 }

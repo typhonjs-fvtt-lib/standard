@@ -17,8 +17,15 @@
     * Events: There are three events fired when the editor is canceled, saved, and started.
     * ---------------------------------
     * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
-    * `editor:enrichedContent` - Fired when content is enriched. Access data from `event.detail.enrichedContent`.
+    *
+    * `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
+    *                             `event.detail.document`.
+    *
+    * `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
+    *                            `event.detail.enrichedContent`.
+    *
     * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    *
     * `editor:start` - Fired when editing is started.
     *
     * The following CSS variables control the associated styles with the default values.
@@ -31,6 +38,7 @@
     * --tjs-editor-height - 100%
     * --tjs-editor-margin - 0
     * --tjs-editor-overflow - auto
+    * --tjs-editor-transition
     * --tjs-editor-width - 100%
     *
     * `.editor` HTMLDivElement; properties available when activated:
@@ -39,14 +47,20 @@
     * --tjs-editor-active-outline - unset
     * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
     *
+    * `.editor` HTMLDivElement; properties available when inactive, but manually focused:
+    * ---------------------------------
+    * --tjs-editor-inactive-box-shadow-focus-visible - fallback: --tjs-default-box-shadow-focus-visible
+    * --tjs-editor-inactive-outline-focus-visible - fallback: --tjs-default-outline-focus-visible; default: revert
+    * --tjs-editor-inactive-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
+    *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
-    * --tjs-editor-inactive-hover-cursor - text
-    * --tjs-editor-inactive-hover-box-shadow - unset
-    * --tjs-editor-inactive-hover-outline - unset
-    * --tjs-editor-inactive-hover-user-select - text
+    * --tjs-editor-inactive-cursor-hover - text
+    * --tjs-editor-inactive-box-shadow-hover - unset
+    * --tjs-editor-inactive-outline-hover - unset
+    * --tjs-editor-inactive-user-select-hover - text
     *
-    * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
+    * `.editor` HTMLDivElement; when editing - the content overflow is set to auto:
     * ---------------------------------
     * --tjs-editor-content-color - #000
     * --tjs-editor-content-font-family - "Signika"
@@ -55,29 +69,10 @@
     * --tjs-editor-content-overflow - auto
     * --tjs-editor-content-padding - 0
     *
-    * `.editor-container` HTMLDivElement; when editing - removes default margins.
-    * ---------------------------------
-    * --tjs-editor-container-margin - 0
-    *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
     * ---------------------------------
-    * --tjs-editor-edit-right - 5px
-    * --tjs-editor-edit-top - 0
-    *
-    * Various TinyMCE `tox` toolbar elements; Defines the toolbar / menu.
-    * ---------------------------------
-    * --tjs-editor-menu-item-background-active - #dee0e2 - This targets the auxiliary TMCE menus.
-    * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
-    * --tjs-editor-toolbar-border-radius - 6px
-    * --tjs-editor-toolbar-button-background - none
-    * --tjs-editor-toolbar-button-background-hover - var(--color-hover-bg, #f0f0e0))
-    * --tjs-editor-toolbar-button-color - var(--color-text-dark-primary, #191813)
-    * --tjs-editor-toolbar-chevron-active - var(--color-text-dark-primary, #191813))
-    * --tjs-editor-toolbar-chevron-inactive - var(--color-text-light-7, #888))
-    * --tjs-editor-toolbar-padding - 0 2px
-    * --tjs-editor-toolbar-separator-border - 1px solid var(--color-text-light-3, #ccc)
-    * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
-    * --tjs-editor-toolbar-width - 100%
+    * --tjs-editor-edit-button-right - 5px
+    * --tjs-editor-edit-button-top - 0
     */
 
    /**
@@ -109,14 +104,16 @@
     *
     * @property {'all'|'end'|'start'}   [initialSelection='start'] - Initial selection range; 'all', 'end' or 'start'.
     *
-    * // @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
-    * //          characters that can be entered.
+    * @property {string}    [keyCode='Enter'] - Defines the key event code to activate the editor when focused.
     *
-    * // @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
-    * //          paragraph.
+    * @property {number}    [maxCharacterLength] - When defined as an integer greater than 0 this limits the max
+    *           characters that can be entered.
     *
-    * // @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
-    * //
+    * @property {boolean}   [preventEnterKey=false] - When true this prevents enter key from creating a new line /
+    *           paragraph.
+    *
+    * @property {boolean}   [preventPaste=false] - Prevents pasting content into the editor.
+    *
     * @property {boolean}   [saveOnBlur=false] - When true any loss of focus / blur from the editor saves the editor
     *           state.
     *
@@ -126,7 +123,6 @@
     *           This is useful for dynamically overriding any built in styles and in particular setting CSS variables
     *           supported.
     */
-
    import {
       createEventDispatcher,
       onDestroy,
@@ -138,7 +134,6 @@
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
    import { CEImpl }        from './CEImpl.js';
-   import {FVTTVersion} from "../../../internal/FVTTVersion";
 
    /** @type {string} */
    export let content = '';
@@ -153,17 +148,10 @@
     */
    export let options = {};
 
-   /**
-    * Defines a regex to check for the shape of a raw Foundry document UUID.
-    *
-    * @type {RegExp}
-    */
-   const s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
-
    const dispatch = createEventDispatcher();
 
    // Provides reactive updates for any associated Foundry document.
-   const doc = new TJSDocument();
+   const doc = new TJSDocument({ delete: onDocumentDeleted });
 
    /** @type {boolean} */
    let clickToEdit;
@@ -179,6 +167,12 @@
 
    /** @type {HTMLDivElement} */
    let editorEl;
+
+   /** @type {string} */
+   let keyCode;
+
+   /** @type {boolean} */
+   let keyFocused = false;
 
    /** @type {number} */
    let maxCharacterLength;
@@ -206,6 +200,11 @@
        !clickToEdit;
 
    /**
+    * Allows another KeyboardEvent.code to be used to activate the editor.
+    */
+   $: keyCode = typeof options.keyCode === 'string' ? options.keyCode : 'Enter';
+
+   /**
     * Updates maxCharacterLength; this does not reactively alter content or the active editor content.
     *
     * TODO: It would be nice to provide reactive updates to content when maxCharacterLength changes, but that is
@@ -219,7 +218,7 @@
     */
    $: if (options.document !== void 0)
    {
-      if (!(options.document instanceof foundry.abstract.Document))
+      if (!(options.document instanceof globalThis.foundry.abstract.Document))
       {
          throw new TypeError(`TJSContentEdit error: 'options.document' is not a Foundry document.`);
       }
@@ -247,20 +246,111 @@
       {
          enrichedContent = '';
          content = '';
-         destroyEditor();
-      }
 
-      doc.set(void 0);
+         destroyEditor();
+
+         doc.set(void 0);
+      }
    }
 
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 ? foundry.utils.getProperty($doc, options.fieldName) :
+      content = $doc !== void 0 ? globalThis.foundry.utils.getProperty($doc, options.fieldName) :
        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
       onContentChanged(content, typeof options.enrichContent === 'boolean' ? options.enrichContent : true);
+   }
+
+   /**
+    * When the component is destroyed if the editor is active then save editor content otherwise destroy editor.
+    */
+   onDestroy(() =>
+   {
+      // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
+      if (editorActive)
+      {
+         saveEditor();
+      }
+      else
+      {
+         destroyEditor();
+      }
+   });
+
+   /**
+    * Destroys any active editor.
+    */
+   function destroyEditor(fireCancel = true)
+   {
+      if (editorActive)
+      {
+         // Post on next micro-task to allow any event propagation for `Escape` key to trigger first.
+         setTimeout(() => editorActive = false, 0);
+
+         // If the editor was initialized by keyboard action then focus it after a short delay to allow the template
+         // to update.
+         if (keyFocused)
+         {
+            keyFocused = false;
+
+            setTimeout(() =>
+            {
+               if (editorEl instanceof HTMLElement && editorEl?.isConnected) { editorEl.focus(); }
+            }, 100);
+         }
+
+         if (fireCancel) { dispatch('editor:cancel'); }
+      }
+   }
+
+   /**
+    * Initializes editor.
+    *
+    * @returns {Promise<void>}
+    */
+   async function initEditor()
+   {
+      editorActive = true;
+
+      // Editor is now active; wait until the template updates w/ new bound `editorEl`.
+      await tick();
+
+      // Set the initial selection; 'all', 'end', 'start'.
+      CEImpl.setInitialSelection(editorEl, options.initialSelection, 'start')
+
+      editorEl.focus();
+
+      dispatch('editor:start');
+   }
+
+   /**
+    * The editor is always saved on loss of focus / blur unless `options.saveOnBlur` is false. If `saveOnBlur` is false
+    * the content editable / editor remains open, but will lose focus. Generally this is undesirable.
+    *
+    * @param {FocusEvent} event -
+    */
+   function onBlur(event)
+   {
+      if (typeof options.saveOnBlur === 'boolean' && !options.saveOnBlur)
+      {
+         if (editorActive) { destroyEditor(true); }
+
+         return;
+      }
+
+      if (editorActive) { saveEditor(); }
+   }
+
+   /**
+    * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
+    *
+    * @param {MouseEvent}   event -
+    */
+   function onClick(event)
+   {
+      if (!editorActive && clickToEdit) { initEditor(); }
    }
 
    /**
@@ -295,79 +385,20 @@
    }
 
    /**
-    * When the component is destroyed if the editor is active then save editor content otherwise destroy editor.
-    */
-   onDestroy(() =>
-   {
-      // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
-      if (editorActive)
-      {
-         saveEditor();
-      }
-      else
-      {
-         destroyEditor();
-      }
-   });
-
-   /**
-    * Destroys any active editor.
-    */
-   function destroyEditor(fireCancel = true)
-   {
-      if (editorActive)
-      {
-         // Post on next micro-task to allow any event propagation for `Escape` key to trigger first.
-         setTimeout(() => editorActive = false, 0);
-
-         if (fireCancel) { dispatch('editor:cancel'); }
-      }
-   }
-
-   /**
-    * Initializes editor.
+    * Handles cleaning up the editor state after any associated document has been deleted.
     *
-    * @returns {Promise<void>}
+    * @param {foundry.abstract.Document} document - The deleted document.
     */
-   async function initEditor()
+   function onDocumentDeleted(document)
    {
-      editorActive = true;
+      options.document = void 0;
 
-      // Editor is now active; wait until the template updates w/ new bound `editorEl`.
-      await tick();
+      destroyEditor();
 
-      // Set the initial selection; 'all', 'end', 'start'.
-      CEImpl.setInitialSelection(editorEl, options.initialSelection, 'start')
+      dispatch('editor:document:deleted', { document });
 
-      editorEl.focus();
-
-      dispatch('editor:start');
-   }
-
-   /**
-    * The editor is always saved on loss of focus / blur unless `options.saveOnBlur` is false. If `saveOnBlur` is false
-    * the content editable / editor remains open, but will lose focus. Generally this is undesirable.
-    *
-    * @param {FocusEvent} event -
-    */
-   function onBlur(event)
-   {
-      if (typeof options.saveOnBlur === 'boolean' && !options.saveOnBlur) { return; }
-
-      if (editorActive) { saveEditor(); }
-   }
-
-   /**
-    * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
-    *
-    * @param {MouseEvent}   event -
-    */
-   function onClick(event)
-   {
-      if (!editorActive && clickToEdit)
-      {
-         initEditor();
-      }
+      content = '';
+      enrichedContent = '';
    }
 
    /**
@@ -379,8 +410,8 @@
    {
       try
       {
-         const linkOptions = options.document instanceof foundry.abstract.Document ? { relative: options.document } :
-          {};
+         const linkOptions = options.document instanceof globalThis.foundry.abstract.Document ?
+          { relative: options.document } : {};
 
          const link = await TextEditor.getContentLink(JSON.parse(event.dataTransfer.getData('text/plain')),
           linkOptions);
@@ -397,26 +428,44 @@
     *
     * @param {KeyboardEvent}    event - A keyboard event from `.editor`.
     */
-   function onKeydown(event)
+   function onKeydownActive(event)
    {
       if (editorActive)
       {
          let preventDefault = false;
 
-         if (event.key === 'Escape')
+         switch (event.code)
          {
-            destroyEditor();
-            preventDefault = true;
+            case 'Enter':
+               if (typeof options?.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
+               {
+                  saveEditor();
+                  preventDefault = true;
+               }
+               else if (typeof options?.preventEnterKey === 'boolean' && options.preventEnterKey)
+               {
+                  preventDefault = true;
+               }
+               break;
+
+            case 'Escape':
+               destroyEditor();
+               preventDefault = true;
+               break;
+
+            case 'KeyS':
+               if (event.ctrlKey || event.metaKey)
+               {
+                  saveEditor();
+                  preventDefault = true;
+               }
+               break;
          }
-         else if (event.key === 'Enter' && typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
+
+         // Prevent key down when limiting max character length, but allow certain control keys through.
+         if (maxCharacterLength !== void 0 && editorEl.innerText.length >= maxCharacterLength)
          {
-            saveEditor();
-            preventDefault = true;
-         }
-         else if (event.key === 's' && (event.ctrlKey || event.metaKey))
-         {
-            saveEditor();
-            preventDefault = true;
+            preventDefault |= CEImpl.isValidKeyForMaxCharacterLength(event);
          }
 
          if (preventDefault)
@@ -424,6 +473,40 @@
             event.preventDefault();
             event.stopPropagation();
          }
+      }
+   }
+
+   /**
+    * Consume / stop propagation of key down when key codes match.
+    *
+    * @param {KeyboardEvent}    event - A KeyboardEvent.
+    */
+   function onKeydownInactive(event)
+   {
+      if (event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * Handle activating the editor if key codes match.
+    *
+    * @param {KeyboardEvent}    event - A KeyboardEvent.
+    */
+   function onKeyupInactive(event)
+   {
+      if (event.code === keyCode)
+      {
+         if (!editorActive)
+         {
+            keyFocused = true;
+            initEditor();
+         }
+
+         event.preventDefault();
+         event.stopPropagation();
       }
    }
 
@@ -438,20 +521,18 @@
     */
    function onPaste(event)
    {
+      if (typeof options?.preventPaste === 'boolean' && options.preventPaste)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+         return;
+      }
+
       let text = event.clipboardData.getData('text/plain');
 
       if (typeof text === 'string')
       {
-         // Check if pasted test matches the shape of a UUID. If so do a lookup and if a document is retrieved build
-         // a UUID.
-         if (FVTTVersion.isV10 && s_UUID_REGEX.test(text))
-         {
-            const uuidDoc = globalThis.fromUuidSync(text);
-            if (uuidDoc)
-            {
-                text = `@UUID[${text}]{${uuidDoc.name}}`;
-            }
-         }
+         text = CEImpl.pastePreprocess(editorEl, text, options, maxCharacterLength);
 
          CEImpl.insertTextAtCursor(text);
       }
@@ -504,8 +585,9 @@
          use:applyStyles={options.styles}
          on:blur={onBlur}
          on:drop|preventDefault|stopPropagation={onDrop}
-         on:keydown|capture={onKeydown}
-         on:paste|preventDefault={onPaste}>
+         on:keydown={onKeydownActive}
+         on:paste|preventDefault={onPaste}
+         role=textbox>
         {@html content}
     </div>
 {:else}
@@ -513,11 +595,15 @@
          class="editor tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
          class:click-to-edit={clickToEdit}
          on:click={onClick}
+         on:keydown={onKeydownInactive}
+         on:keyup={onKeyupInactive}
          use:applyStyles={options.styles}
-         role=presentation>
+         role=textbox
+         tabindex=0>
         {@html enrichedContent}
         {#if editorButton}
-            <a class=editor-edit on:click={() => initEditor()} role=presentation><i class="fas fa-edit"></i></a>
+            <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
+            <a class=editor-edit on:click={() => initEditor()} role=button><i class="fas fa-edit"></i></a>
         {/if}
     </div>
 {/if}
@@ -529,6 +615,9 @@
         border-radius: var(--tjs-editor-border-radius, 0);
         height: var(--tjs-editor-height, 100%);
         margin: var(--tjs-editor-margin, 0);
+        outline-offset: var(--tjs-editor-outline-offset, 0.25em);
+        overflow: var(--tjs-editor-content-overflow, var(--tjs-editor-overflow, auto));
+        transition: var(--tjs-editor-transition);
         width: var(--tjs-editor-width, 100%);
 
         color: var(--tjs-editor-content-color, #000);
@@ -546,20 +635,33 @@
      * keeping the menu bar always visible at the top of the component.
      */
     .editor-active {
-        box-shadow: var(--tjs-editor-active-box-shadow, unset);
-        outline: var(--tjs-editor-active-outline, unset);
+        box-shadow: var(--tjs-editor-active-box-shadow);
+        outline: var(--tjs-editor-active-outline);
         overflow: var(--tjs-editor-active-overflow, auto);
     }
 
     /**
      * Defines cursor and box-shadow / outline when the editor is inactive and hovered.
      */
-    .tjs-editor:not(.editor-active):hover {
-        box-shadow: var(--tjs-editor-inactive-hover-box-shadow, unset);
-        outline: var(--tjs-editor-inactive-hover-outline, unset);
-        user-select: var(--tjs-editor-inactive-hover-user-select, text);
+    .tjs-editor:not(.editor-active):focus-visible {
+        box-shadow: var(--tjs-editor-inactive-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
+        outline: var(--tjs-editor-inactive-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+        transition: var(--tjs-editor-inactive-transition-focus-visible, var(--tjs-default-transition-focus-visible));
+    }
 
-        transition: box-shadow 200ms ease-in-out, outline 200ms ease-in-out;
+    /**
+     * Defines cursor and box-shadow / outline when the editor is inactive and hovered, but not manually focused.
+     */
+    .tjs-editor:not(.editor-active):not(:focus-visible):hover {
+        box-shadow: var(--tjs-editor-inactive-box-shadow-hover);
+        outline: var(--tjs-editor-inactive-outline-hover);
+    }
+
+    /**
+     * Defines user-select when the editor is inactive and hovered.
+     */
+    .tjs-editor:not(.editor-active):hover {
+        user-select: var(--tjs-editor-inactive-user-select-hover, text);
     }
 
     /**
@@ -567,12 +669,12 @@
      * via showing the text cursor across the whole editor element.
      */
     .tjs-editor.click-to-edit:not(.editor-active):hover {
-        cursor: var(--tjs-editor-inactive-hover-cursor, text);
+        cursor: var(--tjs-editor-inactive-cursor-hover, text);
     }
 
     .editor-edit {
-        right: var(--tjs-editor-edit-right, 5px);
-        top: var(--tjs-editor-edit-top, 0);
+        right: var(--tjs-editor-edit-button-right, 5px);
+        top: var(--tjs-editor-edit-button-top, 0);
     }
 
     /* Don't add an initial margin top to first paragraph element. */

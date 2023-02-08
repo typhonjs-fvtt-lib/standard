@@ -57,15 +57,15 @@ export class MCEImpl
    static hasEnterKeyHandler(options)
    {
       return (typeof options.preventEnterKey === 'boolean' && options.preventEnterKey) ||
-       (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey)
+       (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey);
    }
 
-   static get isV5() { return tinymce?.majorVersion === '5'; }
-   static get isV6() { return tinymce?.majorVersion === '6'; }
+   static get isV5() { return globalThis.tinymce?.majorVersion === '5'; }
+   static get isV6() { return globalThis.tinymce?.majorVersion === '6'; }
 
    static keydownHandler(editor, event, options, saveEditor, content)
    {
-      switch (event.key)
+      switch (event.code)
       {
          case 'Enter':
             // Handles `preventEnterKey` option.
@@ -211,7 +211,7 @@ export class MCEImpl
 
          args.content = text;
       }
-   };
+   }
 
    /**
     * Sets the initial selection based on `options.initialSelection`.
@@ -259,9 +259,9 @@ export class MCEImpl
     * Copies over the CSS variable data that is inspected on the `.editor-content` div before the editor is active if
     * set or the default values to the body element of the TinyMCE IFrame.
     *
-    * @param editorContentEl
+    * @param {HTMLElement} editorContentEl - Editor content element.
     *
-    * @return {string} TinyMCE config `content_style` parameter for .
+    * @returns {string} TinyMCE config `content_style` parameter for .
     */
    static setMCEConfigContentStyle(editorContentEl)
    {

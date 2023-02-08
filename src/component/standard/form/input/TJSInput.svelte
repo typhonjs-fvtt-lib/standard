@@ -9,6 +9,7 @@
 
    import { isObject }          from '@typhonjs-svelte/lib/util';
 
+   import TJSInputNumber        from './TJSInputNumber.svelte';
    import TJSInputText          from './TJSInputText.svelte';
 
    export let input = void 0;
@@ -21,12 +22,15 @@
       switch (type)
       {
          case 'email':
-         case 'number':
          case 'password':
          case 'search':
          case 'text':
          case 'url':
             component = TJSInputText;
+            break;
+
+         case 'number':
+            component = TJSInputNumber;
             break;
 
          default:

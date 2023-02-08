@@ -9,23 +9,25 @@
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Exported props include:
-    * `folder`: An object containing id (any), label (string), store (writable boolean)
+    * `folder` ({@link TJSFolderData}): An object defining all properties of a folder including potentially data driven
+    * minimal Svelte configuration objects (`slotDefault`, `slotLabel`, and `slotSummaryEnd`) providing default
+    * component implementations.
     *
     * Or in lieu of passing the folder object you can assign these props directly:
     * `id`: Anything used for an ID.
     * `label`: The label name of the folder; string.
     * `store`: The store tracking the open / close state: writable<boolean>
-    *
-    * The final prop is `styles` which follows the `applyStyles` action; see `applyStyles` or `StylesProperties`
-    * component for more information. This is an object that applies inline styles.
+    * `styles`: Styles to be applied inline via `applyStyles` action.
     *
     * ----------------------------------------------------------------------------------------------------------------
-    * Events: There are several events that are fired and / or bubbled up through parents. There are four
+    * Events: There are several events that are fired and / or bubbled up through parent elements. There are four
     * custom events that pass a details object including: `the details element, id, label, and store`.
     *
     * The following events are bubbled up such that assigning a listener in any parent component receives them
     * from all children folders:
     * `click` - Basic MouseEvent of folder being clicked.
+    * `keydown` - Key down event.
+    * `keyup` - Key up event.
     * `closeAny` - Triggered when any child folder is closed w/ details object.
     * `openAny` - Triggered when any child folder is opened w/ details object.
     *
@@ -38,55 +40,89 @@
     * attributes for `id` and `label`.
     *
     * There are several local CSS variables that you can use to change the appearance dynamically. Either use
-    * CSS props or pass in a `styles` object w/ key / value props to set to the details. Another alternative is using
-    * `StyleProperties` component which wraps a section in locally defined CSS variables. Useful for a large group of
-    * folders where the goal is changing the appearance of all of them as a group.
+    * CSS props or pass in a `styles` object w/ key / value props to set to the details.
     *
     * The following CSS variables are supported, but not defined by default.
     *
-    * Details element (attributes follow `--tjs-details-`):
-    * --tjs-details-padding-left: 5px; set for children to indent more;
+    * Details element (attributes follow `--tjs-folder-details-`):
+    * --tjs-folder-details-margin-left: -0.4em;
+    * --tjs-folder-details-padding-left: 0.4em; set for children to indent more;
     *
-    * Summary element (attributes follow `--tjs-summary-`):
-    * --tjs-summary-background-blend-mode: initial
-    * --tjs-summary-background: none
-    * --tjs-summary-border: none
-    * --tjs-summary-cursor: pointer
-    * --tjs-summary-font-size: inherit
-    * --tjs-summary-font-weight: bold
-    * --tjs-summary-font-family: inherit
-    * --tjs-summary-padding: 4px
-    * --tjs-summary-width: fit-content; wraps content initially, set to 100% or other width measurement
+    * Summary element (attributes follow `--tjs-folder-summary-`):
+    * --tjs-folder-summary-background-blend-mode: initial
+    * --tjs-folder-summary-background: none
+    * --tjs-folder-summary-background-open - fallback: --tjs-folder-summary-background; default: inherit
+    * --tjs-folder-summary-border: none
+    * --tjs-folder-summary-border-radius: 0
+    * --tjs-folder-summary-border-width: initial
+    * --tjs-folder-summary-cursor: pointer
+    * --tjs-folder-summary-font-size: inherit
+    * --tjs-folder-summary-font-weight: bold
+    * --tjs-folder-summary-font-family: inherit
+    * --tjs-folder-summary-gap: 0.125em
+    * --tjs-folder-summary-padding: 0.25em
+    * --tjs-folder-summary-transition: background 0.1s
+    * --tjs-folder-summary-width: fit-content; wraps content initially, set to 100% or other width measurement
     *
-    * Summary SVG / chevron element (attributes follow `--tjs-summary-chevron-`):
+    * Summary element (focus visible):
+    * --tjs-folder-summary-box-shadow-focus-visible - fallback: --tjs-default-box-shadow-focus-visible
+    * --tjs-folder-summary-outline-focus-visible - fallback: --tjs-default-outline-focus-visible; default: revert
+    * --tjs-folder-summary-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
     *
-    * The width and height use multiple fallback variables before setting a default of 15px. You can provide
-    * `--tjs-summary-chevron-size`. If not provided then the chevron dimensions are set by `--tjs-summary-font-size`.
+    * A keyboard focus indicator is defined by the following CSS variables:
+    * --tjs-folder-summary-focus-indicator-align-self - fallback: --tjs-default-focus-indicator-align-self; default: stretch
+    * --tjs-folder-summary-focus-indicator-background - fallback: --tjs-default-focus-indicator-background; default: white
+    * --tjs-folder-summary-focus-indicator-border - fallback: --tjs-default-focus-indicator-border; default: undefined
+    * --tjs-folder-summary-focus-indicator-border-radius - fallback: --tjs-default-focus-indicator-border-radius; default: 0.1em
+    * --tjs-folder-summary-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
+    * --tjs-folder-summary-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
+    * --tjs-folder-summary-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     *
-    * --tjs-summary-chevron-color: currentColor
-    * --tjs-summary-chevron-opacity: 0.2; Opacity when not hovering.
-    * --tjs-summary-chevron-rotate-closed: -90deg; rotation angle when closed.
-    * --tjs-summary-chevron-opacity-hover: 1; Opacity when hovering.
-    * --tjs-summary-chevron-rotate-open: 0; rotation angle when open.
+    * Summary icon / chevron element (attributes follow `--tjs-folder-summary-chevron-`):
     *
-    * Contents element (attributes follow `--tjs-contents-`):
-    * --tjs-contents-background-blend-mode: initial
-    * --tjs-contents-background: none
-    * --tjs-contents-border: none
-    * --tjs-contents-margin: 0 0 0 -5px
+    * --tjs-folder-summary-chevron-color: currentColor
+    * --tjs-folder-summary-chevron-opacity: 1; Opacity when not hovering.
+    * --tjs-folder-summary-chevron-opacity-hover: 1; Opacity when hovering.
+    * --tjs-folder-summary-chevron-margin: 0 0 0 0.25em;
+    * --tjs-folder-summary-chevron-transition: opacity 0.2s, transform 0.1s
+    * --tjs-folder-summary-chevron-width: 1.25em
     *
-    * Padding is set directly by `--tjs-contents-padding` or follows the following calculation:
-    * `0 0 0 calc(var(--tjs-summary-font-size, 13px) * 0.8)`
+    * Summary label element (attributes follow `--tjs-folder-summary-label-):
     *
-    * If neither `--tjs-contents-padding` or `--tjs-summary-font-size` is defined the default is `13px * 0.8`.
+    * By default the label element does not wrap and uses ellipsis for text overflow.
+    *
+    * --tjs-folder-summary-label-overflow: hidden
+    * --tjs-folder-summary-label-text-overflow: ellipsis
+    * --tjs-folder-summary-label-white-space: nowrap
+    * --tjs-folder-summary-label-width: fit-content
+    *
+    * Default label (focus visible):
+    * --tjs-folder-summary-label-text-shadow-focus-visible - fallback: --tjs-default-text-shadow-focus-hover; default: revert
+    *
+    * Contents element (attributes follow `--tjs-folder-contents-`):
+    * --tjs-folder-contents-background-blend-mode: initial
+    * --tjs-folder-contents-background: none
+    * --tjs-folder-contents-border: none
+    * --tjs-folder-contents-margin: 0 0 0 -0.4em
+    *
+    * Padding is set directly by `--tjs-folder-contents-padding` or follows the following calculation:
+    * `0 0 0 calc(var(--tjs-folder-summary-font-size, 1em) * 0.8)`
+    *
+    * If neither `--tjs-folder-contents-padding` or `--tjs-folder-summary-font-size` is defined the default is
+    * `1em * 0.8`.
     */
-
    import { onDestroy }         from 'svelte';
    import { writable }          from 'svelte/store';
 
    import { applyStyles }       from '@typhonjs-svelte/lib/action';
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
-   import { isObject }          from '@typhonjs-svelte/lib/util';
+
+   import {
+      isWritableStore,
+      subscribeIgnoreFirst }    from '@typhonjs-svelte/lib/store';
+
+   import {
+      isObject,
+      isSvelteComponent }       from '@typhonjs-svelte/lib/util';
 
    import { localize }          from '@typhonjs-fvtt/svelte/helper';
 
@@ -96,70 +132,100 @@
    export let folder = void 0;
 
    /** @type {string} */
-   export let id = isObject(folder) && typeof folder.id === 'string' ? folder.id : void 0;
+   export let id = void 0;
 
    /** @type {string} */
-   export let iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen : void 0;
+   export let iconOpen = void 0;
 
    /** @type {string} */
-   export let iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed : void 0;
+   export let iconClosed = void 0;
 
    /** @type {string} */
-   export let label = isObject(folder) && typeof folder.label === 'string' ? folder.label : '';
+   export let label = void 0;
+
+   /** @type {string} */
+   export let keyCode = void 0;
 
    /** @type {TJSFolderOptions} */
-   export let options = isObject(folder) && isObject(folder.options) ? folder.options : {};
+   export let options = void 0;
 
    /** @type {import('svelte/store').Writable<boolean>} */
-   export let store = isObject(folder) && isWritableStore(folder.store) ? folder.store : writable(false);
+   export let store = void 0;
 
    /** @type {object} */
-   export let styles = isObject(folder) && isObject(folder.styles) ? folder.styles : void 0;
+   export let styles = void 0;
+
+   /** @type {() => void} */
+   export let onClose = void 0;
+
+   /** @type {() => void} */
+   export let onOpen = void 0;
 
    /** @type {(event?: MouseEvent) => void} */
-   export let onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick : () => null;
-
-   /** @type {(event?: MouseEvent) => void} */
-   export let onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
-    () => null;
+   export let onContextMenu = void 0;
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
       chevronOnly: false,
+      focusIndicator: false,
       noKeys: false
    }
 
-   let detailsEl, iconEl, summaryEl;
+   let detailsEl, iconEl, labelEl, summaryEl;
+   let storeUnsubscribe;
    let currentIcon;
 
    $: id = isObject(folder) && typeof folder.id === 'string' ? folder.id :
     typeof id === 'string' ? id : void 0;
 
-   $: iconOpen = isObject(folder) && folder.iconOpen === 'string' ? folder.iconOpen :
-    typeof iconOpen === 'string' ? iconOpen : void 0;
+   $: iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen :
+       typeof iconOpen === 'string' ? iconOpen : void 0;
 
-   $: iconClosed = isObject(folder) && folder.iconClosed === 'string' ? folder.iconClosed :
-    typeof iconClosed === 'string' ? iconClosed : void 0;
+   $: iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed :
+       typeof iconClosed === 'string' ? iconClosed : void 0;
 
    $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
     typeof label === 'string' ? label : '';
+
+   $: keyCode = isObject(folder) && typeof folder.keyCode === 'string' ? folder.keyCode :
+    typeof keyCode === 'string' ? keyCode : 'Enter';
 
    $: {
       options = isObject(folder) && isObject(folder.options) ? folder.options :
        isObject(options) ? options : {};
 
       if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
+      if (typeof options?.focusIndicator === 'boolean') { localOptions.focusIndicator = options.focusIndicator; }
       if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
-   $: store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
-    isWritableStore(store) ? store : writable(false);
+   $: {
+      store = isObject(folder) && isWritableStore(folder.store) ? folder.store :
+       isWritableStore(store) ? store : writable(false);
+
+      if (typeof storeUnsubscribe === 'function') { storeUnsubscribe(); }
+
+      // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
+      // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
+      // `createEventDispatcher`.
+      storeUnsubscribe = subscribeIgnoreFirst(store, ((value) =>
+      {
+         if (detailsEl)
+         {
+            detailsEl.dispatchEvent(createEvent(value ? 'open' : 'close'));
+            detailsEl.dispatchEvent(createEvent(value ? 'openAny' : 'closeAny', true));
+         }
+      }));
+   }
 
    $: styles = isObject(folder) && isObject(folder.styles) ? folder.styles :
     isObject(styles) ? styles : void 0;
 
-   $: onClick = isObject(folder) && typeof folder.onClick === 'function' ? folder.onClick :
-    typeof onClick === 'function' ? onClick : () => null;
+   $: onClose = isObject(folder) && typeof folder.onClose === 'function' ? folder.onClose :
+    typeof onClose === 'function' ? onClose : void 0;
+
+   $: onOpen = isObject(folder) && typeof folder.onOpen === 'function' ? folder.onOpen :
+    typeof onOpen === 'function' ? onOpen : void 0;
 
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : () => null;
@@ -186,6 +252,8 @@
       visible = true;
    }
 
+   onDestroy(() => storeUnsubscribe());
+
    /**
     * Create a CustomEvent with details object containing relevant element and props.
     *
@@ -198,18 +266,27 @@
    function createEvent(type, bubbles = false)
    {
       return new CustomEvent(type, {
-         detail: {element: detailsEl, folder, id, label, store},
+         detail: { element: detailsEl, folder, id, label, store },
          bubbles
       });
-    }
+   }
 
-   function onClickSummary(event)
+   /**
+    * Handles opening / closing the details element from either click or keyboard event when summary focused.
+    *
+    * @param {KeyboardEvent|MouseEvent} event -
+    *
+    * @param {boolean} [fromKeyboard=false] - True when event is coming from keyboard. This is used to ignore the
+    * chevronOnly click event handling.
+    */
+   function handleOpenClose(event, fromKeyboard = false)
    {
       const target = event.target;
 
-      if (target === summaryEl || target === iconEl || target.querySelector('.summary-click') !== null)
+      if (target === summaryEl || target === labelEl || target === iconEl ||
+       target.querySelector('.summary-click') !== null)
       {
-         if (localOptions.chevronOnly && target !== iconEl)
+         if (!fromKeyboard && localOptions.chevronOnly && target !== iconEl)
          {
             event.preventDefault();
             event.stopPropagation();
@@ -217,7 +294,15 @@
          }
 
          $store = !$store;
-         onClick(event);
+
+         if ($store && typeof onOpen === 'function')
+         {
+            onOpen();
+         }
+         else if (typeof onClose === 'function')
+         {
+            onClose();
+         }
 
          event.preventDefault();
          event.stopPropagation();
@@ -236,38 +321,112 @@
    }
 
    /**
+    * Detects whether the summary click came from a pointer / mouse device or the keyboard. If from the keyboard and
+    * the active element is `summaryEl` then no action is taken and `onKeyDown` will handle the key event to open /
+    * close the detail element.
+    *
+    * @param {PointerEvent|MouseEvent} event
+    */
+   function onClickSummary(event)
+   {
+      // Firefox sends a `click` event / non-standard response so check for mozInputSource equaling 6 (keyboard) or
+      // a negative pointerId from Chromium and prevent default. This allows `onKeyUp` to handle any open / close
+      // action.
+      if (document.activeElement === summaryEl && (event?.pointerId === -1 || event?.mozInputSource === 6))
+      {
+         event.preventDefault();
+         event.stopPropagation();
+         return;
+      }
+
+      handleOpenClose(event);
+   }
+
+   /**
     * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
+    * matches.
+    *
+    * @param {KeyboardEvent} event -
+    */
+   function onKeyDown(event)
+   {
+      if (localOptions.noKeys && event.code === 'Space')
+      {
+         event.preventDefault();
+      }
+
+      if (document.activeElement === summaryEl && event.code === keyCode)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
+    * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
+    *
+    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
+    * matches.
     *
     * @param {KeyboardEvent} event -
     */
    function onKeyUp(event)
    {
-      if (localOptions.noKeys && event.key === ' ') { event.preventDefault(); }
+      if (localOptions.noKeys && event.code === 'Space')
+      {
+         event.preventDefault();
+      }
+
+      if (document.activeElement === summaryEl && event.code === keyCode)
+      {
+         handleOpenClose(event, true);
+
+         event.preventDefault();
+         event.stopPropagation();
+      }
    }
 
-   // Manually subscribe to store in order to trigger only on changes; avoids initial dispatch on mount as `detailsEl`
-   // is not set yet. Directly dispatch custom events as Svelte 3 does not support bubbling of custom events by
-   // `createEventDispatcher`.
-   const unsubscribe = store.subscribe((value) =>
+   /**
+    * Handle receiving bubbled event from summary or content to close details / content.
+    */
+   function onLocalClose(event)
    {
-      if (detailsEl)
-      {
-         detailsEl.dispatchEvent(createEvent(value ? 'open' : 'close'));
-         detailsEl.dispatchEvent(createEvent(value ? 'openAny' : 'closeAny', true));
-      }
-   });
+      event.preventDefault();
+      event.stopPropagation();
 
-   onDestroy(unsubscribe);
+      store.set(false);
+   }
+
+   /**
+    * Handle receiving bubbled event from summary bar to open details / content.
+    */
+   function onLocalOpen(event)
+   {
+      event.preventDefault();
+      event.stopPropagation();
+
+      store.set(true);
+   }
 </script>
 
 <details class=tjs-icon-folder
          bind:this={detailsEl}
+
+         on:close={onLocalClose}
+         on:closeAny={onLocalClose}
+         on:open={onLocalOpen}
+         on:openAny={onLocalOpen}
+
          on:click
          on:keydown
+         on:keyup
          on:open
          on:close
          on:openAny
          on:closeAny
+
          use:toggleDetails={{ store, clickActive: false }}
          use:applyStyles={styles}
          data-id={id}
@@ -276,61 +435,103 @@
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
-             on:keyup={onKeyUp}
+             on:keydown|capture={onKeyDown}
+             on:keyup|capture={onKeyUp}
              class:default-cursor={localOptions.chevronOnly}>
         {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
-        <slot name=label>{localize(label)}</slot>
+        {#if localOptions.focusIndicator}
+            <div class=tjs-folder-focus-indicator />
+        {/if}
 
-        <slot name="summary-end"></slot>
+        <slot name=label>
+            {#if isSvelteComponent(folder?.slotLabel?.class)}
+                <svelte:component this={folder.slotLabel.class} {...(isObject(folder?.slotLabel?.props) ? folder.slotLabel.props : {})} />
+            {:else}
+                <div bind:this={labelEl} class=label>{localize(label)}</div>
+            {/if}
+        </slot>
+
+        <slot name="summary-end">
+            {#if isSvelteComponent(folder?.slotSummaryEnd?.class)}
+                <svelte:component this={folder.slotSummaryEnd.class} {...(isObject(folder?.slotSummaryEnd?.props) ? folder.slotSummaryEnd.props : {})} />
+            {/if}
+        </slot>
     </summary>
 
     <div class=contents>
         {#if visible}
-            <slot />
+            <slot>
+                {#if isSvelteComponent(folder?.slotDefault?.class)}
+                    <svelte:component this={folder.slotDefault.class} {...(isObject(folder?.slotDefault?.props) ? folder.slotDefault.props : {})} />
+                {/if}
+            </slot>
         {/if}
     </div>
 </details>
 
 <style>
     details {
-        margin-left: -5px;
-        padding-left: var(--tjs-details-padding-left, 5px); /* Set for children folders to increase indent */
+        margin-left: var(--tjs-folder-details-margin-left, -0.4em);
+        padding-left: var(--tjs-folder-details-padding-left, 0.4em); /* Set for children folders to increase indent */
     }
 
     summary {
         display: flex;
         position: relative;
         align-items: center;
-        background-blend-mode: var(--tjs-summary-background-blend-mode, initial);
-        background: var(--tjs-summary-background, none);
-        border: var(--tjs-summary-border, none);
-        border-radius: var(--tjs-summary-border-radius, 0);
-        border-width: var(--tjs-summary-border-width, initial);
-        cursor: var(--tjs-summary-cursor, pointer);
-        font-size: var(--tjs-summary-font-size, inherit);
-        font-weight: var(--tjs-summary-font-weight, bold);
-        font-family: var(--tjs-summary-font-family, inherit);
+        background-blend-mode: var(--tjs-folder-summary-background-blend-mode, initial);
+        background: var(--tjs-folder-summary-background, none);
+        border: var(--tjs-folder-summary-border, none);
+        border-radius: var(--tjs-folder-summary-border-radius, 0);
+        border-width: var(--tjs-folder-summary-border-width, initial);
+        cursor: var(--tjs-folder-summary-cursor, pointer);
+        font-size: var(--tjs-folder-summary-font-size, inherit);
+        font-weight: var(--tjs-folder-summary-font-weight, bold);
+        font-family: var(--tjs-folder-summary-font-family, inherit);
+        gap: var(--tjs-folder-summary-gap, 0.125em);
         list-style: none;
-        margin: var(--tjs-summary-margin, 0);
-        padding: var(--tjs-summary-padding, 4px) 0;
+        margin: var(--tjs-folder-summary-margin, 0);
+        padding: var(--tjs-folder-summary-padding, 0.25em) 0;
+        transition: var(--tjs-folder-summary-transition, background 0.1s);
         user-select: none;
-        width: var(--tjs-summary-width, fit-content);
-
-        transition: background 0.1s;
+        width: var(--tjs-folder-summary-width, fit-content);
     }
 
     summary i {
-        color: var(--tjs-summary-chevron-color, currentColor);
-        cursor: var(--tjs-summary-cursor, pointer);
-        opacity: var(--tjs-summary-chevron-opacity, 1);
-        margin: 0 0 0 0.25em;
-        width: var(--tjs-summary-chevron-width, 1.65em);
-        transition: opacity 0.2s;
+        color: var(--tjs-folder-summary-chevron-color, currentColor);
+        cursor: var(--tjs-folder-summary-cursor, pointer);
+        opacity: var(--tjs-folder-summary-chevron-opacity, 1);
+        margin: var(--tjs-folder-summary-chevron-margin, 0 0 0 0.25em);
+        width: var(--tjs-folder-summary-chevron-width, 1.25em);
+        transition: var(--tjs-folder-summary-chevron-transition, opacity 0.2s, transform 0.1s);
+    }
+
+    summary:focus-visible {
+        box-shadow: var(--tjs-folder-summary-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
+        outline: var(--tjs-folder-summary-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+        transition: var(--tjs-folder-summary-transition-focus-visible, var(--tjs-default-transition-focus-visible));
+    }
+
+    summary:focus-visible .label {
+        text-shadow: var(--tjs-folder-summary-label-text-shadow-focus-visible, var(--tjs-default-text-shadow-focus-hover, revert));
+    }
+
+    summary:focus-visible .tjs-folder-focus-indicator {
+        background: var(--tjs-folder-summary-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
     }
 
     summary:hover i {
-        opacity: var(--tjs-summary-chevron-opacity-hover, 1);
+        opacity: var(--tjs-folder-summary-chevron-opacity-hover, 1);
+    }
+
+    .tjs-folder-focus-indicator {
+        align-self: var(--tjs-folder-summary-focus-indicator-align-self, var(--tjs-default-focus-indicator-align-self, stretch));
+        border: var(--tjs-folder-summary-focus-indicator-border, var(--tjs-default-focus-indicator-border));
+        border-radius: var(--tjs-folder-summary-focus-indicator-border-radius, var(--tjs-default-focus-indicator-border-radius, 0.1em));
+        flex: 0 0 var(--tjs-folder-summary-focus-indicator-width, var(--tjs-default-focus-indicator-width, 0.25em));
+        height: var(--tjs-folder-summary-focus-indicator-height, var(--tjs-default-focus-indicator-height));
+        transition: var(--tjs-folder-summary-focus-indicator-transition, var(--tjs-default-focus-indicator-transition));
     }
 
     .default-cursor {
@@ -338,25 +539,32 @@
     }
 
     details[open] > summary {
-        background: var(--tjs-summary-background-open, var(--tjs-summary-background, inherit));
+        background: var(--tjs-folder-summary-background-open, var(--tjs-folder-summary-background, inherit));
     }
 
     .contents {
         position: relative;
-        background-blend-mode: var(--tjs-contents-background-blend-mode, initial);
-        background: var(--tjs-contents-background, none);
-        border: var(--tjs-contents-border, none);
-        margin: var(--tjs-contents-margin, 0 0 0 -5px);
-        padding: var(--tjs-contents-padding, 0 0 0 calc(var(--tjs-summary-font-size, 13px) * 0.8));
+        background-blend-mode: var(--tjs-folder-contents-background-blend-mode, initial);
+        background: var(--tjs-folder-contents-background, none);
+        border: var(--tjs-folder-contents-border, none);
+        margin: var(--tjs-folder-contents-margin, 0 0 0 -0.4em);
+        padding: var(--tjs-folder-contents-padding, 0 0 0 calc(var(--tjs-folder-summary-font-size, 1em) * 0.8));
     }
 
     .contents::before {
         content: '';
         position: absolute;
         width: 0;
-        height: calc(100% + 8px);
+        height: calc(100% + 0.65em);
         left: 0;
-        top: -8px;
+        top: -0.65em;
+    }
+
+    .label {
+        overflow: var(--tjs-folder-summary-label-overflow, hidden);
+        text-overflow: var(--tjs-folder-summary-label-text-overflow, ellipsis);
+        white-space: var(--tjs-folder-summary-label-white-space, nowrap);
+        width: var(--tjs-folder-summary-label-width, fit-content);
     }
 
     summary:focus-visible + .contents::before {

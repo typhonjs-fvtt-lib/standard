@@ -19,7 +19,7 @@
  *
  * @param {string}   [opts.selectors] - A valid CSS selectors string.
  *
- * @returns Function - Actual action.
+ * @returns {Function} Actual action.
  */
 export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 0.7)', selectors } = {})
 {
@@ -32,6 +32,9 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
       let clientX = -1;
       let clientY = -1;
 
+      /**
+       * WAAPI ripple animation on blur.
+       */
       function blurRipple()
       {
          // When clicking outside the browser window or to another tab `document.activeElement` remains
@@ -60,11 +63,14 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
          animation.onfinish = () =>
          {
             clientX = clientY = -1;
-            span.remove();
+            if (span && span.isConnected) { span.remove(); }
             span = void 0;
-         }
+         };
       }
 
+      /**
+       * WAAPI ripple animation on focus.
+       */
       function focusRipple()
       {
          // If already focused and the span exists do not create another ripple effect.
@@ -117,23 +123,28 @@ export function rippleFocus({ duration = 300, background = 'rgba(255, 255, 255, 
          });
       }
 
-      // Store the pointer down location for the origination of the ripple.
+      /**
+       * Store the pointer down location for the origination of the ripple.
+       *
+       * @param {PointerEvent} e - A PointerEvent.
+       */
       function onPointerDown(e)
       {
          clientX = e.clientX;
          clientY = e.clientY;
       }
 
-      targetEl.addEventListener('pointerdown', onPointerDown)
+      targetEl.addEventListener('pointerdown', onPointerDown);
       targetEl.addEventListener('blur', blurRipple);
       targetEl.addEventListener('focus', focusRipple);
 
       return {
-         destroy: () => {
+         destroy: () =>
+         {
             targetEl.removeEventListener('pointerdown', onPointerDown);
             targetEl.removeEventListener('blur', blurRipple);
             targetEl.removeEventListener('focus', focusRipple);
          }
       };
-   }
+   };
 }
