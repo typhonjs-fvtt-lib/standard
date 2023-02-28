@@ -11,7 +11,7 @@ declare class TJSContextMenu {
     /**
      * Stores any active context menu.
      */
-    static "__#149718@#contextMenu": any;
+    static "__#148349@#contextMenu": any;
     /**
      * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
      * DOM event as it is processed for the location of the context menu to display. Likewise, a A11yFocusSource object
@@ -67,7 +67,7 @@ declare class TJSContextMenu {
      *
      * @returns {object[]} Processed menu items.
      */
-    static "__#149718@#processItems"(items: Iterable<TJSContextMenuItemData>): object[];
+    static "__#148349@#processItems"(items: Iterable<TJSContextMenuItemData>): object[];
 }
 /**
  * - Defines a menu item entry. Depending on the item data that is passed

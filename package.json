@@ -37,9 +37,9 @@
       "types": "./_dist/plugin/system/index.d.ts",
       "import": "./_dist/plugin/system/index.js"
     },
-    "./prosemirror/plugins": {
-      "types": "./_dist/prosemirror/plugins/index.d.ts",
-      "import": "./_dist/prosemirror/plugins/index.js"
+    "./prosemirror": {
+      "types": "./_dist/prosemirror/index.d.ts",
+      "import": "./_dist/prosemirror/index.js"
     },
     "./store": {
       "types": "./_dist/store/index.d.ts",
@@ -61,10 +61,8 @@
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
     "fs-extra": "^11",
-    "prosemirror-dev-toolkit": "^1.0.7",
-    "prosemirror-state": "^1.4.2",
+    "prosemirror-dev-toolkit": "^1.1.1",
     "rollup": "^3",
-    "svelte": "3.55.1",
     "upath": "^2"
   },
   "engines": {

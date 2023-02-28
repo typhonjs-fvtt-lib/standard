@@ -108,15 +108,15 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/prosemirror/plugins/index.js',
+         input: 'src/prosemirror/index.js',
          external: s_LOCAL_EXTERNAL,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/prosemirror/plugins'] }),
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/prosemirror'] }),
             resolve()
          ]
       },
       output: {
-         file: '_dist/prosemirror/plugins/index.js',
+         file: '_dist/prosemirror/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          plugins: outputPlugins,

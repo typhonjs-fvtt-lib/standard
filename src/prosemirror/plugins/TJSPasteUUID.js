@@ -1,5 +1,5 @@
-// TODO: Foundry v10.287 finally added `Plugin`, but is missing `PluginKey` from exports, so include them here.
-import { Plugin, PluginKey } from 'prosemirror-state';
+// Protect for absent global `ProseMirror` on Foundry v9.
+const Plugin = globalThis.ProseMirror ? globalThis.ProseMirror.Plugin : class {};
 
 /**
  * A ProseMirror plugin to transform pasted text that is a raw document UUID into a document link suitable for
@@ -21,7 +21,7 @@ export class TJSPasteUUID
    {
       const instance = new this();
       return new Plugin({
-         key: new PluginKey('tjsPasteRawUUID'),
+         // key: new PluginKey('tjsPasteRawUUID'), // TODO: Add back when exported by Foundry / ProseMirror bundle.
          props: {
             transformPastedText: (text) => instance.#transformUUID(text)
          }
