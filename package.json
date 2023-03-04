@@ -25,6 +25,10 @@
       "types": "./_dist/component/dev/index.d.ts",
       "import": "./_dist/component/dev/index.js"
     },
+    "./component/fvtt": {
+      "types": "./_dist/component/fvtt/index.d.ts",
+      "import": "./_dist/component/fvtt/index.js"
+    },
     "./dev-tools/prosemirror": {
       "types": "./_dist/dev-tools/prosemirror/index.d.ts",
       "import": "./_dist/dev-tools/prosemirror/index.js"

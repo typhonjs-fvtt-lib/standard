@@ -1,4 +1,32 @@
 /**
+ * Provides the ability to mount and control Svelte component based sidebar tabs in the Foundry sidebar.
+ */
+declare class FVTTSidebarControl {
+    static "__#148349@#data": any[];
+    /**
+     * @param {object}   data -
+     *
+     * @param {string}   data.beforeId - The ID for the tab to place the new sidebar before. This must be an existing
+     *        sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
+     *
+     * @param {string}   data.id - The Sidebar ID / name.
+     *
+     * @param {string}   data.icon - The FontAwesome icon css classes.
+     *
+     * @param {string}   [data.tooltip] - The tooltip text or i18n lang key.
+     */
+    static add(data: {
+        beforeId: string;
+        id: string;
+        icon: string;
+        tooltip?: string;
+    }): void;
+    /**
+     */
+    static "__#148349@#addSidebars"(): void;
+}
+
+/**
  * Provides and manages browser window wide context menu functionality. The best way to create a context menu is to
  * attach the source KeyboardEvent or MouseEvent / PointerEvent as data in {@link TJSContextMenu.create}. This allows
  * proper keyboard handling across browsers supporting the context menu key. A A11yFocusSource data object is generated
@@ -11,7 +39,7 @@ declare class TJSContextMenu {
     /**
      * Stores any active context menu.
      */
-    static "__#148349@#contextMenu": any;
+    static "__#148350@#contextMenu": any;
     /**
      * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
      * DOM event as it is processed for the location of the context menu to display. Likewise, a A11yFocusSource object
@@ -67,7 +95,7 @@ declare class TJSContextMenu {
      *
      * @returns {object[]} Processed menu items.
      */
-    static "__#148349@#processItems"(items: Iterable<TJSContextMenuItemData>): object[];
+    static "__#148350@#processItems"(items: Iterable<TJSContextMenuItemData>): object[];
 }
 /**
  * - Defines a menu item entry. Depending on the item data that is passed
@@ -116,4 +144,4 @@ type TJSContextMenuItemData = {
     separator?: 'hr';
 };
 
-export { TJSContextMenu, TJSContextMenuItemData };
+export { FVTTSidebarControl, TJSContextMenu, TJSContextMenuItemData };

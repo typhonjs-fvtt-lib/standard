@@ -17,7 +17,8 @@ const s_LOCAL_EXTERNAL = [
    'svelte/types',
 
    '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
-   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/dev-tools',
+   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/dev',
+   '@typhonjs-fvtt/svelte-standard/component/fvtt', '@typhonjs-fvtt/svelte-standard/dev-tools',
    '@typhonjs-fvtt/svelte-standard/plugin/data', '@typhonjs-fvtt/svelte-standard/plugin/system',
    '@typhonjs-fvtt/svelte-standard/prosemirror', '@typhonjs-fvtt/svelte-standard/store',
 ];
