@@ -1,80 +1,126 @@
+import { SvelteApplication }  from '@typhonjs-fvtt/svelte/application';
+
+import {
+   FVTTSidebarPopout,
+   FVTTSidebarTab,
+   FVTTSidebarWrapper }       from '@typhonjs-fvtt/svelte-standard/component/fvtt';
+
 import {
    isObject,
    parseSvelteConfig,
-   styleParsePixels }   from '@typhonjs-fvtt/svelte/util';
-
-import {
-   FVTTSidebarButton,
-   FVTTSidebarTab }     from '@typhonjs-fvtt/svelte-standard/component/fvtt';
+   styleParsePixels }         from '@typhonjs-fvtt/svelte/util';
 
 /**
  * Provides the ability to mount and control Svelte component based sidebar tabs in the Foundry sidebar.
  */
 export class FVTTSidebarControl
 {
-   static #data = [];
+   /**
+    * @type {object[]}
+    */
+   static #initData = [];
 
    /**
-    * @param {object}   data -
-    *
-    * @param {string}   data.beforeId - The ID for the tab to place the new sidebar before. This must be an existing
-    *        sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
-    *
-    * @param {string}   data.id - The Sidebar ID / name.
-    *
-    * @param {string}   data.icon - The FontAwesome icon css classes.
-    *
-    * @param {string}   [data.tooltip] - The tooltip text or i18n lang key.
+    * @type {Map<string, object>}
     */
-   static add(data)
+   static #sidebars = new Map();
+
+   /**
+    * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
+    *
+    * @param {string}   sidebarData.id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
+    *
+    * @param {string}   sidebarData.icon - The FontAwesome icon css classes.
+    *
+    * @param {object}   sidebarData.svelte - A Svelte configuration object.
+    *
+    * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
+    *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
+    *
+    * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides.
+    *
+    * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
+    *
+    * @param {string}   [sidebarData.tooltip] - The sidebar tab tooltip text or i18n lang key.
+    */
+   static add(sidebarData)
    {
-      if (!isObject(data)) { throw new TypeError(`FVTTSidebarControl.add error: 'data' is not an object.`); }
-
-      if (typeof data.beforeId !== 'string')
+      if (!isObject(sidebarData))
       {
-         throw new TypeError(`FVTTSidebarControl.add error: 'data.beforeId' is not a string.`);
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData' is not an object.`);
       }
 
-      if (typeof data.id !== 'string')
+      if (typeof sidebarData.id !== 'string')
       {
-         throw new TypeError(`FVTTSidebarControl.add error: 'data.id' is not a string.`);
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.id' is not a string.`);
       }
 
-      if (typeof data.icon !== 'string')
+      if (typeof sidebarData.icon !== 'string')
       {
-         throw new TypeError(`FVTTSidebarControl.add error: 'data.icon' is not a string.`);
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.icon' is not a string.`);
       }
 
-      if (data.tooltip !== void 0 && typeof data.tooltip !== 'string')
+      if (sidebarData.beforeId !== void 0 && typeof sidebarData.beforeId !== 'string')
       {
-         throw new TypeError(`FVTTSidebarControl.add error: 'data.tooltip' is not a string.`);
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.beforeId' is not a string.`);
+      }
+
+      if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
+      {
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.title' is not a string.`);
+      }
+
+      if (sidebarData.tooltip !== void 0 && typeof sidebarData.tooltip !== 'string')
+      {
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.tooltip' is not a string.`);
       }
 
       let svelteConfig;
 
       try
       {
-         svelteConfig = parseSvelteConfig(data);
+         svelteConfig = parseSvelteConfig(sidebarData.svelte);
       }
       catch (err)
       {
          throw new TypeError(`FVTTSidebarControl.add error; ${err.message}`);
       }
 
-      if (this.#data.length === 0)
+      if (this.#initData.length === 0)
       {
-         Hooks.once('renderSidebar', () => this.#addSidebars());
+         Hooks.once('renderSidebar', () => this.#initialize());
       }
 
-      this.#data.push({
-         ...data,
+      const sidebar = {
+         ...sidebarData,
          svelteConfig
-      });
+      };
+
+      sidebar.popoutOptions = {
+         // Default SvelteApplication options.
+         id: `${sidebarData.id}-popout`,
+         title: sidebarData.title ?? sidebarData.tooltip,
+         classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
+         height: 'auto',
+         width: 300,
+         svelte: {
+            class: FVTTSidebarPopout,
+            target: document.body,
+            props: {
+               sidebarData: sidebar
+            }
+         },
+
+         // Allow overriding of SvelteApplication options.
+         ...(sidebarData.popoutOptions ?? {})
+      };
+
+      this.#initData.push(sidebar);
    }
 
    /**
     */
-   static #addSidebars()
+   static #initialize()
    {
       // Retrieve Foundry sidebar and sidebar tabs elements.
       const sidebarEl = document.querySelector('#sidebar');
@@ -98,48 +144,81 @@ export class FVTTSidebarControl
       // Stores the cumulative width of all sidebar tab buttons added to increase the width of the sidebar element.
       let addedButtonsWidth = 0;
 
-      for (const sidebar of this.#data)
+      for (const sidebarData of this.#initData)
       {
-         const anchorButtonEl = tabsEl.querySelector(`[data-tab=${sidebar.beforeId}]`);
+         let anchorButtonEl;
 
-         if (!(anchorButtonEl instanceof HTMLElement))
+         // Attempt to find the `beforeId` tab to set as the before anchor when mounting new sidebar button.
+         if (sidebarData.beforeId)
          {
-            throw new TypeError(
-             `FVTTSidebarControl.#addSidebars error - Could not locate sidebar tab for 'beforeId': ${
-               sidebar.beforeId}.`);
+            anchorButtonEl = tabsEl.querySelector(`[data-tab=${sidebarData.beforeId}]`);
+
+            if (!(anchorButtonEl instanceof HTMLElement))
+            {
+               throw new TypeError(
+                `FVTTSidebarControl.#addSidebars error - Could not locate sidebar tab for 'beforeId': ${
+                 sidebarData.beforeId}.`);
+            }
          }
 
-         const buttonComp = new FVTTSidebarButton({
+         const sidebarTab = new FVTTSidebarTab({
             target: tabsEl,
             anchor: anchorButtonEl,
             props: {
-               sidebar
+               sidebarData
             }
          });
 
-         // Get width of button to increase sidebar element width CSS var.
-         addedButtonsWidth += styleParsePixels(globalThis.getComputedStyle(buttonComp.elementRoot).width);
+         // Get width of the tab to increase sidebar element width CSS var.
+         addedButtonsWidth += styleParsePixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
 
          // -------------------
 
          // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
-         new FVTTSidebarTab({
+         const sidebarWrapper = new FVTTSidebarWrapper({
             target: sidebarEl,
             props: {
-               sidebar
+               sidebarData
             }
          });
 
          // Fake the bare minimum API necessary for a Foundry sidebar tab which is added to `globalThis.ui`.
-         globalThis.ui[`${sidebar.id}`] = {
-            renderPopout(id) {},    // Render pop out version of the sidebar.
-            render() {}             // Added as sanity measure.
+         globalThis.ui[`${sidebarData.id}`] = {
+            // Render pop out version of the sidebar. Invoked on context click of sidebar tab button.
+            renderPopout: () =>
+            {
+               const entry = this.get(sidebarData.id);
+
+               // Create a new popout app for the sidebar if none exists.
+               if (entry.popout === void 0) { entry.popout = new SvelteApplication(sidebarData.popoutOptions); }
+
+               entry.popout.render(true, { focus: true });
+            },
+            render() {}             // No-op; added as sanity measure.
          };
+
+         this.#sidebars.set(sidebarData.id, {
+            data: sidebarData,
+            tab: sidebarTab,
+            wrapper: sidebarWrapper
+         });
       }
 
       // Set the Foundry CSS variable controlling the sidebar element width w/ the additional sidebar tab buttons
       // cumulative width.
       document.querySelector(':root').style.setProperty('--sidebar-width',
        `${initialSidebarWidth + addedButtonsWidth}px`);
+   }
+
+   /**
+    * Returns a loaded and configured sidebar entry by ID.
+    *
+    * @param {string}   id -
+    *
+    * @returns {object} The sidebar entry.
+    */
+   static get(id)
+   {
+      return this.#sidebars.get(id);
    }
 }

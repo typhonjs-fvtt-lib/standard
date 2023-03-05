@@ -2,28 +2,52 @@
  * Provides the ability to mount and control Svelte component based sidebar tabs in the Foundry sidebar.
  */
 declare class FVTTSidebarControl {
-    static "__#148349@#data": any[];
     /**
-     * @param {object}   data -
-     *
-     * @param {string}   data.beforeId - The ID for the tab to place the new sidebar before. This must be an existing
-     *        sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
-     *
-     * @param {string}   data.id - The Sidebar ID / name.
-     *
-     * @param {string}   data.icon - The FontAwesome icon css classes.
-     *
-     * @param {string}   [data.tooltip] - The tooltip text or i18n lang key.
+     * @type {object[]}
      */
-    static add(data: {
-        beforeId: string;
+    static "__#148349@#initData": object[];
+    /**
+     * @type {Map<string, object>}
+     */
+    static "__#148349@#sidebars": Map<string, object>;
+    /**
+     * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
+     *
+     * @param {string}   sidebarData.id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
+     *
+     * @param {string}   sidebarData.icon - The FontAwesome icon css classes.
+     *
+     * @param {object}   sidebarData.svelte - A Svelte configuration object.
+     *
+     * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
+     *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
+     *
+     * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides.
+     *
+     * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
+     *
+     * @param {string}   [sidebarData.tooltip] - The sidebar tab tooltip text or i18n lang key.
+     */
+    static add(sidebarData: {
         id: string;
         icon: string;
+        svelte: object;
+        beforeId?: string;
+        popoutOptions?: string;
+        title?: string;
         tooltip?: string;
     }): void;
     /**
      */
-    static "__#148349@#addSidebars"(): void;
+    static "__#148349@#initialize"(): void;
+    /**
+     * Returns a loaded and configured sidebar entry by ID.
+     *
+     * @param {string}   id -
+     *
+     * @returns {object} The sidebar entry.
+     */
+    static get(id: string): object;
 }
 
 /**

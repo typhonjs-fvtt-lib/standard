@@ -1,11 +1,20 @@
 <script>
-   export let sidebar = void 0;
-
-   $: sidebarClass = sidebar?.svelteConfig?.class;
-   $: sidebarProps = sidebar?.svelteConfig?.props ?? {};
+   /**
+    * Export the main anchor element so that FVTTSidebarControl can adjust the sidebar width.
+    *
+    * @type {HTMLAnchorElement}
+    */
+   export let anchorEl;
+   export let sidebarData = void 0;
 </script>
 
-<!--<section class="{{cssClass}} directory flexcol" id="{{cssId}}" data-tab="{{tabName}}">-->
-<section class={`tab sidebar-tab ${sidebar.id}`} id={`${sidebar.id}-id`} data-tab={`${sidebar.id}`}>
-   <svelte:component this={sidebarClass} {...sidebarProps} />
-</section>
+<svelte:options accessors={true} />
+
+<!-- svelte-ignore a11y-missing-attribute -->
+<a bind:this={anchorEl}
+   class=item
+   data-tab={sidebarData.id}
+   data-tooltip={sidebarData.tooltip}
+   alt={sidebarData.tooltip}>
+   <i class={sidebarData.icon}></i>
+</a>
