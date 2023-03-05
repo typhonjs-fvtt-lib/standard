@@ -13,7 +13,59 @@ import {
    styleParsePixels }         from '@typhonjs-fvtt/svelte/util';
 
 /**
- * Provides the ability to mount and control Svelte component based sidebar tabs in the Foundry sidebar.
+ * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
+ *
+ * To add a new sidebar tab schedule one or more invocations of {@link FVTTSidebarControl.add} in a `setup` hook. You
+ * must add all sidebars in the `setup` hook before the main Foundry sidebar renders. Please review all the expanded
+ * options available in the configuration object passed to the `add` method. At minimum, you need to provide a unique
+ * `id`, `icon`, and `svelte` configuration object. You almost always will want to provide `beforeId` referencing
+ * another existing sidebar tab ID to place the tab button before. If undefined the tab is inserted at the end of
+ * the sidebar tabs. The default Foundry sidebar tab IDs from left to right are: 'chat', 'combat', 'scenes', 'actors',
+ * 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
+ *
+ * The nice thing about FVTTSidebarControl is that all you have to provide is the sidebar component and the rest is
+ * handled for you including automatically widening the width of the sidebar to fit the new sidebar tab. Also by default
+ * an adhoc SvelteApplication is configured to display the sidebar when popped out automatically without the need to
+ * associate an app instance.
+ *
+ * -------------------------------------------------------------------------------------------------------------------
+ *
+ * Optionally:
+ * - You can define the `icon` as a Svelte configuration object to load an interactive component instead of
+ * using a FontAwesome icon. This allows you to dynamically show state similar to the chat log sidebar when activity
+ * occurs or for other purposes.
+ *
+ * - You can provide `popoutOptions` overriding the default options passed to the default adhoc SvelteApplication
+ * rendered for the popout.
+ *
+ * - You can provide a class that extends from SvelteApplication as `popoutApplication` to provide a fully customized
+ * popout sidebar that you fully control.
+ *
+ * -------------------------------------------------------------------------------------------------------------------
+ *
+ * The {@link FVTTSidebarControl.get} method allows you to retrieve the associated {@link TJSSidebarEntry} for a given
+ * sidebar by ID allowing access to the configuration data, popout app, and wrapper components that mount the sidebar.
+ *
+ * The {@link FVTTSidebarControl.wait} returns a Promise that is resolved after all sidebars have been initialized.
+ * allowing handling any special setup as necessary.
+ *
+ * -------------------------------------------------------------------------------------------------------------------
+ *
+ * @example Minimal setup
+ *
+ * Hooks.once('setup', () =>
+ * {
+ *    FVTTSidebarControl.add({
+ *       beforeId: 'items',         // Place new tab before the 'items' tab
+ *       id: 'test',                // A unique CSS ID
+ *       icon: 'fas fa-dice-d10',   // FontAwesome icon
+ *       title: 'Test Directory',   // Title of popout sidebar app; can be language string.
+ *       tooltip: 'Tests',          // Tooltip for sidebar tab.
+ *       svelte: {
+ *          class: TestTab          // A Svelte component
+ *       }
+ *    });
+ * });
  */
 export class FVTTSidebarControl
 {
@@ -170,13 +222,13 @@ export class FVTTSidebarControl
       if (!(sidebarEl instanceof HTMLElement))
       {
          throw new TypeError(
-          `FVTTSidebarControl.#addSidebars error - Could not locate sidebar with '#sidebar' selector.`);
+          `FVTTSidebarControl.#initialize error - Could not locate sidebar with '#sidebar' selector.`);
       }
 
       if (!(tabsEl instanceof HTMLElement))
       {
          throw new TypeError(
-          `FVTTSidebarControl.#addSidebars error - Could not locate sidebar tabs with '#sidebar-tabs' selector.`);
+          `FVTTSidebarControl.#initialize error - Could not locate sidebar tabs with '#sidebar-tabs' selector.`);
       }
 
       // Stores the initial sidebar width.
@@ -187,6 +239,13 @@ export class FVTTSidebarControl
 
       for (const sidebarData of this.#initData)
       {
+         // Verify if new sidebar ID is not already defined in 'globalThis.ui` indicating that the ID is taken.
+         if (globalThis.ui[sidebarData.id] !== void 0)
+         {
+            throw new Error(`FVTTSidebarControl.#initialize error - 'sidebarData.id' (${
+             sidebarData.id}) is already in use in 'globalThis.ui'.`);
+         }
+
          let anchorButtonEl;
 
          // Attempt to find the `beforeId` tab to set as the before anchor when mounting new sidebar button.
@@ -197,7 +256,7 @@ export class FVTTSidebarControl
             if (!(anchorButtonEl instanceof HTMLElement))
             {
                throw new TypeError(
-                `FVTTSidebarControl.#addSidebars error - Could not locate sidebar tab for 'beforeId': ${
+                `FVTTSidebarControl.#initialize error - Could not locate sidebar tab for 'beforeId': ${
                  sidebarData.beforeId}.`);
             }
          }
@@ -274,9 +333,9 @@ export class FVTTSidebarControl
    /**
     * Returns a loaded and configured sidebar entry by ID.
     *
-    * @param {string}   id -
+    * @param {string}   id - The ID of the sidebar to retrieve.
     *
-    * @returns {object} The sidebar entry.
+    * @returns {TJSSidebarEntry} The sidebar entry.
     */
    static get(id)
    {
