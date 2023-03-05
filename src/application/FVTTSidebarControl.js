@@ -25,7 +25,7 @@ export class FVTTSidebarControl
    static #initPromise = new ManagedPromise();
 
    /**
-    * @type {Map<string, object>}
+    * @type {Map<string, TJSSidebarEntry>}
     */
    static #sidebars = new Map();
 
@@ -34,7 +34,8 @@ export class FVTTSidebarControl
     *
     * @param {string}   sidebarData.id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
     *
-    * @param {string}   sidebarData.icon - The FontAwesome icon css classes.
+    * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
+    * to load a custom Svelte component to use as the "icon".
     *
     * @param {object}   sidebarData.svelte - A Svelte configuration object.
     *
@@ -63,9 +64,9 @@ export class FVTTSidebarControl
          throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.id' is not a string.`);
       }
 
-      if (typeof sidebarData.icon !== 'string')
+      if (typeof sidebarData.icon !== 'string' && !isObject(sidebarData.icon))
       {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.icon' is not a string.`);
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.icon' is not a string or object.`);
       }
 
       if (sidebarData.beforeId !== void 0 && typeof sidebarData.beforeId !== 'string')
@@ -76,7 +77,7 @@ export class FVTTSidebarControl
       if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
       {
          throw new TypeError(
-            `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
+          `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
       }
 
       if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
@@ -102,7 +103,23 @@ export class FVTTSidebarControl
       }
       catch (err)
       {
-         throw new TypeError(`FVTTSidebarControl.add error; ${err.message}`);
+         throw new TypeError(`FVTTSidebarControl.add error parsing 'sidebarData.svelte'; ${err.message}`);
+      }
+
+      // Parse any icon defined as a Svelte configuration object.
+
+      let iconSvelteConfig;
+
+      if (isObject(sidebarData.icon))
+      {
+         try
+         {
+            iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
+         }
+         catch (err)
+         {
+            throw new TypeError(`FVTTSidebarControl.add error parsing 'sidebarData.icon'; ${err.message}`);
+         }
       }
 
       if (this.#initData.length === 0)
@@ -114,7 +131,8 @@ export class FVTTSidebarControl
 
       const sidebar = {
          ...sidebarData,
-         svelteConfig
+         svelteConfig,
+         iconSvelteConfig
       };
 
       // Defines the default options to use when `popoutApplication` is not defined.
@@ -205,6 +223,7 @@ export class FVTTSidebarControl
             }
          });
 
+         /** @type {TJSSidebarEntry} */
          const sidebarEntry = {
             data: sidebarData,
             popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
@@ -275,3 +294,15 @@ export class FVTTSidebarControl
       return this.#initPromise.get();
    }
 }
+
+/**
+ * @typedef {object} TJSSidebarEntry
+ *
+ * @property {object}               data - The sidebar data that configures a Svelte sidebar.
+ *
+ * @property {SvelteApplication}    popout - The sidebar popout application.
+ *
+ * @property {FVTTSidebarTab}       tab - The tab wrapper component.
+ *
+ * @property {FVTTSidebarWrapper}   wrapper - The sidebar wrapper component.
+ */

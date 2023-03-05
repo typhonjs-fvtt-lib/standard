@@ -8,15 +8,16 @@ declare class FVTTSidebarControl {
     static "__#148349@#initData": object[];
     static "__#148349@#initPromise": any;
     /**
-     * @type {Map<string, object>}
+     * @type {Map<string, TJSSidebarEntry>}
      */
-    static "__#148349@#sidebars": Map<string, object>;
+    static "__#148349@#sidebars": Map<string, TJSSidebarEntry>;
     /**
      * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
      *
      * @param {string}   sidebarData.id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
      *
-     * @param {string}   sidebarData.icon - The FontAwesome icon css classes.
+     * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
+     * to load a custom Svelte component to use as the "icon".
      *
      * @param {object}   sidebarData.svelte - A Svelte configuration object.
      *
@@ -35,7 +36,7 @@ declare class FVTTSidebarControl {
      */
     static add(sidebarData: {
         id: string;
-        icon: string;
+        icon: string | object;
         svelte: object;
         beforeId?: string;
         popoutApplication?: string;
@@ -55,8 +56,32 @@ declare class FVTTSidebarControl {
      * @returns {object} The sidebar entry.
      */
     static get(id: string): object;
-    static wait(): any;
+    /**
+     * Provides a Promise that is resolved after all added sidebars are initialized. This is useful when additional
+     * setup or configuration of sidebars needs to be performed after sidebar initialization.
+     *
+     * @returns {Promise} Initialization Promise.
+     */
+    static wait(): Promise<any>;
 }
+type TJSSidebarEntry = {
+    /**
+     * - The sidebar data that configures a Svelte sidebar.
+     */
+    data: object;
+    /**
+     * - The sidebar popout application.
+     */
+    popout: SvelteApplication;
+    /**
+     * - The tab wrapper component.
+     */
+    tab: FVTTSidebarTab;
+    /**
+     * - The sidebar wrapper component.
+     */
+    wrapper: FVTTSidebarWrapper;
+};
 
 /**
  * Provides and manages browser window wide context menu functionality. The best way to create a context menu is to
@@ -176,4 +201,4 @@ type TJSContextMenuItemData = {
     separator?: 'hr';
 };
 
-export { FVTTSidebarControl, TJSContextMenu, TJSContextMenuItemData };
+export { FVTTSidebarControl, TJSContextMenu, TJSContextMenuItemData, TJSSidebarEntry };
