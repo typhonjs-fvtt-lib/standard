@@ -1,4 +1,10 @@
 # Changelog
+## Release 0.0.19 (small)
+- Corrected external inclusion of ProseMirror library that caused incompatibility w/ Foundry version.
+
+- New `FVTTSidebarControl` found in `@typhonjs-fvtt/svelte-standard/application` to add custom Svelte based 
+  sidebar panels to the Foundry sidebar.
+
 ## Release 0.0.18 (super-major)
 - Significantly refined all existing components (double the amount of commits in `svelte-standard`)
   - Keyboard navigation and activation baked into components. 

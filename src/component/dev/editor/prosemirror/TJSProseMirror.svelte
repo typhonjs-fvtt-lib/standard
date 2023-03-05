@@ -157,7 +157,9 @@
 
    import { applyDevTools } from '@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror';
 
-   import * as Plugins      from '../../../../prosemirror/plugins/index.js';
+   import {
+      Plugins,
+      PMImpl }              from '@typhonjs-fvtt/svelte-standard/prosemirror';
 
    /** @type {string} */
    export let content = '';
@@ -348,11 +350,7 @@
 
             tjsPasteRawUUID: Plugins.TJSPasteUUID.build(),
 
-            ...(typeof options.plugins === 'object' ? options.plugins : {}),
-
-            tjsEditorOptions: Plugins.TJSEditorOptions.build(options, {
-               initialSelectionDefault: 'start'
-            })
+            ...(typeof options.plugins === 'object' ? options.plugins : {})
          }
       };
 
@@ -363,13 +361,15 @@
 
       editor = await ProseMirrorEditor.create(editorContentEl, content, editorOptions);
 
-      applyDevTools(editor.view, { buttonPosition: 'bottom-right'});
+      applyDevTools(editor.view, { buttonPosition: 'bottom-right' });
 
       // `.editor-container` div is added automatically; add inline style to set margin to 0.
       const containerEl = editorEl.querySelector('.editor-container');
       if (containerEl) { containerEl.style = 'margin: var(--tjs-editor-container-margin, 0)'; }
 
       editor.view.focus();
+
+      PMImpl.setInitialSelection(editor.view, options);
 
       dispatch('editor:start');
    }

@@ -27,7 +27,7 @@ export class TJSKeyMaps extends ProseMirrorKeyMaps
    /**
     * Swaps the Foundry default `Escape` / selectParentNode to `Mod-p` and enables `onQuit` function for `Escape`.
     *
-    * @returns {Object<ProseMirrorCommand>}
+    * @returns {Object<ProseMirrorCommand>} ProseMirror keymap data.
     */
    buildMapping()
    {

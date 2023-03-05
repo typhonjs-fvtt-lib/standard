@@ -17,7 +17,8 @@ const s_LOCAL_EXTERNAL = [
    'svelte/types',
 
    '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
-   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/dev-tools',
+   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/dev',
+   '@typhonjs-fvtt/svelte-standard/component/fvtt', '@typhonjs-fvtt/svelte-standard/dev-tools',
    '@typhonjs-fvtt/svelte-standard/plugin/data', '@typhonjs-fvtt/svelte-standard/plugin/system',
    '@typhonjs-fvtt/svelte-standard/prosemirror', '@typhonjs-fvtt/svelte-standard/store',
 ];
@@ -108,15 +109,15 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/prosemirror/plugins/index.js',
+         input: 'src/prosemirror/index.js',
          external: s_LOCAL_EXTERNAL,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/prosemirror/plugins'] }),
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/prosemirror'] }),
             resolve()
          ]
       },
       output: {
-         file: '_dist/prosemirror/plugins/index.js',
+         file: '_dist/prosemirror/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          plugins: outputPlugins,

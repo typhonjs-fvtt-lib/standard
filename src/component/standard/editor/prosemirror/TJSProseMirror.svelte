@@ -171,7 +171,9 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
-   import * as Plugins      from '@typhonjs-fvtt/svelte-standard/prosemirror/plugins';
+   import {
+      Plugins,
+      PMImpl }              from '@typhonjs-fvtt/svelte-standard/prosemirror';
 
    /** @type {string} */
    export let content = '';
@@ -371,11 +373,7 @@
 
             tjsPasteRawUUID: Plugins.TJSPasteUUID.build(),
 
-            ...(typeof options.plugins === 'object' ? options.plugins : {}),
-
-            tjsEditorOptions: Plugins.TJSEditorOptions.build(options, {
-               initialSelectionDefault: 'start'
-            })
+            ...(typeof options.plugins === 'object' ? options.plugins : {})
          }
       };
 
@@ -391,6 +389,8 @@
       if (containerEl) { containerEl.style = 'margin: var(--tjs-editor-container-margin, 0)'; }
 
       editor.view.focus();
+
+      PMImpl.setInitialSelection(editor.view, options);
 
       dispatch('editor:start');
    }

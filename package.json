@@ -1,6 +1,6 @@
 {
   "name": "@typhonjs-fvtt/svelte-standard",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library.",
   "type": "module",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
@@ -25,6 +25,10 @@
       "types": "./_dist/component/dev/index.d.ts",
       "import": "./_dist/component/dev/index.js"
     },
+    "./component/fvtt": {
+      "types": "./_dist/component/fvtt/index.d.ts",
+      "import": "./_dist/component/fvtt/index.js"
+    },
     "./dev-tools/prosemirror": {
       "types": "./_dist/dev-tools/prosemirror/index.d.ts",
       "import": "./_dist/dev-tools/prosemirror/index.js"
@@ -37,9 +41,9 @@
       "types": "./_dist/plugin/system/index.d.ts",
       "import": "./_dist/plugin/system/index.js"
     },
-    "./prosemirror/plugins": {
-      "types": "./_dist/prosemirror/plugins/index.d.ts",
-      "import": "./_dist/prosemirror/plugins/index.js"
+    "./prosemirror": {
+      "types": "./_dist/prosemirror/index.d.ts",
+      "import": "./_dist/prosemirror/index.js"
     },
     "./store": {
       "types": "./_dist/store/index.d.ts",
@@ -61,10 +65,8 @@
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
     "fs-extra": "^11",
-    "prosemirror-dev-toolkit": "^1.0.7",
-    "prosemirror-state": "^1.4.2",
+    "prosemirror-dev-toolkit": "^1.1.1",
     "rollup": "^3",
-    "svelte": "3.55.1",
     "upath": "^2"
   },
   "engines": {
