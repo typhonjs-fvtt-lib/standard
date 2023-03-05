@@ -6,6 +6,7 @@ declare class FVTTSidebarControl {
      * @type {object[]}
      */
     static "__#148349@#initData": object[];
+    static "__#148349@#initPromise": any;
     /**
      * @type {Map<string, object>}
      */
@@ -22,7 +23,11 @@ declare class FVTTSidebarControl {
      * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
      *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
      *
-     * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides.
+     * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
+     *        for the popout sidebar.
+     *
+     * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides for the default
+     *        popout sidebar.
      *
      * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
      *
@@ -33,11 +38,13 @@ declare class FVTTSidebarControl {
         icon: string;
         svelte: object;
         beforeId?: string;
+        popoutApplication?: string;
         popoutOptions?: string;
         title?: string;
         tooltip?: string;
     }): void;
     /**
+     * Initializes all sidebars registered after the initial Foundry Sidebar app has been rendered.
      */
     static "__#148349@#initialize"(): void;
     /**
@@ -48,6 +55,7 @@ declare class FVTTSidebarControl {
      * @returns {object} The sidebar entry.
      */
     static get(id: string): object;
+    static wait(): any;
 }
 
 /**

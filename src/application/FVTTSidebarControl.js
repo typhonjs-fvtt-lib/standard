@@ -6,8 +6,10 @@ import {
    FVTTSidebarWrapper }       from '@typhonjs-fvtt/svelte-standard/component/fvtt';
 
 import {
+   hasPrototype,
    isObject,
    parseSvelteConfig,
+   ManagedPromise,
    styleParsePixels }         from '@typhonjs-fvtt/svelte/util';
 
 /**
@@ -19,6 +21,8 @@ export class FVTTSidebarControl
     * @type {object[]}
     */
    static #initData = [];
+
+   static #initPromise = new ManagedPromise();
 
    /**
     * @type {Map<string, object>}
@@ -37,7 +41,11 @@ export class FVTTSidebarControl
     * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
     *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
     *
-    * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides.
+    * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
+    *        for the popout sidebar.
+    *
+    * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides for the default
+    *        popout sidebar.
     *
     * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
     *
@@ -65,6 +73,17 @@ export class FVTTSidebarControl
          throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.beforeId' is not a string.`);
       }
 
+      if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
+      {
+         throw new TypeError(
+            `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
+      }
+
+      if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
+      {
+         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.popoutOptions' is not an object.`);
+      }
+
       if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
       {
          throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.title' is not a string.`);
@@ -88,6 +107,8 @@ export class FVTTSidebarControl
 
       if (this.#initData.length === 0)
       {
+         this.#initPromise.create();
+
          Hooks.once('renderSidebar', () => this.#initialize());
       }
 
@@ -96,6 +117,7 @@ export class FVTTSidebarControl
          svelteConfig
       };
 
+      // Defines the default options to use when `popoutApplication` is not defined.
       sidebar.popoutOptions = {
          // Default SvelteApplication options.
          id: `${sidebarData.id}-popout`,
@@ -119,6 +141,7 @@ export class FVTTSidebarControl
    }
 
    /**
+    * Initializes all sidebars registered after the initial Foundry Sidebar app has been rendered.
     */
    static #initialize()
    {
@@ -182,32 +205,51 @@ export class FVTTSidebarControl
             }
          });
 
-         // Fake the bare minimum API necessary for a Foundry sidebar tab which is added to `globalThis.ui`.
-         globalThis.ui[`${sidebarData.id}`] = {
-            // Render pop out version of the sidebar. Invoked on context click of sidebar tab button.
-            renderPopout: () =>
-            {
-               const entry = this.get(sidebarData.id);
-
-               // Create a new popout app for the sidebar if none exists.
-               if (entry.popout === void 0) { entry.popout = new SvelteApplication(sidebarData.popoutOptions); }
-
-               entry.popout.render(true, { focus: true });
-            },
-            render() {}             // No-op; added as sanity measure.
-         };
-
-         this.#sidebars.set(sidebarData.id, {
+         const sidebarEntry = {
             data: sidebarData,
+            popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
+               new SvelteApplication(sidebarData.popoutOptions),
             tab: sidebarTab,
             wrapper: sidebarWrapper
-         });
+         };
+
+         Object.freeze(sidebarEntry);
+
+         // Fake the bare minimum API necessary for a Foundry sidebar tab which is added to `globalThis.ui`.
+         globalThis.ui[`${sidebarData.id}`] = {
+            /**
+             * Provides an accessor to retrieve the popout application as a sanity case.
+             *
+             * @returns {SvelteApplication} The popout application.
+             * @protected
+             */
+            get _popout()
+            {
+               return sidebarEntry?.popout;
+            },
+
+            /**
+             * Renders the popout application and is invoked by {@link Sidebar} when the sidebar tab is right-clicked.
+             *
+             * @returns {SvelteApplication} Popout application.
+             */
+            renderPopout: () => sidebarEntry?.popout?.render?.(true, { focus: true }),
+
+            /**
+             * No-op; added as sanity measure.
+             */
+            render() {}
+         };
+
+         this.#sidebars.set(sidebarData.id, sidebarEntry);
       }
 
       // Set the Foundry CSS variable controlling the sidebar element width w/ the additional sidebar tab buttons
       // cumulative width.
       document.querySelector(':root').style.setProperty('--sidebar-width',
        `${initialSidebarWidth + addedButtonsWidth}px`);
+
+      this.#initPromise.resolve(this);
    }
 
    /**
@@ -220,5 +262,16 @@ export class FVTTSidebarControl
    static get(id)
    {
       return this.#sidebars.get(id);
+   }
+
+   /**
+    * Provides a Promise that is resolved after all added sidebars are initialized. This is useful when additional
+    * setup or configuration of sidebars needs to be performed after sidebar initialization.
+    *
+    * @returns {Promise} Initialization Promise.
+    */
+   static wait()
+   {
+      return this.#initPromise.get();
    }
 }
