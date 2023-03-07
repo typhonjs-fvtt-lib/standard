@@ -181,14 +181,8 @@ export class FVTTSidebarControl
          Hooks.once('renderSidebar', () => this.#initialize());
       }
 
-      const sidebar = {
-         ...sidebarData,
-         svelteConfig,
-         iconSvelteConfig
-      };
-
       // Defines the default options to use when `popoutApplication` is not defined.
-      sidebar.popoutOptions = {
+      const popoutOptions = {
          // Default SvelteApplication options.
          id: `${sidebarData.id}-popout`,
          title: sidebarData.title ?? sidebarData.tooltip,
@@ -205,6 +199,14 @@ export class FVTTSidebarControl
 
          // Allow overriding of SvelteApplication options.
          ...(sidebarData.popoutOptions ?? {})
+      };
+
+      const sidebar = {
+         ...sidebarData,
+         popoutOptions,
+         svelteConfig,
+         iconSvelteConfig,
+         action: 'add'
       };
 
       this.#initData.push(sidebar);
@@ -231,101 +233,32 @@ export class FVTTSidebarControl
           `FVTTSidebarControl.#initialize error - Could not locate sidebar tabs with '#sidebar-tabs' selector.`);
       }
 
-      // Stores the initial sidebar width.
-      const initialSidebarWidth = styleParsePixels(globalThis?.getComputedStyle(sidebarEl)?.width);
-
-      // Stores the cumulative width of all sidebar tab buttons added to increase the width of the sidebar element.
-      let addedButtonsWidth = 0;
+      /**
+       * Stores data used for adding / replacing sidebars.
+       *
+       * @type {{tabsEl: HTMLElement, sidebarEl: HTMLElement, initialSidebarWidth: number, addedSidebarWidth: number}}
+       */
+      const data = {
+         sidebarEl,
+         tabsEl,
+         initialSidebarWidth: styleParsePixels(globalThis?.getComputedStyle(sidebarEl)?.width),
+         addedSidebarWidth: 0
+      };
 
       for (const sidebarData of this.#initData)
       {
-         // Verify if new sidebar ID is not already defined in 'globalThis.ui` indicating that the ID is taken.
-         if (globalThis.ui[sidebarData.id] !== void 0)
+         switch (sidebarData.action)
          {
-            throw new Error(`FVTTSidebarControl.#initialize error - 'sidebarData.id' (${
-             sidebarData.id}) is already in use in 'globalThis.ui'.`);
+            case 'add':
+               this.#sidebarAdd(data, sidebarData);
+               break;
          }
-
-         let anchorButtonEl;
-
-         // Attempt to find the `beforeId` tab to set as the before anchor when mounting new sidebar button.
-         if (sidebarData.beforeId)
-         {
-            anchorButtonEl = tabsEl.querySelector(`[data-tab=${sidebarData.beforeId}]`);
-
-            if (!(anchorButtonEl instanceof HTMLElement))
-            {
-               throw new TypeError(
-                `FVTTSidebarControl.#initialize error - Could not locate sidebar tab for 'beforeId': ${
-                 sidebarData.beforeId}.`);
-            }
-         }
-
-         const sidebarTab = new FVTTSidebarTab({
-            target: tabsEl,
-            anchor: anchorButtonEl,
-            props: {
-               sidebarData
-            }
-         });
-
-         // Get width of the tab to increase sidebar element width CSS var.
-         addedButtonsWidth += styleParsePixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
-
-         // -------------------
-
-         // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
-         const sidebarWrapper = new FVTTSidebarWrapper({
-            target: sidebarEl,
-            props: {
-               sidebarData
-            }
-         });
-
-         /** @type {TJSSidebarEntry} */
-         const sidebarEntry = {
-            data: sidebarData,
-            popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
-               new SvelteApplication(sidebarData.popoutOptions),
-            tab: sidebarTab,
-            wrapper: sidebarWrapper
-         };
-
-         Object.freeze(sidebarEntry);
-
-         // Fake the bare minimum API necessary for a Foundry sidebar tab which is added to `globalThis.ui`.
-         globalThis.ui[`${sidebarData.id}`] = {
-            /**
-             * Provides an accessor to retrieve the popout application as a sanity case.
-             *
-             * @returns {SvelteApplication} The popout application.
-             * @protected
-             */
-            get _popout()
-            {
-               return sidebarEntry?.popout;
-            },
-
-            /**
-             * Renders the popout application and is invoked by {@link Sidebar} when the sidebar tab is right-clicked.
-             *
-             * @returns {SvelteApplication} Popout application.
-             */
-            renderPopout: () => sidebarEntry?.popout?.render?.(true, { focus: true }),
-
-            /**
-             * No-op; added as sanity measure.
-             */
-            render() {}
-         };
-
-         this.#sidebars.set(sidebarData.id, sidebarEntry);
       }
 
       // Set the Foundry CSS variable controlling the sidebar element width w/ the additional sidebar tab buttons
       // cumulative width.
       document.querySelector(':root').style.setProperty('--sidebar-width',
-       `${initialSidebarWidth + addedButtonsWidth}px`);
+       `${data.initialSidebarWidth + data.addedSidebarWidth}px`);
 
       this.#initPromise.resolve(this);
    }
@@ -340,6 +273,91 @@ export class FVTTSidebarControl
    static get(id)
    {
       return this.#sidebars.get(id);
+   }
+
+   static #sidebarAdd(data, sidebarData)
+   {
+      // Verify if new sidebar ID is not already defined in 'globalThis.ui` indicating that the ID is taken.
+      if (globalThis.ui[sidebarData.id] !== void 0)
+      {
+         throw new Error(`FVTTSidebarControl.#initialize error - 'sidebarData.id' (${
+          sidebarData.id}) is already in use in 'globalThis.ui'.`);
+      }
+
+      let anchorButtonEl;
+
+      // Attempt to find the `beforeId` tab to set as the before anchor when mounting new sidebar button.
+      if (sidebarData.beforeId)
+      {
+         anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.beforeId}]`);
+
+         if (!(anchorButtonEl instanceof HTMLElement))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.#initialize error - Could not locate sidebar tab for 'beforeId': ${
+              sidebarData.beforeId}.`);
+         }
+      }
+
+      const sidebarTab = new FVTTSidebarTab({
+         target: data.tabsEl,
+         anchor: anchorButtonEl,
+         props: {
+            sidebarData
+         }
+      });
+
+      // Get width of the tab to increase sidebar element width CSS var.
+      data.addedSidebarWidth += styleParsePixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
+
+      // -------------------
+
+      // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
+      const sidebarWrapper = new FVTTSidebarWrapper({
+         target: data.sidebarEl,
+         props: {
+            sidebarData
+         }
+      });
+
+      /** @type {TJSSidebarEntry} */
+      const sidebarEntry = {
+         data: sidebarData,
+         popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
+          new SvelteApplication(sidebarData.popoutOptions),
+         tab: sidebarTab,
+         wrapper: sidebarWrapper
+      };
+
+      Object.freeze(sidebarEntry);
+
+      // Fake the bare minimum API necessary for a Foundry sidebar tab which is added to `globalThis.ui`.
+      globalThis.ui[`${sidebarData.id}`] = {
+         /**
+          * Provides an accessor to retrieve the popout application as a sanity case.
+          *
+          * @returns {SvelteApplication} The popout application.
+          * @protected
+          */
+         get _popout()
+         {
+            return sidebarEntry?.popout;
+         },
+
+         /**
+          * Renders the popout application and is invoked by {@link Sidebar} when the sidebar tab is right-clicked.
+          *
+          * @returns {SvelteApplication} Popout application.
+          */
+         renderPopout: () => sidebarEntry?.popout?.render?.(true, { focus: true }),
+
+         /**
+          * No-op; added as sanity measure.
+          */
+         render() {}
+      };
+
+      this.#sidebars.set(sidebarData.id, sidebarEntry);
    }
 
    /**
