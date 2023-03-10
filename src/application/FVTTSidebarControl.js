@@ -181,8 +181,15 @@ export class FVTTSidebarControl
          Hooks.once('renderSidebar', () => this.#initialize());
       }
 
+      const sidebar = {
+         ...sidebarData,
+         svelteConfig,
+         iconSvelteConfig,
+         action: 'add'
+      };
+
       // Defines the default options to use when `popoutApplication` is not defined.
-      const popoutOptions = {
+      sidebar.popoutOptions = {
          // Default SvelteApplication options.
          id: `${sidebarData.id}-popout`,
          title: sidebarData.title ?? sidebarData.tooltip,
@@ -199,14 +206,6 @@ export class FVTTSidebarControl
 
          // Allow overriding of SvelteApplication options.
          ...(sidebarData.popoutOptions ?? {})
-      };
-
-      const sidebar = {
-         ...sidebarData,
-         popoutOptions,
-         svelteConfig,
-         iconSvelteConfig,
-         action: 'add'
       };
 
       this.#initData.push(sidebar);
@@ -251,6 +250,10 @@ export class FVTTSidebarControl
          {
             case 'add':
                this.#sidebarAdd(data, sidebarData);
+               break;
+
+            case 'replace':
+               this.#sidebarReplace(data, sidebarData);
                break;
          }
       }
@@ -312,9 +315,28 @@ export class FVTTSidebarControl
 
       // -------------------
 
+      let anchorSectionEl;
+
+      // Attempt to find the `beforeId` tab to set as the before anchor when mounting new sidebar button.
+      if (sidebarData.beforeId)
+      {
+         // At this moment the core sidebar apps are not rendered yet so are `template` and `section` elements. Also
+         // Check for `section` elements in case of indexing by another Svelte sidebar added prior.
+         anchorSectionEl = data.sidebarEl.querySelector(`template[data-tab=${sidebarData.beforeId}]`) ??
+          data.sidebarEl.querySelector(`section[data-tab=${sidebarData.beforeId}]`);
+
+         if (!(anchorSectionEl instanceof HTMLElement))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.#initialize error - Could not locate sidebar for 'beforeId': ${
+              sidebarData.beforeId}.`);
+         }
+      }
+
       // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
       const sidebarWrapper = new FVTTSidebarWrapper({
          target: data.sidebarEl,
+         anchor: anchorSectionEl,
          props: {
             sidebarData
          }
@@ -358,6 +380,10 @@ export class FVTTSidebarControl
       };
 
       this.#sidebars.set(sidebarData.id, sidebarEntry);
+   }
+
+   static #sidebarReplace(data, sidebarData)
+   {
    }
 
    /**
