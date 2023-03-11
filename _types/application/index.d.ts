@@ -6,7 +6,8 @@
  * options available in the configuration object passed to the `add` method. At minimum, you need to provide a unique
  * `id`, `icon`, and `svelte` configuration object. You almost always will want to provide `beforeId` referencing
  * another existing sidebar tab ID to place the tab button before. If undefined the tab is inserted at the end of
- * the sidebar tabs.
+ * the sidebar tabs. The default Foundry sidebar tab IDs from left to right are: 'chat', 'combat', 'scenes', 'actors',
+ * 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
  *
  * The nice thing about FVTTSidebarControl is that all you have to provide is the sidebar component and the rest is
  * handled for you including automatically widening the width of the sidebar to fit the new sidebar tab. Also by default
@@ -28,6 +29,19 @@
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
+ * There is a method to remove an existing stock Foundry sidebar {@link FVTTSidebarControl.remove}. It takes
+ * a single field `removeId` as one of the existing Foundry sidebar IDs to replace: chat', 'combat', 'scenes',
+ * 'actors', 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'
+ *
+ * -------------------------------------------------------------------------------------------------------------------
+ *
+ * There is a method to replace an existing stock Foundry sidebar {@link FVTTSidebarControl.replace}. It takes
+ * the same data as the `add` method, but instead of using `id` / `beforeId` you must define `replaceId` as one of the
+ * existing Foundry sidebar IDs to replace: chat', 'combat', 'scenes', 'actors', 'items', 'journal', 'tables',
+ * 'cards', 'playlists', 'compendium', and 'settings'
+ *
+ * -------------------------------------------------------------------------------------------------------------------
+ *
  * The {@link FVTTSidebarControl.get} method allows you to retrieve the associated {@link TJSSidebarEntry} for a given
  * sidebar by ID allowing access to the configuration data, popout app, and wrapper components that mount the sidebar.
  *
@@ -41,13 +55,13 @@
  * Hooks.once('setup', () =>
  * {
  *    FVTTSidebarControl.add({
- *       beforeId: 'items',         // Place new tab before the 'items' tab
- *       id: 'test',                // A unique CSS ID
- *       icon: 'fas fa-dice-d10',   // FontAwesome icon
+ *       beforeId: 'items',         // Place new tab before the 'items' tab.
+ *       id: 'test',                // A unique CSS ID.
+ *       icon: 'fas fa-dice-d10',   // FontAwesome icon.
  *       title: 'Test Directory',   // Title of popout sidebar app; can be language string.
  *       tooltip: 'Tests',          // Tooltip for sidebar tab.
- *       svelte: {
- *          class: TestTab          // A Svelte component
+ *       svelte: {                  // A Svelte configuration object.
+ *          class: TestTab          // A Svelte component.
  *       }
  *    });
  * });
@@ -63,6 +77,8 @@ declare class FVTTSidebarControl {
      */
     static "__#148349@#sidebars": Map<string, TJSSidebarEntry>;
     /**
+     * Adds a new Svelte powered sidebar tab / panel.
+     *
      * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
      *
      * @param {string}   sidebarData.id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
@@ -107,6 +123,73 @@ declare class FVTTSidebarControl {
      * @returns {TJSSidebarEntry} The sidebar entry.
      */
     static get(id: string): TJSSidebarEntry;
+    /**
+     * Removes an existing sidebar tab / panel.
+     *
+     * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
+     *
+     * @param {string}   sidebarData.removeId - The ID for the sidebar tab to remove. This
+     *        must be an existing sidebar tab ID.
+     */
+    static remove(sidebarData: {
+        removeId: string;
+    }): void;
+    /**
+     * Replaces an existing sidebar tab / panel with a new Svelte powered sidebar.
+     *
+     * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
+     *
+     * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
+     *        to load a custom Svelte component to use as the "icon".
+     *
+     * @param {string}   sidebarData.replaceId - The ID for the sidebar to replace. This must be an
+     *        existing sidebar tab ID.
+     *
+     * @param {object}   sidebarData.svelte - A Svelte configuration object.
+     *
+     * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
+     *        for the popout sidebar.
+     *
+     * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides for the default
+     *        popout sidebar.
+     *
+     * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
+     *
+     * @param {string}   [sidebarData.tooltip] - The sidebar tab tooltip text or i18n lang key.
+     */
+    static replace(sidebarData: {
+        icon: string | object;
+        replaceId: string;
+        svelte: object;
+        popoutApplication?: string;
+        popoutOptions?: string;
+        title?: string;
+        tooltip?: string;
+    }): void;
+    /**
+     * Handles adding the new Svelte sidebar tab / panel.
+     *
+     * @param {object}   data - Data for tracking sidebar changes.
+     *
+     * @param {object}   sidebarData - Sidebar data to add.
+     */
+    static "__#148349@#sidebarAdd"(data: object, sidebarData: object): void;
+    /**
+     * Handles removing an existing sidebar.
+     *
+     * @param {object}   data - Data for tracking sidebar changes.
+     *
+     * @param {object}   sidebarData - Sidebar data to remove.
+     */
+    static "__#148349@#sidebarRemove"(data: object, sidebarData: object): void;
+    /**
+     * Handles replacing an existing sidebar with a new Svelte sidebar tab / panel.
+     *
+     * @param {object}   data - Data for tracking sidebar changes.
+     *
+     * @param {object}   sidebarData - Sidebar data to replace.
+     */
+    static "__#148349@#sidebarReplace"(data: object, sidebarData: object): void;
     /**
      * Provides a Promise that is resolved after all added sidebars are initialized. This is useful when additional
      * setup or configuration of sidebars needs to be performed after sidebar initialization.
