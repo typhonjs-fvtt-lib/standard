@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.20 (small)
+- Updated `FVTTSidebarControl` with new `remove` and `replace` methods to remove / replace existing Foundry sidebars. 
+
 ## Release 0.0.19 (small)
 - Corrected external inclusion of ProseMirror library that caused incompatibility w/ Foundry version.
 
