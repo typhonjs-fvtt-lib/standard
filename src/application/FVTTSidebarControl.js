@@ -109,6 +109,10 @@ export class FVTTSidebarControl
     * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
     *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
     *
+    * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
+    *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+    *        internally.
+    *
     * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
     *        for the popout sidebar.
     *
@@ -121,109 +125,122 @@ export class FVTTSidebarControl
     */
    static add(sidebarData)
    {
-      if (!isObject(sidebarData))
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData' is not an object.`);
-      }
-
-      if (typeof sidebarData.id !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.id' is not a string.`);
-      }
-
-      if (typeof sidebarData.icon !== 'string' && !isObject(sidebarData.icon))
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.icon' is not a string or object.`);
-      }
-
-      if (sidebarData.beforeId !== void 0 && typeof sidebarData.beforeId !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.beforeId' is not a string.`);
-      }
-
-      if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
-      {
-         throw new TypeError(
-          `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
-      }
-
-      if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.popoutOptions' is not an object.`);
-      }
-
-      if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.title' is not a string.`);
-      }
-
-      if (sidebarData.tooltip !== void 0 && typeof sidebarData.tooltip !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.tooltip' is not a string.`);
-      }
-
-      let svelteConfig;
-
       try
       {
-         svelteConfig = parseSvelteConfig(sidebarData.svelte);
-      }
-      catch (err)
-      {
-         throw new TypeError(`FVTTSidebarControl.add error parsing 'sidebarData.svelte'; ${err.message}`);
-      }
+         if (!isObject(sidebarData))
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData' is not an object.`);
+         }
 
-      // Parse any icon defined as a Svelte configuration object.
+         if (typeof sidebarData.id !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.id' is not a string.`);
+         }
 
-      let iconSvelteConfig;
+         if (typeof sidebarData.icon !== 'string' && !isObject(sidebarData.icon))
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.icon' is not a string or object.`);
+         }
 
-      if (isObject(sidebarData.icon))
-      {
+         if (sidebarData.beforeId !== void 0 && typeof sidebarData.beforeId !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.beforeId' is not a string.`);
+         }
+
+         if (sidebarData.condition !== void 0 && typeof sidebarData.condition !== 'boolean' &&
+          typeof sidebarData.condition !== 'function')
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.condition' is not a boolean or function.`);
+         }
+
+         if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
+         }
+
+         if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.popoutOptions' is not an object.`);
+         }
+
+         if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.title' is not a string.`);
+         }
+
+         if (sidebarData.tooltip !== void 0 && typeof sidebarData.tooltip !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.tooltip' is not a string.`);
+         }
+
+         let svelteConfig;
+
          try
          {
-            iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
+            svelteConfig = parseSvelteConfig(sidebarData.svelte);
          }
          catch (err)
          {
-            throw new TypeError(`FVTTSidebarControl.add error parsing 'sidebarData.icon'; ${err.message}`);
+            throw new TypeError(`FVTTSidebarControl.add error parsing 'sidebarData.svelte'; ${err.message}`);
          }
-      }
 
-      if (this.#initData.length === 0)
-      {
-         this.#initPromise.create();
+         // Parse any icon defined as a Svelte configuration object.
 
-         Hooks.once('renderSidebar', () => this.#initialize());
-      }
+         let iconSvelteConfig;
 
-      const sidebar = {
-         ...sidebarData,
-         svelteConfig,
-         iconSvelteConfig,
-         action: 'add'
-      };
-
-      // Defines the default options to use when `popoutApplication` is not defined.
-      sidebar.popoutOptions = {
-         // Default SvelteApplication options.
-         id: `${sidebarData.id}-popout`,
-         title: sidebarData.title ?? sidebarData.tooltip,
-         classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
-         height: 'auto',
-         width: 300,
-         svelte: {
-            class: FVTTSidebarPopout,
-            target: document.body,
-            props: {
-               sidebarData: sidebar
+         if (isObject(sidebarData.icon))
+         {
+            try
+            {
+               iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
             }
-         },
+            catch (err)
+            {
+               throw new TypeError(`FVTTSidebarControl.add error parsing 'sidebarData.icon'; ${err.message}`);
+            }
+         }
 
-         // Allow overriding of SvelteApplication options.
-         ...(sidebarData.popoutOptions ?? {})
-      };
+         if (this.#initData.length === 0)
+         {
+            this.#initPromise.create();
 
-      this.#initData.push(sidebar);
+            Hooks.once('renderSidebar', () => this.#initialize());
+         }
+
+         const sidebar = {
+            ...sidebarData,
+            svelteConfig,
+            iconSvelteConfig,
+            action: 'add'
+         };
+
+         // Defines the default options to use when `popoutApplication` is not defined.
+         sidebar.popoutOptions = {
+            // Default SvelteApplication options.
+            id: `${sidebarData.id}-popout`,
+            title: sidebarData.title ?? sidebarData.tooltip,
+            classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
+            height: 'auto',
+            width: 300,
+            svelte: {
+               class: FVTTSidebarPopout,
+               target: document.body,
+               props: {
+                  sidebarData: sidebar
+               }
+            },
+
+            // Allow overriding of SvelteApplication options.
+            ...(sidebarData.popoutOptions ?? {})
+         };
+
+         this.#initData.push(sidebar);
+      }
+      catch (err)
+      {
+         console.error(err);
+      }
    }
 
    /**
@@ -261,19 +278,33 @@ export class FVTTSidebarControl
 
       for (const sidebarData of this.#initData)
       {
-         switch (sidebarData.action)
+         // Handle optional `condition` field potentially skipping the current sidebar action.
+         if (sidebarData.condition !== void 0)
          {
-            case 'add':
-               this.#sidebarAdd(data, sidebarData);
-               break;
+            if (typeof sidebarData.condition === 'boolean' && !sidebarData.condition) { continue; }
+            else if (typeof sidebarData.condition === 'function' && !sidebarData.condition()) { continue; }
+         }
 
-            case 'remove':
-               this.#sidebarRemove(data, sidebarData);
-               break;
+         try
+         {
+            switch (sidebarData.action)
+            {
+               case 'add':
+                  this.#sidebarAdd(data, sidebarData);
+                  break;
 
-            case 'replace':
-               this.#sidebarReplace(data, sidebarData);
-               break;
+               case 'remove':
+                  this.#sidebarRemove(data, sidebarData);
+                  break;
+
+               case 'replace':
+                  this.#sidebarReplace(data, sidebarData);
+                  break;
+            }
+         }
+         catch (err)
+         {
+            console.error(err);
          }
       }
 
@@ -304,43 +335,60 @@ export class FVTTSidebarControl
     *
     * @param {string}   sidebarData.removeId - The ID for the sidebar tab to remove. This
     *        must be an existing sidebar tab ID.
+    *
+    * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
+    *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+    *        internally.
     */
    static remove(sidebarData)
    {
-      if (!isObject(sidebarData))
+      try
       {
-         throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData' is not an object.`);
-      }
+         if (!isObject(sidebarData))
+         {
+            throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData' is not an object.`);
+         }
 
-      if (typeof sidebarData.removeId !== 'string')
+         if (typeof sidebarData.removeId !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData.removeId' is not a string.`);
+         }
+
+         if (sidebarData.condition !== void 0 && typeof sidebarData.condition !== 'boolean' &&
+          typeof sidebarData.condition !== 'function')
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.condition' is not a boolean or function.`);
+         }
+
+         // Verify that there is an entry for `sidebarData.removeId` defined in 'CONFIG.ui` indicating that the ID
+         // is available to remove.
+         if (CONFIG.ui[sidebarData.removeId] === void 0)
+         {
+            throw new Error(`FVTTSidebarControl.remove error - 'sidebarData.removeId' (${
+             sidebarData.removeId}) not found in 'CONFIG.ui'.`);
+         }
+
+         // Remove existing Application reference for `sidebarData.removeId`.
+         delete CONFIG.ui[sidebarData.removeId];
+
+         if (this.#initData.length === 0)
+         {
+            this.#initPromise.create();
+
+            Hooks.once('renderSidebar', () => this.#initialize());
+         }
+
+         const sidebar = {
+            ...sidebarData,
+            action: 'remove'
+         };
+
+         this.#initData.push(sidebar);
+      }
+      catch (err)
       {
-         throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData.removeId' is not a string.`);
+         console.error(err);
       }
-
-      // Verify that there is an entry for `sidebarData.removeId` defined in 'CONFIG.ui` indicating that the ID
-      // is available to remove.
-      if (CONFIG.ui[sidebarData.removeId] === void 0)
-      {
-         throw new Error(`FVTTSidebarControl.remove error - 'sidebarData.removeId' (${
-          sidebarData.removeId}) not found in 'CONFIG.ui'.`);
-      }
-
-      // Remove existing Application reference for `sidebarData.removeId`.
-      delete CONFIG.ui[sidebarData.removeId];
-
-      if (this.#initData.length === 0)
-      {
-         this.#initPromise.create();
-
-         Hooks.once('renderSidebar', () => this.#initialize());
-      }
-
-      const sidebar = {
-         ...sidebarData,
-         action: 'remove'
-      };
-
-      this.#initData.push(sidebar);
    }
 
    /**
@@ -356,6 +404,10 @@ export class FVTTSidebarControl
     *
     * @param {object}   sidebarData.svelte - A Svelte configuration object.
     *
+    * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
+    *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+    *        internally.
+    *
     * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
     *        for the popout sidebar.
     *
@@ -368,118 +420,131 @@ export class FVTTSidebarControl
     */
    static replace(sidebarData)
    {
-      if (!isObject(sidebarData))
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData' is not an object.`);
-      }
-
-      if (typeof sidebarData.icon !== 'string' && !isObject(sidebarData.icon))
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.icon' is not a string or object.`);
-      }
-
-      if (typeof sidebarData.replaceId !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.replaceId' is not a string.`);
-      }
-
-      if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
-      {
-         throw new TypeError(
-          `FVTTSidebarControl.replace error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
-      }
-
-      if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.popoutOptions' is not an object.`);
-      }
-
-      if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.title' is not a string.`);
-      }
-
-      if (sidebarData.tooltip !== void 0 && typeof sidebarData.tooltip !== 'string')
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.tooltip' is not a string.`);
-      }
-
-      // Store 'id' data duplicating `replaceId`. Used in wrapper Svelte components.
-      sidebarData.id = sidebarData.replaceId;
-
-      // Verify that there is an entry for `sidebarData.replaceId` defined in 'CONFIG.ui` indicating that the ID
-      // is available to replace.
-      if (CONFIG.ui[sidebarData.replaceId] === void 0)
-      {
-         throw new Error(`FVTTSidebarControl.replace error - 'sidebarData.replaceId' (${
-          sidebarData.replaceId}) not found in 'CONFIG.ui'.`);
-      }
-
-      // Remove existing Application reference for `sidebarData.replaceId`
-      delete CONFIG.ui[sidebarData.replaceId];
-
-      let svelteConfig;
-
       try
       {
-         svelteConfig = parseSvelteConfig(sidebarData.svelte);
-      }
-      catch (err)
-      {
-         throw new TypeError(`FVTTSidebarControl.replace error parsing 'sidebarData.svelte'; ${err.message}`);
-      }
+         if (!isObject(sidebarData))
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData' is not an object.`);
+         }
 
-      // Parse any icon defined as a Svelte configuration object.
+         if (typeof sidebarData.icon !== 'string' && !isObject(sidebarData.icon))
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.icon' is not a string or object.`);
+         }
 
-      let iconSvelteConfig;
+         if (typeof sidebarData.replaceId !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.replaceId' is not a string.`);
+         }
 
-      if (isObject(sidebarData.icon))
-      {
+         if (sidebarData.condition !== void 0 && typeof sidebarData.condition !== 'boolean' &&
+          typeof sidebarData.condition !== 'function')
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.condition' is not a boolean or function.`);
+         }
+
+         if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.replace error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
+         }
+
+         if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.popoutOptions' is not an object.`);
+         }
+
+         if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.title' is not a string.`);
+         }
+
+         if (sidebarData.tooltip !== void 0 && typeof sidebarData.tooltip !== 'string')
+         {
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.tooltip' is not a string.`);
+         }
+
+         // Store 'id' data duplicating `replaceId`. Used in wrapper Svelte components.
+         sidebarData.id = sidebarData.replaceId;
+
+         // Verify that there is an entry for `sidebarData.replaceId` defined in 'CONFIG.ui` indicating that the ID
+         // is available to replace.
+         if (CONFIG.ui[sidebarData.replaceId] === void 0)
+         {
+            throw new Error(`FVTTSidebarControl.replace error - 'sidebarData.replaceId' (${
+             sidebarData.replaceId}) not found in 'CONFIG.ui'.`);
+         }
+
+         // Remove existing Application reference for `sidebarData.replaceId`
+         // delete CONFIG.ui[sidebarData.replaceId];
+
+         let svelteConfig;
+
          try
          {
-            iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
+            svelteConfig = parseSvelteConfig(sidebarData.svelte);
          }
          catch (err)
          {
-            throw new TypeError(`FVTTSidebarControl.replace error parsing 'sidebarData.icon'; ${err.message}`);
+            throw new TypeError(`FVTTSidebarControl.replace error parsing 'sidebarData.svelte'; ${err.message}`);
          }
-      }
 
-      if (this.#initData.length === 0)
-      {
-         this.#initPromise.create();
+         // Parse any icon defined as a Svelte configuration object.
 
-         Hooks.once('renderSidebar', () => this.#initialize());
-      }
+         let iconSvelteConfig;
 
-      const sidebar = {
-         ...sidebarData,
-         svelteConfig,
-         iconSvelteConfig,
-         action: 'replace'
-      };
-
-      // Defines the default options to use when `popoutApplication` is not defined.
-      sidebar.popoutOptions = {
-         // Default SvelteApplication options.
-         id: `${sidebarData.replaceId}-popout`,
-         title: sidebarData.title ?? sidebarData.tooltip,
-         classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
-         height: 'auto',
-         width: 300,
-         svelte: {
-            class: FVTTSidebarPopout,
-            target: document.body,
-            props: {
-               sidebarData: sidebar
+         if (isObject(sidebarData.icon))
+         {
+            try
+            {
+               iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
             }
-         },
+            catch (err)
+            {
+               throw new TypeError(`FVTTSidebarControl.replace error parsing 'sidebarData.icon'; ${err.message}`);
+            }
+         }
 
-         // Allow overriding of SvelteApplication options.
-         ...(sidebarData.popoutOptions ?? {})
-      };
+         if (this.#initData.length === 0)
+         {
+            this.#initPromise.create();
 
-      this.#initData.push(sidebar);
+            Hooks.once('renderSidebar', () => this.#initialize());
+         }
+
+         const sidebar = {
+            ...sidebarData,
+            svelteConfig,
+            iconSvelteConfig,
+            action: 'replace'
+         };
+
+         // Defines the default options to use when `popoutApplication` is not defined.
+         sidebar.popoutOptions = {
+            // Default SvelteApplication options.
+            id: `${sidebarData.replaceId}-popout`,
+            title: sidebarData.title ?? sidebarData.tooltip,
+            classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
+            height: 'auto',
+            width: 300,
+            svelte: {
+               class: FVTTSidebarPopout,
+               target: document.body,
+               props: {
+                  sidebarData: sidebar
+               }
+            },
+
+            // Allow overriding of SvelteApplication options.
+            ...(sidebarData.popoutOptions ?? {})
+         };
+
+         this.#initData.push(sidebar);
+      }
+      catch (err)
+      {
+         console.error(err);
+      }
    }
 
    /**
@@ -649,12 +714,9 @@ export class FVTTSidebarControl
     */
    static #sidebarReplace(data, sidebarData)
    {
-      // Verify if new sidebar ID is not already defined in 'globalThis.ui` indicating that the ID is taken.
-      if (globalThis.ui[sidebarData.replaceId] !== void 0)
-      {
-         throw new Error(`FVTTSidebarControl.#sidebarReplace error - 'sidebarData.replaceId' (${
-          sidebarData.replaceId}) is already in use in 'globalThis.ui'.`);
-      }
+      // Remove specific sidebar app from Foundry core Sidebar class. This prevents rendering of that sidebar and
+      // must be removed here after the `condition` check in #initialize.
+      delete globalThis.ui?.sidebar?.tabs[sidebarData.replaceId];
 
       // Attempt to find the `replaceId` tab to set as the before anchor when mounting new sidebar button.
       const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.replaceId}]`);
