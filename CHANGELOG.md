@@ -1,4 +1,10 @@
 # Changelog
+## Release 0.0.21 (small)
+- Refined `FVTTSidebarControl`:
+  - Better error handling; a failure to load one sidebar doesn't cause others to fail.
+  - New `condition` field to define a boolean or function returning a boolean to conditionally add the sidebar.
+  - New `mergeAppImpl` for `add` / `replace` to provide a base implementation for the "app" added to `globalThis.ui`.
+
 ## Release 0.0.20 (small)
 - Updated `FVTTSidebarControl` with new `remove` and `replace` methods to remove / replace existing Foundry sidebars. 
 
