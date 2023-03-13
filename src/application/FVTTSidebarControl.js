@@ -44,15 +44,14 @@ import {
  * -------------------------------------------------------------------------------------------------------------------
  *
  * There is a method to remove an existing stock Foundry sidebar {@link FVTTSidebarControl.remove}. It takes
- * a single field `removeId` as one of the existing Foundry sidebar IDs to replace: chat', 'combat', 'scenes',
+ * an `id` field that must be one of the existing Foundry sidebar IDs to remove: chat', 'combat', 'scenes',
  * 'actors', 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
  * There is a method to replace an existing stock Foundry sidebar {@link FVTTSidebarControl.replace}. It takes
- * the same data as the `add` method, but instead of using `id` / `beforeId` you must define `replaceId` as one of the
- * existing Foundry sidebar IDs to replace: chat', 'combat', 'scenes', 'actors', 'items', 'journal', 'tables',
- * 'cards', 'playlists', 'compendium', and 'settings'
+ * the same data as the `add` method, but `id` must be one of the existing Foundry sidebar IDs to replace: chat',
+ * 'combat', 'scenes', 'actors', 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
@@ -333,8 +332,7 @@ export class FVTTSidebarControl
     *
     * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
     *
-    * @param {string}   sidebarData.removeId - The ID for the sidebar tab to remove. This
-    *        must be an existing sidebar tab ID.
+    * @param {string}   sidebarData.id - The ID for the sidebar tab to remove. This must be an existing sidebar tab ID.
     *
     * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
     *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
@@ -349,9 +347,9 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData' is not an object.`);
          }
 
-         if (typeof sidebarData.removeId !== 'string')
+         if (typeof sidebarData.id !== 'string')
          {
-            throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData.removeId' is not a string.`);
+            throw new TypeError(`FVTTSidebarControl.remove error: 'sidebarData.id' is not a string.`);
          }
 
          if (sidebarData.condition !== void 0 && typeof sidebarData.condition !== 'boolean' &&
@@ -360,16 +358,16 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.condition' is not a boolean or function.`);
          }
 
-         // Verify that there is an entry for `sidebarData.removeId` defined in 'CONFIG.ui` indicating that the ID
+         // Verify that there is an entry for `sidebarData.id` defined in 'CONFIG.ui` indicating that the ID
          // is available to remove.
-         if (CONFIG.ui[sidebarData.removeId] === void 0)
+         if (CONFIG.ui[sidebarData.id] === void 0)
          {
-            throw new Error(`FVTTSidebarControl.remove error - 'sidebarData.removeId' (${
-             sidebarData.removeId}) not found in 'CONFIG.ui'.`);
+            throw new Error(`FVTTSidebarControl.remove error - 'sidebarData.id' (${
+             sidebarData.id}) not found in 'CONFIG.ui'.`);
          }
 
-         // Remove existing Application reference for `sidebarData.removeId`.
-         delete CONFIG.ui[sidebarData.removeId];
+         // Remove existing Application reference for `sidebarData.id`.
+         delete CONFIG.ui[sidebarData.id];
 
          if (this.#initData.length === 0)
          {
@@ -399,8 +397,7 @@ export class FVTTSidebarControl
     * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
     *        to load a custom Svelte component to use as the "icon".
     *
-    * @param {string}   sidebarData.replaceId - The ID for the sidebar to replace. This must be an
-    *        existing sidebar tab ID.
+    * @param {string}   sidebarData.id - The ID for the sidebar to replace. This must be an existing sidebar tab ID.
     *
     * @param {object}   sidebarData.svelte - A Svelte configuration object.
     *
@@ -432,9 +429,9 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.icon' is not a string or object.`);
          }
 
-         if (typeof sidebarData.replaceId !== 'string')
+         if (typeof sidebarData.id !== 'string')
          {
-            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.replaceId' is not a string.`);
+            throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.id' is not a string.`);
          }
 
          if (sidebarData.condition !== void 0 && typeof sidebarData.condition !== 'boolean' &&
@@ -464,19 +461,13 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.tooltip' is not a string.`);
          }
 
-         // Store 'id' data duplicating `replaceId`. Used in wrapper Svelte components.
-         sidebarData.id = sidebarData.replaceId;
-
-         // Verify that there is an entry for `sidebarData.replaceId` defined in 'CONFIG.ui` indicating that the ID
+         // Verify that there is an entry for `sidebarData.id` defined in 'CONFIG.ui` indicating that the ID
          // is available to replace.
-         if (CONFIG.ui[sidebarData.replaceId] === void 0)
+         if (CONFIG.ui[sidebarData.id] === void 0)
          {
-            throw new Error(`FVTTSidebarControl.replace error - 'sidebarData.replaceId' (${
-             sidebarData.replaceId}) not found in 'CONFIG.ui'.`);
+            throw new Error(`FVTTSidebarControl.replace error - 'sidebarData.id' (${
+             sidebarData.id}) not found in 'CONFIG.ui'.`);
          }
-
-         // Remove existing Application reference for `sidebarData.replaceId`
-         // delete CONFIG.ui[sidebarData.replaceId];
 
          let svelteConfig;
 
@@ -522,7 +513,7 @@ export class FVTTSidebarControl
          // Defines the default options to use when `popoutApplication` is not defined.
          sidebar.popoutOptions = {
             // Default SvelteApplication options.
-            id: `${sidebarData.replaceId}-popout`,
+            id: `${sidebarData.id}-popout`,
             title: sidebarData.title ?? sidebarData.tooltip,
             classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
             height: 'auto',
@@ -668,20 +659,20 @@ export class FVTTSidebarControl
    static #sidebarRemove(data, sidebarData)
    {
       // Verify that sidebar ID to remove is not already defined in 'globalThis.ui` indicating that the ID is taken.
-      if (globalThis.ui[sidebarData.removeId] !== void 0)
+      if (globalThis.ui[sidebarData.id] !== void 0)
       {
-         throw new Error(`FVTTSidebarControl.#sidebarRemove error - 'sidebarData.removeId' (${
-          sidebarData.removeId}) is already in use in 'globalThis.ui'.`);
+         throw new Error(`FVTTSidebarControl.#sidebarRemove error - 'sidebarData.id' (${
+          sidebarData.id}) is already in use in 'globalThis.ui'.`);
       }
 
-      // Attempt to find the `removeId` tab to set as the before anchor when mounting new sidebar button.
-      const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.removeId}]`);
+      // Attempt to find the `id` tab to set as the before anchor when mounting new sidebar button.
+      const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.id}]`);
 
       if (!(anchorButtonEl instanceof HTMLElement))
       {
          throw new TypeError(
-          `FVTTSidebarControl.#sidebarRemove error - Could not locate sidebar tab for 'sidebarData.removeId': ${
-           sidebarData.removeId}.`);
+          `FVTTSidebarControl.#sidebarRemove error - Could not locate sidebar tab for 'sidebarData.id': ${
+           sidebarData.id}.`);
       }
 
       // Remove width of the old replaced tab width.
@@ -689,15 +680,15 @@ export class FVTTSidebarControl
 
       // -------------------
 
-      // Attempt to find the existing `removeId` panel.
-      const anchorSectionEl = data.sidebarEl.querySelector(`template[data-tab=${sidebarData.removeId}]`) ??
-       data.sidebarEl.querySelector(`section[data-tab=${sidebarData.removeId}]`);
+      // Attempt to find the existing `id` panel.
+      const anchorSectionEl = data.sidebarEl.querySelector(`template[data-tab=${sidebarData.id}]`) ??
+       data.sidebarEl.querySelector(`section[data-tab=${sidebarData.id}]`);
 
       if (!(anchorSectionEl instanceof HTMLElement))
       {
          throw new TypeError(
-          `FVTTSidebarControl.#sidebarRemove error - Could not locate sidebar for 'sidebarData.removeId': ${
-           sidebarData.removeId}.`);
+          `FVTTSidebarControl.#sidebarRemove error - Could not locate sidebar for 'sidebarData.id': ${
+           sidebarData.id}.`);
       }
 
       // Remove old sidebar tab / panel.
@@ -716,16 +707,16 @@ export class FVTTSidebarControl
    {
       // Remove specific sidebar app from Foundry core Sidebar class. This prevents rendering of that sidebar and
       // must be removed here after the `condition` check in #initialize.
-      delete globalThis.ui?.sidebar?.tabs[sidebarData.replaceId];
+      delete globalThis.ui?.sidebar?.tabs[sidebarData.id];
 
-      // Attempt to find the `replaceId` tab to set as the before anchor when mounting new sidebar button.
-      const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.replaceId}]`);
+      // Attempt to find the `id` tab to set as the before anchor when mounting new sidebar button.
+      const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.id}]`);
 
       if (!(anchorButtonEl instanceof HTMLElement))
       {
          throw new TypeError(
-          `FVTTSidebarControl.#sidebarReplace error - Could not locate sidebar tab for 'sidebarData.replaceId': ${
-           sidebarData.replaceId}.`);
+          `FVTTSidebarControl.#sidebarReplace error - Could not locate sidebar tab for 'sidebarData.id': ${
+           sidebarData.id}.`);
       }
 
       const sidebarTab = new FVTTSidebarTab({
@@ -744,17 +735,17 @@ export class FVTTSidebarControl
 
       // -------------------
 
-      // Attempt to find the `replaceId` tab to set as the before anchor when mounting new sidebar.
+      // Attempt to find the `id` tab to set as the before anchor when mounting new sidebar.
       // At this moment the core sidebar apps are not rendered yet so are `template` and `section` elements. Also
       // Check for `section` elements in case of indexing by another Svelte sidebar added prior.
-      const anchorSectionEl = data.sidebarEl.querySelector(`template[data-tab=${sidebarData.replaceId}]`) ??
-       data.sidebarEl.querySelector(`section[data-tab=${sidebarData.replaceId}]`);
+      const anchorSectionEl = data.sidebarEl.querySelector(`template[data-tab=${sidebarData.id}]`) ??
+       data.sidebarEl.querySelector(`section[data-tab=${sidebarData.id}]`);
 
       if (!(anchorSectionEl instanceof HTMLElement))
       {
          throw new TypeError(
-          `FVTTSidebarControl.#sidebarReplace error - Could not locate sidebar for 'sidebarData.replaceId': ${
-           sidebarData.replaceId}.`);
+          `FVTTSidebarControl.#sidebarReplace error - Could not locate sidebar for 'sidebarData.id': ${
+           sidebarData.id}.`);
       }
 
       // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
@@ -778,7 +769,7 @@ export class FVTTSidebarControl
       Object.freeze(sidebarEntry);
 
       // Fake the bare minimum API necessary for a Foundry sidebar tab which is added to `globalThis.ui`.
-      globalThis.ui[`${sidebarData.replaceId}`] = {
+      globalThis.ui[`${sidebarData.id}`] = {
          /**
           * Provides an accessor to retrieve the popout application as a sanity case.
           *
@@ -807,7 +798,7 @@ export class FVTTSidebarControl
       anchorButtonEl.remove();
       anchorSectionEl.remove();
 
-      this.#sidebars.set(sidebarData.replaceId, sidebarEntry);
+      this.#sidebars.set(sidebarData.id, sidebarEntry);
    }
 
    /**
