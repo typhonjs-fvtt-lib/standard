@@ -1,6 +1,13 @@
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
  *
+ * The nice aspect about FVTTSidebarControl is that all you have to provide is the sidebar component and the rest is
+ * handled for you including automatically widening the width of the sidebar to fit the new sidebar tab. Also by default
+ * an adhoc SvelteApplication is configured to display the sidebar when popped out automatically without the need to
+ * associate an app instance.
+ *
+ * -------------------------------------------------------------------------------------------------------------------
+ *
  * To add a new sidebar tab schedule one or more invocations of {@link FVTTSidebarControl.add} in a `setup` hook. You
  * must add all sidebars in the `setup` hook before the main Foundry sidebar renders. Please review all the expanded
  * options available in the configuration object passed to the `add` method. At minimum, you need to provide a unique
@@ -8,11 +15,6 @@
  * another existing sidebar tab ID to place the tab button before. If undefined the tab is inserted at the end of
  * the sidebar tabs. The default Foundry sidebar tab IDs from left to right are: 'chat', 'combat', 'scenes', 'actors',
  * 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
- *
- * The nice thing about FVTTSidebarControl is that all you have to provide is the sidebar component and the rest is
- * handled for you including automatically widening the width of the sidebar to fit the new sidebar tab. Also by default
- * an adhoc SvelteApplication is configured to display the sidebar when popped out automatically without the need to
- * associate an app instance.
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
@@ -30,15 +32,20 @@
  * -------------------------------------------------------------------------------------------------------------------
  *
  * There is a method to remove an existing stock Foundry sidebar {@link FVTTSidebarControl.remove}. It takes
- * a single field `removeId` as one of the existing Foundry sidebar IDs to replace: chat', 'combat', 'scenes',
- * 'actors', 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'
+ * an `id` field that must be one of the existing Foundry sidebar IDs to remove: chat', 'combat', 'scenes',
+ * 'actors', 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
  * There is a method to replace an existing stock Foundry sidebar {@link FVTTSidebarControl.replace}. It takes
- * the same data as the `add` method, but instead of using `id` / `beforeId` you must define `replaceId` as one of the
- * existing Foundry sidebar IDs to replace: chat', 'combat', 'scenes', 'actors', 'items', 'journal', 'tables',
- * 'cards', 'playlists', 'compendium', and 'settings'
+ * the same data as the `add` method, but `id` must be one of the existing Foundry sidebar IDs to replace: chat',
+ * 'combat', 'scenes', 'actors', 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
+ *
+ * Both the `add` and `replace` methods have a data field `mergeAppImpl` that provides the base implementation for the
+ * added / replaced object instance assigned to `globalThis.ui.<SIDEBAR APP ID>`. When replacing Foundry core sidebar
+ * panels like the {@link CombatTracker} there is additional API that you must handle found in the given core
+ * sidebar app implementation. It is recommended that you implement this API as part of the control / model code passed
+ * to the Svelte sidebar component and also set to `mergeAppImpl`.
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
@@ -55,13 +62,14 @@
  * Hooks.once('setup', () =>
  * {
  *    FVTTSidebarControl.add({
- *       beforeId: 'items',         // Place new tab before the 'items' tab.
- *       id: 'test',                // A unique CSS ID.
- *       icon: 'fas fa-dice-d10',   // FontAwesome icon.
- *       title: 'Test Directory',   // Title of popout sidebar app; can be language string.
- *       tooltip: 'Tests',          // Tooltip for sidebar tab.
- *       svelte: {                  // A Svelte configuration object.
- *          class: TestTab          // A Svelte component.
+ *       beforeId: 'items',               // Place new tab before the 'items' tab.
+ *       id: 'test',                      // A unique CSS ID.
+ *       icon: 'fas fa-dice-d10',         // FontAwesome icon.
+ *       condition: () => game.user.isGM, // Optional boolean / function to conditionally run the sidebar action.
+ *       title: 'Test Directory',         // Title of popout sidebar app; can be language string.
+ *       tooltip: 'Tests',                // Tooltip for sidebar tab.
+ *       svelte: {                        // A Svelte configuration object.
+ *          class: TestTab                // A Svelte component.
  *       }
  *    });
  * });
@@ -91,6 +99,13 @@ declare class FVTTSidebarControl {
      * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
      *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
      *
+     * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
+     *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+     *        internally.
+     *
+     * @param {object}   [sidebarData.mergeAppImpl] - Provides a custom base implementation for the object instance
+     *        for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
+     *
      * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
      *        for the popout sidebar.
      *
@@ -106,6 +121,8 @@ declare class FVTTSidebarControl {
         icon: string | object;
         svelte: object;
         beforeId?: string;
+        condition?: boolean | Function;
+        mergeAppImpl?: object;
         popoutApplication?: string;
         popoutOptions?: string;
         title?: string;
@@ -128,11 +145,15 @@ declare class FVTTSidebarControl {
      *
      * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
      *
-     * @param {string}   sidebarData.removeId - The ID for the sidebar tab to remove. This
-     *        must be an existing sidebar tab ID.
+     * @param {string}   sidebarData.id - The ID for the sidebar tab to remove. This must be an existing sidebar tab ID.
+     *
+     * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
+     *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+     *        internally.
      */
     static remove(sidebarData: {
-        removeId: string;
+        id: string;
+        condition?: boolean | Function;
     }): void;
     /**
      * Replaces an existing sidebar tab / panel with a new Svelte powered sidebar.
@@ -142,10 +163,16 @@ declare class FVTTSidebarControl {
      * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
      *        to load a custom Svelte component to use as the "icon".
      *
-     * @param {string}   sidebarData.replaceId - The ID for the sidebar to replace. This must be an
-     *        existing sidebar tab ID.
+     * @param {string}   sidebarData.id - The ID for the sidebar to replace. This must be an existing sidebar tab ID.
      *
      * @param {object}   sidebarData.svelte - A Svelte configuration object.
+     *
+     * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
+     *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+     *        internally.
+     *
+     * @param {object}   [sidebarData.mergeAppImpl] - Provides a custom base implementation for the object instance
+     *        for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
      *
      * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
      *        for the popout sidebar.
@@ -159,8 +186,10 @@ declare class FVTTSidebarControl {
      */
     static replace(sidebarData: {
         icon: string | object;
-        replaceId: string;
+        id: string;
         svelte: object;
+        condition?: boolean | Function;
+        mergeAppImpl?: object;
         popoutApplication?: string;
         popoutOptions?: string;
         title?: string;
