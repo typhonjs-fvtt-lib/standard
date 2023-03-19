@@ -1,14 +1,17 @@
 # Changelog
-## Release 0.0.21 (small)
+## Release 0.0.22 (minor)
+- Added `svelte-ignore` for new Svelte a11y warnings in TJSMenu / TJSContextMenu despite proper roles assigned.
+
+## Release 0.0.21 (minor)
 - Refined `FVTTSidebarControl`:
   - Better error handling; a failure to load one sidebar doesn't cause others to fail.
   - New `condition` field to define a boolean or function returning a boolean to conditionally add the sidebar.
   - New `mergeAppImpl` for `add` / `replace` to provide a base implementation for the "app" added to `globalThis.ui`.
 
-## Release 0.0.20 (small)
+## Release 0.0.20 (minor)
 - Updated `FVTTSidebarControl` with new `remove` and `replace` methods to remove / replace existing Foundry sidebars. 
 
-## Release 0.0.19 (small)
+## Release 0.0.19 (minor)
 - Corrected external inclusion of ProseMirror library that caused incompatibility w/ Foundry version.
 
 - New `FVTTSidebarControl` found in `@typhonjs-fvtt/svelte-standard/application` to add custom Svelte based 
