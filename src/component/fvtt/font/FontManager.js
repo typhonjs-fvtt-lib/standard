@@ -1,4 +1,4 @@
-import { FVTTVersion } from './FVTTVersion.js';
+import { FVTTVersion } from '../util/FVTTVersion.js';
 
 /**
  * Loads FVTT core fonts supporting `FontConfig` on Foundry v10+.

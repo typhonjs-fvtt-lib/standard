@@ -1,19 +1,19 @@
-import { SvelteApplication } from '#runtime/svelte/application';
+import { SvelteApplication }  from '#runtime/svelte/application';
 
-import {
-   cssVariables,
-   FoundryStyles }   from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
+import { cssVariables }       from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
-export *             from './button/index.js';
-export *             from './color/index.js';
-export *             from './container/index.js';
-export *             from './editor/index.js';
-export *             from './folder/index.js';
-export *             from './form/index.js';
-export *             from './label/index.js';
-export *             from './layers/index.js';
-export *             from './menu/index.js';
-export *             from './settings/index.js';
+import { FoundryStyles }      from '../fvtt/index.js';
+
+export * from './button/index.js';
+export * from './color/index.js';
+export * from './container/index.js';
+export * from './editor/index.js';
+export * from './folder/index.js';
+export * from './form/index.js';
+export * from './label/index.js';
+export * from './layers/index.js';
+export * from './menu/index.js';
+export * from './settings/index.js';
 
 // -------------------------------------------------------------------------------------------------------------------
 

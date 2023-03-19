@@ -1,7 +1,8 @@
-import { striptags }    from '@typhonjs-svelte/lib/util';
+import { striptags } from '@typhonjs-svelte/lib/util';
 
-import { FontManager }  from '../../../internal/FontManager.js';
-import { FVTTVersion }  from "../../../internal/FVTTVersion.js";
+import {
+   FontManager,
+   FVTTVersion }     from '../../../fvtt/index.js';
 
 export class MCEImpl
 {

@@ -1,6 +1,6 @@
 import { striptags }    from '@typhonjs-svelte/lib/util';
 
-import { FVTTVersion }  from '../../../internal/FVTTVersion.js';
+import { FVTTVersion }  from '../../../fvtt/index.js';
 
 export class CEImpl
 {

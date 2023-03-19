@@ -170,7 +170,7 @@
 
    import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
 
-   import { FontManager }   from '../../../internal/FontManager.js';
+   import { FontManager }   from '../../../fvtt/index.js';
    import { TinyMCEHelper } from './TinyMCEHelper.js';
    import { MCEImpl }       from './MCEImpl.js';
 
