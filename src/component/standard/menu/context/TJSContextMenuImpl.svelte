@@ -396,9 +396,11 @@
      use:applyStyles={styles}
      tabindex=-1>
 
-    <ol class=tjs-context-menu-items>
+    <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+    <ol class=tjs-context-menu-items role=menu>
         {#each items as item}
             {#if item['#type'] === 'class'}
+                <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class=tjs-context-menu-item
                     on:click={() => onClick(item)}
                     on:keyup={(event) => onKeyupItem(event, item)}
@@ -408,6 +410,7 @@
                     <svelte:component this={item.class} {...(isObject(item.props) ? item.props : {})} />
                 </li>
             {:else if item['#type'] === 'icon'}
+                <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class="tjs-context-menu-item tjs-context-menu-item-button"
                     on:click={() => onClick(item)}
                     on:keyup={(event) => onKeyupItem(event, item)}
@@ -418,6 +421,7 @@
                     <span class=tjs-context-menu-item-label>{localize(item.label)}</span>
                 </li>
             {:else if item['#type'] === 'image'}
+                <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class="tjs-context-menu-item tjs-context-menu-item-button"
                     on:click={() => onClick(item)}
                     on:keyup={(event) => onKeyupItem(event, item)}

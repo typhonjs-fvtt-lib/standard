@@ -483,7 +483,9 @@
      use:efx
      tabindex=-1
    >
-   <ol class=tjs-menu-items>
+
+   <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+   <ol class=tjs-menu-items role=menu>
       <!-- TJSMenu supports hosting a slot for menu content -->
       <slot>
          {#if isSvelteComponent(menu?.slotDefault?.class)}
@@ -492,6 +494,7 @@
       </slot>
 
       {#if $$slots.before}
+         <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
          <li class=tjs-menu-item
              on:click={() => onClick()}
              on:keyup={(event) => onKeyupItem(event)}
@@ -503,6 +506,7 @@
       {/if}
       {#each allItems as item}
          {#if item['#type'] === 'class'}
+            <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class=tjs-menu-item
                 on:click={() => onClick(item)}
                 on:keyup={(event) => onKeyupItem(event, item)}
@@ -512,6 +516,7 @@
                <svelte:component this={item.class} {...(isObject(item.props) ? item.props : {})} />
             </li>
          {:else if item['#type'] === 'icon'}
+            <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class="tjs-menu-item tjs-menu-item-button"
                  on:click={() => onClick(item)}
                  on:keyup={(event) => onKeyupItem(event, item)}
@@ -522,6 +527,7 @@
                <span class=tjs-menu-item-label>{localize(item.label)}</span>
             </li>
          {:else if item['#type'] === 'image'}
+            <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class="tjs-menu-item tjs-menu-item-button"
                  on:click={() => onClick(item)}
                  on:keyup={(event) => onKeyupItem(event, item)}
@@ -536,6 +542,7 @@
          {/if}
       {/each}
       {#if $$slots.after}
+         <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
          <li class=tjs-menu-item
              on:click={() => onClick()}
              on:keyup={(event) => onKeyupItem(event)}
