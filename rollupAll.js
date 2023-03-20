@@ -19,8 +19,9 @@ const s_LOCAL_EXTERNAL = [
    '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
    '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/dev',
    '@typhonjs-fvtt/svelte-standard/component/fvtt', '@typhonjs-fvtt/svelte-standard/dev-tools',
-   '@typhonjs-fvtt/svelte-standard/plugin/data', '@typhonjs-fvtt/svelte-standard/plugin/system',
-   '@typhonjs-fvtt/svelte-standard/prosemirror', '@typhonjs-fvtt/svelte-standard/store',
+   '@typhonjs-fvtt/svelte-standard/fvtt', '@typhonjs-fvtt/svelte-standard/plugin/data',
+   '@typhonjs-fvtt/svelte-standard/plugin/system', '@typhonjs-fvtt/svelte-standard/prosemirror',
+   '@typhonjs-fvtt/svelte-standard/store'
 ];
 
 // Defines potential output plugins to use conditionally if the .env file indicates the bundles should be
@@ -65,6 +66,23 @@ const rollupConfigs = [
       },
       output: {
          file: '_dist/dev-tools/prosemirror/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         plugins: outputPlugins,
+         sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/fvtt/index.js',
+         external: s_LOCAL_EXTERNAL,
+         plugins: [
+            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/fvtt'] }),
+            resolve()
+         ]
+      },
+      output: {
+         file: '_dist/fvtt/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          plugins: outputPlugins,

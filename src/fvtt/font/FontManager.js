@@ -17,30 +17,48 @@ export class FontManager
    {
       const fonts = [];
 
-      if (FVTTVersion.isV10)
+      if (FVTTVersion.isAtLeast(10))
       {
-         /**
-          * @deprecated since v10.
-          */
-         const legacyFamilies = globalThis.CONFIG._fontFamilies.reduce((obj, f) =>
-         {
-            obj[f] = { editor: true, fonts: [] };
-            return obj;
-         }, {});
+         let legacyFamilies;
 
-         fonts.push(globalThis.foundry.utils.duplicate(globalThis.CONFIG.fontDefinitions));
-         fonts.push(globalThis.foundry.utils.duplicate(globalThis.game.settings.get('core', 'fonts')));
-         fonts.push(legacyFamilies);
+         /**
+          * @deprecated since v10, so check that it exists.
+          */
+         if (Array.isArray(globalThis.CONFIG?._fontFamilies))
+         {
+            legacyFamilies = globalThis.CONFIG._fontFamilies.reduce((obj, f) =>
+            {
+               obj[f] = { editor: true, fonts: [] };
+               return obj;
+            }, {});
+         }
+
+         if (Array.isArray(globalThis.CONFIG?.fontDefinitions))
+         {
+            fonts.push(globalThis.foundry.utils.duplicate(globalThis.CONFIG.fontDefinitions));
+         }
+
+         const coreFonts = globalThis.game?.settings.get('core', 'fonts');
+         if (Array.isArray(coreFonts))
+         {
+            fonts.push(globalThis.foundry.utils.duplicate(coreFonts));
+         }
+
+         if (legacyFamilies) { fonts.push(legacyFamilies); }
       }
       else
       {
-         const legacyFamilies = globalThis.CONFIG.fontFamilies.reduce((obj, f) =>
+         if (Array.isArray(globalThis.CONFIG?.fontFamilies))
          {
-            obj[f] = { editor: true, fonts: [] };
-            return obj;
-         }, {});
+            // Handle v9 and below legacy font families.
+            const legacyFamilies = globalThis.CONFIG.fontFamilies.reduce((obj, f) =>
+            {
+               obj[f] = { editor: true, fonts: [] };
+               return obj;
+            }, {});
 
-         fonts.push(legacyFamilies);
+            fonts.push(legacyFamilies);
+         }
       }
 
       FontManager.removeDuplicateDefinitions(fonts);
@@ -148,34 +166,37 @@ export class FontManager
    /**
     * Removes duplicate font definitions.
     *
-    * @param {Object<FontFamilyDefinition>[]}   fonts -
+    * @param {Object<FontFamilyDefinition>[]}   fonts - An array of FontFamilyDefinition objects to process.
     *
     * @returns {Object<FontFamilyDefinition>[]} Filtered font definitions.
     */
    static removeDuplicateDefinitions(fonts)
    {
+      if (!Array.isArray(fonts))
+      {
+         throw new TypeError(`FontManager.removeDuplicateDefinitions error: 'fonts' is not an array.`);
+      }
+
       const familySet = new Set();
 
       for (const definitions of fonts)
       {
-         if (typeof definitions === 'object')
+         if (typeof definitions !== 'object' || definitions === null)
          {
-            for (const family of Object.keys(definitions))
-            {
-               // Remove duplicate from current definitions set.
-               if (familySet.has(family))
-               {
-                  delete definitions[family];
-               }
-               else
-               {
-                  familySet.add(family);
-               }
-            }
+            throw new TypeError(`FontManager.removeDuplicateDefinitions error: 'definitions' is not an object.`);
          }
-         else
+
+         for (const family of Object.keys(definitions))
          {
-            // TODO throw error.
+            // Remove duplicate from current definitions set.
+            if (familySet.has(family))
+            {
+               delete definitions[family];
+            }
+            else
+            {
+               familySet.add(family);
+            }
          }
       }
 

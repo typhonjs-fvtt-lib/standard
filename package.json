@@ -33,6 +33,10 @@
       "types": "./_dist/dev-tools/prosemirror/index.d.ts",
       "import": "./_dist/dev-tools/prosemirror/index.js"
     },
+    "./fvtt": {
+      "types": "./_dist/fvtt/index.d.ts",
+      "import": "./_dist/fvtt/index.js"
+    },
     "./plugin/data": {
       "types": "./_dist/plugin/data/index.d.ts",
       "import": "./_dist/plugin/data/index.js"

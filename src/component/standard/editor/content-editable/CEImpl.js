@@ -1,6 +1,6 @@
 import { striptags }    from '@typhonjs-svelte/lib/util';
 
-import { FVTTVersion }  from '../../../fvtt/index.js';
+import { FVTTVersion }  from '@typhonjs-fvtt/svelte-standard/fvtt';
 
 export class CEImpl
 {
@@ -153,7 +153,7 @@ export class CEImpl
       {
          // Check if pasted test matches the shape of a UUID. If so do a lookup and if a document is retrieved build
          // a UUID.
-         if (FVTTVersion.isV10 && this.#UUID_REGEX.test(text))
+         if (FVTTVersion.isAtLeast(10) && this.#UUID_REGEX.test(text))
          {
             const uuidDoc = globalThis.fromUuidSync(text);
             if (uuidDoc) { text = `@UUID[${text}]{${uuidDoc.name}}`; }

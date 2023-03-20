@@ -1,8 +1,8 @@
 import { SvelteApplication }  from '#runtime/svelte/application';
 
-import { cssVariables }       from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
+import { FoundryStyles }      from '@typhonjs-fvtt/svelte-standard/fvtt';
 
-import { FoundryStyles }      from '../fvtt/index.js';
+import { cssVariables }       from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
 export * from './button/index.js';
 export * from './color/index.js';
