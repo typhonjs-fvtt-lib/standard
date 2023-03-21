@@ -167,8 +167,7 @@
    /** @type {TJSFolderOptions} */
    const localOptions = {
       chevronOnly: false,
-      focusIndicator: false,
-      noKeys: false
+      focusIndicator: false
    }
 
    let detailsEl, iconEl, labelEl, summaryEl;
@@ -196,7 +195,6 @@
 
       if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
       if (typeof options?.focusIndicator === 'boolean') { localOptions.focusIndicator = options.focusIndicator; }
-      if (typeof options?.noKeys === 'boolean') { localOptions.noKeys = options.noKeys; }
    }
 
    $: {
@@ -343,20 +341,12 @@
    }
 
    /**
-    * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
-    *
-    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
-    * matches.
+    * Detect if the key event came from the active tabbed / focused summary element and `options.keyCode` matches.
     *
     * @param {KeyboardEvent} event -
     */
    function onKeyDown(event)
    {
-      if (localOptions.noKeys && event.code === 'Space')
-      {
-         event.preventDefault();
-      }
-
       if (document.activeElement === summaryEl && event.code === keyCode)
       {
          event.preventDefault();
@@ -365,20 +355,12 @@
    }
 
    /**
-    * When localOptions `noKeys` is true prevent `space bar` / 'space' from activating folder open / close.
-    *
-    * Otherwise, detect if the key event came from the active tabbed / focused summary element and `options.keyCode`
-    * matches.
+    * Detect if the key event came from the active tabbed / focused summary element and `options.keyCode` matches.
     *
     * @param {KeyboardEvent} event -
     */
    function onKeyUp(event)
    {
-      if (localOptions.noKeys && event.code === 'Space')
-      {
-         event.preventDefault();
-      }
-
       if (document.activeElement === summaryEl && event.code === keyCode)
       {
          handleOpenClose(event, true);

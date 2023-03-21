@@ -8,9 +8,6 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {boolean} [focusIndicator=false] - When true a `focus-visible` focus indicator is inserted between the
  *           chevron and summary label. This is a useful a11y focus indicator when `outline` isn't suitable.
- *
- * @property {boolean} [noKeys=false] - When true keyboard events do not control the details open / close state.
- *           This is useful when embedding an input element in the summary.
  */
 
 /**
