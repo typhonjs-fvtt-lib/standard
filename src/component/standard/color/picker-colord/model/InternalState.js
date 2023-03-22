@@ -1,6 +1,8 @@
 import { writable }        from 'svelte/store';
 
-import { propertyStore }   from '@typhonjs-svelte/lib/store';
+import {
+   isWritableStore,
+   propertyStore }         from '@typhonjs-svelte/lib/store';
 
 import {
    isIterable,
@@ -372,6 +374,11 @@ export class InternalState
       if (opts.precision !== void 0 && (!Number.isInteger(opts.precision) || opts.precision < 0))
       {
          throw new TypeError(`'options.precision' must be an integer >= 0.`);
+      }
+
+      if (opts.store !== void 0 && !isWritableStore(opts.store))
+      {
+         throw new TypeError(`'options.store' must be a writable store.`);
       }
 
       if (opts.width !== void 0)

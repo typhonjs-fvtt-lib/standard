@@ -1,4 +1,4 @@
-import { writable }              from 'svelte/store';
+import { get, writable }         from 'svelte/store';
 
 import { colord }                from '#runtime/color/colord';
 
@@ -88,8 +88,32 @@ export class ColorState
 
       this.#validateOptions(options);
 
-      // Attempt to parse color model format & type.
-      if (color !== void 0)
+      // First attempt to parse color model format & type from any defined optional store.
+      if (options.store)
+      {
+         const storeColor = get(options.store);
+
+         if (storeColor !== void 0)
+         {
+            const colorFormat = ColorParser.getColorFormat(storeColor);
+
+            // Post a warning message that any initial bound color prop is invalid. The default will be set to red.
+            if (!colorFormat)
+            {
+               console.warn(`TJSColordPicker warning - initial 'options.store' for color is invalid: ${storeColor}`);
+            }
+            else
+            {
+               this.#data.format = colorFormat.format;
+               this.#data.formatType = colorFormat.type;
+
+               const initialHsv = HsvColorParser.parseExternal(storeColor);
+               this.#updateColorData(initialHsv);
+            }
+         }
+      }
+      // Then potentially attempt to parse color model format & type from any `color` prop.
+      else if (color !== void 0)
       {
          const colorFormat = ColorParser.getColorFormat(color);
 
