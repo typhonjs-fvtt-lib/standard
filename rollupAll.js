@@ -16,6 +16,8 @@ const s_LOCAL_EXTERNAL = [
    'svelte', 'svelte/easing', 'svelte/internal', 'svelte/motion', 'svelte/store', 'svelte/transition',
    'svelte/types',
 
+   '@typhonjs-fvtt/runtime/color/colord',  // Referenced from TJSThemeStore
+
    '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
    '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/dev',
    '@typhonjs-fvtt/svelte-standard/component/fvtt', '@typhonjs-fvtt/svelte-standard/dev-tools',
