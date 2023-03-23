@@ -18,7 +18,7 @@ export class FVTTVersion
    {
       if (!Number.isInteger(version) && version < 9)
       {
-         throw new TypeError(`'version' is not a positive integer greater than '9'.`);
+         throw new TypeError(`'version' is not a positive integer greater than or equals '9'.`);
       }
 
       return !globalThis.foundry.utils.isNewerVersion(version, globalThis.game.version ??
@@ -38,12 +38,14 @@ export class FVTTVersion
    {
       if (!Number.isInteger(min) && min < 9)
       {
-         throw new TypeError(`FVTTVersion.isBetween error: 'min' is not a positive integer greater than '9'.`);
+         throw new TypeError(
+          `FVTTVersion.isBetween error: 'min' is not a positive integer greater than or equals '9'.`);
       }
 
       if (!Number.isInteger(max) && max < 9)
       {
-         throw new TypeError(`FVTTVersion.isBetween error: 'max' is not a positive integer greater than '9'.`);
+         throw new TypeError(
+          `FVTTVersion.isBetween error: 'max' is not a positive integer greater than or equals '9'.`);
       }
 
       if (min > max)
