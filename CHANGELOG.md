@@ -1,4 +1,7 @@
 # Changelog
+## Release 0.0.23 (minor)
+- Fixed respecting GM user when enriching content for all editor components. IE secrets won't show for non-GM users.
+
 ## Release 0.0.22 (minor)
 - Added `svelte-ignore` for new Svelte a11y warnings in TJSMenu / TJSContextMenu despite proper roles assigned.
 
