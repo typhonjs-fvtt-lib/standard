@@ -520,7 +520,7 @@
       {
          if (enrichContent)
          {
-            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: true });
+            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: globalThis.game.user.isGM });
          }
          else
          {
