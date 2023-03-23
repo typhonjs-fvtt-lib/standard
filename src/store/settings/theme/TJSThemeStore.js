@@ -9,6 +9,7 @@ import {
    isObject,
    StyleManager }          from '@typhonjs-fvtt/svelte/util';
 
+import { DataValidator }   from './DataValidator.js';
 import { TJSGameSettings } from '../TJSGameSettings.js';
 
 /**
@@ -29,7 +30,7 @@ export class TJSThemeStore
    #data = {};
 
    /**
-    * Stores all of the CSS variable keys.
+    * Stores all CSS variable keys.
     *
     * @type {string[]}
     */
@@ -43,11 +44,14 @@ export class TJSThemeStore
    #subscriptions = [];
 
    /**
-    * @type {Object<String, import('svelte/store').Writable<string|null>>}
+    * @type {Object<string, import('svelte/store').Writable<string|null>>}
     */
-   #stores = {}
+   #stores = {};
 
-   #opts;
+   /**
+    * @type {StyleManager}
+    */
+   #styleManager;
 
    /**
     * @param {object} options - Options
@@ -83,54 +87,69 @@ export class TJSThemeStore
 
       if (!isIterable(options.data)) { throw new TypeError(`'data' is not an iterable list. `); }
 
-      this.#opts = Object.assign({}, options);
+      this.#styleManager = options.styleManager;
 
-      this.#initialize();
+      this.#initialize(options);
    }
 
    /**
-    * @returns {Object<String, import('svelte/store').Writable<string|null>>}
+    * @returns {Object<string, import('svelte/store').Writable<string|null>>} All stores.
     */
    get stores()
    {
       return this.#stores;
    }
 
-   #initialize()
+   /**
+    * Parse `options.data` and initialize game setting for theme data.
+    *
+    * @param {object}   options -
+    */
+   #initialize(options)
    {
       this.#components = [];
       this.#vars = [];
 
-      this.#defaultThemeData = this.#selectDefaultData();
+      this.#defaultThemeData = {};
       this.#initialThemeData = Object.assign({}, this.#defaultThemeData);
 
+      const data = options.data;
+
+      let cntr = 0;
+
       // Process vars data.
-      for (const entry of this.#opts.data)
+      for (let entry of data)
       {
-         // TODO: Validate data
+         // Validate entry, but also adds additional information based on data types; IE `format` for `color`.
+         entry = DataValidator.dataEntry(entry, cntr);
 
          // Add var key if defined.
          if (typeof entry.var === 'string')
          {
-            // TODO: Validate var is CSS variable.
             const key = entry.var;
 
             this.#vars.push(key);
             this.#stores[key] = propertyStore(this, key);
             this.#components.push(Object.assign({}, entry, { store: this.#stores[key] }));
+            this.#defaultThemeData[key] = entry.default;
          }
          else
          {
             this.#components.push(Object.assign({}, entry));
          }
+
+         cntr++;
       }
 
       // Create a store for TJSThemeEditor of all component data / definitions.
       this.#stores.components = writable(this.#components);
 
-      this.#settingsStoreHandler = this.#opts.gameSettings.register({
-         namespace: this.#opts.namespace,
-         key: this.#opts.key,
+      // Set initial data to default here just in case the game setting entry is invalid upon registration / IE null.
+      this.#initialThemeData = Object.assign({}, this.#defaultThemeData);
+
+      this.#settingsStoreHandler = options.gameSettings.register({
+         namespace: options.namespace,
+         key: options.key,
          store: this,
          options: {
             scope: 'world',
@@ -140,46 +159,44 @@ export class TJSThemeStore
          }
       });
 
-      this.#initialThemeData = game.settings.get(this.#opts.namespace, this.#opts.key);
+      // Retrieve existing data from stored word setting.
+      this.#initialThemeData = game.settings.get(options.namespace, options.key);
 
-      if (!this.#validateThemeData(this.#initialThemeData))
+      // Validate initial theme data and set to default if it fails to validate.
+      if (!this.#validateThemeData(this.#initialThemeData, false))
       {
          console.warn(
-          `TinyMCE Everywhere! (mce-everywhere) warning: Initial theme data invalid. Setting to system default.`);
+          `TJSThemeStore warning: Initial theme data invalid. Setting to default data.`);
 
          this.#initialThemeData = Object.assign({}, this.#defaultThemeData);
 
-         this.set(Object.assign({}, this.#initialThemeData), true);
+         this.set(Object.assign({}, this.#initialThemeData));
       }
-   }
-
-   #selectDefaultData()
-   {
-      return {
-         '--mce-everywhere-toolbar-background': 'hsla(0, 0%, 0%, 0.1)',
-         '--mce-everywhere-toolbar-button-background-hover': 'hsl(60, 35%, 91%)',
-         '--mce-everywhere-toolbar-disabled-font-color': 'hsla(212, 29%, 19%, 0.5)',
-         '--mce-everywhere-toolbar-font-color': 'hsl(50, 14%, 9%)'
-      };
    }
 
    /**
     * Sets the theme store with new data.
     *
-    * @param {object}   theme -
+    * @param {object}   themeData -
     *
-    * @returns {TJSThemeStore}
+    * @returns {TJSThemeStore} This theme store instance.
     */
-   set(theme)
+   set(themeData)
    {
-     if (!this.#validateThemeData(theme)) { theme = Object.assign({}, this.#initialThemeData); }
+      if (!this.#validateThemeData(themeData))
+      {
+         themeData = Object.assign({}, this.#initialThemeData);
+      }
 
       for (const key of this.#vars)
       {
-         const keyData = theme[key];
+         if (key in themeData)
+         {
+            const keyData = themeData[key];
 
-         this.#data[key] = keyData;
-         this.#opts.styleManager.setProperty(key, keyData);
+            this.#data[key] = keyData;
+            this.#styleManager.setProperty(key, keyData);
+         }
       }
 
       this.#updateSubscribers();
@@ -192,14 +209,18 @@ export class TJSThemeStore
     *
     * @param {object}   themeData -
     *
+    * @param {boolean}  warn - When true post warning message.
+    *
     * @returns {boolean} Validation status.
     */
-   #validateThemeData(themeData)
+   #validateThemeData(themeData, warn = true)
    {
       if (typeof themeData !== 'object' || themeData === null)
       {
-         console.warn(
-          `TinyMCE Eveywhere (mce-everywhere) warning: 'theme' data is not an object resetting to initial data.`);
+         if (warn)
+         {
+            console.warn(`TJSThemeStore warning: 'theme' data is not an object resetting to initial data.`);
+         }
 
          return false;
       }
@@ -210,8 +231,11 @@ export class TJSThemeStore
 
          if (getFormat(data) !== 'hsl')
          {
-            console.warn(`TinyMCE Eveywhere (mce-everywhere) warning: data for property '${
-             key}' is not a HSL color string. Resetting to initial data.`);
+            if (warn)
+            {
+               console.warn(`TJSThemeStore warning: data for property '${
+                key}' is not a HSL color string. Resetting to initial data.`);
+            }
 
             return false;
          }
