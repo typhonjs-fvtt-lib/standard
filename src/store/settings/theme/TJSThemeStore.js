@@ -9,7 +9,10 @@ import {
    isObject,
    StyleManager }          from '@typhonjs-fvtt/svelte/util';
 
-import { DataValidator }   from './DataValidator.js';
+import {
+   DataValidator,
+   SemVer }                from './DataValidator.js';
+
 import { TJSGameSettings } from '../TJSGameSettings.js';
 
 /**
@@ -21,27 +24,13 @@ export class TJSThemeStore
    /** @type {object[]} */
    #components;
 
+   #data = {};
+
    #defaultThemeData;
 
    #initialThemeData;
 
    #settingsStoreHandler;
-
-   #data = {};
-
-   /**
-    * Stores all CSS variable keys.
-    *
-    * @type {string[]}
-    */
-   #vars;
-
-   /**
-    * Stores the subscribers.
-    *
-    * @type {(function(data): void)[]}
-    */
-   #subscriptions = [];
 
    /**
     * @type {Object<string, import('svelte/store').Writable<string|null>>}
@@ -54,38 +43,63 @@ export class TJSThemeStore
    #styleManager;
 
    /**
-    * @param {object} options - Options
+    * Stores the subscribers.
     *
-    * @param {string} options.namespace - The world setting scope.
+    * @type {(function(data): void)[]}
+    */
+   #subscriptions = [];
+
+   /**
+    * Stores all CSS variable keys.
     *
-    * @param {string} options.key - The world setting key.
-    *
-    * @param {TJSGameSettings} options.gameSettings - An associated TJSGameSettings instance.
-    *
-    * @param {StyleManager} options.styleManager - An associated StyleManager instance to manipulate CSS variables.
-    *
-    * @param {object[]} options.data - Data defining CSS theme variables.
-    *
+    * @type {string[]}
+    */
+   #vars;
+
+   /**
+    * @type {SemVerData}
+    */
+   #version;
+
+   /**
+    * @param {TJSThemeStoreOptions} options - Options
     */
    constructor(options)
    {
       if (!isObject(options)) { throw new TypeError(`'options' is not an object.`); }
 
-      if (typeof options.namespace !== 'string') { throw new TypeError(`'namespace' is not a string.`); }
+      if (typeof options.namespace !== 'string') { throw new TypeError(`'namespace' attribute is not a string.`); }
 
-      if (typeof options.key !== 'string') { throw new TypeError(`'key' is not a string.`); }
+      if (typeof options.key !== 'string') { throw new TypeError(`'key' attribute is not a string.`); }
 
       if (!(options.gameSettings instanceof TJSGameSettings))
       {
-         throw new TypeError(`'gameSettings' is not an instance of TJSGameSettings.`);
+         throw new TypeError(`'gameSettings' attribute is not an instance of TJSGameSettings.`);
       }
 
       if (!(options.styleManager instanceof StyleManager))
       {
-         throw new TypeError(`'styleManager' is not an instance of StyleManager.`);
+         throw new TypeError(`'styleManager' attribute is not an instance of StyleManager.`);
       }
 
-      if (!isIterable(options.data)) { throw new TypeError(`'data' is not an iterable list. `); }
+      if (!isObject(options.config)) { throw new TypeError(`'config' attribute is not an object. `); }
+
+      if (typeof options.config.version !== 'string')
+      {
+         throw new TypeError(`'config.version' attribute is not a string`);
+      }
+
+      this.#version = SemVer.parseSemVer(options.config.version);
+
+      if (!isObject(this.#version))
+      {
+         throw new Error(`'config.version' attribute is not a valid semantic version string.`);
+      }
+
+      if (!isIterable(options.config.components))
+      {
+         throw new TypeError(`'config.components' attribute is not an iterable list. `);
+      }
 
       this.#styleManager = options.styleManager;
 
@@ -101,9 +115,9 @@ export class TJSThemeStore
    }
 
    /**
-    * Parse `options.data` and initialize game setting for theme data.
+    * Parse `options.config` and initialize game setting for theme data.
     *
-    * @param {object}   options -
+    * @param {TJSThemeStoreOptions}   options -
     */
    #initialize(options)
    {
@@ -113,15 +127,13 @@ export class TJSThemeStore
       this.#defaultThemeData = {};
       this.#initialThemeData = Object.assign({}, this.#defaultThemeData);
 
-      const data = options.data;
-
       let cntr = 0;
 
-      // Process vars data.
-      for (let entry of data)
+      // Process component / vars data.
+      for (let entry of options.config.components)
       {
          // Validate entry, but also adds additional information based on data types; IE `format` for `color`.
-         entry = DataValidator.dataEntry(entry, cntr);
+         entry = DataValidator.componentEntry(entry, cntr);
 
          // Add var key if defined.
          if (typeof entry.var === 'string')
@@ -280,3 +292,37 @@ export class TJSThemeStore
       };
    }
 }
+
+/**
+ * @typedef {object} TJSThemeStoreConfig
+ *
+ * @property {string} version - A semantic version string.
+ *
+ * @property {Iterable<TJSThemeStoreComponent>} components - An iterable list of theme store component data.
+ */
+
+/**
+ * @typedef {object} TJSThemeStoreComponent
+ *
+ * @property {string} type - Type of component / variable.
+ *
+ * @property {string} [default] - An optional default value for a CSS variable.
+ *
+ * @property {string} [label] - An optional label for any variable / setting related component.
+ *
+ * @property {string} [var] - A CSS variable name.
+ */
+
+/**
+ * @typedef {object} TJSThemeStoreOptions
+ *
+ * @property {string} namespace - The world setting namespace.
+ *
+ * @property {string} key - The world setting key.
+ *
+ * @property {TJSGameSettings} gameSettings - An associated TJSGameSettings instance.
+ *
+ * @property {StyleManager} styleManager - An associated StyleManager instance to manipulate CSS variables.
+ *
+ * @property {TJSThemeStoreConfig} config - Data defining CSS theme store components and variables.
+ */
