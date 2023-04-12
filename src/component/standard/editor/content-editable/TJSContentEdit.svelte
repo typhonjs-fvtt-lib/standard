@@ -604,7 +604,7 @@
         {@html enrichedContent}
         {#if editorButton}
             <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
-            <a class=editor-edit on:click={() => initEditor()} role=button tabindex=0><i class="fas fa-edit"></i></a>
+            <a class=editor-edit on:click={() => initEditor()} role=button tabindex=-1><i class="fas fa-edit"></i></a>
         {/if}
     </div>
 {/if}
