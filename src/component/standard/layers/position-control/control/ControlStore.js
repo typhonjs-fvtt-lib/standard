@@ -2,7 +2,7 @@ import { writable }        from 'svelte/store';
 
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 
-import { Position }        from '@typhonjs-fvtt/svelte/application';
+import { TJSPosition }     from '@typhonjs-fvtt/svelte/store/position';
 
 export class ControlStore
 {
@@ -31,7 +31,7 @@ export class ControlStore
       // target component position.
       let ignoreRoundRobin = false;
 
-      this.#position = Position.duplicate(component.position, { calculateTransform: true });
+      this.#position = TJSPosition.duplicate(component.position, { calculateTransform: true });
 
       /**
        * Update component position, but only when ignoring round-robin callback.
@@ -72,7 +72,7 @@ export class ControlStore
    get isPrimary() { return this.#data.isPrimary; }
 
    /**
-    * @returns {Position} Control position.
+    * @returns {TJSPosition} Control position.
     */
    get position() { return this.#position; }
 

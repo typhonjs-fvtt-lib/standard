@@ -1,5 +1,3 @@
-import { ManagedPromise } from '@typhonjs-fvtt/runtime/svelte/util';
-
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
  *
@@ -80,12 +78,12 @@ declare class FVTTSidebarControl {
     /**
      * @type {object[]}
      */
-    static "__#173869@#initData": object[];
-    static "__#173869@#initPromise": ManagedPromise;
+    static "__#142705@#initData": object[];
+    static "__#142705@#initPromise": any;
     /**
      * @type {Map<string, TJSSidebarEntry>}
      */
-    static "__#173869@#sidebars": Map<string, TJSSidebarEntry>;
+    static "__#142705@#sidebars": Map<string, TJSSidebarEntry>;
     /**
      * Adds a new Svelte powered sidebar tab / panel.
      *
@@ -133,7 +131,7 @@ declare class FVTTSidebarControl {
     /**
      * Initializes all sidebars registered after the initial Foundry Sidebar app has been rendered.
      */
-    static "__#173869@#initialize"(): void;
+    static "__#142705@#initialize"(): void;
     /**
      * Returns a loaded and configured sidebar entry by ID.
      *
@@ -204,7 +202,7 @@ declare class FVTTSidebarControl {
      *
      * @param {object}   sidebarData - Sidebar data to add.
      */
-    static "__#173869@#sidebarAdd"(data: object, sidebarData: object): void;
+    static "__#142705@#sidebarAdd"(data: object, sidebarData: object): void;
     /**
      * Handles removing an existing sidebar.
      *
@@ -212,7 +210,7 @@ declare class FVTTSidebarControl {
      *
      * @param {object}   sidebarData - Sidebar data to remove.
      */
-    static "__#173869@#sidebarRemove"(data: object, sidebarData: object): void;
+    static "__#142705@#sidebarRemove"(data: object, sidebarData: object): void;
     /**
      * Handles replacing an existing sidebar with a new Svelte sidebar tab / panel.
      *
@@ -220,7 +218,7 @@ declare class FVTTSidebarControl {
      *
      * @param {object}   sidebarData - Sidebar data to replace.
      */
-    static "__#173869@#sidebarReplace"(data: object, sidebarData: object): void;
+    static "__#142705@#sidebarReplace"(data: object, sidebarData: object): void;
     /**
      * Provides a Promise that is resolved after all added sidebars are initialized. This is useful when additional
      * setup or configuration of sidebars needs to be performed after sidebar initialization.
@@ -261,7 +259,7 @@ declare class TJSContextMenu {
     /**
      * Stores any active context menu.
      */
-    static "__#173870@#contextMenu": any;
+    static "__#142706@#contextMenu": any;
     /**
      * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
      * DOM event as it is processed for the location of the context menu to display. Likewise, a A11yFocusSource object
@@ -317,7 +315,7 @@ declare class TJSContextMenu {
      *
      * @returns {object[]} Processed menu items.
      */
-    static "__#173870@#processItems"(items: Iterable<TJSContextMenuItemData>): object[];
+    static "__#142706@#processItems"(items: Iterable<TJSContextMenuItemData>): object[];
 }
 /**
  * - Defines a menu item entry. Depending on the item data that is passed

@@ -9,7 +9,7 @@ import { hitboxCallback } from './constants.js';
  *
  * @param {ControlStore}   control - ControlStore instance.
  *
- * @returns {object} Position update data.
+ * @returns {object} TJSPosition update data.
  */
 export function applyResizeData(id, dX, dY, control)
 {

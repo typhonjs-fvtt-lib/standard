@@ -1,6 +1,6 @@
 import { writable }        from 'svelte/store';
 
-import { Position }        from '@typhonjs-fvtt/svelte/application';
+import { TJSPosition }     from '@typhonjs-fvtt/svelte/store/position';
 
 import { propertyStore }   from '@typhonjs-svelte/lib/store';
 
@@ -95,7 +95,7 @@ export class ControlsStore
    set validate(validate) { this.#stores.validate.set(validate); }
 
    /**
-    * Exports all or selected component data w/ Position converted to JSON object. An option to compact the position
+    * Exports all or selected component data w/ TJSPosition converted to JSON object. An option to compact the position
     * data will transform the minimum top / left of all components as the origin.
     *
     * @param {object}   [opts] - Optional parameters.
@@ -180,7 +180,7 @@ export class ControlsStore
 
    /**
     * Updates the tracked component data. Each entry must be an object containing a unique `id` property and an
-    * instance of Position as the `position` property.
+    * instance of TJSPosition as the `position` property.
     *
     * @param {Iterable<object>} components - Iterable list of component data objects.
     */
@@ -200,7 +200,7 @@ export class ControlsStore
             throw new Error(`updateComponents error: component data does not have a defined 'id' property.`);
          }
 
-         if (!(component.position instanceof Position))
+         if (!(component.position instanceof TJSPosition))
          {
             throw new Error(`updateComponents error: component data does not have a valid 'position' property.`);
          }
@@ -209,7 +209,7 @@ export class ControlsStore
          {
             const control = controlMap.get(componentId);
 
-            // Evaluate if the components Position instance has changed.
+            // Evaluate if the components TJSPosition instance has changed.
             if (control.component.position !== component.position)
             {
                // Remove old control
@@ -237,7 +237,7 @@ export class ControlsStore
          selected.removeById(id);
          controlMap.delete(id);
 
-         // Remove subscriptions to Position instances.
+         // Remove subscriptions to TJSPosition instances.
          if (control) { control.destroy(); }
       }
 
