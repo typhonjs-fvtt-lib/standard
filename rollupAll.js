@@ -1,7 +1,6 @@
 import alias               from '@rollup/plugin-alias';
-import commonjs            from '@rollup/plugin-commonjs';
 import resolve             from '@rollup/plugin-node-resolve';
-import { generateTSDef }   from '@typhonjs-build-test/esm-d-ts';
+import { generateDTS }     from '@typhonjs-build-test/esm-d-ts';
 import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
@@ -19,8 +18,7 @@ const s_LOCAL_EXTERNAL = [
    '@typhonjs-fvtt/runtime/color/colord',  // Referenced from TJSThemeStore
 
    '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
-   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/dev',
-   '@typhonjs-fvtt/svelte-standard/component/fvtt', '@typhonjs-fvtt/svelte-standard/dev-tools',
+   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/fvtt',
    '@typhonjs-fvtt/svelte-standard/fvtt', '@typhonjs-fvtt/svelte-standard/plugin/data',
    '@typhonjs-fvtt/svelte-standard/plugin/system', '@typhonjs-fvtt/svelte-standard/prosemirror',
    '@typhonjs-fvtt/svelte-standard/store'
@@ -50,24 +48,6 @@ const rollupConfigs = [
       },
       output: {
          file: '_dist/action/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         plugins: outputPlugins,
-         sourcemap
-      }
-   },
-   {
-      input: {
-         input: 'src/dev-tools/prosemirror/index.js',
-         external: s_LOCAL_EXTERNAL,
-         plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/dev-tools/prosemirror'] }),
-            resolve(),
-            commonjs()
-         ]
-      },
-      output: {
-         file: '_dist/dev-tools/prosemirror/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          plugins: outputPlugins,
@@ -171,28 +151,15 @@ for (const config of rollupConfigs)
    // closes the bundle
    await bundle.close();
 
-   await generateTSDef({
-      main: config.output.file,
+   await generateDTS({
+      input: config.output.file,
       output: upath.changeExt(config.output.file, '.d.ts')
-   });
-
-   fs.writeJSONSync(`${upath.dirname(config.output.file)}/package.json`, {
-      main: './index.js',
-      module: './index.js',
-      type: 'module',
-      types: './index.d.ts'
    });
 }
 
 // Handle application by copying the source.
 fs.emptyDirSync('./_dist/application');
 fs.copySync('./src/application', './_dist/application');
-
-fs.writeJSONSync(`./_dist/application/package.json`, {
-   main: './index.js',
-   module: './index.js',
-   type: 'module'
-});
 
 let compFiles = await getFileList({ dir: './_dist/application' });
 for (const compFile of compFiles)
@@ -204,8 +171,8 @@ for (const compFile of compFiles)
    fs.writeFileSync(compFile, fileData);
 }
 
-await generateTSDef({
-   main: './_dist/application/index.js',
+await generateDTS({
+   input: './_dist/application/index.js',
    output: './_types/application/index.d.ts'
 });
 
@@ -214,12 +181,6 @@ await generateTSDef({
 // Handle component/standard by copying the source.
 fs.emptyDirSync('./_dist/component');
 fs.copySync('./src/component', './_dist/component');
-
-fs.writeJSONSync(`./_dist/component/standard/package.json`, {
-   main: './index.js',
-   module: './index.js',
-   type: 'module'
-});
 
 compFiles = await getFileList({ dir: './_dist/component' });
 for (const compFile of compFiles)
