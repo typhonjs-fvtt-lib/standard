@@ -21,17 +21,9 @@
       "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
     },
-    "./component/dev": {
-      "types": "./_dist/component/dev/index.d.ts",
-      "import": "./_dist/component/dev/index.js"
-    },
     "./component/fvtt": {
       "types": "./_dist/component/fvtt/index.d.ts",
       "import": "./_dist/component/fvtt/index.js"
-    },
-    "./dev-tools/prosemirror": {
-      "types": "./_dist/dev-tools/prosemirror/index.d.ts",
-      "import": "./_dist/dev-tools/prosemirror/index.js"
     },
     "./fvtt": {
       "types": "./_dist/fvtt/index.d.ts",
@@ -59,20 +51,16 @@
     "#runtime/color/colord": "@typhonjs-fvtt/runtime/color/colord",
     "#runtime/svelte/application": "@typhonjs-fvtt/runtime/svelte/application"
   },
-  "peerDependencies": {
-    "@typhonjs-fvtt/runtime": ">=0.0.22"
-  },
   "devDependencies": {
     "@rollup/plugin-alias": "^4",
     "@rollup/plugin-commonjs": "^24",
     "@rollup/plugin-node-resolve": "^15",
-    "@typhonjs-build-test/esm-d-ts": "^0.0.8",
+    "@typhonjs-build-test/esm-d-ts": "^0.0.16",
     "@typhonjs-config/eslint-config": "^0.3.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
     "fs-extra": "^11",
-    "prosemirror-dev-toolkit": "^1.1.1",
     "rollup": "^3",
     "upath": "^2"
   },
