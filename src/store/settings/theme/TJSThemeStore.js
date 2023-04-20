@@ -7,7 +7,7 @@ import { propertyStore }   from '@typhonjs-fvtt/svelte/store';
 import {
    isIterable,
    isObject,
-   StyleManager }          from '@typhonjs-fvtt/svelte/util';
+   TJSStyleManager }       from '@typhonjs-fvtt/svelte/util';
 
 import {
    DataValidator,
@@ -38,7 +38,7 @@ export class TJSThemeStore
    #stores = {};
 
    /**
-    * @type {StyleManager}
+    * @type {TJSStyleManager}
     */
    #styleManager;
 
@@ -77,9 +77,9 @@ export class TJSThemeStore
          throw new TypeError(`'gameSettings' attribute is not an instance of TJSGameSettings.`);
       }
 
-      if (!(options.styleManager instanceof StyleManager))
+      if (!(options.styleManager instanceof TJSStyleManager))
       {
-         throw new TypeError(`'styleManager' attribute is not an instance of StyleManager.`);
+         throw new TypeError(`'styleManager' attribute is not an instance of TJSStyleManager.`);
       }
 
       if (!isObject(options.config)) { throw new TypeError(`'config' attribute is not an object. `); }
@@ -322,7 +322,7 @@ export class TJSThemeStore
  *
  * @property {TJSGameSettings} gameSettings - An associated TJSGameSettings instance.
  *
- * @property {StyleManager} styleManager - An associated StyleManager instance to manipulate CSS variables.
+ * @property {TJSStyleManager} styleManager - An associated TJSStyleManager instance to manipulate CSS variables.
  *
  * @property {TJSThemeStoreConfig} config - Data defining CSS theme store components and variables.
  */

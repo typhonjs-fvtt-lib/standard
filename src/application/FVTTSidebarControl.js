@@ -8,7 +8,7 @@ import {
 import {
    hasPrototype,
    isObject,
-   parseSvelteConfig,
+   parseTJSSvelteConfig,
    ManagedPromise,
    styleParsePixels }         from '@typhonjs-fvtt/svelte/util';
 
@@ -194,7 +194,7 @@ export class FVTTSidebarControl
 
          try
          {
-            svelteConfig = parseSvelteConfig(sidebarData.svelte);
+            svelteConfig = parseTJSSvelteConfig(sidebarData.svelte);
          }
          catch (err)
          {
@@ -209,7 +209,7 @@ export class FVTTSidebarControl
          {
             try
             {
-               iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
+               iconSvelteConfig = parseTJSSvelteConfig(sidebarData.icon);
             }
             catch (err)
             {
@@ -498,7 +498,7 @@ export class FVTTSidebarControl
 
          try
          {
-            svelteConfig = parseSvelteConfig(sidebarData.svelte);
+            svelteConfig = parseTJSSvelteConfig(sidebarData.svelte);
          }
          catch (err)
          {
@@ -513,7 +513,7 @@ export class FVTTSidebarControl
          {
             try
             {
-               iconSvelteConfig = parseSvelteConfig(sidebarData.icon);
+               iconSvelteConfig = parseTJSSvelteConfig(sidebarData.icon);
             }
             catch (err)
             {
