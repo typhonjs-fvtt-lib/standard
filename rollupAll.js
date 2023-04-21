@@ -173,7 +173,7 @@ for (const compFile of compFiles)
 
 await generateDTS({
    input: './_dist/application/index.js',
-   output: './_types/application/index.d.ts'
+   output: './_dist/application/index.d.ts'
 });
 
 // Svelte standard components ----------------------------------------------------------------------------------------
