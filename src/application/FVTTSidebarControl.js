@@ -1,4 +1,4 @@
-import { SvelteApplication }  from '@typhonjs-fvtt/svelte/application';
+import { SvelteApplication }  from '#runtime/svelte/application';
 
 import {
    FVTTSidebarPopout,
@@ -10,7 +10,7 @@ import {
    isObject,
    parseTJSSvelteConfig,
    ManagedPromise,
-   styleParsePixels }         from '@typhonjs-fvtt/svelte/util';
+   styleParsePixels }         from '#runtime/svelte/util';
 
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
@@ -63,7 +63,7 @@ import {
  *
  * -------------------------------------------------------------------------------------------------------------------
  *
- * The {@link FVTTSidebarControl.get} method allows you to retrieve the associated {@link TJSSidebarEntry} for a given
+ * The {@link FVTTSidebarControl.get} method allows you to retrieve the associated {@link FVTTSidebarEntry} for a given
  * sidebar by ID allowing access to the configuration data, popout app, and wrapper components that mount the sidebar.
  *
  * The {@link FVTTSidebarControl.wait} returns a Promise that is resolved after all sidebars have been initialized.
@@ -98,41 +98,14 @@ export class FVTTSidebarControl
    static #initPromise = new ManagedPromise();
 
    /**
-    * @type {Map<string, TJSSidebarEntry>}
+    * @type {Map<string, FVTTSidebarEntry>}
     */
    static #sidebars = new Map();
 
    /**
     * Adds a new Svelte powered sidebar tab / panel.
     *
-    * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
-    *
-    * @param {string}   sidebarData.id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
-    *
-    * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
-    * to load a custom Svelte component to use as the "icon".
-    *
-    * @param {object}   sidebarData.svelte - A Svelte configuration object.
-    *
-    * @param {string}   [sidebarData.beforeId] - The ID for the tab to place the new sidebar before. This must be an
-    *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
-    *
-    * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
-    *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
-    *        internally.
-    *
-    * @param {object}   [sidebarData.mergeAppImpl] - Provides a custom base implementation for the object instance
-    *        for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
-    *
-    * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
-    *        for the popout sidebar.
-    *
-    * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides for the default
-    *        popout sidebar.
-    *
-    * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
-    *
-    * @param {string}   [sidebarData.tooltip] - The sidebar tab tooltip text or i18n lang key.
+    * @param {FVTTSidebarAddData}   sidebarData - The configuration object for a Svelte sidebar,
     */
    static add(sidebarData)
    {
@@ -337,7 +310,7 @@ export class FVTTSidebarControl
     *
     * @param {string}   id - The ID of the sidebar to retrieve.
     *
-    * @returns {TJSSidebarEntry} The sidebar entry.
+    * @returns {FVTTSidebarEntry} The sidebar entry.
     */
    static get(id)
    {
@@ -347,13 +320,7 @@ export class FVTTSidebarControl
    /**
     * Removes an existing sidebar tab / panel.
     *
-    * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
-    *
-    * @param {string}   sidebarData.id - The ID for the sidebar tab to remove. This must be an existing sidebar tab ID.
-    *
-    * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
-    *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
-    *        internally.
+    * @param {FVTTSidebarRemoveData}   sidebarData - The configuration object to remove a Svelte sidebar.
     */
    static remove(sidebarData)
    {
@@ -409,31 +376,8 @@ export class FVTTSidebarControl
    /**
     * Replaces an existing sidebar tab / panel with a new Svelte powered sidebar.
     *
-    * @param {object}   sidebarData - The configuration object for a Svelte sidebar,
-    *
-    * @param {string|object}  sidebarData.icon - The FontAwesome icon css classes _or_ a Svelte configuration object
-    *        to load a custom Svelte component to use as the "icon".
-    *
-    * @param {string}   sidebarData.id - The ID for the sidebar to replace. This must be an existing sidebar tab ID.
-    *
-    * @param {object}   sidebarData.svelte - A Svelte configuration object.
-    *
-    * @param {boolean|Function}   [sidebarData.condition] - A boolean value or function to invoke that returns a
-    *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
-    *        internally.
-    *
-    * @param {object}   [sidebarData.mergeAppImpl] - Provides a custom base implementation for the object instance
-    *        for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
-    *
-    * @param {string}   [sidebarData.popoutApplication] - Provides a custom SvelteApplication class to instantiate
-    *        for the popout sidebar.
-    *
-    * @param {string}   [sidebarData.popoutOptions] - Provides SvelteApplication options overrides for the default
-    *        popout sidebar.
-    *
-    * @param {string}   [sidebarData.title] - The popout application title text or i18n lang key.
-    *
-    * @param {string}   [sidebarData.tooltip] - The sidebar tab tooltip text or i18n lang key.
+    * @param {FVTTSidebarReplaceData}   sidebarData - The configuration object to replace a core sidebar with a Svelte
+    *        sidebar.
     */
    static replace(sidebarData)
    {
@@ -634,7 +578,7 @@ export class FVTTSidebarControl
          }
       });
 
-      /** @type {TJSSidebarEntry} */
+      /** @type {FVTTSidebarEntry} */
       const sidebarEntry = {
          data: sidebarData,
          popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
@@ -779,7 +723,7 @@ export class FVTTSidebarControl
          }
       });
 
-      /** @type {TJSSidebarEntry} */
+      /** @type {FVTTSidebarEntry} */
       const sidebarEntry = {
          data: sidebarData,
          popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
@@ -836,13 +780,83 @@ export class FVTTSidebarControl
 }
 
 /**
- * @typedef {object} TJSSidebarEntry
+ * @typedef {object} FVTTSidebarAddData The configuration object to add a Svelte sidebar.
  *
- * @property {object}               data - The sidebar data that configures a Svelte sidebar.
+ * @property {string}   id - The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
  *
- * @property {SvelteApplication}    popout - The sidebar popout application.
+ * @property {string|import('#runtime/svelte/util').TJSSvelteConfig}  icon - The FontAwesome icon css classes
+ *        _or_ a Svelte configuration object to load a custom Svelte component to use as the "icon".
  *
- * @property {FVTTSidebarTab}       tab - The tab wrapper component.
+ * @property {import('#runtime/svelte/util').TJSSvelteConfig}   svelte - A Svelte configuration object.
  *
- * @property {FVTTSidebarWrapper}   wrapper - The sidebar wrapper component.
+ * @property {string}   [beforeId] - The ID for the tab to place the new sidebar before. This must be an
+ *        existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
+ *
+ * @property {boolean | (() => boolean)}  [condition] - A boolean value or function to invoke that returns a
+ *        boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+ *        internally.
+ *
+ * @property {object}   [mergeAppImpl] - Provides a custom base implementation for the object instance
+ *        for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
+ *
+ * @property {import('#runtime/svelte/application').SvelteApplication}   [popoutApplication] - Provides a custom SvelteApplication class to instantiate
+ *        for the popout sidebar.
+ *
+ * @property {object}   [popoutOptions] - Provides SvelteApplication options overrides for the default
+ *        popout sidebar.
+ *
+ * @property {string}   [title] - The popout application title text or i18n lang key.
+ *
+ * @property {string}   [tooltip] - The sidebar tab tooltip text or i18n lang key.
+ */
+
+/**
+ * @typedef {object} FVTTSidebarRemoveData
+ *
+ * @property {string}   id - The ID for the sidebar tab to remove. This must be an existing sidebar tab ID.
+ *
+ * @property {boolean | (() => boolean)}   [condition] - A boolean value or function to invoke that returns a
+ *           boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+ *           internally.
+ */
+
+/**
+ * @typedef {object} FVTTSidebarReplaceData The configuration object to replace a core sidebar with a Svelte sidebar.
+ *
+ * @property {string|import('#runtime/svelte/util').TJSSvelteConfig}  icon - The FontAwesome icon css classes _or_ a Svelte configuration object
+ *           to load a custom Svelte component to use as the "icon".
+ *
+ * @property {string}   id - The ID for the sidebar to replace. This must be an existing sidebar tab ID.
+ *
+ * @property {import('#runtime/svelte/util').TJSSvelteConfig}   svelte - A Svelte configuration object.
+ *
+ * @property {boolean | (() => boolean)}   [condition] - A boolean value or function to invoke that returns a
+ *           boolean value to control sidebar replacement. This is executed in the `renderSidebar` callback
+ *           internally.
+ *
+ * @property {object}   [mergeAppImpl] - Provides a custom base implementation for the object instance
+ *           for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
+ *
+ * @property {import('#runtime/svelte/application').SvelteApplication}   [popoutApplication] - Provides a custom SvelteApplication class to instantiate
+ *           for the popout sidebar.
+ *
+ * @property {object}   [popoutOptions] - Provides SvelteApplication options overrides for the default
+ *           popout sidebar.
+ *
+ * @property {string}   [title] - The popout application title text or i18n lang key.
+ *
+ * @property {string}   [tooltip] - The sidebar tab tooltip text or i18n lang key.
+ */
+
+/**
+ * @typedef {object} FVTTSidebarEntry
+ *
+ * @property {FVTTSidebarAddData | FVTTSidebarRemoveData | FVTTSidebarReplaceData} data - The sidebar data that
+ *           configures a Svelte sidebar.
+ *
+ * @property {import('#runtime/svelte/application').SvelteApplication}  popout - The sidebar popout application.
+ *
+ * @property {import('svelte').SvelteComponent} tab - The tab wrapper component.
+ *
+ * @property {import('svelte').SvelteComponent} wrapper - The sidebar wrapper component.
  */
