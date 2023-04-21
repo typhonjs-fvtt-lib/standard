@@ -48,8 +48,11 @@
     "./package.json": "./package.json"
   },
   "imports": {
-    "#runtime/color/colord": "@typhonjs-fvtt/runtime/color/colord",
-    "#runtime/svelte/application": "@typhonjs-fvtt/runtime/svelte/application"
+    "#runtime/*": "@typhonjs-fvtt/runtime/*"
+  },
+  "peerDependencies": {
+    "@typhonjs-fvtt/runtime": ">=0.0.22",
+    "svelte": ">=3.58.0"
   },
   "devDependencies": {
     "@rollup/plugin-alias": "^4",
