@@ -1,6 +1,6 @@
 import { SvelteApplication }  from '#runtime/svelte/application';
 
-import { FoundryStyles }      from '@typhonjs-fvtt/svelte-standard/fvtt';
+import { FoundryStyles }      from '#standard/fvtt';
 
 import { cssVariables }       from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 

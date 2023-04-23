@@ -1,4 +1,4 @@
-import { TJSContextMenuImpl } from '@typhonjs-fvtt/svelte-standard/component';
+import { TJSContextMenuImpl } from '#standard/component';
 
 import {
    A11yHelper,

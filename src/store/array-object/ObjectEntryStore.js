@@ -42,14 +42,12 @@ export class ObjectEntryStore
     * @param {object}   data - A copy of local data w/ new ID already set.
     *
     * @param {import('./ArrayObjectStore').ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
-    * @internal
     */
    static duplicate(data, arrayStore) {}  // eslint-disable-line no-unused-vars
 
    /**
     * @returns {object}
     * @protected
-    * @internal
     */
    get _data() { return this.#data; }
 

@@ -2,8 +2,8 @@
    /**
     * TJSContextMenuImpl provides a context menu implementation component that is not meant to be directly used as it is
     * controlled as a single browser wide context menu from {@link TJSContextMenu} that is imported via:
-    * `import { TJSContextMenu } from '@typhonjs-fvtt/svelte-standard/application';` The front end for
-    * TJSContextMenuImpl processes data and invokes / manages a single context menu.
+    * `import { TJSContextMenu } from '#standard/application';` The front end for TJSContextMenuImpl processes data and
+    * invokes / manages a single context menu.
     *
     * TJSContextMenuImpl supports a flexible data driven way to construct the menu items with the same format as
     * {@link TJSMenu}. Depending on the item data that is passed into the menu you can define 4 types of items:

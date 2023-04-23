@@ -13,11 +13,11 @@
 
    import {
       applyScrolltop,
-      applyStyles }        from '@typhonjs-fvtt/runtime/svelte/action';
+      applyStyles }        from '#runtime/svelte/action';
 
    import {
       isObject,
-      isSvelteComponent }  from '@typhonjs-fvtt/runtime/svelte/util';
+      isSvelteComponent }  from '#runtime/svelte/util';
 
    /** @type {TJSScrollContainerData} */
    export let container = void 0;

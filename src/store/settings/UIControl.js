@@ -10,7 +10,7 @@ import {
 
 import {
    ripple,
-   rippleFocus }        from '@typhonjs-fvtt/svelte-standard/action';
+   rippleFocus }        from '#standard/action';
 
 /**
  * Controls preparation and processing of registered game settings w/ TJSGameSettings. Game settings are parsed

@@ -3,7 +3,7 @@
 
    import { ClipboardAccess }   from '#runtime/svelte/util';
 
-   import { ripple }            from '@typhonjs-fvtt/svelte-standard/action';
+   import { ripple }            from '#standard/action';
 
    import TJSIconButton         from '../../../button/TJSIconButton.svelte';
    import TJSToggleIconButton   from '../../../button/TJSToggleIconButton.svelte';

@@ -1,16 +1,16 @@
 import { SvelteApplication }  from '#runtime/svelte/application';
 
 import {
-   FVTTSidebarPopout,
-   FVTTSidebarTab,
-   FVTTSidebarWrapper }       from '@typhonjs-fvtt/svelte-standard/component/fvtt';
-
-import {
    hasPrototype,
    isObject,
    parseTJSSvelteConfig,
    ManagedPromise,
    styleParsePixels }         from '#runtime/svelte/util';
+
+import {
+   FVTTSidebarPopout,
+   FVTTSidebarTab,
+   FVTTSidebarWrapper }       from '#standard/component/fvtt';
 
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.

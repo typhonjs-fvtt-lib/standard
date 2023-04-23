@@ -2,7 +2,7 @@ import {
    isIterable,
    isObject }                    from '#runtime/svelte/util';
 
-import { TJSGameSettings as GS } from '@typhonjs-fvtt/svelte-standard/store';
+import { TJSGameSettings as GS } from '#standard/store';
 
 /**
  * Provides a TyphonJS plugin to add TJSGameSettings to the plugin eventbus.
@@ -46,7 +46,7 @@ export class TJSGameSettings
     * This allows the custom store in the `set` implementation to mainly only trigger the TJSGameSettings subscriber
     * handler on updates and not all the connected `propertyStore` instances.
     *
-    * @param {GameSetting} setting - A GameSetting instance to set to Foundry game settings.
+    * @param {import('#standard/store').GameSetting} setting - A GameSetting instance to set to Foundry game settings.
     *
     * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
     *                                   registering the setting with Foundry. This allows the settings to be displayed
@@ -97,11 +97,12 @@ export class TJSGameSettings
    /**
     * Registers multiple settings.
     *
-    * @param {Iterable<GameSetting>} settings - An iterable list of game setting configurations to register.
+    * @param {Iterable<import('#standard/store').GameSetting>} settings - An iterable list of game setting
+    *        configurations to register.
     *
-    * @param {boolean}     coreConfig - When false this overrides the `setting.options.config` parameter when
-    *                                   registering the setting with Foundry. This allows the settings to be displayed
-    *                                   in the app itself, but removed from the standard Foundry configuration location.
+    * @param {boolean}  coreConfig - When false this overrides the `setting.options.config` parameter when
+    *        registering the setting with Foundry. This allows the settings to be displayed in the app itself, but
+    *        removed from the standard Foundry configuration location.
     */
    registerAll(settings, coreConfig = true)
    {
@@ -132,43 +133,3 @@ export class TJSGameSettings
       ev.eventbus.on(`tjs:system:game:settings:register:all`, this.registerAll, this, opts);
    }
 }
-
-/**
- * @typedef {object} GameSettingOptions
- *
- * @property {object} [choices] - If choices are defined, the resulting setting will be a select menu.
- *
- * @property {boolean} [config=true] - Specifies that the setting appears in the configuration view.
- *
- * @property {*} [default] - A default value for the setting.
- *
- * @property {string} [hint] - A description of the registered setting and its behavior.
- *
- * @property {string} name - The displayed name of the setting.
- *
- * @property {Function|Function[]} [onChange] - An onChange callback function or array of callbacks to directly receive
- *                                              callbacks from Foundry on setting change.
- *
- * @property {{min: number, max: number, step: number}} [range] - If range is specified, the resulting setting will be
- *                                                                a range slider.
- *
- * @property {boolean} [requiresReload=false] - If true then a prompt to reload after changes occurs.
- *
- * @property {('client' | 'world')} [scope='client'] - Scope for setting.
- *
- * @property {object|Function} type - A constructable object or function.
- */
-
-/**
- * @typedef {object} GameSetting - Defines a game setting.
- *
- * @property {string} namespace - The setting namespace; usually the ID of the module / system.
- *
- * @property {string} key - The setting key to register.
- *
- * @property {string} folder - The name of the TJSSvgFolder to put this setting in to group them.
- *
- * @property {import('svelte/store').Writable} [store] - An existing store instance to use.
- *
- * @property {GameSettingOptions} options - Configuration for setting data.
- */

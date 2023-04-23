@@ -1,7 +1,7 @@
 import { writable }     from 'svelte/store';
 
 // TODO REFACTOR TO TOP LEVEL OPTION
-import { rippleFocus }  from '@typhonjs-fvtt/svelte-standard/action';
+import { rippleFocus }  from '#standard/action';
 
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into rounded HSV component

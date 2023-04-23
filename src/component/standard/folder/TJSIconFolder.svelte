@@ -126,7 +126,7 @@
 
    import { localize }          from '#runtime/svelte/helper';
 
-   import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
+   import { toggleDetails }     from '#standard/action';
 
    /** @type {TJSIconFolderData} */
    export let folder = void 0;

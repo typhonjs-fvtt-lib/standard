@@ -1,6 +1,6 @@
 import { writable }        from 'svelte/store';
 
-import { getFormat }       from '@typhonjs-fvtt/runtime/color/colord';
+import { getFormat }       from '#runtime/color/colord';
 
 import { propertyStore }   from '#runtime/svelte/store';
 

@@ -3,7 +3,7 @@ import { writable }  from 'svelte/store';
 import { colord }    from '#runtime/color/colord';
 
 // TODO REFACTOR TO TOP LEVEL OPTION
-import { rippleFocus } from '@typhonjs-fvtt/svelte-standard/action';
+import { rippleFocus } from '#standard/action';
 
 /**
  * Provides a buffered set of stores converting the current color from {@link ColorState} into a hex values for display

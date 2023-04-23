@@ -1,7 +1,7 @@
 <script>
    import { getContext }    from 'svelte';
 
-   import { ripple }        from '@typhonjs-fvtt/svelte-standard/action';
+   import { ripple }        from '#standard/action';
 
    import TJSColordButton   from '../../../TJSColordButton.svelte';
 

@@ -111,7 +111,7 @@
     *           Requires `fieldName` to be set.
     *
     * @property {{ sanitizeWithVideo: function }}   [DOMPurify] - The DOMPurify export from
-    *           `@typhonjs-fvtt/runtime/dompurify`. Sanitizes content client side. Note: TinyMCE already does essential
+    *           `#runtime/dompurify`. Sanitizes content client side. Note: TinyMCE already does essential
     *           `<script>` sanitization, so this is just an extra option that is available as an extra precaution.
     *
     * @property {boolean}   [editable=true] - Prevents editing and hides button. When set to false any active editor
@@ -173,7 +173,7 @@
 
    import {
       Plugins,
-      PMImpl }              from '@typhonjs-fvtt/svelte-standard/prosemirror';
+      PMImpl }              from '#standard/prosemirror';
 
    /** @type {string} */
    export let content = '';

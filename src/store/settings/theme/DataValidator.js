@@ -1,6 +1,5 @@
+import { getFormat } from '#runtime/color/colord';
 import { isObject }  from '#runtime/svelte/util';
-
-import { getFormat } from '@typhonjs-fvtt/runtime/color/colord';
 
 export class DataValidator
 {

@@ -2,7 +2,7 @@ import { striptags } from '#runtime/svelte/util';
 
 import {
    FontManager,
-   FVTTVersion }     from '@typhonjs-fvtt/svelte-standard/fvtt';
+   FVTTVersion }     from '#standard/fvtt';
 
 export class MCEImpl
 {
