@@ -11,10 +11,11 @@ export class FontManager
    /**
     * Collect all the font definitions and combine them.
     *
-    * @returns {Object<globalThis.FontFamilyDefinition>[]} Core font definitions.
+    * @returns { {[key: string]: globalThis.FontFamilyDefinition}[] } Core font definitions.
     */
    static getCoreDefinitions()
    {
+      /** @type { {[key: string]: globalThis.FontFamilyDefinition}[] } */
       const fonts = [];
 
       if (FVTTVersion.isAtLeast(10))
@@ -126,8 +127,11 @@ export class FontManager
     * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of
     *        {@link globalThis.FontFamilyDefinition}.
     *
-    * @param {Object<globalThis.FontFamilyDefinition>[]|Object<globalThis.FontFamilyDefinition>} [opts.fonts] - A
-    *        custom set of font family definitions to load. If not defined the core font family definitions are loaded.
+    * @param {
+    *    {[key: string]: globalThis.FontFamilyDefinition}[] |
+    *    {[key: string]: globalThis.FontFamilyDefinition}
+    * } [opts.fonts] A custom set of font family definitions to load. If not defined the core font family definitions
+    *        are loaded.
     *
     * @returns {Promise<void>}
     */
@@ -167,9 +171,10 @@ export class FontManager
    /**
     * Removes duplicate font definitions.
     *
-    * @param {Object<globalThis.FontFamilyDefinition>[]}   fonts - An array of FontFamilyDefinition objects to process.
+    * @param { {[key: string]: globalThis.FontFamilyDefinition}[] }  fonts - An array of FontFamilyDefinition objects
+    *        to process.
     *
-    * @returns {Object<globalThis.FontFamilyDefinition>[]} Filtered font definitions.
+    * @returns { {[key: string]: globalThis.FontFamilyDefinition}[] } Filtered font definitions.
     */
    static removeDuplicateDefinitions(fonts)
    {

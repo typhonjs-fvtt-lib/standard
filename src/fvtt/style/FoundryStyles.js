@@ -5,6 +5,7 @@ export class FoundryStyles
 {
    static #sheet = void 0;
 
+   /** @type {Map<string, {[key: string]: string}>} */
    static #sheetMap = new Map();
 
    static #initialized = false;
@@ -71,7 +72,7 @@ export class FoundryStyles
     *
     * @param {string}   selector - Selector to find.
     *
-    * @returns {Object<string, string>} Properties object.
+    * @returns { {[key: string]: string} } Properties object.
     */
    static getProperties(selector)
    {

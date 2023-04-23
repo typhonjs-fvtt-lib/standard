@@ -11,9 +11,11 @@ import {
 
 import { ObjectEntryStore }   from './ObjectEntryStore.js';
 
+/* eslint-disable */
 /**
  * @typedef {import('#svelte/store').Writable & { get id: string }} BaseEntryStore
  */
+/* eslint-enable */
 
 /**
  * @template [T=BaseEntryStore]

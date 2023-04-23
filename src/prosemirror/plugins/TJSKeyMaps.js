@@ -6,6 +6,7 @@ const ProseMirrorKeyMaps = globalThis.ProseMirror ? globalThis.ProseMirror.Prose
  */
 export class TJSKeyMaps extends ProseMirrorKeyMaps
 {
+   /** @type {Function} */
    #onQuit;
 
    /**
@@ -24,10 +25,11 @@ export class TJSKeyMaps extends ProseMirrorKeyMaps
       if (typeof options.onQuit === 'function') { this.#onQuit = options.onQuit; }
    }
 
+   // eslint-disable-next jsdoc/check-types
    /**
     * Swaps the Foundry default `Escape` / selectParentNode to `Mod-p` and enables `onQuit` function for `Escape`.
     *
-    * @returns {Object<ProseMirrorCommand>} ProseMirror keymap data.
+    * @returns { {[key: string]: globalThis.ProseMirrorCommand} } ProseMirror keymap data.
     */
    buildMapping()
    {
