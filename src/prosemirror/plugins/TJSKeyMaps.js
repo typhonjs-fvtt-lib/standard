@@ -9,7 +9,7 @@ export class TJSKeyMaps extends ProseMirrorKeyMaps
    #onQuit;
 
    /**
-    * @param {Schema}   schema - The ProseMirror schema to build keymaps for.
+    * @param {globalThis.Schema}   schema - The ProseMirror schema to build keymaps for.
     *
     * @param {object}   [options] - Additional options to configure the plugin's behaviour.
     *

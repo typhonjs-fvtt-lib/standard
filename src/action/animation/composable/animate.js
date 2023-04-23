@@ -1,4 +1,4 @@
-import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
+import { debounce as debounceFn } from '#runtime/svelte/util';
 
 /**
  * Defines an `Element.animate` animation from provided keyframes and options.

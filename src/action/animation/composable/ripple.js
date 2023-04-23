@@ -1,4 +1,4 @@
-import { debounce as debounceFn } from '@typhonjs-svelte/lib/util';
+import { debounce as debounceFn } from '#runtime/svelte/util';
 
 /**
  * Defines the classic Material Design ripple effect as an action. `ripple` is a wrapper around the returned action.

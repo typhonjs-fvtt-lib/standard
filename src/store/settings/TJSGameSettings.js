@@ -2,11 +2,11 @@ import { writable }        from 'svelte/store';
 
 import {
    isIterable,
-   isObject }              from '@typhonjs-svelte/lib/util';
+   isObject }              from '#runtime/svelte/util';
 
 import {
    isWritableStore,
-   subscribeIgnoreFirst }  from '@typhonjs-svelte/lib/store';
+   subscribeIgnoreFirst }  from '#runtime/svelte/store';
 
 import { UIControl }       from './UIControl.js';
 

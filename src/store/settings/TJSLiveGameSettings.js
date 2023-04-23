@@ -161,7 +161,7 @@ export class TJSLiveGameSettings
    /**
     * Returns an iterator / generator of all setting entries.
     *
-    * @returns {Generator<[string, *], void, *>}
+    * @yields {string}
     */
    *entries()
    {
@@ -176,7 +176,7 @@ export class TJSLiveGameSettings
    /**
     * Returns an iterator / generator of all setting keys.
     *
-    * @returns {Generator<string, void, *>}
+    * @yields {string}
     */
    *keys()
    {
@@ -212,7 +212,7 @@ export class TJSLiveGameSettings
    /**
     * Returns an iterator / generator of all values.
     *
-    * @returns {Generator<*, void, *>}
+    * @yields {*}
     */
    *values()
    {

@@ -4,7 +4,7 @@ import {
    A11yHelper,
    isIterable,
    isObject,
-   isSvelteComponent }        from '@typhonjs-svelte/lib/util';
+   isSvelteComponent }        from '#runtime/svelte/util';
 
 /**
  * Provides and manages browser window wide context menu functionality. The best way to create a context menu is to

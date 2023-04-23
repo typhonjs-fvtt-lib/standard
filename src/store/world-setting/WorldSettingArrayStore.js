@@ -1,7 +1,8 @@
-import { CrudArrayObjectStore }  from '../array-object';
+import { CrudArrayObjectStore }  from '../array-object/index.js';
 
 /**
- * @template {BaseEntryStore} T
+ * @template [T=import('../array-object').BaseEntryStore]
+ * @extends {CrudArrayObjectStore<T>}
  */
 export class WorldSettingArrayStore extends CrudArrayObjectStore
 {
@@ -15,13 +16,14 @@ export class WorldSettingArrayStore extends CrudArrayObjectStore
     *
     * @param {object}            [opts] - Optional parameters.
     *
-    * @param {TJSGameSettings}   [opts.gameSettings] - An instance of TJSGameSettings.
+    * @param {import('../settings/TJSGameSettings').TJSGameSettings}   [opts.gameSettings] - An instance of
+    *        TJSGameSettings.
     *
     * @param {string}            [opts.namespace] - Game setting 'namespace' field.
     *
     * @param {string}            [opts.key] - Game setting 'key' field.
     *
-    * @param {CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore parameters.
+    * @param {import('../array-object').CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore parameters.
     */
    constructor({ gameSettings, namespace, key, ...rest })
    {

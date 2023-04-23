@@ -4,9 +4,9 @@
 
    import {
       isFocused,
-      keyforward }          from '@typhonjs-svelte/lib/action';
+      keyforward }          from '#runtime/svelte/action';
 
-   import { KeyStore }      from '@typhonjs-svelte/lib/store';
+   import { KeyStore }      from '#runtime/svelte/store';
 
    import { easeInOutSin }  from '../util/transition.js';
 

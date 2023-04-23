@@ -1,6 +1,6 @@
 import {
    isObject,
-   uuidv4 }    from '@typhonjs-fvtt/svelte/util';
+   uuidv4 }    from '#runtime/svelte/util';
 
 /**
  * Provides a base implementation for store entries in {@link ArrayObjectStore}.
@@ -41,13 +41,15 @@ export class ObjectEntryStore
     *
     * @param {object}   data - A copy of local data w/ new ID already set.
     *
-    * @param {ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
+    * @param {import('./ArrayObjectStore').ArrayObjectStore} arrayStore - The source ArrayObjectStore instance.
+    * @internal
     */
    static duplicate(data, arrayStore) {}  // eslint-disable-line no-unused-vars
 
    /**
     * @returns {object}
     * @protected
+    * @internal
     */
    get _data() { return this.#data; }
 

@@ -114,17 +114,17 @@
    import { onDestroy }         from 'svelte';
    import { writable }          from 'svelte/store';
 
-   import { applyStyles }       from '@typhonjs-svelte/lib/action';
+   import { applyStyles }       from '#runtime/svelte/action';
 
    import {
       isWritableStore,
-      subscribeIgnoreFirst }    from '@typhonjs-svelte/lib/store';
+      subscribeIgnoreFirst }    from '#runtime/svelte/store';
 
    import {
       isObject,
-      isSvelteComponent }       from '@typhonjs-svelte/lib/util';
+      isSvelteComponent }       from '#runtime/svelte/util';
 
-   import { localize }          from '@typhonjs-fvtt/svelte/helper';
+   import { localize }          from '#runtime/svelte/helper';
 
    import { toggleDetails }     from '@typhonjs-fvtt/svelte-standard/action';
 

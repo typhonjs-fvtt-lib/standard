@@ -43,9 +43,9 @@
     */
    import { createEventDispatcher } from 'svelte';
 
-   import { applyStyles }           from '@typhonjs-svelte/lib/action';
-   import { localize }              from '@typhonjs-svelte/lib/helper';
-   import { isObject }              from '@typhonjs-svelte/lib/util';
+   import { applyStyles }           from '#runtime/svelte/action';
+   import { localize }              from '#runtime/svelte/helper';
+   import { isObject }              from '#runtime/svelte/util';
 
    import { colord }                from '#runtime/color/colord';
 

@@ -91,17 +91,17 @@
 
    import { quintOut }     from 'svelte/easing';
 
-   import { applyStyles }  from '@typhonjs-svelte/lib/action';
-   import { localize }     from '@typhonjs-svelte/lib/helper';
-   import { slideFade }    from '@typhonjs-svelte/lib/transition';
+   import { applyStyles }  from '#runtime/svelte/action';
+   import { localize }     from '#runtime/svelte/helper';
+   import { slideFade }    from '#runtime/svelte/transition';
    import {
       A11yHelper,
       getStackingContext,
       isIterable,
       isObject,
-      isSvelteComponent }  from '@typhonjs-svelte/lib/util';
+      isSvelteComponent }  from '#runtime/svelte/util';
 
-   import { TJSFocusWrap } from '@typhonjs-fvtt/svelte/component/core';
+   import { TJSFocusWrap } from '#runtime/svelte/component/core';
 
    /** @type {TJSMenuData} */
    export let menu = void 0;

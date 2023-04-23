@@ -45,9 +45,9 @@
 
    import {
       applyScrolltop,
-      applyStyles }        from '@typhonjs-svelte/lib/action';
+      applyStyles }        from '#runtime/svelte/action';
 
-   import { isSvelteComponent } from '@typhonjs-svelte/lib/util';
+   import { isSvelteComponent } from '#runtime/svelte/util';
 
    import { TJSSvgFolder } from '../folder/index.js';
 

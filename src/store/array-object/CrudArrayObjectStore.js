@@ -1,11 +1,12 @@
 import {
    isObject,
-   uuidv4 }                   from '@typhonjs-svelte/lib/util';
+   uuidv4 }                   from '#runtime/svelte/util';
 
 import { ArrayObjectStore }   from './ArrayObjectStore.js';
 
 /**
- * @template {BaseEntryStore} T
+ * @template [T=import('./').BaseEntryStore]
+ * @extends {ArrayObjectStore<T>}
  */
 export class CrudArrayObjectStore extends ArrayObjectStore
 {
@@ -22,7 +23,7 @@ export class CrudArrayObjectStore extends ArrayObjectStore
     *
     * @param {object}                  [opts.extraData] -
     *
-    * @param {ArrayObjectStoreParams}  [opts.rest] - Rest of ArrayObjectStore parameters.
+    * @param {import('./').ArrayObjectStoreParams}  [opts.rest] - Rest of ArrayObjectStore parameters.
     */
    constructor({ crudDispatch, extraData, ...rest })
    {
@@ -131,15 +132,21 @@ export class CrudArrayObjectStore extends ArrayObjectStore
 }
 
 /**
- * @typedef {ArrayObjectStoreParams} CrudArrayObjectStoreParams
+ * @typedef {import('./').ArrayObjectStoreParams & CrudArrayObjectStoreParamProps} CrudArrayObjectStoreParams
+ */
+
+/**
+ * @typedef {object} CrudArrayObjectStoreParamProps
  *
  * @property {CrudDispatch}   [crudDispatch] -
  *
  * @property {object}         [extraData] -
+ *
+ * @internal
  */
 
 /**
- * @typedef {({ action: string, id?: string, data?: object }) => boolean} CrudDispatch
+ * @typedef {(data: { action: string, id?: string, data?: object }) => boolean} CrudDispatch
  *
  * A function that accepts an object w/ 'action', 'moduleId', 'key' properties and optional 'id' / UUIDv4 string and
  * 'data' property.

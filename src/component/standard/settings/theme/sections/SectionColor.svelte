@@ -1,5 +1,5 @@
 <script>
-   import { localize }          from '@typhonjs-fvtt/svelte/helper';
+   import { localize }          from '#runtime/svelte/helper';
 
    import { TJSColordPicker }   from '../../../color/index.js';
 

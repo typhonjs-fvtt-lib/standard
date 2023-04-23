@@ -7,7 +7,7 @@
     * If no `type` property is available in the input object `text` is assumed as the default.
     */
 
-   import { isObject }          from '@typhonjs-svelte/lib/util';
+   import { isObject }          from '#runtime/svelte/util';
 
    import TJSInputNumber        from './TJSInputNumber.svelte';
    import TJSInputText          from './TJSInputText.svelte';

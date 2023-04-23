@@ -1,4 +1,4 @@
-import { TJSStyleManager } from '@typhonjs-svelte/lib/util';
+import { TJSStyleManager } from '#runtime/svelte/util';
 
 const s_STYLE_KEY = '#__tjs-root-styles';
 

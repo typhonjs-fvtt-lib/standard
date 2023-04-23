@@ -1,4 +1,4 @@
-import { striptags } from '@typhonjs-svelte/lib/util';
+import { striptags } from '#runtime/svelte/util';
 
 import {
    FontManager,
@@ -95,7 +95,7 @@ export class MCEImpl
     * Provides a mechanism to load core Foundry fonts and any additional font family definitions. The returned data
     * includes the parsed font family definitions and the configuration data TinyMCE needs for loading the font formats.
     *
-    * @param {Object<FontFamilyDefinition>}  [extraFonts] - Extra user defined fonts to load.
+    * @param {{[key: string]: FontFamilyDefinition}}  [extraFonts] - Extra user defined fonts to load.
     *
     * @returns {{ fonts: Object<FontFamilyDefinition>[], fontFormats: string}} Font formats for MCE & all fonts to load.
     */

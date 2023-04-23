@@ -2,12 +2,12 @@ import { writable }        from 'svelte/store';
 
 import { getFormat }       from '@typhonjs-fvtt/runtime/color/colord';
 
-import { propertyStore }   from '@typhonjs-fvtt/svelte/store';
+import { propertyStore }   from '#runtime/svelte/store';
 
 import {
    isIterable,
    isObject,
-   TJSStyleManager }       from '@typhonjs-fvtt/svelte/util';
+   TJSStyleManager }       from '#runtime/svelte/util';
 
 import {
    DataValidator,
@@ -24,6 +24,7 @@ export class TJSThemeStore
    /** @type {object[]} */
    #components;
 
+   /** @type {{}} */
    #data = {};
 
    #defaultThemeData;
@@ -45,7 +46,7 @@ export class TJSThemeStore
    /**
     * Stores the subscribers.
     *
-    * @type {(function(data): void)[]}
+    * @type {(function(object): void)[]}
     */
    #subscriptions = [];
 
@@ -57,7 +58,7 @@ export class TJSThemeStore
    #vars;
 
    /**
-    * @type {SemVerData}
+    * @type {import('./DataValidator').SemVerData}
     */
    #version;
 
@@ -273,10 +274,10 @@ export class TJSThemeStore
    }
 
    /**
-    * @param {function(data): void} handler - Callback function that is invoked on update / changes.
+    * @param {function({}): void} handler - Callback function that is invoked on update / changes.
     * Receives copy of the theme data.
     *
-    * @returns {(function(data): void)} Unsubscribe function.
+    * @returns {(function({}): void)} Unsubscribe function.
     */
    subscribe(handler)
    {

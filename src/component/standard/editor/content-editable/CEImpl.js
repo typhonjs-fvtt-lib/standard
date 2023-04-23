@@ -1,4 +1,4 @@
-import { striptags }    from '@typhonjs-svelte/lib/util';
+import { striptags }    from '#runtime/svelte/util';
 
 import { FVTTVersion }  from '@typhonjs-fvtt/svelte-standard/fvtt';
 

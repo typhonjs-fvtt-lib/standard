@@ -51,8 +51,8 @@
    import { onMount }         from 'svelte';
    import { writable }        from 'svelte/store';
 
-   import { applyStyles }     from '@typhonjs-svelte/lib/action';
-   import { isWritableStore } from '@typhonjs-svelte/lib/store';
+   import { applyStyles }     from '#runtime/svelte/action';
+   import { isWritableStore } from '#runtime/svelte/store';
 
    export let select = void 0;
    export let selected = void 0;

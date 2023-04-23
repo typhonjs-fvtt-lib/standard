@@ -1,12 +1,12 @@
 import { writable }     from 'svelte/store';
 
-import { TJSDialog }    from '@typhonjs-fvtt/svelte/application';
+import { TJSDialog }    from '#runtime/svelte/application';
 
-import { localize }     from '@typhonjs-fvtt/svelte/helper';
+import { localize }     from '#runtime/svelte/helper';
 
 import {
    isObject,
-   isSvelteComponent }  from '@typhonjs-svelte/lib/util';
+   isSvelteComponent }  from '#runtime/svelte/util';
 
 import {
    ripple,
@@ -22,7 +22,7 @@ export class UIControl
    /** @type {TJSSettingsCustomSection[]} */
    #sections = [];
 
-   /** @type {TJSGameSettings} */
+   /** @type {import('./').TJSGameSettings} */
    #settings;
 
    /** @type {boolean} */
@@ -35,7 +35,7 @@ export class UIControl
    #stores;
 
    /**
-    * @param {TJSGameSettings}   settings -
+    * @param {import('./').TJSGameSettings}   settings -
     */
    constructor(settings)
    {
@@ -461,8 +461,8 @@ export class UIControl
  *
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
  *
- * @property {TJSSessionStorage} [storage] - TRL TJSSessionStorage instance to serialize folder state and scrollbar
- *                                           position.
+ * @property {import('#runtime/svelte/store').TJSSessionStorage} [storage] - TRL TJSSessionStorage instance to
+ *           serialize folder state and scrollbar position.
  */
 
 /**
@@ -485,7 +485,6 @@ export class UIControl
  * @property {object} [summaryEnd] - A Svelte component config object defining TJSSvgFolder summary end component.
  *
  * @property {object} [styles] - Inline styles for the `TJSSvgFolder`; useful for setting CSS variables.
- *
  */
 
 /**

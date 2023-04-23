@@ -49,15 +49,15 @@
 
    import { writable }      from 'svelte/store';
 
-   import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { applyStyles }   from '#runtime/svelte/action';
 
-   import { localize }      from '@typhonjs-svelte/lib/helper';
+   import { localize }      from '#runtime/svelte/helper';
 
    import {
       isReadableStore,
-      isWritableStore }     from '@typhonjs-svelte/lib/store';
+      isWritableStore }     from '#runtime/svelte/store';
 
-   import { isObject }      from '@typhonjs-svelte/lib/util';
+   import { isObject }      from '#runtime/svelte/util';
 
    export let input = void 0;
    export let disabled = void 0;

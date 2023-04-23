@@ -1,7 +1,7 @@
 <script>
    import { getContext }   from 'svelte';
 
-   import { applyStyles }  from '@typhonjs-svelte/lib/action'
+   import { applyStyles }  from '#runtime/svelte/action'
 
    import { resize }          from './resize.js';
    import { applyResizeData } from './applyResizeData.js';

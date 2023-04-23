@@ -11,7 +11,7 @@ export class FontManager
    /**
     * Collect all the font definitions and combine them.
     *
-    * @returns {Object<FontFamilyDefinition>[]} Core font definitions.
+    * @returns {Object<globalThis.FontFamilyDefinition>[]} Core font definitions.
     */
    static getCoreDefinitions()
    {
@@ -73,7 +73,7 @@ export class FontManager
     *
     * @param {string}               family - The font family name (case-sensitive).
     *
-    * @param {FontFamilyDefinition} definition - The font family definition.
+    * @param {globalThis.FontFamilyDefinition} definition - The font family definition.
     *
     * @param {Document}             document - Target Document to load font into.
     *
@@ -123,10 +123,11 @@ export class FontManager
     *
     * @param {Document} [opts.document] - The target document to load the fonts into.
     *
-    * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of {@link FontFamilyDefinition}.
+    * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of
+    *        {@link globalThis.FontFamilyDefinition}.
     *
-    * @param {Object<FontFamilyDefinition>[]|Object<FontFamilyDefinition>} [opts.fonts] - A custom set of font family
-    *        definitions to load. If not defined the core font family definitions are loaded.
+    * @param {Object<globalThis.FontFamilyDefinition>[]|Object<globalThis.FontFamilyDefinition>} [opts.fonts] - A
+    *        custom set of font family definitions to load. If not defined the core font family definitions are loaded.
     *
     * @returns {Promise<void>}
     */
@@ -166,9 +167,9 @@ export class FontManager
    /**
     * Removes duplicate font definitions.
     *
-    * @param {Object<FontFamilyDefinition>[]}   fonts - An array of FontFamilyDefinition objects to process.
+    * @param {Object<globalThis.FontFamilyDefinition>[]}   fonts - An array of FontFamilyDefinition objects to process.
     *
-    * @returns {Object<FontFamilyDefinition>[]} Filtered font definitions.
+    * @returns {Object<globalThis.FontFamilyDefinition>[]} Filtered font definitions.
     */
    static removeDuplicateDefinitions(fonts)
    {

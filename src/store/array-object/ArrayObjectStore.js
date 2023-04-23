@@ -1,22 +1,22 @@
 import {
    DynArrayReducer,
    isWritableStore,
-   subscribeIgnoreFirst }     from '@typhonjs-svelte/lib/store';
+   subscribeIgnoreFirst }     from '#runtime/svelte/store';
 
 import {
    debounce,
    isObject,
    klona,
-   uuidv4 }                   from '@typhonjs-svelte/lib/util';
+   uuidv4 }                   from '#runtime/svelte/util';
 
 import { ObjectEntryStore }   from './ObjectEntryStore.js';
 
 /**
- * @typedef {typeof import('svelte/store').Writable & { get id: string }} BaseEntryStore
+ * @typedef {import('svelte/store').Writable & { get id: string }} BaseEntryStore
  */
 
 /**
- * @template {BaseEntryStore} T
+ * @template [T=BaseEntryStore]
  */
 export class ArrayObjectStore
 {

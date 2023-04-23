@@ -1,10 +1,10 @@
 import { get, writable }   from 'svelte/store';
 
-import { isWritableStore } from '@typhonjs-svelte/lib/store';
+import { isWritableStore } from '#runtime/svelte/store';
 
 import {
    isIterable,
-   normalizeString }       from '@typhonjs-svelte/lib/util';
+   normalizeString }       from '#runtime/svelte/util';
 
 /**
  * Creates a filter function to compare objects by a give property key against a regex test. The returned function

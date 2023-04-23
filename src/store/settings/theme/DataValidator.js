@@ -1,4 +1,4 @@
-import { isObject }  from '@typhonjs-fvtt/svelte/util';
+import { isObject }  from '#runtime/svelte/util';
 
 import { getFormat } from '@typhonjs-fvtt/runtime/color/colord';
 

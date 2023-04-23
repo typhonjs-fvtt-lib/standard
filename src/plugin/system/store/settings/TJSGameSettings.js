@@ -1,6 +1,6 @@
 import {
    isIterable,
-   isObject }                    from '@typhonjs-fvtt/svelte/util';
+   isObject }                    from '#runtime/svelte/util';
 
 import { TJSGameSettings as GS } from '@typhonjs-fvtt/svelte-standard/store';
 

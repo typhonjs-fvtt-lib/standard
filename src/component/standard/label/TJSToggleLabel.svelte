@@ -20,12 +20,12 @@
     */
    import { createEventDispatcher } from 'svelte';
 
-   import { applyStyles }     from '@typhonjs-svelte/lib/action';
-   import { localize }        from '@typhonjs-svelte/lib/helper';
-   import { isWritableStore } from '@typhonjs-svelte/lib/store';
+   import { applyStyles }     from '#runtime/svelte/action';
+   import { localize }        from '#runtime/svelte/helper';
+   import { isWritableStore } from '#runtime/svelte/store';
    import {
       isObject,
-      isSvelteComponent }     from '@typhonjs-svelte/lib/util';
+      isSvelteComponent }     from '#runtime/svelte/util';
 
    export let label = void 0;
    export let text = void 0;

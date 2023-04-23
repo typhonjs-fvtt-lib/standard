@@ -14,14 +14,14 @@
 
    import { colord }            from '#runtime/color/colord';
 
-   import { applyStyles }       from '@typhonjs-svelte/lib/action';
+   import { applyStyles }       from '#runtime/svelte/action';
 
-   import { isWritableStore }   from '@typhonjs-svelte/lib/store';
+   import { isWritableStore }   from '#runtime/svelte/store';
 
    import {
       A11yHelper,
       ClipboardAccess,
-      isObject }                from '@typhonjs-svelte/lib/util';
+      isObject }                from '#runtime/svelte/util';
 
 
    import { InternalState }     from './model/InternalState.js';

@@ -1,5 +1,5 @@
 <script>
-   import { applyStyles } from '@typhonjs-svelte/lib/action';
+   import { applyStyles } from '#runtime/svelte/action';
 
    export let focused = false;
    export let styles = void 0;

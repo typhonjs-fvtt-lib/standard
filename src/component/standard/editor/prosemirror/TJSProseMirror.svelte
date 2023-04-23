@@ -167,9 +167,9 @@
       tick
    }                        from 'svelte';
 
-   import { applyStyles }   from '@typhonjs-svelte/lib/action';
+   import { applyStyles }   from '#runtime/svelte/action';
 
-   import { TJSDocument }   from '@typhonjs-fvtt/svelte/store';
+   import { TJSDocument }   from '#runtime/svelte/store';
 
    import {
       Plugins,

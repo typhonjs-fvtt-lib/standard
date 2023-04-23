@@ -1,8 +1,8 @@
 import { writable }        from 'svelte/store';
 
-import { TJSPosition }     from '@typhonjs-fvtt/svelte/store/position';
+import { TJSPosition }     from '#runtime/svelte/store/position';
 
-import { propertyStore }   from '@typhonjs-svelte/lib/store';
+import { propertyStore }   from '#runtime/svelte/store';
 
 import { ControlStore }    from './control/ControlStore.js';
 

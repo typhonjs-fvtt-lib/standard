@@ -4,7 +4,7 @@
       onDestroy }          from 'svelte';
 
    import {
-      getStackingContext } from '@typhonjs-svelte/lib/util';
+      getStackingContext } from '#runtime/svelte/util';
 
    export let containerEl = void 0;
    export let inputEl = void 0;

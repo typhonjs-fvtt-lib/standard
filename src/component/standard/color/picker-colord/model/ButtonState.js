@@ -1,4 +1,4 @@
-import { isObject }  from '@typhonjs-svelte/lib/util';
+import { isObject }  from '#runtime/svelte/util';
 
 /**
  * Manages the addon button state allowing addons to add buttons to the button bar. When addons are removed

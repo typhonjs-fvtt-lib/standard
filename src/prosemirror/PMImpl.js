@@ -24,7 +24,7 @@ export class PMImpl
     * Handles `options.initialSelection`: Sets the initial cursor / selection range to the start, end, or selects
     * all text.
     *
-    * @param {EditorView}  view - PM editor view.
+    * @param {globalThis.EditorView}  view - PM editor view.
     *
     * @param {object}  options - TJSProseMirror options.
     */

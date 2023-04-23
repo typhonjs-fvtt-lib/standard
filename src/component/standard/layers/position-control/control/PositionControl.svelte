@@ -3,7 +3,7 @@
       getContext,
       setContext }            from 'svelte'
 
-   import { applyPosition }   from '@typhonjs-fvtt/svelte/action'
+   import { applyPosition }   from '#runtime/svelte/action'
 
    import { draggable }       from './draggable.js';
 

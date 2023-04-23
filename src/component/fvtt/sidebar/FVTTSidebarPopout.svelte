@@ -6,7 +6,7 @@
 
    import { setContext }       from 'svelte';
 
-   import { ApplicationShell } from '@typhonjs-fvtt/svelte/component/core';
+   import { ApplicationShell } from '#runtime/svelte/component/core';
 
    /**
     * Application Shell contract.

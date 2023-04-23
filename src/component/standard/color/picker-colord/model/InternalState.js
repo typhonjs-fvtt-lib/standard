@@ -2,11 +2,11 @@ import { writable }        from 'svelte/store';
 
 import {
    isWritableStore,
-   propertyStore }         from '@typhonjs-svelte/lib/store';
+   propertyStore }         from '#runtime/svelte/store';
 
 import {
    isIterable,
-   isObject }              from '@typhonjs-svelte/lib/util';
+   isObject }              from '#runtime/svelte/util';
 
 import { AddOnState }      from './AddOnState.js';
 import { ButtonState }     from './ButtonState.js';

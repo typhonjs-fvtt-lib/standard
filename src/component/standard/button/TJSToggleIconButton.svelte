@@ -45,10 +45,10 @@
     */
    import { createEventDispatcher } from 'svelte';
 
-   import { applyStyles }           from '@typhonjs-svelte/lib/action';
-   import { isWritableStore }       from '@typhonjs-svelte/lib/store';
-   import { localize }              from '@typhonjs-svelte/lib/helper';
-   import { isObject }              from '@typhonjs-svelte/lib/util';
+   import { applyStyles }           from '#runtime/svelte/action';
+   import { isWritableStore }       from '#runtime/svelte/store';
+   import { localize }              from '#runtime/svelte/helper';
+   import { isObject }              from '#runtime/svelte/util';
 
    export let button = void 0;
    export let icon = void 0;
