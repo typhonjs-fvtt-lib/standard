@@ -1,5 +1,5 @@
 <script>
-   import { setContext }      from 'svelte';
+   import { setContext }      from '#svelte';
 
    import PositionControl     from './control/PositionControl.svelte';
    import { ControlsStore }   from './ControlsStore.js';

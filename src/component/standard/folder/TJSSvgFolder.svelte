@@ -117,8 +117,8 @@
     * `1em * 0.8`.
     */
 
-   import { onDestroy }         from 'svelte';
-   import { writable }          from 'svelte/store';
+   import { onDestroy }         from '#svelte';
+   import { writable }          from '#svelte/store';
 
    import { applyStyles }       from '#runtime/svelte/action';
 
@@ -149,7 +149,7 @@
    /** @type {TJSFolderOptions} */
    export let options = void 0;
 
-   /** @type {import('svelte/store').Writable<boolean>} */
+   /** @type {import('#svelte/store').Writable<boolean>} */
    export let store = void 0;
 
    /** @type {object} */

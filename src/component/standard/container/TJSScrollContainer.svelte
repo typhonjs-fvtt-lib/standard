@@ -9,7 +9,7 @@
     * by the `class` and `props` fields in {@link TJSScrollContainerData}.
     */
 
-   import { writable }     from 'svelte/store';
+   import { writable }     from '#svelte/store';
 
    import {
       applyScrolltop,
@@ -22,7 +22,7 @@
    /** @type {TJSScrollContainerData} */
    export let container = void 0;
 
-   /** @type {import('svelte/store').Writable<number>} */
+   /** @type {import('#svelte/store').Writable<number>} */
    export let scrollTop = void 0;
 
    /** @type {Record<string, string>} */

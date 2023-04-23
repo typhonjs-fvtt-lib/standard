@@ -87,9 +87,9 @@
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     */
 
-   import { onMount }      from 'svelte';
+   import { onMount }      from '#svelte';
 
-   import { quintOut }     from 'svelte/easing';
+   import { quintOut }     from '#svelte/easing';
 
    import { applyStyles }  from '#runtime/svelte/action';
    import { localize }     from '#runtime/svelte/helper';

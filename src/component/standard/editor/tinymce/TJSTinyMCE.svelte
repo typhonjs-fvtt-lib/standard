@@ -164,7 +164,7 @@
       onDestroy,
       onMount,
       tick
-   }                        from 'svelte';
+   }                        from '#svelte';
 
    import { applyStyles }   from '#runtime/svelte/action';
 

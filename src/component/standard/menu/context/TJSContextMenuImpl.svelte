@@ -83,9 +83,9 @@
 
    import {
       createEventDispatcher,
-      onMount }                     from 'svelte';
+      onMount }                     from '#svelte';
 
-   import { current_component }     from 'svelte/internal';
+   import { current_component }     from '#svelte/internal';
 
    import { applyStyles }           from '#runtime/svelte/action';
    import { localize }              from '#runtime/svelte/helper';

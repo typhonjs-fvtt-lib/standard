@@ -1,4 +1,4 @@
-import { writable }  from 'svelte/store';
+import { writable }  from '#svelte/store';
 
 import { colord }    from '#runtime/color/colord';
 
@@ -239,9 +239,9 @@ export class HslState
 /**
  * @typedef {object} HslStateStores Provides the buffered stores to use in text input components.
  *
- * @property {import('svelte/store').Writable<number|null>} h - Hue component value.
+ * @property {import('#svelte/store').Writable<number|null>} h - Hue component value.
  *
- * @property {import('svelte/store').Writable<number|null>} s - Saturation component value.
+ * @property {import('#svelte/store').Writable<number|null>} s - Saturation component value.
  *
- * @property {import('svelte/store').Writable<number|null>} l - Luminance component value.
+ * @property {import('#svelte/store').Writable<number|null>} l - Luminance component value.
  */

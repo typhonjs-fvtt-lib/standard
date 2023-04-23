@@ -4,7 +4,7 @@
     * application; used by `FVTTSidebarControl`.
     */
 
-   import { setContext }       from 'svelte';
+   import { setContext }       from '#svelte';
 
    import { ApplicationShell } from '#runtime/svelte/component/core';
 

@@ -856,7 +856,7 @@ export class FVTTSidebarControl
  *
  * @property {import('#runtime/svelte/application').SvelteApplication}  popout - The sidebar popout application.
  *
- * @property {import('svelte').SvelteComponent} tab - The tab wrapper component.
+ * @property {import('#svelte').SvelteComponent} tab - The tab wrapper component.
  *
- * @property {import('svelte').SvelteComponent} wrapper - The sidebar wrapper component.
+ * @property {import('#svelte').SvelteComponent} wrapper - The sidebar wrapper component.
  */

@@ -1,7 +1,7 @@
 <script>
    import {
       getContext,
-      setContext }            from 'svelte'
+      setContext }            from '#svelte'
 
    import { applyPosition }   from '#runtime/svelte/action'
 

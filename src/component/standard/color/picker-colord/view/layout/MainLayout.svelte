@@ -1,7 +1,7 @@
 <script>
    import {
       getContext,
-      onDestroy }          from 'svelte';
+      onDestroy }          from '#svelte';
 
    import {
       getStackingContext } from '#runtime/svelte/util';

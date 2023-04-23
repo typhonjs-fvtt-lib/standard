@@ -1,4 +1,4 @@
-import { writable }     from 'svelte/store';
+import { writable }     from '#svelte/store';
 
 // TODO REFACTOR TO TOP LEVEL OPTION
 import { rippleFocus }  from '#standard/action';
@@ -220,9 +220,9 @@ export class HsvState
 /**
  * @typedef {object} HsvStateStores Provides the buffered stores to use in text input components.
  *
- * @property {import('svelte/store').Writable<number|null>} h - Hue component value.
+ * @property {import('#svelte/store').Writable<number|null>} h - Hue component value.
  *
- * @property {import('svelte/store').Writable<number|null>} s - Saturation component value.
+ * @property {import('#svelte/store').Writable<number|null>} s - Saturation component value.
  *
- * @property {import('svelte/store').Writable<number|null>} v - Value / brightness component value.
+ * @property {import('#svelte/store').Writable<number|null>} v - Value / brightness component value.
  */

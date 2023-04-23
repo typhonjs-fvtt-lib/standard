@@ -10,7 +10,7 @@
       createEventDispatcher,
       getContext,
       onDestroy,
-      setContext }              from 'svelte';
+      setContext }              from '#svelte';
 
    import { colord }            from '#runtime/color/colord';
 

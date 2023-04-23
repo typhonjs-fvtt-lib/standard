@@ -43,7 +43,7 @@
     * --tjs-icon-button-transition
     * --tjs-icon-button-transition-focus-visible
     */
-   import { createEventDispatcher } from 'svelte';
+   import { createEventDispatcher } from '#svelte';
 
    import { applyStyles }           from '#runtime/svelte/action';
    import { localize }              from '#runtime/svelte/helper';

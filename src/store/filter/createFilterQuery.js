@@ -1,4 +1,4 @@
-import { get, writable }   from 'svelte/store';
+import { get, writable }   from '#svelte/store';
 
 import { isWritableStore } from '#runtime/svelte/store';
 
@@ -18,7 +18,7 @@ import {
  *
  * @param {boolean}  [opts.caseSensitive=false] - When true regex test is case-sensitive.
  *
- * @param {import('svelte/store').Writable<string>}  [opts.store=void] - Use the provided store to instead of creating
+ * @param {import('#svelte/store').Writable<string>}  [opts.store=void] - Use the provided store to instead of creating
  *                                                                       a default writable store.
  *
  * @returns {(data: object) => boolean} The query string filter.
@@ -83,7 +83,7 @@ export function createFilterQuery(properties, { caseSensitive = false, store } =
     *
     * @param {(string) => void} handler - A callback function that accepts strings.
     *
-    * @returns {import('svelte/store').Unsubscriber}
+    * @returns {import('#svelte/store').Unsubscriber}
     */
    filterQuery.subscribe = (handler) =>
    {

@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable } from '#svelte/store';
 
 // TODO REFACTOR TO TOP LEVEL OPTION
 import { rippleFocus } from '#standard/action';
@@ -142,5 +142,5 @@ export class AlphaState
 /**
  * @typedef {object} AlphaStateStores Provides the buffered stores to use in number input components.
  *
- * @property {import('svelte/store').Writable<number|null>} alpha - Alpha component value.
+ * @property {import('#svelte/store').Writable<number|null>} alpha - Alpha component value.
  */

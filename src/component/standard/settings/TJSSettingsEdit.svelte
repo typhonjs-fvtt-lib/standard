@@ -41,7 +41,7 @@
     * --tjs-settings-section-padding - 0.5em
     */
 
-   import { onDestroy }    from 'svelte';
+   import { onDestroy }    from '#svelte';
 
    import {
       applyScrolltop,

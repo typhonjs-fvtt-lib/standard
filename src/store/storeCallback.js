@@ -11,19 +11,19 @@ import { isWritableStore } from '#runtime/svelte/store';
  *
  * @template T
  *
- * @param {import('svelte/store').Writable<T>} store - A store to wrap.
+ * @param {import('#svelte/store').Writable<T>} store - A store to wrap.
  *
- * @param {(store?: import('svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
+ * @param {(store?: import('#svelte/store').Writable<T>, value?: T) => void} setCallback - A callback to invoke after
  *                                                                                        store set.
  *
- * @returns {import('svelte/store').Writable<T>} Wrapped store.
+ * @returns {import('#svelte/store').Writable<T>} Wrapped store.
  */
 export function storeCallback(store, setCallback)
 {
    if (!isWritableStore(store)) { throw new TypeError(`'store' is not a writable store.`); }
    if (typeof setCallback !== 'function') { throw new TypeError(`'setCallback' is not a function.`); }
 
-   /** @type {import('svelte/store').Writable<T>} */
+   /** @type {import('#svelte/store').Writable<T>} */
    return {
       set: (value) =>
       {

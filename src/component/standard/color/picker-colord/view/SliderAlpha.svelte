@@ -1,6 +1,6 @@
 <script>
-   import { getContext }    from 'svelte';
-   import { writable }      from 'svelte/store';
+   import { getContext }    from '#svelte';
+   import { writable }      from '#svelte/store';
 
    import {
       isFocused,

@@ -1,4 +1,4 @@
-import { tick }               from 'svelte';
+import { tick }               from '#svelte';
 
 import { subscribeFirstRest } from '#runtime/svelte/store';
 
@@ -14,7 +14,7 @@ import { subscribeFirstRest } from '#runtime/svelte/store';
  *
  * @param {object} opts - Options parameters.
  *
- * @param {import('svelte/store').Writable<boolean>} opts.store - A boolean store.
+ * @param {import('#svelte/store').Writable<boolean>} opts.store - A boolean store.
  *
  * @param {boolean} [opts.clickActive] - When false click events are not handled.
  *

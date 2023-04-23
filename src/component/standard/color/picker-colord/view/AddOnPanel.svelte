@@ -1,5 +1,5 @@
 <script>
-   import { getContext }    from 'svelte';
+   import { getContext }    from '#svelte';
 
    import TJSSvgFolder      from '../../../folder/TJSSvgFolder.svelte';
 

@@ -1,4 +1,4 @@
-import { writable }     from 'svelte/store';
+import { writable }     from '#svelte/store';
 
 import { colord }       from '#runtime/color/colord';
 
@@ -221,9 +221,9 @@ export class RgbState
 /**
  * @typedef {object} RgbStateStores Provides the buffered stores to use in text input components.
  *
- * @property {import('svelte/store').Writable<number|null>} r - Red component value.
+ * @property {import('#svelte/store').Writable<number|null>} r - Red component value.
  *
- * @property {import('svelte/store').Writable<number|null>} g - Green component value.
+ * @property {import('#svelte/store').Writable<number|null>} g - Green component value.
  *
- * @property {import('svelte/store').Writable<number|null>} b - Blue component value.
+ * @property {import('#svelte/store').Writable<number|null>} b - Blue component value.
  */

@@ -12,7 +12,7 @@ import {
 import { ObjectEntryStore }   from './ObjectEntryStore.js';
 
 /**
- * @typedef {import('svelte/store').Writable & { get id: string }} BaseEntryStore
+ * @typedef {import('#svelte/store').Writable & { get id: string }} BaseEntryStore
  */
 
 /**

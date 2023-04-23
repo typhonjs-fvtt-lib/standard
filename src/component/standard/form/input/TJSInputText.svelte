@@ -48,7 +48,7 @@
     * --tjs-input-text-width
     */
 
-   import { writable }          from 'svelte/store';
+   import { writable }          from '#svelte/store';
 
    import { applyStyles }       from '#runtime/svelte/action';
 

@@ -1,4 +1,4 @@
-import { writable }        from 'svelte/store';
+import { writable }        from '#svelte/store';
 
 import { getFormat }       from '#runtime/color/colord';
 
@@ -34,7 +34,7 @@ export class TJSThemeStore
    #settingsStoreHandler;
 
    /**
-    * @type {Object<string, import('svelte/store').Writable<string|null>>}
+    * @type {Object<string, import('#svelte/store').Writable<string|null>>}
     */
    #stores = {};
 
@@ -108,7 +108,7 @@ export class TJSThemeStore
    }
 
    /**
-    * @returns {Object<string, import('svelte/store').Writable<string|null>>} All stores.
+    * @returns {Object<string, import('#svelte/store').Writable<string|null>>} All stores.
     */
    get stores()
    {

@@ -1,4 +1,4 @@
-import { get, writable }         from 'svelte/store';
+import { get, writable }         from '#svelte/store';
 
 import { colord }                from '#runtime/color/colord';
 
@@ -662,24 +662,24 @@ class HsvColorParser
 /**
  * @typedef {object} ColorStateStores
  *
- * @property {import('svelte/store').Writable<number>} alpha - The current alpha value (0 - 1).
+ * @property {import('#svelte/store').Writable<number>} alpha - The current alpha value (0 - 1).
  *
- * @property {import('svelte/store').Writable<number>} hue - The current hue value (0 - 360).
+ * @property {import('#svelte/store').Writable<number>} hue - The current hue value (0 - 360).
  *
- * @property {import('svelte/store').Readable<string|object>} currentColor - The current color.
+ * @property {import('#svelte/store').Readable<string|object>} currentColor - The current color.
  *
- * @property {import('svelte/store').Readable<string>} currentColorString - The current color string matching format or HSL.
+ * @property {import('#svelte/store').Readable<string>} currentColorString - The current color string matching format or HSL.
  *
- * @property {import('svelte/store').Readable<boolean>} isDark - Is the current color considered "dark".
+ * @property {import('#svelte/store').Readable<boolean>} isDark - Is the current color considered "dark".
  *
  * @property {TextState} textState - The text state for various supported color formats.
  *
- * @property {import('svelte/store').Readable<string>} hslString - The current color / RGB only string.
+ * @property {import('#svelte/store').Readable<string>} hslString - The current color / RGB only string.
  *
- * @property {import('svelte/store').Readable<string>} hslHueString - The current color hue / RGB only string.
+ * @property {import('#svelte/store').Readable<string>} hslHueString - The current color hue / RGB only string.
  *
- * @property {import('svelte/store').Readable<string>} hslaString - The current color / RGBA only string.
+ * @property {import('#svelte/store').Readable<string>} hslaString - The current color / RGBA only string.
  *
- * @property {import('svelte/store').Writable<{ s: number, v: number }>} sv - The saturation / value pair for HSV components.
+ * @property {import('#svelte/store').Writable<{ s: number, v: number }>} sv - The saturation / value pair for HSV components.
  */
 

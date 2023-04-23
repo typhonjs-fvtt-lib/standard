@@ -48,8 +48,8 @@
     * @see https://dev.to/isaachagoel/svelte-reactivity-gotchas-solutions-if-you-re-using-svelte-in-production-you-should-read-this-3oj3
     */
 
-   import { onMount }         from 'svelte';
-   import { writable }        from 'svelte/store';
+   import { onMount }         from '#svelte';
+   import { writable }        from '#svelte/store';
 
    import { applyStyles }     from '#runtime/svelte/action';
    import { isWritableStore } from '#runtime/svelte/store';

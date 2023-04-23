@@ -1,5 +1,5 @@
 <script>
-   import { getContext }    from 'svelte';
+   import { getContext }    from '#svelte';
 
    const internalState = getContext('#tjs-color-picker-state');
    const sliderHorizontal = getContext('#tjs-color-picker-slider-horizontal');

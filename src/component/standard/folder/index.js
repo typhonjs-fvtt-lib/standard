@@ -36,7 +36,7 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  * @property {{ class: Function, props?: object }} [slotSummaryEnd] - A minimal Svelte config defining the summary end
  *           component.
  *
- * @property {import('svelte/store').Writable<boolean>} [store] - Folder open / close store.
+ * @property {import('#svelte/store').Writable<boolean>} [store] - Folder open / close store.
  *
  * @property {object} [styles] - Additional styles to apply.
  */

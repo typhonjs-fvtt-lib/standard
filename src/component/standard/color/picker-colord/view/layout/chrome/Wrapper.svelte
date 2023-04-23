@@ -2,7 +2,7 @@
    import {
       getContext, onMount,
       setContext
-   } from 'svelte';
+   } from '#svelte';
 
    import {
       AddOnPanel,
