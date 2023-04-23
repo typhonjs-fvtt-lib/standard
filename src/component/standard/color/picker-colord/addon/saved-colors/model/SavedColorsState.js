@@ -9,7 +9,7 @@ export class SavedColorsState
 
    #colorArray = [];
 
-   /** @type {InternalState} */
+   /** @type {import('../../../model').InternalState} */
    #internalState;
 
    #sessionStore;

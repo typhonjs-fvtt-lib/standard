@@ -17,10 +17,10 @@ export class AlphaState
    /** @type {number} */
    #alpha;
 
-   /** @type {ColorStateAccess} */
+   /** @type {import('./').ColorStateAccess} */
    #colorStateAccess;
 
-   /** @type {TextStateAccess} */
+   /** @type {import('./').TextStateAccess} */
    #textStateAccess;
 
    /** @type {AlphaStateInputData} */
@@ -37,9 +37,9 @@ export class AlphaState
    #storeSet;
 
    /**
-    * @param {ColorStateAccess}  colorStateAccess -
+    * @param {import('./').ColorStateAccess}  colorStateAccess -
     *
-    * @param {TextStateAccess}   textStateAccess -
+    * @param {import('./').TextStateAccess}   textStateAccess -
     */
    constructor(colorStateAccess, textStateAccess)
    {

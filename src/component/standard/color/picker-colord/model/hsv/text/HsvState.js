@@ -15,10 +15,10 @@ export class HsvState
    /** @type {{ h: number, s: number, v: number}} */
    #data;
 
-   /** @type {ColorStateAccess} */
+   /** @type {import('./').ColorStateAccess} */
    #colorStateAccess;
 
-   /** @type {TextStateAccess} */
+   /** @type {import('./').TextStateAccess} */
    #textStateAccess;
 
    /** @type {HsvStateInputData} */
@@ -35,9 +35,9 @@ export class HsvState
    #storeSet = {};
 
    /**
-    * @param {ColorStateAccess}  colorStateAccess -
+    * @param {import('./').ColorStateAccess}  colorStateAccess -
     *
-    * @param {TextStateAccess}   textStateAccess -
+    * @param {import('./').TextStateAccess}   textStateAccess -
     */
    constructor(colorStateAccess, textStateAccess)
    {

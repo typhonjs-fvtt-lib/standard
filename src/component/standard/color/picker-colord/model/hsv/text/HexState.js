@@ -17,10 +17,10 @@ export class HexState
    /** @type {string} */
    #hex;
 
-   /** @type {ColorStateAccess} */
+   /** @type {import('./').ColorStateAccess} */
    #colorStateAccess;
 
-   /** @type {TextStateAccess} */
+   /** @type {import('./').TextStateAccess} */
    #textStateAccess;
 
    /** @type {HexStateInputData} */
@@ -37,9 +37,9 @@ export class HexState
    #storeSet = {};
 
    /**
-    * @param {ColorStateAccess}  colorStateAccess -
+    * @param {import('./').ColorStateAccess}  colorStateAccess -
     *
-    * @param {TextStateAccess}   textStateAccess -
+    * @param {import('./').TextStateAccess}   textStateAccess -
     */
    constructor(colorStateAccess, textStateAccess)
    {

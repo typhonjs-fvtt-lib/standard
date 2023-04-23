@@ -9,7 +9,7 @@ export class ButtonState
    #buttonList = [];
 
    /**
-    * @type {InternalState}
+    * @type {import('./').InternalState}
     */
    #internalState;
 
@@ -21,7 +21,7 @@ export class ButtonState
    #subscriptions = [];
 
    /**
-    * @param {InternalState}  internalState -
+    * @param {import('./').InternalState}  internalState -
     */
    constructor(internalState)
    {

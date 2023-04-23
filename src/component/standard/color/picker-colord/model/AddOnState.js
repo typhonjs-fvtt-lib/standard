@@ -9,19 +9,19 @@ export class AddOnState
    #addOnArray = [];
 
    /**
-    * @type {InternalState}
+    * @type {import('./').InternalState}
     */
    #internalState;
 
    /**
     * Stores the subscribers.
     *
-    * @type {(function(TJSFolderData[]): void)[]}
+    * @type {(function(import('../../../folder').TJSFolderData[]): void)[]}
     */
    #subscriptions = [];
 
    /**
-    * @param {InternalState}  internalState -
+    * @param {import('./').InternalState}  internalState -
     */
    constructor(internalState)
    {
@@ -129,7 +129,8 @@ export class AddOnState
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**
-    * @param {function(TJSFolderData[]): void} handler - Callback function that is invoked on update / changes.
+    * @param {function(import('../../../folder').TJSFolderData[]): void} handler - Callback function that is invoked on
+    * update / changes.
     *
     * @returns {(function(): void)} Unsubscribe function.
     */

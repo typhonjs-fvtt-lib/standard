@@ -33,19 +33,19 @@ export class TextState
    #activeTextState;
 
    /**
-    * @param {ColorState}                 colorState - ColorState instance.
+    * @param {import('../').ColorState}                 colorState - ColorState instance.
     *
-    * @param {ColorStateInternalUpdate}   internalUpdate - ColorState internal store update data.
+    * @param {import('../').ColorStateInternalUpdate}   internalUpdate - ColorState internal store update data.
     */
    constructor(colorState, internalUpdate)
    {
-      /** @type {ColorStateAccess} */
+      /** @type {import('./').ColorStateAccess} */
       const colorStateAccess = {
          stores: colorState.stores,
          internalUpdate
       };
 
-      /** @type {TextStateAccess} */
+      /** @type {import('./').TextStateAccess} */
       const textStateAccess = {
          updateColorInternal: this.#updateColorInternal.bind(this)
       };
@@ -187,23 +187,3 @@ export class TextState
       for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
    }
 }
-
-/**
- * @typedef {object} ColorStateAccess
- *
- * @property {ColorStateStores} stores - The stores from {@link ColorState}.
- *
- * @property {ColorStateInternalUpdate} internalUpdate - The internal tracking state from {@link ColorState}.
- */
-
-/**
- * @typedef {object} TextStateAccess
- *
- * @property {Function} updateColorInternal - Provides access to the #updateColorInternal method.
- */
-
-/**
- * @typedef {object} TextStateStores
- *
- * @property {import('#svelte/store').Readable<object>} activeMode - The current active text mode config object.
- */

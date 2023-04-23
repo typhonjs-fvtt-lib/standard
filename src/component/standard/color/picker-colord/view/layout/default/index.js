@@ -8,7 +8,7 @@ import { default as Wrapper }          from './Wrapper.svelte';
 /**
  * The default layout components.
  *
- * @type {PickerComponents}
+ * @type {import('../../../model').PickerComponents}
  */
 export const components = {
    alphaIndicator: SliderIndicator,

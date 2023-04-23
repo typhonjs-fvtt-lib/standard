@@ -4,7 +4,7 @@ import { default as ChromeWrapper }          from './Wrapper.svelte';
 /**
  * The `chrome` style layout components.
  *
- * @type {PickerComponents}
+ * @type {import('../../../model').PickerComponents}
  */
 export const components = {
    pickerWrapper: ChromePickerWrapper,
