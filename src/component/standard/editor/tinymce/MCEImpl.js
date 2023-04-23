@@ -95,9 +95,10 @@ export class MCEImpl
     * Provides a mechanism to load core Foundry fonts and any additional font family definitions. The returned data
     * includes the parsed font family definitions and the configuration data TinyMCE needs for loading the font formats.
     *
-    * @param {{[key: string]: FontFamilyDefinition}}  [extraFonts] - Extra user defined fonts to load.
+    * @param { {[key: string]: globalThis.FontFamilyDefinition} }  [extraFonts] - Extra user defined fonts to load.
     *
-    * @returns {{ fonts: Object<FontFamilyDefinition>[], fontFormats: string}} Font formats for MCE & all fonts to load.
+    * @returns { {fonts: {[key: string]: globalThis.FontFamilyDefinition}[], fontFormats: string} } Font formats for
+    *          MCE & all fonts to load.
     */
    static getFontData(extraFonts = {})
    {
@@ -106,7 +107,7 @@ export class MCEImpl
       // TODO Sanitize / confirm extraFonts data / add `editor` field if missing.
 
       /**
-       * @type {Object<FontFamilyDefinition>[]}
+       * @type { {[key: string]: globalThis.FontFamilyDefinition}[] }
        */
       const fonts = [
          ...FontManager.getCoreDefinitions(),
@@ -141,13 +142,13 @@ export class MCEImpl
     * of a raw UUID and if detected attempts to retrieve the document and if found will generate a proper document link
     * from it. You can get the raw UUID by context-clicking the icon in the app header bar for various documents.
     *
-    * @param {TinyMCE.Editor} editor -
+    * @param {object}   editor -
     *
-    * @param {object}         args -
+    * @param {object}   args -
     *
-    * @param {object}         options -
+    * @param {object}   options -
     *
-    * @param {number}         maxCharacterLength -
+    * @param {number}   maxCharacterLength -
     */
    static pastePreprocess(editor, args, options, maxCharacterLength)
    {
@@ -217,7 +218,7 @@ export class MCEImpl
    /**
     * Sets the initial selection based on `options.initialSelection`.
     *
-    * @param {TinyMCE.Editor} editor - MCE editor.
+    * @param {object}   editor - MCE editor.
     *
     * @param {string}   initialSelection - Initial selection option.
     *

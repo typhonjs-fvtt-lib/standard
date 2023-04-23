@@ -321,7 +321,7 @@ class SelectedAPI
    #selectedMap = new Map();
 
    /**
-    * @type {Map<*, TransformData>}
+    * @type {Map<*, import('#runtime/svelte/store/position').TJSTransformData>}
     */
    #transformDataMap = new Map();
 

@@ -7,7 +7,7 @@ import { hitboxCallback } from './constants.js';
  *
  * @param {number}   dY - delta Y
  *
- * @param {ControlStore}   control - ControlStore instance.
+ * @param {import('../ControlStore.js').ControlStore}   control - ControlStore instance.
  *
  * @returns {object} TJSPosition update data.
  */
