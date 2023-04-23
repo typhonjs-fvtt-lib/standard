@@ -7,7 +7,12 @@
   "contributors": [
     "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"
   ],
-  "svelte": "src/index-svelte.js",
+  "imports": {
+    "#runtime/*": "@typhonjs-fvtt/runtime/*",
+    "#standard/*": "@typhonjs-fvtt/svelte-standard/*",
+    "#svelte/*": "svelte/*",
+    "#svelte": "svelte"
+  },
   "exports": {
     "./action": {
       "types": "./_dist/action/index.d.ts",
@@ -47,25 +52,20 @@
     },
     "./package.json": "./package.json"
   },
-  "imports": {
-    "#runtime/*": "@typhonjs-fvtt/runtime/*"
-  },
   "peerDependencies": {
     "@typhonjs-fvtt/runtime": ">=0.0.22",
     "svelte": ">=3.58.0"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^4",
-    "@rollup/plugin-commonjs": "^24",
     "@rollup/plugin-node-resolve": "^15",
-    "@typhonjs-build-test/esm-d-ts": "^0.0.16",
-    "@typhonjs-config/eslint-config": "^0.3.0",
+    "@typhonjs-build-test/esm-d-ts": "^0.0.18",
+    "@typhonjs-build-test/rollup-external-imports": "^0.0.1",
+    "@typhonjs-config/eslint-config": "^0.5.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
     "fs-extra": "^11",
-    "rollup": "^3",
-    "upath": "^2"
+    "rollup": "^3"
   },
   "engines": {
     "node": ">=14.18"
