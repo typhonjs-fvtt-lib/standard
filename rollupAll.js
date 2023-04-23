@@ -5,17 +5,12 @@ import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
 
-// Defines Rollup `external` option excluding Svelte.
-const external = [/^svelte.*/];
-
-// Defines whether source maps are generated / loaded from the .env file.
-const sourcemap = true;
+const sourcemap = true; // Defines whether source maps are generated.
 
 const rollupConfigs = [
    {
       input: {
          input: 'src/action/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -32,7 +27,6 @@ const rollupConfigs = [
    {
       input: {
          input: 'src/application/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -49,7 +43,6 @@ const rollupConfigs = [
    {
       input: {
          input: 'src/fvtt/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -66,7 +59,6 @@ const rollupConfigs = [
    {
       input: {
          input: 'src/plugin/data/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -83,7 +75,6 @@ const rollupConfigs = [
    {
       input: {
          input: 'src/plugin/system/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -100,7 +91,6 @@ const rollupConfigs = [
    {
       input: {
          input: 'src/prosemirror/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -117,7 +107,6 @@ const rollupConfigs = [
    {
       input: {
          input: 'src/store/index.js',
-         external,
          plugins: [
             importsExternal(),
             resolve(),
@@ -135,29 +124,12 @@ const rollupConfigs = [
 
 for (const config of rollupConfigs)
 {
+   console.log(`Generating bundle: ${config.input.input}`);
+
    const bundle = await rollup(config.input);
    await bundle.write(config.output);
    await bundle.close();
 }
-
-// // Handle application by copying the source.
-// fs.emptyDirSync('./_dist/application');
-// fs.copySync('./src/application', './_dist/application');
-//
-// let compFiles = await getFileList({ dir: './_dist/application' });
-// for (const compFile of compFiles)
-// {
-//    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-//    fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
-//    fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/');
-//    fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/');
-//    fs.writeFileSync(compFile, fileData);
-// }
-//
-// await generateDTS({
-//    input: './_dist/application/index.js',
-//    output: './_dist/application/index.d.ts'
-// });
 
 // Svelte standard components ----------------------------------------------------------------------------------------
 
@@ -170,7 +142,7 @@ for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
    fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/');
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/');
+   fileData = fileData.replaceAll('#standard/', '@typhonjs-fvtt/svelte-standard/');
+   fileData = fileData.replaceAll('#svelte', 'svelte');
    fs.writeFileSync(compFile, fileData);
 }
