@@ -1,143 +1,133 @@
-import alias               from '@rollup/plugin-alias';
 import resolve             from '@rollup/plugin-node-resolve';
 import { generateDTS }     from '@typhonjs-build-test/esm-d-ts';
+import { importsExternal } from '@typhonjs-build-test/rollup-external-imports';
 import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
-import upath               from 'upath';
 
-import { typhonjsRuntime } from './.rollup/local/index.js';
-
-const s_SOURCEMAPS = true;
-
-// Defines Svelte and all local exports as external.
-const s_LOCAL_EXTERNAL = [
-   'svelte', 'svelte/easing', 'svelte/internal', 'svelte/motion', 'svelte/store', 'svelte/transition',
-   'svelte/types',
-
-   '@typhonjs-fvtt/runtime/color/colord',  // Referenced from TJSThemeStore
-
-   '@typhonjs-fvtt/svelte-standard/action', '@typhonjs-fvtt/svelte-standard/application',
-   '@typhonjs-fvtt/svelte-standard/component', '@typhonjs-fvtt/svelte-standard/component/fvtt',
-   '@typhonjs-fvtt/svelte-standard/fvtt', '@typhonjs-fvtt/svelte-standard/plugin/data',
-   '@typhonjs-fvtt/svelte-standard/plugin/system', '@typhonjs-fvtt/svelte-standard/prosemirror',
-   '@typhonjs-fvtt/svelte-standard/store'
-];
-
-// Defines potential output plugins to use conditionally if the .env file indicates the bundles should be
-// minified / mangled.
-const outputPlugins = [typhonjsRuntime({ output: true })];
+// Defines Rollup `external` option excluding Svelte.
+const external = [/^svelte.*/];
 
 // Defines whether source maps are generated / loaded from the .env file.
-const sourcemap = s_SOURCEMAPS;
+const sourcemap = true;
 
 const rollupConfigs = [
    {
       input: {
          input: 'src/action/index.js',
-         external: s_LOCAL_EXTERNAL,
+         external,
          plugins: [
-            alias({
-               entries: [
-                  { find: '#internal', replacement: './src/internal/index.js' }
-               ]
-            }),
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/action'] }),
-            resolve()
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
          ]
       },
       output: {
          file: '_dist/action/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
-         plugins: outputPlugins,
+         sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/application/index.js',
+         external,
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
+         ]
+      },
+      output: {
+         file: '_dist/application/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
          sourcemap
       }
    },
    {
       input: {
          input: 'src/fvtt/index.js',
-         external: s_LOCAL_EXTERNAL,
+         external,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/fvtt'] }),
-            resolve()
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
          ]
       },
       output: {
          file: '_dist/fvtt/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
-         plugins: outputPlugins,
          sourcemap
       }
    },
    {
       input: {
          input: 'src/plugin/data/index.js',
-         external: s_LOCAL_EXTERNAL,
+         external,
          plugins: [
-            typhonjsRuntime({ exclude: [`@typhonjs-fvtt/svelte-standard/plugin/data`] }),
-            resolve()
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
          ]
       },
       output: {
          file: '_dist/plugin/data/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
-         // paths: externalPathsNPM,
-         plugins: outputPlugins,
          sourcemap,
       }
    },
    {
       input: {
          input: 'src/plugin/system/index.js',
-         external: s_LOCAL_EXTERNAL,
+         external,
          plugins: [
-            typhonjsRuntime({ exclude: [`@typhonjs-fvtt/svelte-standard/plugin/system`] }),
-            resolve()
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
          ]
       },
       output: {
          file: '_dist/plugin/system/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
-         // paths: externalPathsNPM,
-         plugins: outputPlugins,
          sourcemap,
       }
    },
    {
       input: {
          input: 'src/prosemirror/index.js',
-         external: s_LOCAL_EXTERNAL,
+         external,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/prosemirror'] }),
-            resolve()
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
          ]
       },
       output: {
          file: '_dist/prosemirror/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
-         plugins: outputPlugins,
          sourcemap
       }
    },
    {
       input: {
          input: 'src/store/index.js',
-         external: s_LOCAL_EXTERNAL,
+         external,
          plugins: [
-            typhonjsRuntime({ exclude: ['@typhonjs-fvtt/svelte-standard/store'] }),
-            resolve()
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
          ]
       },
       output: {
          file: '_dist/store/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
-         plugins: outputPlugins,
          sourcemap
       }
    }
@@ -147,34 +137,27 @@ for (const config of rollupConfigs)
 {
    const bundle = await rollup(config.input);
    await bundle.write(config.output);
-
-   // closes the bundle
    await bundle.close();
-
-   await generateDTS({
-      input: config.output.file,
-      output: upath.changeExt(config.output.file, '.d.ts')
-   });
 }
 
-// Handle application by copying the source.
-fs.emptyDirSync('./_dist/application');
-fs.copySync('./src/application', './_dist/application');
-
-let compFiles = await getFileList({ dir: './_dist/application' });
-for (const compFile of compFiles)
-{
-   let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
-   fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/');
-   fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/');
-   fs.writeFileSync(compFile, fileData);
-}
-
-await generateDTS({
-   input: './_dist/application/index.js',
-   output: './_dist/application/index.d.ts'
-});
+// // Handle application by copying the source.
+// fs.emptyDirSync('./_dist/application');
+// fs.copySync('./src/application', './_dist/application');
+//
+// let compFiles = await getFileList({ dir: './_dist/application' });
+// for (const compFile of compFiles)
+// {
+//    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+//    fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
+//    fileData = fileData.replaceAll('@typhonjs-fvtt/svelte/', '@typhonjs-fvtt/runtime/svelte/');
+//    fileData = fileData.replaceAll('@typhonjs-svelte/lib/', '@typhonjs-fvtt/runtime/svelte/');
+//    fs.writeFileSync(compFile, fileData);
+// }
+//
+// await generateDTS({
+//    input: './_dist/application/index.js',
+//    output: './_dist/application/index.d.ts'
+// });
 
 // Svelte standard components ----------------------------------------------------------------------------------------
 
@@ -182,7 +165,7 @@ await generateDTS({
 fs.emptyDirSync('./_dist/component');
 fs.copySync('./src/component', './_dist/component');
 
-compFiles = await getFileList({ dir: './_dist/component' });
+const compFiles = await getFileList({ dir: './_dist/component' });
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
