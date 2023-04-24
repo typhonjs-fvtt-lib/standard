@@ -65,7 +65,7 @@ export class CrudArrayObjectStore extends ArrayObjectStore
     *
     * @param {object}   entryData -
     *
-    * @returns {T}
+    * @returns {T} Associated store with entry data.
     */
    createEntry(entryData = {})
    {

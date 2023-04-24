@@ -34,6 +34,9 @@ export class ArrayObjectStore
     */
    #manualUpdate;
 
+   /**
+    * @type {T}
+    */
    #StoreClass;
 
    /**
@@ -114,13 +117,13 @@ export class ArrayObjectStore
    }
 
    /**
-    * @returns {T[]}
+    * @returns {T[]} The internal data array tracked allowing child classes direct access.
     * @protected
     */
    get _data() { return this.#data; }
 
    /**
-    * @returns {DynArrayReducer<T>}
+    * @returns {DynArrayReducer<T>} The data reducer.
     */
    get dataReducer()
    {
@@ -134,7 +137,7 @@ export class ArrayObjectStore
    }
 
    /**
-    * @returns {number}
+    * @returns {number} The length of all data.
     */
    get length() { return this.#data.length; }
 
@@ -156,7 +159,7 @@ export class ArrayObjectStore
     *
     * @param {object}   entryData -
     *
-    * @returns {T}
+    * @returns {T} The store
     */
    createEntry(entryData = {})
    {

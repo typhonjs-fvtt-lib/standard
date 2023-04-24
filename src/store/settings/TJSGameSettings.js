@@ -64,7 +64,7 @@ export class TJSGameSettings
    /**
     * Provides an iterator / generator to return stored settings data.
     *
-    * @returns {Generator<GameSettingData, void, *>}
+    * @yields {GameSettingData}
     */
    *[Symbol.iterator]()
    {
@@ -83,7 +83,7 @@ export class TJSGameSettings
    }
 
    /**
-    * @returns {UIControl}
+    * @returns {UIControl} The associated UIControl.
     */
    get uiControl()
    {
@@ -318,7 +318,7 @@ export class TJSGameSettings
     *                                   in the app itself, but removed from the standard Foundry configuration location.
     *
     * @returns { {[key: string]: Function} } An object containing all TJSGameSetting store subscriber handlers for each
-    * setting `key` added.
+    *          setting `key` added.
     */
    registerAll(settings, coreConfig)
    {

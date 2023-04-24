@@ -46,7 +46,7 @@ export class ObjectEntryStore
    static duplicate(data, arrayStore) {}  // eslint-disable-line no-unused-vars
 
    /**
-    * @returns {object}
+    * @returns {object} The object data tracked by this store.
     * @protected
     */
    get _data() { return this.#data; }
@@ -54,7 +54,7 @@ export class ObjectEntryStore
    // ----------------------------------------------------------------------------------------------------------------
 
    /**
-    * @returns {string}
+    * @returns {string} The ID attribute in object data tracked by this store.
     */
    get id() { return this.#data.id; }
 

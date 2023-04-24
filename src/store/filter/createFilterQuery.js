@@ -10,7 +10,7 @@ import {
  * Creates a filter function to compare objects by a give property key against a regex test. The returned function
  * is also a writable Svelte store that builds a regex from the stores value.
  *
- * This filter function can be used w/ DynArrayReducer and bound as a store to input elements.
+ * This filter function can be used w/ a dynamic reducer and bound as a store to input elements.
  *
  * @param {string|Iterable<string>}   properties - Property key to compare.
  *
@@ -83,7 +83,7 @@ export function createFilterQuery(properties, { caseSensitive = false, store } =
     *
     * @param {(string) => void} handler - A callback function that accepts strings.
     *
-    * @returns {import('#svelte/store').Unsubscriber}
+    * @returns {import('#svelte/store').Unsubscriber} Store unsubscribe function.
     */
    filterQuery.subscribe = (handler) =>
    {
