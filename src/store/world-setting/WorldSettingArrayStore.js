@@ -2,7 +2,7 @@ import { CrudArrayObjectStore }  from '../array-object/index.js';
 
 /**
  * @template [T=import('../array-object').BaseEntryStore]
- * @extends {CrudArrayObjectStore<T>}
+ * @augments {CrudArrayObjectStore<T>}
  */
 export class WorldSettingArrayStore extends CrudArrayObjectStore
 {
@@ -55,12 +55,12 @@ export class WorldSettingArrayStore extends CrudArrayObjectStore
    }
 
    /**
-    * @returns {string}
+    * @returns {string} The Foundry game setting key.
     */
    get key() { return this.#key; }
 
    /**
-    * @returns {string}
+    * @returns {string} The Foundry game setting namespace.
     */
    get namespace() { return this.#namespace; }
 }

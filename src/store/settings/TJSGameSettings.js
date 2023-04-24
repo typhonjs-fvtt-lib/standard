@@ -317,11 +317,12 @@ export class TJSGameSettings
     *                                   registering the setting with Foundry. This allows the settings to be displayed
     *                                   in the app itself, but removed from the standard Foundry configuration location.
     *
-    * @returns {Object<string, Function>} An object containing all TJSGameSetting store subscriber handlers for each
+    * @returns { {[key: string]: Function} } An object containing all TJSGameSetting store subscriber handlers for each
     * setting `key` added.
     */
    registerAll(settings, coreConfig)
    {
+      /** @type { {[key: string]: Function} } */
       const storeHandlers = {};
 
       if (!isIterable(settings)) { throw new TypeError(`TJSGameSettings - registerAll: settings is not iterable.`); }

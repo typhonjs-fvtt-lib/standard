@@ -34,7 +34,7 @@ export class TJSThemeStore
    #settingsStoreHandler;
 
    /**
-    * @type {Object<string, import('#svelte/store').Writable<string|null>>}
+    * @type { {[key: string]: import('#svelte/store').Writable<string|null>} }
     */
    #stores = {};
 
@@ -108,7 +108,7 @@ export class TJSThemeStore
    }
 
    /**
-    * @returns {Object<string, import('#svelte/store').Writable<string|null>>} All stores.
+    * @returns { {[key: string]: import('#svelte/store').Writable<string|null>} } All stores.
     */
    get stores()
    {

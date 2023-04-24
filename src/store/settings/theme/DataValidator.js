@@ -19,7 +19,7 @@ export class DataValidator
    /**
     * Parses and verifies a component entry.
     *
-    * @param {TJSThemeStoreComponent} entry - A component entry.
+    * @param {import('./TJSThemeStore').TJSThemeStoreComponent} entry - A component entry.
     *
     * @param {number}   cntr - Current component entry counter.
     *

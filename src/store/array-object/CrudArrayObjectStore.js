@@ -6,7 +6,7 @@ import { ArrayObjectStore }   from './ArrayObjectStore.js';
 
 /**
  * @template [T=import('./').BaseEntryStore]
- * @extends {ArrayObjectStore<T>}
+ * @augments {ArrayObjectStore<T>}
  */
 export class CrudArrayObjectStore extends ArrayObjectStore
 {
@@ -108,7 +108,7 @@ export class CrudArrayObjectStore extends ArrayObjectStore
     * attached. When the update is an object with a valid UUIDv4 string as the id property the `crudDispatch`
     * function is invoked with  along with the data payload
     *
-    * @param {ArrayObjectUpdateData} [update] -
+    * @param {import('./').ArrayObjectUpdateData} [update] -
     */
    updateSubscribers(update)
    {
