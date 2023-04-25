@@ -1,8 +1,8 @@
 /**
- * Loads https://github.com/typhonjs-node-config/typhonjs-config-eslint/blob/master/3.0/basic/es8/server/node/.eslintrc
- * Loads https://github.com/typhonjs-fvtt/eslint-config-foundry.js/blob/main/0.8.0.js
+ * Loads https://github.com/typhonjs-config/eslint-config/blob/main/esm/2022/browser.js
+ * Loads https://github.com/typhonjs-fvtt-lib/eslint-config-foundry.js/blob/main/0.8.0.js
  *
- * NPM: https://www.npmjs.com/package/typhonjs-config-eslint
+ * NPM: https://www.npmjs.com/package/@typhonjs-config/eslint-config
  * NPM: https://www.npmjs.com/package/@typhonjs-fvtt/eslint-config-foundry.js
  */
 {
@@ -10,13 +10,9 @@
   // with one that you do prefer. The second config defines globals defined in `foundry.js` for use w/ `no-shadow`.
   "extends": [
     "@typhonjs-config/eslint-config/esm/2022/browser",
+    "@typhonjs-config/eslint-config/esm/2022/no-undefined-types",
     "@typhonjs-fvtt/eslint-config-foundry.js"
   ],
-
-  // Defines / overrides a few more environment parameters not provided in the configs above.
-  "env": {
-    "jquery": true
-  },
 
   // Prevents overwriting any built in globals particularly from `@typhonjs-fvtt/eslint-config-foundry.js`, but also
   // node & browser environments. `event / window.event` shadowing is allowed due to being a common variable name and
