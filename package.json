@@ -60,7 +60,7 @@
     "@rollup/plugin-node-resolve": "^15",
     "@typhonjs-build-test/esm-d-ts": "^0.0.18",
     "@typhonjs-build-test/rollup-external-imports": "^0.0.1",
-    "@typhonjs-config/eslint-config": "^0.5.0",
+    "@typhonjs-config/eslint-config": "^0.6.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "@typhonjs-utils/file-util": "^0.0.6",
     "eslint": "^8",
@@ -70,7 +70,7 @@
   "engines": {
     "node": ">=14.18"
   },
-  "homepage": "https://github.com/typhonjs-fvtt/svelte-standard#readme",
+  "homepage": "https://github.com/typhonjs-fvtt-lib/svelte-standard#readme",
   "keywords": [
     "foundry vtt",
     "fvtt",
@@ -87,6 +87,6 @@
   ],
   "directories": {},
   "license": "MPL-2.0",
-  "repository": "github:typhonjs-fvtt/svelte-standard",
-  "bugs": "https://github.com/typhonjs-fvtt/svelte-standard/issues"
+  "repository": "github:typhonjs-fvtt-lib/svelte-standard",
+  "bugs": "https://github.com/typhonjs-fvtt-lib/svelte-standard/issues"
 }
