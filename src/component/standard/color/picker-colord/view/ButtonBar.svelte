@@ -3,7 +3,7 @@
 
    import { ClipboardAccess }   from '#runtime/svelte/util';
 
-   import { ripple }            from '#standard/action';
+   import { ripple }            from '#runtime/svelte/animate/action';
 
    import TJSIconButton         from '../../../button/TJSIconButton.svelte';
    import TJSToggleIconButton   from '../../../button/TJSToggleIconButton.svelte';

@@ -126,7 +126,7 @@
 
    import { localize }          from '#runtime/svelte/helper';
 
-   import { toggleDetails }     from '#standard/action';
+   import { toggleDetails }     from '#runtime/svelte/animate/action';
 
    /** @type {TJSIconFolderData} */
    export let folder = void 0;
