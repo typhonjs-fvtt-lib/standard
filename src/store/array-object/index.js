@@ -25,7 +25,7 @@ export * from './ObjectEntryStore.js';
  * @typedef {boolean|object|undefined} ArrayObjectUpdateData
  */
 
-/* eslint-disable */  // jsdoc/valid-types doesn't like the import in typedef.
+/* eslint-disable */  // jsdoc/valid-types doesn't like the import in typedef. TODO: verify in future eslint-plugin-jsdoc version
 /**
  * @typedef {import('#svelte/store').Writable & { get id: string }} BaseEntryStore
  */
