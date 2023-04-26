@@ -1,7 +1,7 @@
-import { CrudArrayObjectStore }  from '#runtime/svelte/store';
+import { CrudArrayObjectStore }  from '#runtime/svelte/store/reducer';
 
 /**
- * @template [T=import('#runtime/svelte/store').BaseArrayObjectEntryStore]
+ * @template [T=import('#runtime/svelte/store/reducer').BaseArrayObjectEntryStore]
  * @augments {CrudArrayObjectStore<T>}
  */
 export class WorldSettingArrayStore extends CrudArrayObjectStore
@@ -23,8 +23,8 @@ export class WorldSettingArrayStore extends CrudArrayObjectStore
     *
     * @param {string}            [opts.key] - Game setting 'key' field.
     *
-    * @param {import('#runtime/svelte/store').CrudArrayObjectStoreParams} [opts.rest] - Rest of CrudArrayObjectStore
-    *        parameters.
+    * @param {import('#runtime/svelte/store/reducer').CrudArrayObjectStoreParams} [opts.rest] - Rest of
+    *        CrudArrayObjectStore parameters.
     */
    constructor({ gameSettings, namespace, key, ...rest })
    {
