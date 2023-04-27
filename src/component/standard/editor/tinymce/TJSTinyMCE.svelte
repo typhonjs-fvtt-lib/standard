@@ -168,7 +168,7 @@
 
    import { applyStyles }   from '#runtime/svelte/action';
 
-   import { TJSDocument }   from '#runtime/svelte/store';
+   import { TJSDocument }   from '#runtime/svelte/store/document';
 
    import { FontManager }   from '#standard/fvtt';
 
