@@ -91,7 +91,7 @@
 
    import { quintOut }     from '#svelte/easing';
 
-   import { applyStyles }  from '#runtime/svelte/action';
+   import { applyStyles }  from '#runtime/svelte/action/dom';
    import { localize }     from '#runtime/svelte/helper';
    import { slideFade }    from '#runtime/svelte/transition';
    import {

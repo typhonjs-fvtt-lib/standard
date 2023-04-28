@@ -114,7 +114,7 @@
    import { onDestroy }         from '#svelte';
    import { writable }          from '#svelte/store';
 
-   import { applyStyles }       from '#runtime/svelte/action';
+   import { applyStyles }       from '#runtime/svelte/action/dom';
 
    import {
       isWritableStore,

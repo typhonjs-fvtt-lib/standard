@@ -51,7 +51,7 @@
    import { onMount }         from '#svelte';
    import { writable }        from '#svelte/store';
 
-   import { applyStyles }     from '#runtime/svelte/action';
+   import { applyStyles }     from '#runtime/svelte/action/dom';
    import { isWritableStore } from '#runtime/svelte/store';
 
    export let select = void 0;

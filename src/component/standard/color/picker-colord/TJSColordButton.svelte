@@ -43,7 +43,7 @@
     */
    import { createEventDispatcher } from '#svelte';
 
-   import { applyStyles }           from '#runtime/svelte/action';
+   import { applyStyles }           from '#runtime/svelte/action/dom';
    import { localize }              from '#runtime/svelte/helper';
    import { isObject }              from '#runtime/svelte/util';
 

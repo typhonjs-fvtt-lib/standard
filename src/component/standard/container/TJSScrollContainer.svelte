@@ -13,7 +13,7 @@
 
    import {
       applyScrolltop,
-      applyStyles }        from '#runtime/svelte/action';
+      applyStyles }        from '#runtime/svelte/action/dom';
 
    import {
       isObject,

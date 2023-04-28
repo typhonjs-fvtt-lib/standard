@@ -49,7 +49,7 @@
 
    import { writable }      from '#svelte/store';
 
-   import { applyStyles }   from '#runtime/svelte/action';
+   import { applyStyles }   from '#runtime/svelte/action/dom';
 
    import { localize }      from '#runtime/svelte/helper';
 

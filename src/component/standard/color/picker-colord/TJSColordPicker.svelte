@@ -14,7 +14,7 @@
 
    import { colord }            from '#runtime/color/colord';
 
-   import { applyStyles }       from '#runtime/svelte/action';
+   import { applyStyles }       from '#runtime/svelte/action/dom';
 
    import { isWritableStore }   from '#runtime/svelte/store';
 

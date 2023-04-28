@@ -2,7 +2,7 @@
    import { getContext }    from '#svelte';
    import { writable }      from '#svelte/store';
 
-   import { isFocused }     from '#runtime/svelte/action';
+   import { isFocused }     from '#runtime/svelte/action/dom';
 
    const internalState = getContext('#tjs-color-picker-state');
 

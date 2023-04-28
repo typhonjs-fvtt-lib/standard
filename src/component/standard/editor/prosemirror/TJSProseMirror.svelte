@@ -167,7 +167,7 @@
       tick
    }                        from '#svelte';
 
-   import { applyStyles }   from '#runtime/svelte/action';
+   import { applyStyles }   from '#runtime/svelte/action/dom';
 
    import { TJSDocument }   from '#runtime/svelte/store/document';
 

@@ -45,7 +45,7 @@
     */
    import { createEventDispatcher } from '#svelte';
 
-   import { applyStyles }           from '#runtime/svelte/action';
+   import { applyStyles }           from '#runtime/svelte/action/dom';
    import { isWritableStore }       from '#runtime/svelte/store';
    import { localize }              from '#runtime/svelte/helper';
    import { isObject }              from '#runtime/svelte/util';
