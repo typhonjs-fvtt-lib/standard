@@ -3,7 +3,7 @@
       getContext,
       setContext }            from '#svelte'
 
-   import { applyPosition }   from '#runtime/svelte/action'
+   import { applyPosition }   from '#runtime/svelte/store/position'
 
    import { draggable }       from './draggable.js';
 
