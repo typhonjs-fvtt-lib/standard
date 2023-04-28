@@ -2,11 +2,11 @@
    import { getContext }    from '#svelte';
    import { writable }      from '#svelte/store';
 
-   import {
-      isFocused,
-      keyforward }          from '#runtime/svelte/action';
+   import { isFocused }     from '#runtime/svelte/action';
 
-   import { KeyStore }      from '#runtime/svelte/store';
+   import {
+      keyforward,
+      KeyStore }            from '#runtime/svelte/store/dom';
 
    import { easeInOutSin }  from '../util/transition.js';
 
