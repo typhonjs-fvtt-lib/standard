@@ -10,9 +10,9 @@
     * {@link TJSGameSettings.addSection}.
     *
     * The other prop `options` is an object instance defined by {@link TJSSettingsCreateOptions}. This allows you to
-    * associate a {@link TJSSessionStorage} instance that automatically will track open / closed state of any section
-    * folders configured along with the scrolling position of the scrollbar and define the `efx action` associated with
-    * the TJS input elements used in
+    * associate a {@link import('#runtime/svelte/store/storage/web').TJSSessionStorage} instance that automatically
+    * will track open / closed state of any section folders configured along with the scrolling position of the
+    * scrollbar and define the `efx action` associated with the TJS input elements used in
     *
     * TJSSettingsEdit supports two additional named slots `settings-header` and `settings-footer` allowing you to
     * set Svelte components as a fixed header and / or footer to the main scrollable settings content.
