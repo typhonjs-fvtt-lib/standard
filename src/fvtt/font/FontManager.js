@@ -127,11 +127,11 @@ export class FontManager
     * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of
     *        {@link globalThis.FontFamilyDefinition}.
     *
-    * @param {
+    * @param {(
     *    {[key: string]: globalThis.FontFamilyDefinition}[] |
     *    {[key: string]: globalThis.FontFamilyDefinition}
-    * } [opts.fonts] A custom set of font family definitions to load. If not defined the core font family definitions
-    *        are loaded.
+    * )} [opts.fonts] - A custom set of font family definitions to load. If not defined the core font family definitions
+    *    are loaded.
     *
     * @returns {Promise<void>}
     */
