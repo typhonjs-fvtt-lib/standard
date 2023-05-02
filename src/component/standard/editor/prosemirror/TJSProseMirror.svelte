@@ -171,9 +171,8 @@
 
    import { TJSDocument }   from '#runtime/svelte/store/document';
 
-   import {
-      Plugins,
-      PMImpl }              from '#standard/prosemirror';
+   import { PMImpl }        from '#standard/prosemirror';
+   import * as Plugins  	from '#standard/prosemirror/plugins';
 
    /** @type {string} */
    export let content = '';
