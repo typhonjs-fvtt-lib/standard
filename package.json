@@ -23,11 +23,9 @@
       "import": "./_dist/application/index.js"
     },
     "./component": {
-      "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
     },
     "./component/fvtt": {
-      "types": "./_dist/component/fvtt/index.d.ts",
       "import": "./_dist/component/fvtt/index.js"
     },
     "./fvtt": {
