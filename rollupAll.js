@@ -1,6 +1,6 @@
 import resolve             from '@rollup/plugin-node-resolve';
 import { generateDTS }     from '@typhonjs-build-test/esm-d-ts';
-import { importsExternal } from '@typhonjs-build-test/rollup-external-imports';
+import { importsExternal } from '@typhonjs-build-test/rollup-plugin-pkg-imports';
 import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
@@ -153,7 +153,8 @@ for (const config of rollupConfigs)
 fs.emptyDirSync('./_dist/component');
 fs.copySync('./src/component', './_dist/component');
 
-const compFiles = await getFileList({ dir: './_dist/component' });
+const compFiles = await getFileList({ dir: './_dist/component', resolve: true, walk: true });
+
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();

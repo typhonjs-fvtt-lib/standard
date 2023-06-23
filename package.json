@@ -56,15 +56,15 @@
   },
   "peerDependencies": {
     "@typhonjs-fvtt/runtime": ">=0.0.22",
-    "svelte": ">=3.58.0"
+    "svelte": "3.59.2"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15",
-    "@typhonjs-build-test/esm-d-ts": "^0.0.25",
-    "@typhonjs-build-test/rollup-external-imports": "^0.0.1",
+    "@typhonjs-build-test/esm-d-ts": "^0.0.26",
+    "@typhonjs-build-test/rollup-plugin-pkg-imports": "^0.0.2",
     "@typhonjs-config/eslint-config": "^0.6.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
-    "@typhonjs-utils/file-util": "^0.0.6",
+    "@typhonjs-utils/file-util": "^0.0.10",
     "eslint": "^8",
     "fs-extra": "^11",
     "rollup": "^3"
