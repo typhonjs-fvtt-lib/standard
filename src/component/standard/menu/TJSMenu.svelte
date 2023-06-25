@@ -94,12 +94,15 @@
    import { applyStyles }  from '#runtime/svelte/action/dom';
    import { localize }     from '#runtime/svelte/helper';
    import { slideFade }    from '#runtime/svelte/transition';
+
    import {
       A11yHelper,
       getStackingContext,
-      isIterable,
-      isObject,
       isSvelteComponent }  from '#runtime/svelte/util';
+
+   import {
+      isIterable,
+      isObject }           from '#runtime/util/object';
 
    import { TJSFocusWrap } from '#runtime/svelte/component/core';
 

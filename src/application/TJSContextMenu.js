@@ -2,9 +2,11 @@ import { TJSContextMenuImpl } from '#standard/component';
 
 import {
    A11yHelper,
-   isIterable,
-   isObject,
    isSvelteComponent }        from '#runtime/svelte/util';
+
+import {
+   isIterable,
+   isObject }                 from '#runtime/util/object';
 
 /**
  * Provides and manages browser window wide context menu functionality. The best way to create a context menu is to

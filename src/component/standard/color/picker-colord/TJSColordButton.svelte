@@ -43,11 +43,10 @@
     */
    import { createEventDispatcher } from '#svelte';
 
+   import { colord }                from '#runtime/color/colord';
    import { applyStyles }           from '#runtime/svelte/action/dom';
    import { localize }              from '#runtime/svelte/helper';
-   import { isObject }              from '#runtime/svelte/util';
-
-   import { colord }                from '#runtime/color/colord';
+   import { isObject }              from '#runtime/util/object';
 
    export let button = void 0;
    export let color = void 0;

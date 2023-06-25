@@ -20,8 +20,9 @@
 
    import {
       A11yHelper,
-      ClipboardAccess,
-      isObject }                from '#runtime/svelte/util';
+      ClipboardAccess }         from '#runtime/svelte/util';
+
+   import { isObject }          from '#runtime/util/object';
 
 
    import { InternalState }     from './model/InternalState.js';

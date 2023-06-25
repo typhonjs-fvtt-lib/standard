@@ -1,16 +1,16 @@
-import { writable }     from '#svelte/store';
+import { writable }           from '#svelte/store';
 
-import { TJSDialog }    from '#runtime/svelte/application';
+import { TJSDialog }          from '#runtime/svelte/application';
 
-import { localize }     from '#runtime/svelte/helper';
+import { localize }           from '#runtime/svelte/helper';
 
-import {
-   isObject,
-   isSvelteComponent }  from '#runtime/svelte/util';
+import { isSvelteComponent }  from '#runtime/svelte/util';
+
+import { isObject }           from '#runtime/util/object';
 
 import {
    ripple,
-   rippleFocus }        from '#runtime/svelte/animate/action';
+   rippleFocus }              from '#runtime/svelte/animate/action';
 
 /**
  * Controls preparation and processing of registered game settings w/ TJSGameSettings. Game settings are parsed

@@ -9,15 +9,15 @@
     * by the `class` and `props` fields in {@link TJSScrollContainerData}.
     */
 
-   import { writable }     from '#svelte/store';
+   import { writable }           from '#svelte/store';
 
    import {
       applyScrolltop,
-      applyStyles }        from '#runtime/svelte/action/dom';
+      applyStyles }              from '#runtime/svelte/action/dom';
 
-   import {
-      isObject,
-      isSvelteComponent }  from '#runtime/svelte/util';
+   import { isSvelteComponent }  from '#runtime/svelte/util';
+
+   import { isObject }           from '#runtime/util/object';
 
    /** @type {TJSScrollContainerData} */
    export let container = void 0;

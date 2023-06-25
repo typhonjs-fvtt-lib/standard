@@ -58,7 +58,7 @@
       isReadableStore,
       isWritableStore }         from '#runtime/svelte/store';
 
-   import { isObject }          from '#runtime/svelte/util';
+   import { isObject }          from '#runtime/util/object';
 
    export let input = void 0;
    export let type = void 0;

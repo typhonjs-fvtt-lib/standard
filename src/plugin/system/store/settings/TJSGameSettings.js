@@ -1,6 +1,6 @@
 import {
    isIterable,
-   isObject }                    from '#runtime/svelte/util';
+   isObject }                    from '#runtime/util/object';
 
 import { TJSGameSettings as GS } from '#standard/store';
 

@@ -4,10 +4,11 @@ import { getFormat }       from '#runtime/color/colord';
 
 import { propertyStore }   from '#runtime/svelte/store';
 
+import { TJSStyleManager } from '#runtime/svelte/util';
+
 import {
    isIterable,
-   isObject,
-   TJSStyleManager }       from '#runtime/svelte/util';
+   isObject }              from '#runtime/util/object';
 
 import {
    DataValidator,

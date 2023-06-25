@@ -48,7 +48,7 @@
    import { applyStyles }           from '#runtime/svelte/action/dom';
    import { isWritableStore }       from '#runtime/svelte/store';
    import { localize }              from '#runtime/svelte/helper';
-   import { isObject }              from '#runtime/svelte/util';
+   import { isObject }              from '#runtime/util/object';
 
    export let button = void 0;
    export let icon = void 0;

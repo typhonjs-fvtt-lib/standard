@@ -1,5 +1,5 @@
 import { getFormat } from '#runtime/color/colord';
-import { isObject }  from '#runtime/svelte/util';
+import { isObject }  from '#runtime/util/object';
 
 export class DataValidator
 {

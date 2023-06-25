@@ -1,11 +1,13 @@
 import { SvelteApplication }  from '#runtime/svelte/application';
 
 import {
-   hasPrototype,
-   isObject,
    parseTJSSvelteConfig,
    ManagedPromise,
    styleParsePixels }         from '#runtime/svelte/util';
+
+import {
+   hasPrototype,
+   isObject }                 from '#runtime/util/object';
 
 import {
    FVTTSidebarPopout,

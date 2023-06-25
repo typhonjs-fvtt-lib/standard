@@ -6,7 +6,7 @@ import {
 
 import {
    isIterable,
-   isObject }              from '#runtime/svelte/util';
+   isObject }              from '#runtime/util/object';
 
 import { AddOnState }      from './AddOnState.js';
 import { ButtonState }     from './ButtonState.js';

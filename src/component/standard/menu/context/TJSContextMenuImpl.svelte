@@ -93,8 +93,9 @@
 
    import {
       A11yHelper,
-      isObject,
       outroAndDestroy }             from '#runtime/svelte/util';
+
+   import { isObject }              from '#runtime/util/object';
 
    import { TJSFocusWrap }          from '#runtime/svelte/component/core';
 
