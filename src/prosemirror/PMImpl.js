@@ -1,4 +1,4 @@
-import { clamp } from '#runtime/svelte/math';
+import { clamp } from '#runtime/math/util';
 
 /**
  * Provides helper utilities to manipulate the PM editor view for various options from TJSProseMirror component.
