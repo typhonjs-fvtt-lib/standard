@@ -52,7 +52,7 @@
    import { writable }        from '#svelte/store';
 
    import { applyStyles }     from '#runtime/svelte/action/dom';
-   import { isWritableStore } from '#runtime/svelte/store';
+   import { isWritableStore } from '#runtime/util/store';
 
    export let select = void 0;
    export let selected = void 0;

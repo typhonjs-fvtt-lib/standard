@@ -1,12 +1,12 @@
 import { writable }        from '#svelte/store';
 
-import {
-   isWritableStore,
-   propertyStore }         from '#runtime/svelte/store';
+import { propertyStore }   from '#runtime/svelte/store/derived';
 
 import {
    isIterable,
    isObject }              from '#runtime/util/object';
+
+import { isWritableStore } from '#runtime/util/store';
 
 import { AddOnState }      from './AddOnState.js';
 import { ButtonState }     from './ButtonState.js';

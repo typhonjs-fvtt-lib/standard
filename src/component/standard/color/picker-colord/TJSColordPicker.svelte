@@ -15,13 +15,14 @@
    import { colord }            from '#runtime/color/colord';
 
    import { applyStyles }       from '#runtime/svelte/action/dom';
-   import { isWritableStore }   from '#runtime/svelte/store';
 
    import {
       A11yHelper,
       ClipboardAccess }         from '#runtime/util/browser';
 
    import { isObject }          from '#runtime/util/object';
+
+   import { isWritableStore }   from '#runtime/util/store';
 
    import { InternalState }     from './model/InternalState.js';
 

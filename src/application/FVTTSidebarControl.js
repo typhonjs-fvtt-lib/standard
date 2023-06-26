@@ -1,19 +1,17 @@
-import { SvelteApplication }  from '#runtime/svelte/application';
+import { SvelteApplication }     from '#runtime/svelte/application';
 
-import {
-   parseTJSSvelteConfig,
-   styleParsePixels }         from '#runtime/svelte/util';
-
-import { ManagedPromise }     from '#runtime/util/async';
+import { parseTJSSvelteConfig }  from '#runtime/svelte/util';
+import { ManagedPromise }        from '#runtime/util/async';
+import { StyleParse }            from '#runtime/util/browser';
 
 import {
    hasPrototype,
-   isObject }                 from '#runtime/util/object';
+   isObject }                    from '#runtime/util/object';
 
 import {
    FVTTSidebarPopout,
    FVTTSidebarTab,
-   FVTTSidebarWrapper }       from '#standard/component/fvtt';
+   FVTTSidebarWrapper }          from '#standard/component/fvtt';
 
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
@@ -264,7 +262,7 @@ export class FVTTSidebarControl
       const data = {
          sidebarEl,
          tabsEl,
-         initialSidebarWidth: styleParsePixels(globalThis?.getComputedStyle(sidebarEl)?.width),
+         initialSidebarWidth: StyleParse.pixels(globalThis?.getComputedStyle(sidebarEl)?.width),
          addedSidebarWidth: 0
       };
 
@@ -550,7 +548,7 @@ export class FVTTSidebarControl
       });
 
       // Get width of the tab to increase sidebar element width CSS var.
-      data.addedSidebarWidth += styleParsePixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
+      data.addedSidebarWidth += StyleParse.pixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
 
       // -------------------
 
@@ -645,7 +643,7 @@ export class FVTTSidebarControl
       }
 
       // Remove width of the old replaced tab width.
-      data.addedSidebarWidth -= styleParsePixels(globalThis.getComputedStyle(anchorButtonEl).width);
+      data.addedSidebarWidth -= StyleParse.pixels(globalThis.getComputedStyle(anchorButtonEl).width);
 
       // -------------------
 
@@ -697,10 +695,10 @@ export class FVTTSidebarControl
       });
 
       // Remove width of the old replaced tab width.
-      data.addedSidebarWidth -= styleParsePixels(globalThis.getComputedStyle(anchorButtonEl).width);
+      data.addedSidebarWidth -= StyleParse.pixels(globalThis.getComputedStyle(anchorButtonEl).width);
 
       // Get width of the tab to increase sidebar element width CSS var.
-      data.addedSidebarWidth += styleParsePixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
+      data.addedSidebarWidth += StyleParse.pixels(globalThis.getComputedStyle(sidebarTab.anchorEl).width);
 
       // -------------------
 

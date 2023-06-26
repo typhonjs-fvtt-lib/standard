@@ -1,7 +1,6 @@
 import { writable }        from '#svelte/store';
 
-import { propertyStore }   from '#runtime/svelte/store';
-
+import { propertyStore }   from '#runtime/svelte/store/derived';
 import { TJSPosition }     from '#runtime/svelte/store/position';
 
 export class ControlStore

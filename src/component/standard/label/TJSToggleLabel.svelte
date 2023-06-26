@@ -22,11 +22,9 @@
 
    import { applyStyles }        from '#runtime/svelte/action/dom';
    import { localize }           from '#runtime/svelte/helper';
-   import { isWritableStore }    from '#runtime/svelte/store';
-
    import { isSvelteComponent }  from '#runtime/svelte/util';
-
    import { isObject }           from '#runtime/util/object';
+   import { isWritableStore }    from '#runtime/util/store';
 
    export let label = void 0;
    export let text = void 0;

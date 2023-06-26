@@ -51,14 +51,12 @@
    import { writable }          from '#svelte/store';
 
    import { applyStyles }       from '#runtime/svelte/action/dom';
-
    import { localize }          from '#runtime/svelte/helper';
+   import { isObject }          from '#runtime/util/object';
 
    import {
       isReadableStore,
-      isWritableStore }         from '#runtime/svelte/store';
-
-   import { isObject }          from '#runtime/util/object';
+      isWritableStore }         from '#runtime/util/store';
 
    export let input = void 0;
    export let type = void 0;

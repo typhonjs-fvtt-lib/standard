@@ -36,7 +36,7 @@ export * from './ColorState.js';
  * @typedef {object} ColorStateInternalUpdate
  *
  * The separated store updates for alpha, hue, sv are debounced with a next tick update and this object
- * collates the values for each store update in the same tick. It is reset in #updaateOutputColorDebounce.
+ * collates the values for each store update in the same tick. It is reset in #updateOutputColorDebounce.
  *
  * `textUpdate` determines if the update came from {@link TextState} and if so TextState is not updated in
  * #updateCurrentColor.

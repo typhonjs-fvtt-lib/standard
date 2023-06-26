@@ -1,9 +1,8 @@
 import { get, writable }         from '#svelte/store';
 
 import { colord }                from '#runtime/color/colord';
-
-import { subscribeIgnoreFirst }  from '#runtime/svelte/store';
-import { debounce }              from '#runtime/svelte/util';
+import { Timing }                from '#runtime/util';
+import { subscribeIgnoreFirst }  from '#runtime/util/store';
 
 import { TextState }             from './text/TextState.js';
 
@@ -140,7 +139,7 @@ export class ColorState
       this.#data.precision = internalState.precision;
 
       // 'alpha', 'hue', and 'sv' stores on subscription below invoke `#updateCurrentColor` on the next tick.
-      this.#updateCurrentColorDebounce = debounce(() =>
+      this.#updateCurrentColorDebounce = Timing.debounce(() =>
       {
          this.#updateCurrentColor(this.#internalUpdate);
          this.#internalUpdate.h = void 0;

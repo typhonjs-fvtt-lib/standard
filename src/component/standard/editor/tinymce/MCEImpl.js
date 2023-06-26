@@ -1,4 +1,4 @@
-import { striptags } from '#runtime/svelte/util';
+import { striptags } from '#runtime/util/browser';
 
 import {
    FontManager,

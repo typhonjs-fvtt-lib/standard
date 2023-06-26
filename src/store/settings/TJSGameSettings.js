@@ -1,12 +1,12 @@
 import { writable }        from '#svelte/store';
 
 import {
-   isWritableStore,
-   subscribeIgnoreFirst }  from '#runtime/svelte/store';
-
-import {
    isIterable,
    isObject }              from '#runtime/util/object';
+
+import {
+   isWritableStore,
+   subscribeIgnoreFirst }  from '#runtime/util/store';
 
 import { UIControl }       from './UIControl.js';
 

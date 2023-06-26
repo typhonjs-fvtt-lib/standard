@@ -1,9 +1,7 @@
 import { writable }        from '#svelte/store';
 
 import { getFormat }       from '#runtime/color/colord';
-
-import { propertyStore }   from '#runtime/svelte/store';
-
+import { propertyStore }   from '#runtime/svelte/store/derived';
 import { TJSStyleManager } from '#runtime/util/browser';
 
 import {

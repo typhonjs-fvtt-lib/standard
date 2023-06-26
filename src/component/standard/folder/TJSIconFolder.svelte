@@ -115,18 +115,14 @@
    import { writable }          from '#svelte/store';
 
    import { applyStyles }       from '#runtime/svelte/action/dom';
-
    import { toggleDetails }     from '#runtime/svelte/animate/action';
-
    import { localize }          from '#runtime/svelte/helper';
+   import { isSvelteComponent } from '#runtime/svelte/util';
+   import { isObject }          from '#runtime/util/object';
 
    import {
       isWritableStore,
-      subscribeIgnoreFirst }    from '#runtime/svelte/store';
-
-   import { isSvelteComponent } from '#runtime/svelte/util';
-
-   import { isObject }          from '#runtime/util/object';
+      subscribeIgnoreFirst }    from '#runtime/util/store';
 
    /** @type {TJSIconFolderData} */
    export let folder = void 0;
