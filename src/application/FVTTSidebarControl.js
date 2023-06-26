@@ -2,8 +2,9 @@ import { SvelteApplication }  from '#runtime/svelte/application';
 
 import {
    parseTJSSvelteConfig,
-   ManagedPromise,
    styleParsePixels }         from '#runtime/svelte/util';
+
+import { ManagedPromise }     from '#runtime/util/async';
 
 import {
    hasPrototype,

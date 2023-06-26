@@ -1,8 +1,8 @@
 import { TJSContextMenuImpl } from '#standard/component';
 
-import {
-   A11yHelper,
-   isSvelteComponent }        from '#runtime/svelte/util';
+import { isSvelteComponent }  from '#runtime/svelte/util';
+
+import { A11yHelper }         from '#runtime/util/browser';
 
 import {
    isIterable,

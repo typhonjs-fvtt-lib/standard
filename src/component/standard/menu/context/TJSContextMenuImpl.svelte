@@ -91,9 +91,9 @@
    import { localize }              from '#runtime/svelte/helper';
    import { slideFade }             from '#runtime/svelte/transition';
 
-   import {
-      A11yHelper,
-      outroAndDestroy }             from '#runtime/svelte/util';
+   import { outroAndDestroy }       from '#runtime/svelte/util';
+
+   import { A11yHelper }            from '#runtime/util/browser';
 
    import { isObject }              from '#runtime/util/object';
 

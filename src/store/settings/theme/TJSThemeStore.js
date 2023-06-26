@@ -4,7 +4,7 @@ import { getFormat }       from '#runtime/color/colord';
 
 import { propertyStore }   from '#runtime/svelte/store';
 
-import { TJSStyleManager } from '#runtime/svelte/util';
+import { TJSStyleManager } from '#runtime/util/browser';
 
 import {
    isIterable,

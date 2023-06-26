@@ -1,9 +1,9 @@
 <script>
    import { getContext }        from '#svelte';
 
-   import { ClipboardAccess }   from '#runtime/svelte/util';
-
    import { ripple }            from '#runtime/svelte/animate/action';
+
+   import { ClipboardAccess }   from '#runtime/util/browser';
 
    import TJSIconButton         from '../../../button/TJSIconButton.svelte';
    import TJSToggleIconButton   from '../../../button/TJSToggleIconButton.svelte';

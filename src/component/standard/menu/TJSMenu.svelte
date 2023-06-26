@@ -87,24 +87,25 @@
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     */
 
-   import { onMount }      from '#svelte';
+   import { onMount }            from '#svelte';
 
-   import { quintOut }     from '#svelte/easing';
+   import { quintOut }           from '#svelte/easing';
 
-   import { applyStyles }  from '#runtime/svelte/action/dom';
-   import { localize }     from '#runtime/svelte/helper';
-   import { slideFade }    from '#runtime/svelte/transition';
+   import { applyStyles }        from '#runtime/svelte/action/dom';
+   import { localize }           from '#runtime/svelte/helper';
+   import { slideFade }          from '#runtime/svelte/transition';
+
+   import { isSvelteComponent }  from '#runtime/svelte/util';
 
    import {
-      A11yHelper,
       getStackingContext,
-      isSvelteComponent }  from '#runtime/svelte/util';
+      A11yHelper }               from '#runtime/util/browser';
 
    import {
       isIterable,
-      isObject }           from '#runtime/util/object';
+      isObject }                 from '#runtime/util/object';
 
-   import { TJSFocusWrap } from '#runtime/svelte/component/core';
+   import { TJSFocusWrap }       from '#runtime/svelte/component/core';
 
    /** @type {TJSMenuData} */
    export let menu = void 0;

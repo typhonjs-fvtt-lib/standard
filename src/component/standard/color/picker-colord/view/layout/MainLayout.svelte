@@ -1,10 +1,9 @@
 <script>
    import {
       getContext,
-      onDestroy }          from '#svelte';
+      onDestroy }                from '#svelte';
 
-   import {
-      getStackingContext } from '#runtime/svelte/util';
+   import { getStackingContext } from '#runtime/util/browser';
 
    export let containerEl = void 0;
    export let inputEl = void 0;
