@@ -1,2 +1,2 @@
-export * from './store/settings/TJSGameSettings.js';
-export * from './store/settings/TJSGameSettingsControl.js';
+export * from './store/settings/TJSPGameSettings.js';
+export * from './store/settings/TJSPGameSettingsControl.js';

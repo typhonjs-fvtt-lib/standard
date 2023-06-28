@@ -1,8 +1,8 @@
 import {
    isIterable,
-   isObject }                    from '#runtime/util/object';
+   isObject }              from '#runtime/util/object';
 
-import { TJSGameSettings as GS } from '#standard/store';
+import { TJSGameSettings } from '#standard/store';
 
 /**
  * Provides a TyphonJS plugin to add TJSGameSettings to the plugin eventbus.
@@ -21,7 +21,7 @@ import { TJSGameSettings as GS } from '#standard/store';
  * `tjs:system:game:settings:change:any`           - Provides an object containing the setting and value.
  * `tjs:system:game:settings:change:<SETTING KEY>` - Provides the value of the keyed event.
  */
-export class TJSGameSettings
+export class TJSPGameSettings
 {
    #gameSettings;
 
@@ -32,7 +32,7 @@ export class TJSGameSettings
     */
    constructor(namespace)
    {
-      this.#gameSettings = new GS(namespace);
+      this.#gameSettings = new TJSGameSettings(namespace);
    }
 
    /**

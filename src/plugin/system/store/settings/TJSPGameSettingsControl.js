@@ -9,7 +9,7 @@
  * There is one additional event handled by TJSGameSettingsControl:
  * `tjs:system:settings:control:log:enable` - When passed a truthy value console logging of setting changes occurs.
  */
-export class TJSGameSettingsControl
+export class TJSPGameSettingsControl
 {
    /**
     * Defines if logging setting changes to the console occurs.

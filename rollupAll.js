@@ -10,22 +10,6 @@ const sourcemap = true; // Defines whether source maps are generated.
 const rollupConfigs = [
    {
       input: {
-         input: 'src/action/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin()
-         ]
-      },
-      output: {
-         file: '_dist/action/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
-   {
-      input: {
          input: 'src/application/index.js',
          plugins: [
             importsExternal(),
@@ -54,22 +38,6 @@ const rollupConfigs = [
          format: 'es',
          generatedCode: { constBindings: true },
          sourcemap
-      }
-   },
-   {
-      input: {
-         input: 'src/plugin/data/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin()
-         ]
-      },
-      output: {
-         file: '_dist/plugin/data/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap,
       }
    },
    {
