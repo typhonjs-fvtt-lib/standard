@@ -461,8 +461,8 @@ export class UIControl
  *
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
  *
- * @property {import('#runtime/svelte/store/storage/web').TJSSessionStorage} [storage] - TRL TJSSessionStorage instance
- *           to serialize folder state and scrollbar position.
+ * @property {import('#runtime/svelte/store/storage/web').TJSWebStorage} [storage] - TRL TJSWebStorage (session)
+ *           instance to serialize folder state and scrollbar position.
  */
 
 /**
