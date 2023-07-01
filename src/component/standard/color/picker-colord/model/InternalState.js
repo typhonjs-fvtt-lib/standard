@@ -49,7 +49,7 @@ export class InternalState
    /**
     * External TJSWebStorage (session) instance.
     *
-    * @type {import('#runtime/svelte/store/storage/web').TJSWebStorage}
+    * @type {import('#runtime/svelte/store/web-storage').TJSWebStorage}
     */
    #sessionStorage;
 
@@ -63,7 +63,7 @@ export class InternalState
     *
     * @param {import('./').TJSColordPickerOptions}  options -
     *
-    * @param {import('#runtime/svelte/store/storage/web').TJSWebStorage}  tjsSessionStorage - External
+    * @param {import('#runtime/svelte/store/web-storage').TJSWebStorage}  tjsSessionStorage - External
     *        TJSWebStorage (session) instance.
     */
    constructor(color, options, tjsSessionStorage)
@@ -184,7 +184,7 @@ export class InternalState
    }
 
    /**
-    * @returns {import('#runtime/svelte/store/storage/web').TJSWebStorage} Gets associated TJSWebStorage (session)
+    * @returns {import('#runtime/svelte/store/web-storage').TJSWebStorage} Gets associated TJSWebStorage (session)
     *          instance.
     */
    get sessionStorage()

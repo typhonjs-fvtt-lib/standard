@@ -35,7 +35,7 @@ export * from './InternalState.js';
  *
  * @property {number} [precision=0] - A positive integer defining rounding precision.
  *
- * @property {import('#svelte/store').Writable<string|object>} [store] - An external store to update current color.
+ * @property {import('svelte/store').Writable<string|object>} [store] - An external store to update current color.
  *
  * @property {object} [styles] - Inline styles to apply to TJSColordPicker span; useful to set CSS variables.
  *
@@ -56,54 +56,54 @@ export * from './InternalState.js';
 /**
  * @typedef {object} PickerComponents
  *
- * @property {import('#svelte').SvelteComponent} [alphaIndicator] - Alpha slider indicator.
+ * @property {import('svelte').SvelteComponent} [alphaIndicator] - Alpha slider indicator.
  *
- * @property {import('#svelte').SvelteComponent} [alphaWrapper] - Alpha slider wrapper.
+ * @property {import('svelte').SvelteComponent} [alphaWrapper] - Alpha slider wrapper.
  *
- * @property {import('#svelte').SvelteComponent} [focusWrap] - When in popup model advances focus to prop element.
+ * @property {import('svelte').SvelteComponent} [focusWrap] - When in popup model advances focus to prop element.
  *
- * @property {import('#svelte').SvelteComponent} [pickerIndicator] - Picker indicator.
+ * @property {import('svelte').SvelteComponent} [pickerIndicator] - Picker indicator.
  *
- * @property {import('#svelte').SvelteComponent} [pickerWrapper] - Picker wrapper.
+ * @property {import('svelte').SvelteComponent} [pickerWrapper] - Picker wrapper.
  *
- * @property {import('#svelte').SvelteComponent} [sliderIndicator] - Hue slider indicator.
+ * @property {import('svelte').SvelteComponent} [sliderIndicator] - Hue slider indicator.
  *
- * @property {import('#svelte').SvelteComponent} [sliderWrapper] - Hue slider wrapper.
+ * @property {import('svelte').SvelteComponent} [sliderWrapper] - Hue slider wrapper.
  *
- * @property {import('#svelte').SvelteComponent} [textInput] - Text input component.
+ * @property {import('svelte').SvelteComponent} [textInput] - Text input component.
  *
- * @property {import('#svelte').SvelteComponent} [wrapper] - Outer wrapper for all components.
+ * @property {import('svelte').SvelteComponent} [wrapper] - Outer wrapper for all components.
  */
 
 /**
  * @typedef {object} PickerStores
  *
- * @property {import('#svelte/store').Writable<PickerComponents>} components - This selected layout components.
+ * @property {import('svelte/store').Writable<PickerComponents>} components - This selected layout components.
  *
- * @property {import('#svelte/store').Writable<boolean>} hasAlpha - See {@link TJSColordPickerOptions.hasAlpha}
+ * @property {import('svelte/store').Writable<boolean>} hasAlpha - See {@link TJSColordPickerOptions.hasAlpha}
  *
- * @property {import('#svelte/store').Writable<boolean>} hasButtonBar - See {@link TJSColordPickerOptions.hasButtonBar}
+ * @property {import('svelte/store').Writable<boolean>} hasButtonBar - See {@link TJSColordPickerOptions.hasButtonBar}
  *
- * @property {import('#svelte/store').Writable<boolean>} hasEyeDropper - See {@link TJSColordPickerOptions.hasEyeDropper}
+ * @property {import('svelte/store').Writable<boolean>} hasEyeDropper - See {@link TJSColordPickerOptions.hasEyeDropper}
  *
- * @property {import('#svelte/store').Writable<boolean>} hasTextInput - See {@link TJSColordPickerOptions.hasTextInput}
+ * @property {import('svelte/store').Writable<boolean>} hasTextInput - See {@link TJSColordPickerOptions.hasTextInput}
  *
- * @property {import('#svelte/store').Writable<string>} inputName - See {@link TJSColordPickerOptions.inputName}
+ * @property {import('svelte/store').Writable<string>} inputName - See {@link TJSColordPickerOptions.inputName}
  *
- * @property {import('#svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
+ * @property {import('svelte/store').Writable<boolean>} isPopup - See {@link TJSColordPickerOptions.isPopup}
  *
- * @property {import('#svelte/store').Writable<boolean>} lockTextFormat - See {@link TJSColordPickerOptions.lockTextFormat}
+ * @property {import('svelte/store').Writable<boolean>} lockTextFormat - See {@link TJSColordPickerOptions.lockTextFormat}
  *
- * @property {import('#svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
+ * @property {import('svelte/store').Writable<number>} precision - See {@link TJSColordPickerOptions.precision}
  *
- * @property {import('#svelte/store').Writable<string>} width - See {@link TJSColordPickerOptions.width}
+ * @property {import('svelte/store').Writable<string>} width - See {@link TJSColordPickerOptions.width}
  *
  *
- * @property {import('#svelte/store').Writable<boolean>} firstFocusEl - Stores first tab / focus traversable element.
+ * @property {import('svelte/store').Writable<boolean>} firstFocusEl - Stores first tab / focus traversable element.
  *
- * @property {import('#svelte/store').Writable<boolean>} hasAddons - See {@link PickerInternalData.hasAddons}
+ * @property {import('svelte/store').Writable<boolean>} hasAddons - See {@link PickerInternalData.hasAddons}
  *
- * @property {import('#svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
+ * @property {import('svelte/store').Writable<boolean>} isOpen - See {@link PickerInternalData.isOpen}
  *
- * @property {import('#svelte/store').Writable<string>} padding - See {@link PickerInternalData.padding}
+ * @property {import('svelte/store').Writable<string>} padding - See {@link PickerInternalData.padding}
  */

@@ -31,7 +31,7 @@ export class UIControl
    /** @type {Function} */
    #showSettingsSet;
 
-   /** @type {{showSettings: import('#svelte/store').Readable<boolean>}} */
+   /** @type {{showSettings: import('svelte/store').Readable<boolean>}} */
    #stores;
 
    /**
@@ -60,7 +60,7 @@ export class UIControl
    }
 
    /**
-    * @returns {{showSettings: import('#svelte/store').Readable<boolean>}} Returns the managed stores.
+    * @returns {{showSettings: import('svelte/store').Readable<boolean>}} Returns the managed stores.
     */
    get stores()
    {
@@ -461,7 +461,7 @@ export class UIControl
  *
  * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
  *
- * @property {import('#runtime/svelte/store/storage/web').TJSWebStorage} [storage] - TRL TJSWebStorage (session)
+ * @property {import('#runtime/svelte/store/web-storage').TJSWebStorage} [storage] - TRL TJSWebStorage (session)
  *           instance to serialize folder state and scrollbar position.
  */
 
@@ -496,7 +496,7 @@ export class UIControl
  *
  * @property {object[]} sections - Custom sections.
  *
- * @property {import('#svelte/store').Writable<number>} storeScrollbar - The store for `applyScrolltop`.
+ * @property {import('svelte/store').Writable<number>} storeScrollbar - The store for `applyScrolltop`.
  *
  * @property {Function} [destroy] - The bound destroy callback function for received of TJSSettingsUIData.
  */

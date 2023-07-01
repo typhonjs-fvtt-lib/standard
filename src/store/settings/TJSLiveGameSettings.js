@@ -27,7 +27,7 @@ export class TJSLiveGameSettings
    /**
     * Map of all game settings stores and unsubscribe functions currently subscribed.
     *
-    * @type {Map<string, { unsubscribe: Function, store: import('#svelte/store').Writable }>}
+    * @type {Map<string, { unsubscribe: Function, store: import('svelte/store').Writable }>}
     */
    #gameSettings = new Map();
 

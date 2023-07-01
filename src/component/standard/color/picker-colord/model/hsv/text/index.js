@@ -18,5 +18,5 @@ export * from './TextState.js';
 /**
  * @typedef {object} TextStateStores
  *
- * @property {import('#svelte/store').Readable<object>} activeMode - The current active text mode config object.
+ * @property {import('svelte/store').Readable<object>} activeMode - The current active text mode config object.
  */

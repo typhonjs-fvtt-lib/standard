@@ -22,7 +22,7 @@
    /** @type {TJSScrollContainerData} */
    export let container = void 0;
 
-   /** @type {import('#svelte/store').Writable<number>} */
+   /** @type {import('svelte/store').Writable<number>} */
    export let scrollTop = void 0;
 
    /** @type {Record<string, string>} */

@@ -29,7 +29,7 @@ export class TJSGameSettings
    #settings = [];
 
    /**
-    * @type {Map<string, import('#svelte/store').Writable>}
+    * @type {Map<string, import('svelte/store').Writable>}
     */
    #stores = new Map();
 
@@ -54,7 +54,7 @@ export class TJSGameSettings
     *
     * @param {*}  initialValue - An initial value to set to new stores.
     *
-    * @returns {import('#svelte/store').Writable} The new writable.
+    * @returns {import('svelte/store').Writable} The new writable.
     */
    static #createStore(initialValue)
    {
@@ -97,7 +97,7 @@ export class TJSGameSettings
     *
     * @param {string}   [initialValue] - An initial value to set to new stores.
     *
-    * @returns {import('#svelte/store').Writable} The store for the given key.
+    * @returns {import('svelte/store').Writable} The store for the given key.
     */
    #getStore(key, initialValue)
    {
@@ -116,7 +116,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {import('#svelte/store').Readable|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Readable|undefined} The associated store for the given game setting key.
     */
    getReadableStore(key)
    {
@@ -136,7 +136,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {import('#svelte/store').Writable|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Writable|undefined} The associated store for the given game setting key.
     */
    getStore(key)
    {
@@ -148,7 +148,7 @@ export class TJSGameSettings
     *
     * @param {string}   key - Game setting key.
     *
-    * @returns {import('#svelte/store').Writable|undefined} The associated store for the given game setting key.
+    * @returns {import('svelte/store').Writable|undefined} The associated store for the given game setting key.
     */
    getWritableStore(key)
    {
@@ -391,7 +391,7 @@ export class TJSGameSettings
  *
  * @property {string} folder - The name of the TJSSvgFolder to put this setting in to group them.
  *
- * @property {import('#svelte/store').Writable} [store] - An existing store instance to use.
+ * @property {import('svelte/store').Writable} [store] - An existing store instance to use.
  *
  * @property {GameSettingOptions} options - Configuration for setting data.
  */

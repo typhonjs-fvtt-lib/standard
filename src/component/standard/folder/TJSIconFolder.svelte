@@ -145,7 +145,7 @@
    /** @type {TJSFolderOptions} */
    export let options = void 0;
 
-   /** @type {import('#svelte/store').Writable<boolean>} */
+   /** @type {import('svelte/store').Writable<boolean>} */
    export let store = void 0;
 
    /** @type {object} */

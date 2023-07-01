@@ -7,6 +7,10 @@ import { rollup }          from 'rollup';
 
 const sourcemap = true; // Defines whether source maps are generated.
 
+const dtsPluginOptions = {
+   dtsReplace: { '/\\/\\/ <reference.*\\/>': '' } // Svelte v4 types currently add triple slash references.
+};
+
 const rollupConfigs = [
    {
       input: {
@@ -14,7 +18,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -30,7 +34,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -46,7 +50,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -62,7 +66,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -78,7 +82,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -94,7 +98,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {

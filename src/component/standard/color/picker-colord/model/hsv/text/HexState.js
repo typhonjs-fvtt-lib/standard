@@ -193,7 +193,7 @@ export class HexState
 /**
  * @typedef {object} HexStateStores Provides the buffered stores to use in text input components.
  *
- * @property {import('#svelte/store').Writable<string|null>} hex - Hex value.
+ * @property {import('svelte/store').Writable<string|null>} hex - Hex value.
  *
- * @property {import('#svelte/store').Writable<boolean>}     isHexValid - Is current entered hex string valid.
+ * @property {import('svelte/store').Writable<boolean>}     isHexValid - Is current entered hex string valid.
  */
