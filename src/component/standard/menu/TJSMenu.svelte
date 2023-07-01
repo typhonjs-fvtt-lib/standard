@@ -475,6 +475,7 @@
 <!-- bind to 'window' to close menu when browser window is blurred. -->
 <svelte:window on:blur={onWindowBlur}/>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <nav class=tjs-menu
      bind:this={menuEl}
      on:click|preventDefault|stopPropagation={() => null}

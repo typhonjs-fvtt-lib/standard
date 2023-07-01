@@ -258,6 +258,7 @@
    }
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <span bind:this={spanEl}
       class=tjs-color-picker
       on:keydown={onKeydown}
@@ -266,7 +267,8 @@
       style:--_tjs-color-picker-current-color-hsla={$hslaString}
       style:--_tjs-color-picker-width-option={$width}
       style:--_tjs-color-picker-padding-option={$padding}
-      use:applyStyles={styles}>
+      use:applyStyles={styles}
+      role=region>
     <input name={$inputName} type=hidden value={$currentColorString}/>
     {#if $isPopup}
         <Input bind:inputEl />

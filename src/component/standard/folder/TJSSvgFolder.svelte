@@ -378,6 +378,7 @@
    }
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <details class=tjs-svg-folder
          bind:this={detailsEl}
 
@@ -399,12 +400,15 @@
          data-id={id}
          data-label={label}
          data-closing='false'>
+    <!-- svelte-ignore a11y-no-redundant-roles -->
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
              on:keydown|capture={onKeyDown}
              on:keyup|capture={onKeyUp}
-             class:default-cursor={localOptions.chevronOnly}>
+             class:default-cursor={localOptions.chevronOnly}
+             role=button
+             tabindex=0>
         <svg bind:this={svgEl} viewBox="0 0 24 24">
             <path
                 fill=currentColor

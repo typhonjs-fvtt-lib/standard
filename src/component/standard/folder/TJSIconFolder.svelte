@@ -389,6 +389,7 @@
    }
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <details class=tjs-icon-folder
          bind:this={detailsEl}
 
@@ -410,12 +411,15 @@
          data-id={id}
          data-label={label}
          data-closing='false'>
+    <!-- svelte-ignore a11y-no-redundant-roles -->
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
              on:contextmenu={onContextMenu}
              on:keydown|capture={onKeyDown}
              on:keyup|capture={onKeyUp}
-             class:default-cursor={localOptions.chevronOnly}>
+             class:default-cursor={localOptions.chevronOnly}
+             role=button
+             tabindex=0>
         {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
 
         {#if localOptions.focusIndicator}

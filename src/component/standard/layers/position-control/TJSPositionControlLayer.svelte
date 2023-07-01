@@ -72,9 +72,11 @@
 <svelte:body on:keydown|capture={onKeyDown} on:keyup|capture={onKeyUp} />
 
 {#if active}
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div use:selection={{ active: ctrlKey, width: 4 }}
      on:mousedown|capture={onMouseDown}
-     on:selection:end={onSelectionEnd}>
+     on:selection:end={onSelectionEnd}
+     role=region>
    {#each $controls as control (control.id)}
       <PositionControl {control} />
    {/each}

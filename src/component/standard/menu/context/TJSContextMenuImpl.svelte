@@ -386,6 +386,7 @@
 <!-- bind to 'window' to close context menu when browser window is blurred. -->
 <svelte:window on:blur={onWindowBlur}/>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <nav id={id}
      class=tjs-context-menu
      bind:this={menuEl}

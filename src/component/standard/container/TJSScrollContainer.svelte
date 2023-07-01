@@ -110,6 +110,7 @@
      on:wheel={onWheel}
      use:applyScrolltop={scrollTop}
      use:applyStyles={styles}
+     role=presentation
      tabindex=-1
 >
    <slot>

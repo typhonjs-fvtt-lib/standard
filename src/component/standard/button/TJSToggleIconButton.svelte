@@ -204,11 +204,12 @@
    }
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-click-events-have-key-events a11y-interactive-supports-focus -->
 <div class=tjs-toggle-icon-button
      on:click={onClickDiv}
      on:close:popup={onClosePopup}
-     use:applyStyles={styles}>
+     use:applyStyles={styles}
+     role=button>
    <!-- svelte-ignore a11y-missing-attribute -->
    <a bind:this={anchorEl}
       class:selected
