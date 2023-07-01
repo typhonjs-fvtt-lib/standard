@@ -48,7 +48,7 @@
   },
   "peerDependencies": {
     "@typhonjs-fvtt/runtime": ">=0.0.22",
-    "svelte": "3.59.2"
+    "svelte": ">=4.x.x"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15",
