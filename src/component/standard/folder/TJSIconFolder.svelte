@@ -114,8 +114,8 @@
    import { onDestroy }         from '#svelte';
    import { writable }          from '#svelte/store';
 
+   import { toggleDetails }     from '#runtime/svelte/action/animate';
    import { applyStyles }       from '#runtime/svelte/action/dom';
-   import { toggleDetails }     from '#runtime/svelte/animate/action';
    import { localize }          from '#runtime/svelte/helper';
    import { isSvelteComponent } from '#runtime/svelte/util';
    import { isObject }          from '#runtime/util/object';
