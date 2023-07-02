@@ -17,7 +17,7 @@ export class SavedColorsState
    /**
     * Stores the subscribers.
     *
-    * @type {(function(string[]): void)[]}
+    * @type {import('svelte/store').Subscriber<string[]>[]}
     */
    #subscriptions = [];
 
@@ -107,9 +107,10 @@ export class SavedColorsState
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**
-    * @param {function(string[]): void} handler - Callback function that is invoked on update / changes.
+    * @param {import('svelte/store').Subscriber<string[]>} handler - Callback function that is invoked on update /
+    * changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {

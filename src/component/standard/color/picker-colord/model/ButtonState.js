@@ -6,6 +6,9 @@ import { isObject }  from '#runtime/util/object';
  */
 export class ButtonState
 {
+   /**
+    * @type {object[]}
+    */
    #buttonList = [];
 
    /**
@@ -16,7 +19,7 @@ export class ButtonState
    /**
     * Stores the subscribers.
     *
-    * @type {(function(object[]): void)[]}
+    * @type {import('svelte/store').Subscriber<object[]>[]}
     */
    #subscriptions = [];
 
@@ -80,9 +83,10 @@ export class ButtonState
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**
-    * @param {function(object[]): void} handler - Callback function that is invoked on update / changes.
+    * @param {import('svelte/store').Subscriber<object[]>} handler - Callback function that is invoked on update /
+    * changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {

@@ -37,7 +37,7 @@ export class TJSLiveGameSettings
     * Note: When using from JS a second argument is the key that was updated.
     * From Svelte: Use 'lastKey' accessor to retrieve the last updated key.
     *
-    * @type {((liveSettings: TJSLiveGameSettings, key: string) => void)[]}
+    * @type {((value: TJSLiveGameSettings, key?: string) => void)[]}
     */
    #subscriptions = [];
 
@@ -227,10 +227,10 @@ export class TJSLiveGameSettings
    // Readable store implementation ----------------------------------------------------------------------------------
 
    /**
-    * @param {(liveSettings: TJSLiveGameSettings, key: string) => void} handler - Callback function that is invoked on
-    *                                                                             update / changes.
+    * @param {(value: TJSLiveGameSettings, key?: string) => void} handler - Callback function that is invoked on
+    * update / changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {

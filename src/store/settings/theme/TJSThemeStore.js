@@ -45,7 +45,7 @@ export class TJSThemeStore
    /**
     * Stores the subscribers.
     *
-    * @type {(function(object): void)[]}
+    * @type {import('svelte/store').Subscriber<Record<string, object>>[]}
     */
    #subscriptions = [];
 
@@ -273,10 +273,10 @@ export class TJSThemeStore
    }
 
    /**
-    * @param {function({}): void} handler - Callback function that is invoked on update / changes.
-    * Receives copy of the theme data.
+    * @param {import('svelte/store').Subscriber<Record<string, object>>} handler - Callback function that is invoked on
+    * update / changes. Receives copy of the theme data.
     *
-    * @returns {(function({}): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {

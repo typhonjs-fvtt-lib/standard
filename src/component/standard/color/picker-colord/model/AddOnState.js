@@ -16,7 +16,7 @@ export class AddOnState
    /**
     * Stores the subscribers.
     *
-    * @type {(function(import('../../../folder').TJSFolderData[]): void)[]}
+    * @type {import('svelte/store').Subscriber<import('../../../folder').TJSFolderData[]>[]}
     */
    #subscriptions = [];
 
@@ -129,10 +129,10 @@ export class AddOnState
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**
-    * @param {function(import('../../../folder').TJSFolderData[]): void} handler - Callback function that is invoked on
-    * update / changes.
+    * @param {import('svelte/store').Subscriber<import('../../../folder').TJSFolderData[]>} handler - Callback function
+    * that is invoked on update / changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {

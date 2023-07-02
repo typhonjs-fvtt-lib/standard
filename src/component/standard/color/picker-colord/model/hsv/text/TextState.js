@@ -26,7 +26,7 @@ export class TextState
    /**
     * Stores the subscribers.
     *
-    * @type {(function(TextState): void)[]}
+    * @type {import('svelte/store').Subscriber<TextState>[]}
     */
    #subscriptions = [];
 
@@ -161,9 +161,10 @@ export class TextState
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**
-    * @param {function(TextState): void} handler - Callback function that is invoked on update / changes.
+    * @param {import('svelte/store').Subscriber<TextState>} handler - Callback function that is invoked on update /
+    * changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {

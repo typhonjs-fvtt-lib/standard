@@ -1,17 +1,21 @@
 export class ActiveTextState
 {
+   /** @type {string} */
    #activeKey;
 
+   /** @type {object} */
    #activeState;
 
+   /** @type {{ hex: HexState, hsl: HslState, hsv: HsvState, rgb: RgbState }} */
    #allState;
 
+   /** @type {string[]} */
    #modeKeys;
 
    /**
     * Stores the subscribers.
     *
-    * @type {(function(ActiveTextState): void)[]}
+    * @type {import('svelte/store').Subscriber<object>[]}
     */
    #subscriptions = [];
 
@@ -76,9 +80,10 @@ export class ActiveTextState
    // Store subscriber implementation --------------------------------------------------------------------------------
 
    /**
-    * @param {function(ActiveTextState): void} handler - Callback function that is invoked on update / changes.
+    * @param {import('svelte/store').Subscriber<object>} handler - Callback function that is invoked on
+    * update / changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {
@@ -99,7 +104,9 @@ export class ActiveTextState
     */
    #updateSubscribers()
    {
-      // for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this); }
-      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](this.#allState[this.#activeKey]); }
+      for (let cntr = 0; cntr < this.#subscriptions.length; cntr++)
+      {
+         this.#subscriptions[cntr](this.#allState[this.#activeKey]);
+      }
    }
 }

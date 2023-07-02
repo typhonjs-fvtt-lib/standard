@@ -7,6 +7,9 @@ import { ControlStore }    from './control/ControlStore.js';
 
 export class ControlsStore
 {
+   /**
+    * @type {ControlStore[]}
+    */
    #controls = [];
 
    /**
@@ -32,7 +35,7 @@ export class ControlsStore
    /**
     * Stores the subscribers.
     *
-    * @type {(function(ControlStore[]): void)[]}
+    * @type {import('svelte/store').Subscriber<ControlStore[]>[]}
     */
    #subscriptions = [];
 
@@ -267,9 +270,10 @@ export class ControlsStore
    }
 
    /**
-    * @param {function(ControlStore[]): void} handler - Callback function that is invoked on update / changes.
+    * @param {import('svelte/store').Subscriber<ControlStore[]>} handler - Callback function that is invoked on
+    * update / changes.
     *
-    * @returns {(function(): void)} Unsubscribe function.
+    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
     */
    subscribe(handler)
    {
