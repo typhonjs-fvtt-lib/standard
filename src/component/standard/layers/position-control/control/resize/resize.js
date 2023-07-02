@@ -12,7 +12,7 @@
  *
  * @param {boolean}           [params.active=true] - A boolean value; attached to a readable store.
  *
- * @returns {{update: Function, destroy: Function}} The action lifecycle methods.
+ * @returns {import('svelte/action').ActionReturn<Record<string, any>>} Lifecycle functions.
  */
 export function resize(node, { id, resizeCallback, active = true })
 {
