@@ -4,53 +4,53 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
 /**
  * @typedef {object} TJSMenuData
  *
- * @property {Iterable<TJSMenuItemData>} [items] - The data driven menu items.
+ * @property {Iterable<TJSMenuItemData>} [items] The data driven menu items.
  *
- * @property {{ x?: number, y?: number }} [offset] - Optional X / Y offsets for the menu display.
+ * @property {{ x?: number, y?: number }} [offset] Optional X / Y offsets for the menu display.
  *
- * @property {{ class: Function, props?: object }} [slotAfter] - A minimal Svelte config defining a menu item component
- *           after the main data driven menu items.
+ * @property {{ class: Function, props?: object }} [slotAfter] A minimal Svelte config defining a menu item component
+ * after the main data driven menu items.
  *
- * @property {{ class: Function, props?: object }} [slotBefore] - A minimal Svelte config defining a menu item component
- *           before the main data driven menu items.
+ * @property {{ class: Function, props?: object }} [slotBefore] A minimal Svelte config defining a menu item component
+ * before the main data driven menu items.
  *
- * @property {{ class: Function, props?: object }} [slotDefault] - A minimal Svelte config defining the default content
- *           component replacing the data driven menu items.
+ * @property {{ class: Function, props?: object }} [slotDefault] A minimal Svelte config defining the default content
+ * component replacing the data driven menu items.
  *
- * @property {Record<string, string>}   [styles] - Styles to be applied inline.
+ * @property {Record<string, string>}   [styles] Styles to be applied inline.
  *
- * @property {Function}  [efx] - Currently unused; for any future action effects.
+ * @property {Function}  [efx] Currently unused; for any future action effects.
  *
- * @property {string}  [keyCode='Enter'] - The key code to activate menu items.
+ * @property {string}  [keyCode='Enter'] The key code to activate menu items.
  *
- * @property {{ duration: number, easing: Function }}  [transitionOptions={ duration: 200, easing: Function }] - Custom
- *           transition options for duration and easing function. The default easing function is `quintOut`.
+ * @property {{ duration: number, easing: Function }}  [transitionOptions={ duration: 200, easing: Function }] Custom
+ * transition options for duration and easing function. The default easing function is `quintOut`.
  */
 
 /**
  * @typedef {object} TJSMenuItemData
  *
- * @property {(item: TJSMenuItemData, options: object) => void} [onPress] - A callback function to invoke; second
- *           parameter includes any focus source options to pass to potential new application.
+ * @property {(item: TJSMenuItemData, options: object) => void} [onPress] A callback function to invoke; second
+ * parameter includes any focus source options to pass to potential new application.
  *
- * @property {boolean|Function} [condition] - If a boolean and false or a function that invoked returns a falsy value
- *           this item is not added.
- *
- *
- * @property {Function} [class] - A Svelte component class.
- *
- * @property {object} [props] - An object passed on as props for any Svelte component.
+ * @property {boolean|Function} [condition] If a boolean and false or a function that invoked returns a falsy value
+ * this item is not added.
  *
  *
- * @property {string} [icon] - A string containing icon classes.
+ * @property {Function} [class] A Svelte component class.
+ *
+ * @property {object} [props] An object passed on as props for any Svelte component.
  *
  *
- * @property {string} [image] - An image icon path.
- *
- * @property {string} [imageAlt] - An image 'alt' text description.
+ * @property {string} [icon] A string containing icon classes.
  *
  *
- * @property {string} [label] - A text string that is passed through localization.
+ * @property {string} [image] An image icon path.
  *
- * @property {'hr'} [separator] - A menu item separator; only 'hr' supported.
+ * @property {string} [imageAlt] An image 'alt' text description.
+ *
+ *
+ * @property {string} [label] A text string that is passed through localization.
+ *
+ * @property {'hr'} [separator] A menu item separator; only 'hr' supported.
  */

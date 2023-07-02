@@ -136,11 +136,11 @@ export class AlphaState
 /**
  * @typedef {object} AlphaStateInputData Provides the input data options to use in number input components.
  *
- * @property {object} alpha - Alpha input component data.
+ * @property {object} alpha Alpha input component data.
  */
 
 /**
  * @typedef {object} AlphaStateStores Provides the buffered stores to use in number input components.
  *
- * @property {import('svelte/store').Writable<number|null>} alpha - Alpha component value.
+ * @property {import('svelte/store').Writable<number|null>} alpha Alpha component value.
  */

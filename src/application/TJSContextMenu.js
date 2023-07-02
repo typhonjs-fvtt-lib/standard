@@ -148,31 +148,31 @@ export class TJSContextMenu
 }
 
 /**
- * @typedef {object} TJSContextMenuItemData - Defines a menu item entry. Depending on the item data that is passed
+ * @typedef {object} TJSContextMenuItemData Defines a menu item entry. Depending on the item data that is passed
  * into the menu you can define 4 types of items: 'icon / label', 'image / label', 'class / Svelte component', and
  * 'separator / hr'. A single callback function `onPress` is supported.
  *
- * @property {(item: TJSContextMenuItemData, object) => void} [onPress] - A callback function that receives the selected
- * item data and an object containing the A11yFocusSource data that can be passed to any Application / particularly modal
- * dialogs returning focus when closed.
+ * @property {(item: TJSContextMenuItemData, object) => void} [onPress] A callback function that receives the selected
+ * item data and an object containing the A11yFocusSource data that can be passed to any Application / particularly
+ * modal dialogs returning focus when closed.
  *
- * @property {boolean|(() => boolean)} [condition] - If a boolean and false or a function that invoked returns a falsy value
- *           this item is not added.
+ * @property {boolean|(() => boolean)} [condition] If a boolean and false or a function that invoked returns a falsy
+ * value this item is not added.
  *
- * @property {Function} [class] - A Svelte component class.
+ * @property {Function} [class] A Svelte component class.
  *
- * @property {object} [props] - An object passed on as props for any Svelte component.
- *
- *
- * @property {string} [icon] - A string containing icon classes.
+ * @property {object} [props] An object passed on as props for any Svelte component.
  *
  *
- * @property {string} [image] - An image icon path.
- *
- * @property {string} [imageAlt] - An image 'alt' text description.
+ * @property {string} [icon] A string containing icon classes.
  *
  *
- * @property {string} [label] - A text string that is passed through localization.
+ * @property {string} [image] An image icon path.
  *
- * @property {'hr'} [separator] - A menu item separator; only 'hr' supported.
+ * @property {string} [imageAlt] An image 'alt' text description.
+ *
+ *
+ * @property {string} [label] A text string that is passed through localization.
+ *
+ * @property {'hr'} [separator] A menu item separator; only 'hr' supported.
  */

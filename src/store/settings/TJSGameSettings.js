@@ -359,49 +359,49 @@ export class TJSGameSettings
 /**
  * @typedef {object} GameSettingOptions
  *
- * @property {object} [choices] - If choices are defined, the resulting setting will be a select menu.
+ * @property {object} [choices] If choices are defined, the resulting setting will be a select menu.
  *
- * @property {boolean} [config=true] - Specifies that the setting appears in the configuration view.
+ * @property {boolean} [config=true] Specifies that the setting appears in the configuration view.
  *
- * @property {*} [default] - A default value for the setting.
+ * @property {*} [default] A default value for the setting.
  *
- * @property {string} [hint] - A description of the registered setting and its behavior.
+ * @property {string} [hint] A description of the registered setting and its behavior.
  *
- * @property {string} name - The displayed name of the setting.
+ * @property {string} name The displayed name of the setting.
  *
- * @property {Function|Iterable<Function>} [onChange] - An onChange callback function or iterable list of callbacks to
- *                                                      directly receive callbacks from Foundry on setting change.
+ * @property {Function|Iterable<Function>} [onChange] An onChange callback function or iterable list of callbacks to
+ * directly receive callbacks from Foundry on setting change.
  *
- * @property {{min: number, max: number, step: number}} [range] - If range is specified, the resulting setting will be
- *                                                                a range slider.
+ * @property {{min: number, max: number, step: number}} [range] If range is specified, the resulting setting will be
+ * a range slider.
  *
- * @property {boolean} [requiresReload=false] - If true then a prompt to reload after changes occurs.
+ * @property {boolean} [requiresReload=false] If true then a prompt to reload after changes occurs.
  *
- * @property {('client' | 'world')} [scope='client'] - Scope for setting.
+ * @property {('client' | 'world')} [scope='client'] Scope for setting.
  *
- * @property {object|Function} type - A constructable object or function.
+ * @property {object|Function} type A constructable object or function.
  */
 
 /**
- * @typedef {object} GameSetting - Defines a game setting.
+ * @typedef {object} GameSetting Defines a game setting.
  *
- * @property {string} namespace - The setting namespace; usually the ID of the module / system.
+ * @property {string} namespace The setting namespace; usually the ID of the module / system.
  *
- * @property {string} key - The setting key to register.
+ * @property {string} key The setting key to register.
  *
- * @property {string} folder - The name of the TJSSvgFolder to put this setting in to group them.
+ * @property {string} folder The name of the TJSSvgFolder to put this setting in to group them.
  *
- * @property {import('svelte/store').Writable} [store] - An existing store instance to use.
+ * @property {import('svelte/store').Writable} [store] An existing store instance to use.
  *
- * @property {GameSettingOptions} options - Configuration for setting data.
+ * @property {GameSettingOptions} options Configuration for setting data.
  */
 
 /**
- * @typedef {GameSettingOptions} GameSettingData - Stores the primary TJS game setting keys w/ GameSettingOptions.
+ * @typedef {GameSettingOptions} GameSettingData Stores the primary TJS game setting keys w/ GameSettingOptions.
  *
- * @property {string} namespace - The setting namespace; usually the ID of the module / system.
+ * @property {string} namespace The setting namespace; usually the ID of the module / system.
  *
- * @property {string} key - The setting key to register.
+ * @property {string} key The setting key to register.
  *
- * @property {string} folder - The name of the TJSSvgFolder to put this setting in to group them.
+ * @property {string} folder The name of the TJSSvgFolder to put this setting in to group them.
  */

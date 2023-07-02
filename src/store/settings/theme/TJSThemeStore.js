@@ -296,33 +296,33 @@ export class TJSThemeStore
 /**
  * @typedef {object} TJSThemeStoreConfig
  *
- * @property {string} version - A semantic version string.
+ * @property {string} version A semantic version string.
  *
- * @property {Iterable<TJSThemeStoreComponent>} components - An iterable list of theme store component data.
+ * @property {Iterable<TJSThemeStoreComponent>} components An iterable list of theme store component data.
  */
 
 /**
  * @typedef {object} TJSThemeStoreComponent
  *
- * @property {string} type - Type of component / variable.
+ * @property {string} type Type of component / variable.
  *
- * @property {string} [default] - An optional default value for a CSS variable.
+ * @property {string} [default] An optional default value for a CSS variable.
  *
- * @property {string} [label] - An optional label for any variable / setting related component.
+ * @property {string} [label] An optional label for any variable / setting related component.
  *
- * @property {string} [var] - A CSS variable name.
+ * @property {string} [var] A CSS variable name.
  */
 
 /**
  * @typedef {object} TJSThemeStoreOptions
  *
- * @property {string} namespace - The world setting namespace.
+ * @property {string} namespace The world setting namespace.
  *
- * @property {string} key - The world setting key.
+ * @property {string} key The world setting key.
  *
- * @property {TJSGameSettings} gameSettings - An associated TJSGameSettings instance.
+ * @property {TJSGameSettings} gameSettings An associated TJSGameSettings instance.
  *
- * @property {TJSStyleManager} styleManager - An associated TJSStyleManager instance to manipulate CSS variables.
+ * @property {TJSStyleManager} styleManager An associated TJSStyleManager instance to manipulate CSS variables.
  *
- * @property {TJSThemeStoreConfig} config - Data defining CSS theme store components and variables.
+ * @property {TJSThemeStoreConfig} config Data defining CSS theme store components and variables.
  */

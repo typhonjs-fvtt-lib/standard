@@ -228,13 +228,13 @@ export class SemVer
 /**
  * @typedef {object} SemVerData
  *
- * @property {number} major - The major version number as a string.
+ * @property {number} major The major version number as a string.
  *
- * @property {number} minor - The minor version number as a string.
+ * @property {number} minor The minor version number as a string.
  *
- * @property {number} patch - The patch version number as a string.
+ * @property {number} patch The patch version number as a string.
  *
- * @property {string} prerelease - The prerelease version identifier as a string, or an empty string if not present.
+ * @property {string} prerelease The prerelease version identifier as a string, or an empty string if not present.
  *
- * @property {string} build - The build metadata identifier as a string, or an empty string if not present.
+ * @property {string} build The build metadata identifier as a string, or an empty string if not present.
  */

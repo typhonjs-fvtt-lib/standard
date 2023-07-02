@@ -459,44 +459,44 @@ export class UIControl
 /**
  * @typedef {object} TJSSettingsCreateOptions
  *
- * @property {string} [efx=ripple] - Defines the effects added to TJS components; ripple by default.
+ * @property {string} [efx=ripple] Defines the effects added to TJS components; ripple by default.
  *
  * @property {import('#runtime/svelte/store/web-storage').TJSWebStorage} [storage] - TRL TJSWebStorage (session)
- *           instance to serialize folder state and scrollbar position.
+ * instance to serialize folder state and scrollbar position.
  */
 
 /**
  * @typedef {object} TJSSettingsCustomSection
  *
- * @property {Function} class - Svelte component constructor function for custom section.
+ * @property {Function} class Svelte component constructor function for custom section.
  *
- * @property {Function} [props] - Svelte component constructor function for custom section.
+ * @property {Function} [props] Svelte component constructor function for custom section.
  *
- * @property {object} [styles] - Inline styles for the section element.
+ * @property {object} [styles] Inline styles for the section element.
  *
- * @property {string|TJSSettingsCustomSectionFolder} [folder] - A folder label or TJSSettingsCustomSectionFolder object.
+ * @property {string|TJSSettingsCustomSectionFolder} [folder] A folder label or TJSSettingsCustomSectionFolder object.
  */
 
 /**
  * @typedef {object} TJSSettingsCustomSectionFolder
  *
- * @property {string} label - The folder label.
+ * @property {string} label The folder label.
  *
- * @property {object} [summaryEnd] - A Svelte component config object defining TJSSvgFolder summary end component.
+ * @property {object} [summaryEnd] A Svelte component config object defining TJSSvgFolder summary end component.
  *
- * @property {object} [styles] - Inline styles for the `TJSSvgFolder`; useful for setting CSS variables.
+ * @property {object} [styles] Inline styles for the `TJSSvgFolder`; useful for setting CSS variables.
  */
 
 /**
  * @typedef {object} TJSSettingsUIData
  *
- * @property {{label: string, settings: object[]}[]} folders - Sorted folders with associated settings and label.
+ * @property {{label: string, settings: object[]}[]} folders Sorted folders with associated settings and label.
  *
- * @property {object[]} topLevel - Top level settings data.
+ * @property {object[]} topLevel Top level settings data.
  *
- * @property {object[]} sections - Custom sections.
+ * @property {object[]} sections Custom sections.
  *
- * @property {import('svelte/store').Writable<number>} storeScrollbar - The store for `applyScrolltop`.
+ * @property {import('svelte/store').Writable<number>} storeScrollbar The store for `applyScrolltop`.
  *
- * @property {Function} [destroy] - The bound destroy callback function for received of TJSSettingsUIData.
+ * @property {Function} [destroy] The bound destroy callback function for received of TJSSettingsUIData.
  */

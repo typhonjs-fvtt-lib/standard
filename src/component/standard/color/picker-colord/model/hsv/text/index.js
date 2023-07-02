@@ -6,7 +6,7 @@ export * from './TextState.js';
  * @property {import('../').ColorStateStores} stores The stores from {@link ColorState}.
  *
  * @property {import('../').ColorStateInternalUpdate} internalUpdate The internal tracking state from
- *           {@link ColorState}.
+ * {@link ColorState}.
  */
 
 /**
