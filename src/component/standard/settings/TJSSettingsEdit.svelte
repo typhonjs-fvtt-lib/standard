@@ -41,17 +41,18 @@
     * --tjs-settings-section-padding - 0.5em
     */
 
-   import { onDestroy }    from '#svelte';
+   import { onDestroy }          from '#svelte';
 
    import {
       applyScrolltop,
-      applyStyles }        from '#runtime/svelte/action/dom';
+      applyStyles }              from '#runtime/svelte/action/dom';
 
-   import { isSvelteComponent } from '#runtime/svelte/util';
+   import { isSvelteComponent }  from '#runtime/svelte/util';
+   import { isObject }           from '#runtime/util/object';
 
-   import { TJSSvgFolder } from '../folder/index.js';
+   import { TJSSvgFolder }       from '../folder/index.js';
 
-   import SettingEntry     from './SettingEntry.svelte';
+   import SettingEntry           from './SettingEntry.svelte';
 
    /** @type {TJSGameSettings} */
    export let settings = void 0;
@@ -94,16 +95,16 @@
          <section class=tjs-settings-section use:applyStyles={section.styles}>
             {#if section.folder}
                <TJSSvgFolder folder={section.folder}>
-                  <svelte:component this={section.class} {...(typeof section.props === 'object' ? section.props : {})}/>
+                  <svelte:component this={section.class} {...(isObject(section.props) ? section.props : {})}/>
 
                   <svelte:fragment slot=summary-end>
                      {#if isSvelteComponent(section?.folder?.summaryEnd?.class)}
-                        <svelte:component this={section.folder.summaryEnd.class} {...(typeof section?.folder?.summaryEnd?.props === 'object' ? section.folder.summaryEnd.props : {})}/>
+                        <svelte:component this={section.folder.summaryEnd.class} {...(isObject(section?.folder?.summaryEnd?.props) ? section.folder.summaryEnd.props : {})}/>
                      {/if}
                   </svelte:fragment>
                </TJSSvgFolder>
             {:else}
-               <svelte:component this={section.class} {...(typeof section.props === 'object' ? section.props : {})}/>
+               <svelte:component this={section.class} {...(isObject(section.props) ? section.props : {})}/>
             {/if}
          </section>
       {/each}

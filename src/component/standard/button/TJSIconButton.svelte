@@ -65,8 +65,8 @@
     typeof icon === 'string' ? icon : '';
    $: title = isObject(button) && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : '';
-   $: styles = isObject(button) && typeof button.styles === 'object' ? button.styles :
-    typeof styles === 'object' ? styles : void 0;
+   $: styles = isObject(button) && isObject(button.styles) ? button.styles :
+    isObject(styles) ? styles : void 0;
    $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
    $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :

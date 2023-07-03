@@ -117,7 +117,7 @@
     isReadableStore(storeIsValid) ? storeIsValid : writable(true);
 
    $: styles = isObject(input) && isObject(input.styles) ? input.styles :
-    typeof styles === 'object' ? styles : void 0;
+    isObject(styles) ? styles : void 0;
 
    $: efx = isObject(input) && typeof input.efx === 'function' ? input.efx :
     typeof efx === 'function' ? efx : () => {};

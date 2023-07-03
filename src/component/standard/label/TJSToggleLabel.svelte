@@ -52,8 +52,8 @@
     typeof titleSelected === 'string' ? titleSelected : '';
    $: store = isObject(label) && isWritableStore(label.store) ? label.store : isWritableStore(store) ?
     store : void 0;
-   $: styles = isObject(label) && typeof label.styles === 'object' ? label.styles :
-    typeof styles === 'object' ? styles : void 0;
+   $: styles = isObject(label) && isObject(label.styles) ? label.styles :
+    isObject(styles) ? styles : void 0;
    $: efx = isObject(label) && typeof label.efx === 'function' ? label.efx :
     typeof efx === 'function' ? efx : () => {};
    $: keyCode = isObject(label) && typeof label.keyCode === 'string' ? label.keyCode :

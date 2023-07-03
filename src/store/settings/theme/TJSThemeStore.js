@@ -227,7 +227,7 @@ export class TJSThemeStore
     */
    #validateThemeData(themeData, warn = true)
    {
-      if (typeof themeData !== 'object' || themeData === null)
+      if (!isObject(themeData))
       {
          if (warn)
          {

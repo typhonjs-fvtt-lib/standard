@@ -1,3 +1,5 @@
+import { isObject } from '#runtime/util/object';
+
 /**
  * Parses the core Foundry style sheet creating an indexed object of properties by selector.
  */
@@ -110,7 +112,7 @@ export class FoundryStyles
       if (this.#sheetMap.has(selector))
       {
          const data = this.#sheetMap.get(selector);
-         return typeof data === 'object' && property in data ? data[property] : void 0;
+         return isObject(data) && property in data ? data[property] : void 0;
       }
 
       for (const key of this.#sheetMap.keys())
@@ -118,7 +120,7 @@ export class FoundryStyles
          if (key.includes(selector))
          {
             const data = this.#sheetMap.get(key);
-            if (typeof data === 'object' && property in data) { return data[property]; }
+            if (isObject(data) && property in data) { return data[property]; }
          }
       }
 

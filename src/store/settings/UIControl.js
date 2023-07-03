@@ -233,13 +233,13 @@ export class UIControl
 
          let options;
 
-         if (typeof setting.choices === 'object')
+         if (isObject(setting.choices))
          {
             options = Object.entries(setting.choices).map((entry) => ({ value: entry[0], label: localize(entry[1]) }));
          }
 
          let range;
-         if (typeof setting.range === 'object')
+         if (isObject(setting.range))
          {
             range = {};
 
@@ -302,7 +302,7 @@ export class UIControl
          }
          else if (setting.type === Number)
          {
-            componentType = typeof setting.range === 'object' ? 'range' : 'number';
+            componentType = isObject(setting.range) ? 'range' : 'number';
          }
 
          let inputData;

@@ -1,4 +1,6 @@
-import { FVTTVersion } from '../util/FVTTVersion.js';
+import { isObject }     from '#runtime/util/object';
+
+import { FVTTVersion }  from '../util/FVTTVersion.js';
 
 /**
  * Loads FVTT core fonts supporting `FontConfig` on Foundry v10+.
@@ -145,7 +147,7 @@ export class FontManager
 
       for (const definitions of allFonts)
       {
-         if (typeof definitions === 'object')
+         if (isObject(definitions))
          {
             for (const [family, definition] of Object.entries(definitions))
             {
@@ -187,7 +189,7 @@ export class FontManager
 
       for (const definitions of fonts)
       {
-         if (typeof definitions !== 'object' || definitions === null)
+         if (!isObject(definitions))
          {
             throw new TypeError(`FontManager.removeDuplicateDefinitions error: 'definitions' is not an object.`);
          }

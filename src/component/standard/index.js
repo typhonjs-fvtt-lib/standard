@@ -1,4 +1,5 @@
 import { SvelteApplication }  from '#runtime/svelte/application';
+import { isObject }           from '#runtime/util/object';
 
 import { FoundryStyles }      from '#standard/fvtt';
 
@@ -50,7 +51,7 @@ cssVariables.setProperties({
     */
    const props = FoundryStyles.getProperties('input[type="text"], input[type="number"]');
 
-   if (typeof props === 'object')
+   if (isObject(props))
    {
       cssVariables.setProperties({
          '--tjs-input-background': 'background' in props ? props.background : 'rgba(0, 0, 0, 0.05)',

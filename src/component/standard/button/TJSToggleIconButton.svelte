@@ -73,8 +73,8 @@
     typeof titleSelected === 'string' ? titleSelected : '';
    $: store = isObject(button) && isWritableStore(button.store) ? button.store : isWritableStore(store) ?
     store : void 0;
-   $: styles = isObject(button) && typeof button.styles === 'object' ? button.styles :
-    typeof styles === 'object' ? styles : void 0;
+   $: styles = isObject(button) && isObject(button.styles) ? button.styles :
+    isObject(styles) ? styles : void 0;
    $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
     typeof efx === 'function' ? efx : () => {};
    $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :

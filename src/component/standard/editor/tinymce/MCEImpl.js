@@ -1,4 +1,5 @@
 import { striptags } from '#runtime/util/browser';
+import { isObject }  from '#runtime/util/object';
 
 import {
    FontManager,
@@ -102,7 +103,7 @@ export class MCEImpl
     */
    static getFontData(extraFonts = {})
    {
-      if (typeof extraFonts !== 'object') { throw new TypeError(`'extraFonts' is not an object.`); }
+      if (!isObject(extraFonts)) { throw new TypeError(`'extraFonts' is not an object.`); }
 
       // TODO Sanitize / confirm extraFonts data / add `editor` field if missing.
 
@@ -121,7 +122,7 @@ export class MCEImpl
 
       for (const definitions of fonts)
       {
-         if (typeof definitions === 'object')
+         if (isObject(definitions))
          {
             for (const family of Object.keys(definitions))
             {

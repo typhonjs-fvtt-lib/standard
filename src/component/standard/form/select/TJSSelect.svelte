@@ -53,6 +53,7 @@
 
    import { applyStyles }     from '#runtime/svelte/action/dom';
    import { isWritableStore } from '#runtime/util/store';
+   import { isObject }        from '#runtime/util/object';
 
    export let select = void 0;
    export let selected = void 0;
@@ -61,15 +62,15 @@
    export let styles = void 0;
    export let efx = void 0;
 
-   $: selected = typeof select === 'object' && typeof select.selected === 'string' ? select.selected :
+   $: selected = isObject(select) && typeof select.selected === 'string' ? select.selected :
     typeof selected === 'string' ? selected : void 0;
-   $: options = typeof select === 'object' && Array.isArray(select.options) ? select.options :
+   $: options = isObject(select) && Array.isArray(select.options) ? select.options :
     Array.isArray(options) ? options : [];
-   $: store = typeof select === 'object' && isWritableStore(select.store) ? select.store :
+   $: store = isObject(select) && isWritableStore(select.store) ? select.store :
     isWritableStore(store) ? store : writable(void 0);
-   $: styles = typeof select === 'object' && typeof select.styles === 'object' ? select.styles :
-    typeof styles === 'object' ? styles : void 0;
-   $: efx = typeof select === 'object' && typeof select.efx === 'function' ? select.efx :
+   $: styles = isObject(select) && isObject(select.styles) ? select.styles :
+    isObject(styles) ? styles : void 0;
+   $: efx = isObject(select) && typeof select.efx === 'function' ? select.efx :
     typeof efx === 'function' ? efx : () => {};
 
    onMount(() =>
