@@ -46,22 +46,6 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/plugin/system/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin(dtsPluginOptions)
-         ]
-      },
-      output: {
-         file: '_dist/plugin/system/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap,
-      }
-   },
-   {
-      input: {
          input: 'src/prosemirror/index.js',
          plugins: [
             importsExternal(),

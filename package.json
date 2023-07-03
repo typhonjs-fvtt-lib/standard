@@ -28,10 +28,6 @@
       "types": "./_dist/fvtt/index.d.ts",
       "import": "./_dist/fvtt/index.js"
     },
-    "./plugin/system": {
-      "types": "./_dist/plugin/system/index.d.ts",
-      "import": "./_dist/plugin/system/index.js"
-    },
     "./prosemirror": {
       "types": "./_dist/prosemirror/index.d.ts",
       "import": "./_dist/prosemirror/index.js"
