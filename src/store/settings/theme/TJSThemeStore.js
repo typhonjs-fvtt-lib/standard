@@ -1,6 +1,7 @@
 import { writable }        from '#svelte/store';
 
 import { getFormat }       from '#runtime/color/colord';
+import { TJSGameSettings } from '#runtime/svelte/store/fvtt';
 import { propertyStore }   from '#runtime/svelte/store/writable-derived';
 import { TJSStyleManager } from '#runtime/util/browser';
 
@@ -11,8 +12,6 @@ import {
 import {
    DataValidator,
    SemVer }                from './DataValidator.js';
-
-import { TJSGameSettings } from '../TJSGameSettings.js';
 
 /**
  * Must be constructed from a TJSGameSettings instance `init` / initialize method called from the `ready` Foundry VTT
