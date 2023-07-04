@@ -142,7 +142,7 @@
 <!-- Conditional is required to trigger transition to correct positioning when in popup mode -->
 {#if $isOpen}
 <main class=tjs-color-picker-main-layout
-      in:updatePosition
+      in:updatePosition|global
       on:pointerdown|stopPropagation={onPointerDownLocal}
       class:isOpen={$isOpen}
       class:isPopup={$isPopup}

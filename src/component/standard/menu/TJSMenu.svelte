@@ -483,7 +483,7 @@
      on:keyup|preventDefault|stopPropagation={onKeyupMenu}
      on:pointerdown|stopPropagation={() => null}
      on:pointerup|stopPropagation={() => null}
-     transition:animate
+     transition:animate|global
      use:applyStyles={styles}
      use:efx
      tabindex=-1

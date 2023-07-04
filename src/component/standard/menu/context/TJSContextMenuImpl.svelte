@@ -394,7 +394,7 @@
      on:keydown|stopPropagation={onKeydownMenu}
      on:keyup|preventDefault|stopPropagation={onKeyupMenu}
      style:z-index={zIndex}
-     transition:animate
+     transition:animate|global
      use:applyStyles={styles}
      tabindex=-1>
 
