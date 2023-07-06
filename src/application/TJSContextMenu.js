@@ -56,7 +56,7 @@ export class TJSContextMenu
     *
     * @param {number}      [opts.duration] - Transition option for duration of transition.
     *
-    * @param {Function}    [opts.easing] - Transition option for easing function.
+    * @param {import('svelte/transition').EasingFunction}   [opts.easing] - Transition option for easing function.
     */
    static create({ id = '', event, x, y, items, focusDebug = false, focusEl, keyCode = 'Enter', styles,
     zIndex = Number.MAX_SAFE_INTEGER - 100, duration = 200, easing, } = {})
