@@ -58,7 +58,7 @@ import {
  *
  * Both the `add` and `replace` methods have a data field `mergeAppImpl` that provides the base implementation for the
  * added / replaced object instance assigned to `globalThis.ui.<SIDEBAR APP ID>`. When replacing Foundry core sidebar
- * panels like the {@link globalThis.CombatTracker} there is additional API that you must handle found in the given core
+ * panels like the {@link CombatTracker} there is additional API that you must handle found in the given core
  * sidebar app implementation. It is recommended that you implement this API as part of the control / model code passed
  * to the Svelte sidebar component and also set to `mergeAppImpl`.
  *

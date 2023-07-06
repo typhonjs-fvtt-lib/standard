@@ -126,8 +126,7 @@ export class FontManager
     *
     * @param {Document} [opts.document] - The target document to load the fonts into.
     *
-    * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of
-    *        {@link globalThis.FontFamilyDefinition}.
+    * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of {@link FontFamilyDefinition}.
     *
     * @param {(
     *    {[key: string]: globalThis.FontFamilyDefinition}[] |
