@@ -16,7 +16,7 @@ export class WorldSettingArrayStore extends CrudArrayObjectStore
     *
     * @param {object}            [opts] - Optional parameters.
     *
-    * @param {import('#runtime/svelte/store/fvtt').TJSGameSettings}   [opts.gameSettings] - An instance of
+    * @param {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings}   [opts.gameSettings] - An instance of
     *        TJSGameSettings.
     *
     * @param {string}            [opts.namespace] - Game setting 'namespace' field.

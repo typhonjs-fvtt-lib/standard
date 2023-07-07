@@ -166,7 +166,7 @@
    }                        from '#svelte';
 
    import { applyStyles }   from '#runtime/svelte/action/dom';
-   import { TJSDocument }   from '#runtime/svelte/store/fvtt';
+   import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
    import { isObject }      from '#runtime/util/object';
 
    import { PMImpl }        from '#standard/prosemirror';
