@@ -1,4 +1,9 @@
 # Changelog
+## Release 0.1.0 (major)
+- Many resources are now located at various other import paths. Several moved back to TRL / main runtime.
+- Please check the Discord release notes as they will be updated with info on package import details.
+- Requires TRL 0.1.0+ and Svelte v4+
+
 ## Release 0.0.23 (minor)
 - Fixed respecting GM user when enriching content for all editor components. IE secrets won't show for non-GM users.
 
@@ -12,21 +17,21 @@
   - New `mergeAppImpl` for `add` / `replace` to provide a base implementation for the "app" added to `globalThis.ui`.
 
 ## Release 0.0.20 (minor)
-- Updated `FVTTSidebarControl` with new `remove` and `replace` methods to remove / replace existing Foundry sidebars. 
+- Updated `FVTTSidebarControl` with new `remove` and `replace` methods to remove / replace existing Foundry sidebars.
 
 ## Release 0.0.19 (minor)
 - Corrected external inclusion of ProseMirror library that caused incompatibility w/ Foundry version.
 
-- New `FVTTSidebarControl` found in `@typhonjs-fvtt/svelte-standard/application` to add custom Svelte based 
+- New `FVTTSidebarControl` found in `@typhonjs-fvtt/svelte-standard/application` to add custom Svelte based
   sidebar panels to the Foundry sidebar.
 
 ## Release 0.0.18 (super-major)
 - Significantly refined all existing components (double the amount of commits in `svelte-standard`)
-  - Keyboard navigation and activation baked into components. 
+  - Keyboard navigation and activation baked into components.
   - Data defined callback `onClick` now `onPress`. Handling both pointer / key interaction.
   - New `on:press` event binding exposed on relevant components.
 
-- Editor components finished: 
+- Editor components finished:
   - TJSContentEdit fully up to par w/ config options of TJSTinyMCE
   - TJSProseMirror handles most of the same config options, but not single line support (use TJSContentEdit).
 
@@ -49,23 +54,23 @@
   - Documentation added.
 
 ## Release 0.0.16 (minor)
-- Moved ProseMirror plugins to `@typhonjs-fvtt/svelte-standard/prosemirror/plugins` sub-package to be able to bundle 
+- Moved ProseMirror plugins to `@typhonjs-fvtt/svelte-standard/prosemirror/plugins` sub-package to be able to bundle
   extra PM resources.
 
 ## Release 0.0.15 (major)
 - Initial release of TJSTinyMCE and TJSContentEdit editor components.
-  - Note: TJSTinyMCE is fully developed and next release will bring as much feature parity to TJSProseMirror and 
-    TJSContentEdit from the "gold standard" MCE editor. 
+  - Note: TJSTinyMCE is fully developed and next release will bring as much feature parity to TJSProseMirror and
+    TJSContentEdit from the "gold standard" MCE editor.
 
 
 - Added TJSGameSettings in `store` sub-export.
 - Added TJSSettingsEdit / TJSSettingsSwap components
   - This allows reactive editing of game settings from directly inside apps.
-  - Group settings into logical folders. 
+  - Group settings into logical folders.
   - Support for `requireReload`
-  
 
-- Refined TJSSvgFolder & TJSIconFolder to hide slotted components when not visible improving performance for lists of 
+
+- Refined TJSSvgFolder & TJSIconFolder to hide slotted components when not visible improving performance for lists of
   many instances.
 
 ## Release 0.0.14 (minor)
@@ -86,7 +91,7 @@
 - Small mod to TJSToggleLabel to only potentially render `left` or `right` slot when `comp` or `text` prop not defined.
 
 ## Release 0.0.8 (minor)
-- Fix for unintentional "double bubble" of click / close events on TJSIconButton, TJSToggleIconButton, and 
+- Fix for unintentional "double bubble" of click / close events on TJSIconButton, TJSToggleIconButton, and
   TJSToggleLabel.
 
 ## Release 0.0.7 (minor)
@@ -101,7 +106,7 @@
   - several options too many to list.
 
 - TJSMenu updated
-  - Can now embed a content component w/ a slot. 
+  - Can now embed a content component w/ a slot.
   - before and after slots
   - Items list can now have `image`, `separator: 'hr'` for a separator, `class` for a Svelte component.
 
@@ -113,7 +118,7 @@
 ## Release 0.0.3 (minor)
 - Hardened TJSContextMenu / TJSMenu to close on scroll wheel events and clicks outside browser window.
 
-- Added CSS variable for TJSInput / placeholder. 
+- Added CSS variable for TJSInput / placeholder.
 
 - Finetuned a few other components.
 
@@ -122,11 +127,11 @@
   - TJSIconFolder / TJSSvgFolder
     - Options: 'chevron only click', 'no keyboard / spacebar open'
     - Fixed click detect with child / slotted components
-    
+
   - Add TJSIconButton; basic icon button.
- 
+
   - TJSMenu; better positioning / absolute in relative parent.
-  
+
   - TJSInput
     - fixed efx / rippleFocus multiple clicks issue
     - Options: 'blurOnKeyEnter', 'cancelOnEscKey', 'clearOnEscKey'
@@ -142,7 +147,7 @@
 - TJSPositionControlLayer
   - A layer to add to rendering position based components for interactive editing (many features!)
   - Export JSON configuration of controlled components
-  
+
 ## Release 0.0.0
 - Initial alpha release
   - Initial support for add on Svelte components and resources.
