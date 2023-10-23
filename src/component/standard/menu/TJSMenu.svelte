@@ -87,7 +87,10 @@
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     */
 
-   import { onMount }            from '#svelte';
+   import {
+      getContext,
+      onDestroy,
+      onMount }                  from '#svelte';
 
    import { quintOut }           from '#svelte/easing';
 
@@ -135,6 +138,14 @@
 
    // Provides options to `A11yHelper.getFocusableElements` to ignore TJSFocusWrap by CSS class.
    const s_IGNORE_CLASSES = { ignoreClasses: ['tjs-focus-wrap'] };
+
+   /**
+    * @type {Window} The current external application active Window / WindowProxy or `globalThis`.
+    *
+    * Supports registering to the active window / document body for when an underlying application is popped out in a
+    * unique browser window. If not found default to `globalThis`.
+    */
+   const activeWindow = getContext('#external')?.application?.reactive?.activeWindow ?? globalThis;
 
    /** @type {Iterable<TJSMenuItemData>} */
    let allItems;
@@ -213,8 +224,21 @@
 
    // ----------------------------------------------------------------------------------------------------------------
 
+   onDestroy(() =>
+   {
+      // To support cases when the active window may be a popped out browser register directly.
+      activeWindow.document.body.removeEventListener('pointerdown', onClose);
+      activeWindow.document.body.removeEventListener('wheel', onClose);
+      activeWindow.removeEventListener('blur', onWindowBlur);
+   });
+
    onMount(() =>
    {
+      // To support cases when the active window may be a popped out browser unregister directly.
+      activeWindow.document.body.addEventListener('pointerdown', onClose);
+      activeWindow.document.body.addEventListener('wheel', onClose);
+      activeWindow.addEventListener('blur', onWindowBlur);
+
       const activeEl = document.activeElement;
       const parentEl = menuEl.parentElement;
 
@@ -276,9 +300,8 @@
     */
    function animate(node)
    {
-      const result = getStackingContext(node.parentElement);
-
-      if (!(result?.node instanceof HTMLElement))
+      const result = getStackingContext(node.parentElement, activeWindow);
+      if (!result?.node)
       {
          console.warn(`'TJSMenu.animate warning: Could not locate parent stacking context element.`);
          return;
@@ -468,12 +491,6 @@
       }
    }
 </script>
-
-<!-- bind to `document.body` to receive pointer down & scroll wheel events to close the menu. -->
-<svelte:body on:pointerdown={onClose} on:wheel={onClose}/>
-
-<!-- bind to 'window' to close menu when browser window is blurred. -->
-<svelte:window on:blur={onWindowBlur}/>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <nav class=tjs-menu
