@@ -25,6 +25,14 @@ export class TJSContextMenu
    static #contextMenu = void 0;
 
    /**
+    * Provides the event constructor names to duck type against. This is necessary for when HTML nodes / elements are
+    * moved to another browser window as `instanceof` checks will fail.
+    *
+    * @type {Set<string>}
+    */
+   static #eventTypes = new Set(['KeyboardEvent', 'MouseEvent', 'PointerEvent']);
+
+   /**
     * Creates and manages a browser wide context menu. The best way to create the context menu is to pass in the source
     * DOM event as it is processed for the location of the context menu to display. Likewise, a A11yFocusSource object
     * is generated that allows focus to be returned to the source location. You may supply a default focus target as a
@@ -57,27 +65,37 @@ export class TJSContextMenu
     * @param {number}      [opts.duration] - Transition option for duration of transition.
     *
     * @param {import('svelte/transition').EasingFunction}   [opts.easing] - Transition option for easing function.
+    *
+    * @param {Window}      [opts.activeWindow=globalThis] - The active browser window that the context menu is
+    *        displaying inside.
     */
    static create({ id = '', event, x, y, items, focusDebug = false, focusEl, keyCode = 'Enter', styles,
-    zIndex = Number.MAX_SAFE_INTEGER - 100, duration = 200, easing, } = {})
+    zIndex = Number.MAX_SAFE_INTEGER - 100, duration = 200, easing, activeWindow = globalThis} = {})
    {
       if (this.#contextMenu !== void 0) { return; }
+
+      if (Object.prototype.toString.call(activeWindow) !== '[object Window]')
+      {
+         throw new TypeError(`TJSContextMenu.create error: 'activeWindow' is not a Window / WindowProxy.`);
+      }
 
       if (!event && (typeof x !== 'number' || typeof y !== 'number'))
       {
          throw new Error(`TJSContextMenu.create error: No event or absolute X / Y position not defined.`);
       }
 
-      if (event !== void 0 && !(event instanceof KeyboardEvent) && !(event instanceof MouseEvent))
+      // Perform duck typing on event constructor name.
+      if (event !== void 0 && !TJSContextMenu.#eventTypes.has(event?.constructor?.name))
       {
-         throw new TypeError(`TJSContextMenu.create error: 'event' is not a KeyboardEvent or MouseEvent.`);
+         throw new TypeError(
+          `TJSContextMenu.create error: 'event' is not a KeyboardEvent, MouseEvent, or PointerEvent.`);
       }
 
       const focusSource = A11yHelper.getFocusSource({ event, x, y, focusEl, debug: focusDebug });
 
       // Create the new context menu with the last click x / y point.
       this.#contextMenu = new TJSContextMenuImpl({
-         target: document.body,
+         target: activeWindow.document.body,
          intro: true,
          props: {
             id,
@@ -88,7 +106,8 @@ export class TJSContextMenu
             keyCode,
             styles,
             transitionOptions: { duration, easing },
-            zIndex
+            zIndex,
+            activeWindow
          }
       });
 

@@ -83,6 +83,7 @@
 
    import {
       createEventDispatcher,
+      onDestroy,
       onMount }                     from '#svelte';
 
    import { current_component }     from '#svelte/internal';
@@ -122,6 +123,11 @@
    /** @type {{ duration: number, easing: Function }} */
    export let transitionOptions = void 0;
 
+   /**
+    * @type {Window} The active window the context menu is displaying inside.
+    */
+   export let activeWindow = globalThis;
+
    $: styles = isObject(menu) && isObject(menu.styles) ? menu.styles :
     isObject(styles) ? styles : void 0;
 
@@ -149,8 +155,25 @@
 
    // ----------------------------------------------------------------------------------------------------------------
 
+   // Event bindings
+   // Bind to `document.body` to receive pointer down & scroll wheel events to close the context menu.
+   // Bind to 'window' to close context menu when browser window is blurred.
+
+   onDestroy(() =>
+   {
+      // To support cases when the active window may be a popped out browser register directly.
+      activeWindow.document.body.removeEventListener('pointerdown', onClose);
+      activeWindow.document.body.removeEventListener('wheel', onCloseWheel);
+      activeWindow.removeEventListener('blur', onWindowBlur);
+   });
+
    onMount(() =>
    {
+      // To support cases when the active window may be a popped out browser unregister directly.
+      activeWindow.document.body.addEventListener('pointerdown', onClose);
+      activeWindow.document.body.addEventListener('wheel', onCloseWheel);
+      activeWindow.addEventListener('blur', onWindowBlur);
+
       const keyboardFocus = focusSource?.source === 'keyboard';
 
       // If the focus options designate that the source of the context menu came from the keyboard then focus the first
@@ -188,14 +211,14 @@
     */
    function animate(node)
    {
-      const expandUp = y + node.clientHeight > document.body.clientHeight
-      const expandLeft = x + node.clientWidth > document.body.clientWidth
+      const expandUp = y + node.clientHeight > activeWindow.document.body.clientHeight
+      const expandLeft = x + node.clientWidth > activeWindow.document.body.clientWidth
 
       node.style.top = expandUp ? null : `${y}px`;
-      node.style.bottom = expandUp ? `${document.body.clientHeight - y}px` : null;
+      node.style.bottom = expandUp ? `${activeWindow.document.body.clientHeight - y}px` : null;
 
       node.style.left = expandLeft ? null : `${x}px`;
-      node.style.right = expandLeft ? `${document.body.clientWidth - x}px` : null;
+      node.style.right = expandLeft ? `${activeWindow.document.body.clientWidth - x}px` : null;
 
       return slideFade(node, transitionOptions);
    }
@@ -253,6 +276,16 @@
    }
 
    /**
+    * Provides an explicit function for direct event registration.
+    *
+    * @param {WheelEvent}  event -
+    */
+   function onCloseWheel(event)
+   {
+      onClose(event, true);
+   }
+
+   /**
     * Handle key commands for closing the menu ('Esc') and reverse focus cycling via 'Shift-Tab'. Also stop propagation
     * for the key code assigned for menu item selection ('Enter').
     *
@@ -284,7 +317,8 @@
 
                // Only cycle focus to the last keyboard focusable app element if `elementRoot` or first focusable
                // element is the active element.
-               if (menuEl === document.activeElement || firstFocusEl === document.activeElement)
+               if (menuEl === activeWindow.document.activeElement ||
+                firstFocusEl === activeWindow.document.activeElement)
                {
                   if (lastFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
 
@@ -379,12 +413,6 @@
       }
    }
 </script>
-
-<!-- bind to `document.body` to receive pointer down & scroll wheel events to close the context menu. -->
-<svelte:body on:pointerdown={onClose} on:wheel={(event) => onClose(event, true)}/>
-
-<!-- bind to 'window' to close context menu when browser window is blurred. -->
-<svelte:window on:blur={onWindowBlur}/>
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <nav id={id}

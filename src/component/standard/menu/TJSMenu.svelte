@@ -224,6 +224,10 @@
 
    // ----------------------------------------------------------------------------------------------------------------
 
+   // Event bindings
+   // Bind to `document.body` to receive pointer down & scroll wheel events to close the context menu.
+   // Bind to 'window' to close context menu when browser window is blurred.
+
    onDestroy(() =>
    {
       // To support cases when the active window may be a popped out browser register directly.
@@ -239,7 +243,7 @@
       activeWindow.document.body.addEventListener('wheel', onClose);
       activeWindow.addEventListener('blur', onWindowBlur);
 
-      const activeEl = document.activeElement;
+      const activeEl = activeWindow.document.activeElement;
       const parentEl = menuEl.parentElement;
 
       // Determine if the parent element to the menu contains the active element and that it is explicitly focused
@@ -410,7 +414,8 @@
 
                // Only cycle focus to the last keyboard focusable app element if `elementRoot` or first focusable
                // element is the active element.
-               if (menuEl === document.activeElement || firstFocusEl === document.activeElement)
+               if (menuEl === activeWindow.document.activeElement ||
+                firstFocusEl === activeWindow.document.activeElement)
                {
                   if (lastFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
 
