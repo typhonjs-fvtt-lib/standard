@@ -12,6 +12,8 @@
 
    import { EyeDropper }        from '../model/EyeDropper.js';
 
+   const activeWindow = getContext('#activeWindow');
+
    const internalState = getContext('#tjs-color-picker-state');
    const buttonState = internalState.buttonState;
 
@@ -21,6 +23,9 @@
 
    const { currentColorString } = internalState.colorState.stores;
 
+   // Reconfigure the eye dropper button when the active window changes.
+   $: eyeDropperButton = EyeDropper.buttonData(internalState.colorState, $activeWindow);
+
    /**
     * Copy current color string to clipboard.
     *
@@ -28,7 +33,7 @@
     */
    function onPress()
    {
-      ClipboardAccess.writeText($currentColorString);
+      ClipboardAccess.writeText($currentColorString, $activeWindow);
    }
 </script>
 
@@ -40,7 +45,7 @@
     />
 
     {#if $hasEyeDropper}
-        <TJSIconButton button={EyeDropper.buttonData(internalState.colorState)} efx={ripple({ keyCode: 'Space' })} />
+        <TJSIconButton button={eyeDropperButton} efx={ripple({ keyCode: 'Space' })} />
     {/if}
 
     {#if $hasAddons}

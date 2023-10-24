@@ -19,9 +19,11 @@ export class EyeDropper
     *
     * @param {{ setColor: Function }} colorState - Provides a callback function setting any user selected color.
     *
+    * @param {Window} activeWindow - The current active window.
+    *
     * @returns {{onClick: ((function(): Promise<void>)|*), icon: string}} TJSIconButton data object.
     */
-   static buttonData(colorState)
+   static buttonData(colorState, activeWindow)
    {
       return {
          icon: 'fas fa-eye-dropper',
@@ -30,7 +32,7 @@ export class EyeDropper
          {
             try
             {
-               const eyeDropper = new globalThis.EyeDropper();
+               const eyeDropper = new activeWindow.EyeDropper();
 
                const colorSelectionResult = await eyeDropper.open();
 
