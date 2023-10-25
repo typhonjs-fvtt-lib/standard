@@ -99,6 +99,8 @@
     *
     * @property {boolean}   [enrichContent=true] When set to false content won't be enriched by `TextEditor.enrichHTML`.
     *
+    * @property {EnrichmentOptions} [enrichOptions] Additional `TextEditor.enrichHTML` options.
+    *
     * @property {string}    [fieldName] A field name to load and save to / from associated document. IE `a.b.c`.
     *
     * @property {'all'|'end'|'start'}   [initialSelection='start'] Initial selection range; 'all', 'end' or 'start'.
@@ -131,6 +133,9 @@
    import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
 
    import { CEImpl }        from './CEImpl.js';
+   import {
+      isObject
+   } from "../../../../../../../../../../../win10-64/programs/games/FoundryVTT/v10/data/Data/modules/typhonjs/_dist/util/object/index.js";
 
    /** @type {string} */
    export let content = '';
@@ -179,7 +184,7 @@
     */
    $:
    {
-      editable = typeof options.editable === 'boolean' ? options.editable : true;
+      editable = typeof options?.editable === 'boolean' ? options.editable : true;
       if (!editable) { destroyEditor(); }
    }
 
@@ -187,19 +192,19 @@
     * When `options.editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
     */
    $: clickToEdit = !editorActive && editable &&
-       (typeof options.clickToEdit === 'boolean' ? options.clickToEdit : false);
+       (typeof options?.clickToEdit === 'boolean' ? options.clickToEdit : false);
 
    /**
     * When `options.button` & `options.editable` is true and the editor is not active and `clickToEdit` is false
     * enable the edit button.
     */
-   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
+   $: editorButton = !editorActive && editable && (typeof options?.button === 'boolean' ? options.button : true) &&
        !clickToEdit;
 
    /**
     * Allows another KeyboardEvent.code to be used to activate the editor.
     */
-   $: keyCode = typeof options.keyCode === 'string' ? options.keyCode : 'Enter';
+   $: keyCode = typeof options?.keyCode === 'string' ? options.keyCode : 'Enter';
 
    /**
     * Updates maxCharacterLength; this does not reactively alter content or the active editor content.
@@ -207,20 +212,20 @@
     * TODO: It would be nice to provide reactive updates to content when maxCharacterLength changes, but that is
     * problematic w/ mixed text & HTML content without a lot of potential work.
     */
-   $: maxCharacterLength = Number.isInteger(options.maxCharacterLength) && options.maxCharacterLength >= 0 ?
+   $: maxCharacterLength = Number.isInteger(options?.maxCharacterLength) && options?.maxCharacterLength >= 0 ?
        options.maxCharacterLength : void 0;
 
    /**
     * Respond to changes in `options.document`
     */
-   $: if (options.document !== void 0)
+   $: if (options?.document !== void 0)
    {
       if (!(options.document instanceof globalThis.foundry.abstract.Document))
       {
          throw new TypeError(`TJSContentEdit error: 'options.document' is not a Foundry document.`);
       }
 
-      if (typeof options.fieldName !== 'string')
+      if (typeof options?.fieldName !== 'string')
       {
          throw new TypeError(
           `TJSContentEdit error: 'options.document' is defined, but 'options.fieldName' is not a string.`);
@@ -253,11 +258,12 @@
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 ? globalThis.foundry.utils.getProperty($doc, options.fieldName) :
-       typeof content === 'string' ? content : '';
+      content = $doc !== void 0 && typeof options?.fieldName === 'string' ?
+       globalThis.foundry.utils.getProperty($doc, options.fieldName) :
+        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
-      onContentChanged(content, typeof options.enrichContent === 'boolean' ? options.enrichContent : true);
+      onContentChanged(content, typeof options?.enrichContent === 'boolean' ? options.enrichContent : true);
    }
 
    /**
@@ -315,7 +321,7 @@
       await tick();
 
       // Set the initial selection; 'all', 'end', 'start'.
-      CEImpl.setInitialSelection(editorEl, options.initialSelection, 'start')
+      CEImpl.setInitialSelection(editorEl, options?.initialSelection, 'start')
 
       editorEl.focus();
 
@@ -330,7 +336,7 @@
     */
    function onBlur(event)
    {
-      if (typeof options.saveOnBlur === 'boolean' && !options.saveOnBlur)
+      if (typeof options?.saveOnBlur === 'boolean' && !options.saveOnBlur)
       {
          if (editorActive) { destroyEditor(true); }
 
@@ -342,10 +348,8 @@
 
    /**
     * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
-    *
-    * @param {MouseEvent}   event -
     */
-   function onClick(event)
+   function onClick()
    {
       if (!editorActive && clickToEdit) { initEditor(); }
    }
@@ -366,7 +370,22 @@
       {
          if (enrichContent)
          {
-            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: globalThis.game.user.isGM });
+            // Determine if the document is owned by current user falling back to false if there is no document
+            // assigned.
+            const isOwner = $doc?.isOwner ?? false;
+
+            // Use any current associated document as the relative location for UUID generation.
+            const relativeTo = $doc ?? void 0;
+
+            // Combine any external EnrichmentOptions, but always set `async: true`.
+            const enrichOptions = isObject(options?.enrichOptions) ? {
+               secrets: globalThis.game.user.isGM || isOwner,
+               relativeTo,
+               ...options.enrichOptions,
+               async: true
+            } : { async: true, relativeTo, secrets: globalThis.game.user.isGM || isOwner};
+
+            enrichedContent = await TextEditor.enrichHTML(content, enrichOptions);
          }
          else
          {
@@ -388,7 +407,7 @@
     */
    function onDocumentDeleted(document)
    {
-      options.document = void 0;
+      if (isObject(options)) { options.document = void 0; }
 
       destroyEditor();
 
@@ -407,8 +426,8 @@
    {
       try
       {
-         const linkOptions = options.document instanceof globalThis.foundry.abstract.Document ?
-          { relative: options.document } : {};
+         const linkOptions = options?.document instanceof globalThis.foundry.abstract.Document ?
+          { relativeTo: options.document } : {};
 
          const link = await TextEditor.getContentLink(JSON.parse(event.dataTransfer.getData('text/plain')),
           linkOptions);
@@ -558,7 +577,7 @@
             }
 
             // Save to document if available
-            if ($doc && options.fieldName)
+            if ($doc && typeof options?.fieldName === 'string')
             {
                $doc.update({ [options.fieldName]: data });
             }
@@ -577,25 +596,27 @@
 
 {#if editorActive}
     <div bind:this={editorEl}
-         class="editor tjs-editor editor-active {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
+         class="editor tjs-editor editor-active {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
          contenteditable=true
-         use:applyStyles={options.styles}
+         use:applyStyles={options?.styles}
          on:blur={onBlur}
          on:drop|preventDefault|stopPropagation={onDrop}
          on:keydown={onKeydownActive}
          on:paste|preventDefault={onPaste}
+         on:pointerdown|stopPropagation
          role=textbox
          tabindex=0>
         {@html content}
     </div>
 {:else}
     <div bind:this={editorEl}
-         class="editor tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
+         class="editor tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
          class:click-to-edit={clickToEdit}
          on:click={onClick}
          on:keydown={onKeydownInactive}
          on:keyup={onKeyupInactive}
-         use:applyStyles={options.styles}
+         on:pointerdown|stopPropagation
+         use:applyStyles={options?.styles}
          role=textbox
          tabindex=0>
         {@html enrichedContent}

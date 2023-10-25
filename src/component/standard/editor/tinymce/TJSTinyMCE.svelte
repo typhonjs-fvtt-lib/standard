@@ -123,6 +123,8 @@
     *
     * @property {boolean}   [enrichContent=true] When set to false content won't be enriched by `TextEditor.enrichHTML`.
     *
+    * @property {EnrichmentOptions} [enrichOptions] Additional `TextEditor.enrichHTML` options.
+    *
     * @property {string}    [fieldName] A field name to load and save to / from associated document. IE `a.b.c`.
     *
     * @property {Object<FontFamilyDefinition>}    [fonts] An additional object defining module / custom fonts to load
@@ -166,6 +168,7 @@
 
    import { applyStyles }   from '#runtime/svelte/action/dom';
    import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
+   import { isObject }      from '#runtime/util/object';
 
    import { FontManager }   from '#standard/fvtt';
 
@@ -255,7 +258,7 @@
     */
    $:
    {
-      editable = typeof options.editable === 'boolean' ? options.editable : true;
+      editable = typeof options?.editable === 'boolean' ? options.editable : true;
       if (!editable) { destroyEditor(); }
    }
 
@@ -263,19 +266,19 @@
     * When `options.editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
     */
    $: clickToEdit = !editorActive && editable &&
-       (typeof options.clickToEdit === 'boolean' ? options.clickToEdit : false);
+       (typeof options?.clickToEdit === 'boolean' ? options.clickToEdit : false);
 
    /**
     * When `options.button` & `options.editable` is true and the editor is not active and `clickToEdit` is false
     * enable the edit button.
     */
-   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
+   $: editorButton = !editorActive && editable && (typeof options?.button === 'boolean' ? options.button : true) &&
        !clickToEdit;
 
    /**
     * Allows another KeyboardEvent.code to be used to activate the editor.
     */
-   $: keyCode = typeof options.keyCode === 'string' ? options.keyCode : 'Enter';
+   $: keyCode = typeof options?.keyCode === 'string' ? options.keyCode : 'Enter';
 
    /**
     * Updates maxCharacterLength; this does not reactively alter content or the active editor content.
@@ -283,14 +286,14 @@
     * TODO: It would be nice to provide reactive updates to content when maxCharacterLength changes, but that is
     * problematic w/ mixed text & HTML content without a lot of potential work.
     */
-   $: maxCharacterLength = Number.isInteger(options.maxCharacterLength) && options.maxCharacterLength >= 0 ?
+   $: maxCharacterLength = Number.isInteger(options?.maxCharacterLength) && options?.maxCharacterLength >= 0 ?
        options.maxCharacterLength : void 0;
 
    /**
     * Loads any additional fonts specified. Note that FontManager.loadFonts verifies that a font is already loaded,
     * so it is OK to load additional fonts per component.
     */
-   $: if (options.fonts)
+   $: if (options?.fonts)
    {
       FontManager.loadFonts({ fonts: options.fonts });
    }
@@ -298,14 +301,14 @@
    /**
     * Respond to changes in `options.document`
     */
-   $: if (options.document !== void 0)
+   $: if (options?.document !== void 0)
    {
       if (!(options.document instanceof globalThis.foundry.abstract.Document))
       {
          throw new TypeError(`TJSTinyMCE error: 'options.document' is not a Foundry document.`);
       }
 
-      if (typeof options.fieldName !== 'string')
+      if (typeof options?.fieldName !== 'string')
       {
          throw new TypeError(
           `TJSTinyMCE error: 'options.document' is defined, but 'options.fieldName' is not a string.`);
@@ -338,11 +341,12 @@
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 ? globalThis.foundry.utils.getProperty($doc, options.fieldName) :
-       typeof content === 'string' ? content : '';
+      content = $doc !== void 0 && typeof options?.fieldName === 'string' ?
+       globalThis.foundry.utils.getProperty($doc, options.fieldName) :
+        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
-      onContentChanged(content, typeof options.enrichContent === 'boolean' ? options.enrichContent : true);
+      onContentChanged(content, typeof options?.enrichContent === 'boolean' ? options?.enrichContent : true);
    }
 
    /**
@@ -353,7 +357,7 @@
       // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
       if (editorActive)
       {
-         saveEditor({ remove: typeof options.button === 'boolean' ? options.button : true });
+         saveEditor({ remove: typeof options?.button === 'boolean' ? options.button : true });
       }
       else
       {
@@ -412,10 +416,10 @@
       // Store any existing setup function.
       const existingSetupFn = options?.mceConfig?.setup;
 
-      const { fonts, fontFormats } = MCEImpl.getFontData(options.fonts);
+      const { fonts, fontFormats } = MCEImpl.getFontData(options?.fonts);
 
       const mceConfig = {
-         ...(options.mceConfig ?? TinyMCEHelper.configStandard()),
+         ...(options?.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
          [`${MCEImpl.isV6 ? 'font_family_formats' : 'font_formats'}`]: fontFormats,
          target: editorContentEl,
@@ -463,7 +467,7 @@
       editor = await TextEditor.create(mceConfig, content);
 
       // Set the initial selection; 'all', 'end', 'start'.
-      MCEImpl.setInitialSelection(editor, options.initialSelection, 'start')
+      MCEImpl.setInitialSelection(editor, options?.initialSelection, 'start')
 
       /**
        * Load core fonts into TinyMCE IFrame.
@@ -488,15 +492,13 @@
     */
    function onBlur(event)
    {
-      if (editorActive && typeof options.saveOnBlur === 'boolean' && options.saveOnBlur) { saveEditor(); }
+      if (editorActive && typeof options?.saveOnBlur === 'boolean' && options?.saveOnBlur) { saveEditor(); }
    }
 
    /**
     * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
-    *
-    * @param {MouseEvent}   event -
     */
-   function onClick(event)
+   function onClick()
    {
       if (!editorActive && clickToEdit) { initEditor(); }
    }
@@ -517,7 +519,22 @@
       {
          if (enrichContent)
          {
-            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: globalThis.game.user.isGM });
+            // Determine if the document is owned by current user falling back to false if there is no document
+            // assigned.
+            const isOwner = $doc?.isOwner ?? false;
+
+            // Use any current associated document as the relative location for UUID generation.
+            const relativeTo = $doc ?? void 0;
+
+            // Combine any external EnrichmentOptions, but always set `async: true`.
+            const enrichOptions = isObject(options?.enrichOptions) ? {
+               secrets: globalThis.game.user.isGM || isOwner,
+               relativeTo,
+               ...options.enrichOptions,
+               async: true
+            } : { async: true, relativeTo, secrets: globalThis.game.user.isGM || isOwner};
+
+            enrichedContent = await TextEditor.enrichHTML(content, enrichOptions);
          }
          else
          {
@@ -539,7 +556,7 @@
     */
    function onDocumentDeleted(document)
    {
-      options.document = void 0;
+      if (isObject(options)) { options.document = void 0; }
 
       destroyEditor();
 
@@ -603,7 +620,7 @@
     *
     * @param {boolean}  [opts.remove] - Removes the editor.
     */
-   function saveEditor({ remove = typeof options.button === 'boolean' ? options.button : true } = {})
+   function saveEditor({ remove = typeof options?.button === 'boolean' ? options.button : true } = {})
    {
       // Remove the editor
       if (editor)
@@ -624,7 +641,7 @@
             }
 
             // Save to document if available
-            if ($doc && options.fieldName)
+            if ($doc && typeof options?.fieldName === 'string')
             {
                $doc.update({ [options.fieldName]: data });
             }
@@ -642,13 +659,14 @@
 </script>
 
 <div bind:this={editorEl}
-     class="editor tinymce tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
+     class="editor tinymce tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
      class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
-     use:applyStyles={options.styles}
+     use:applyStyles={options?.styles}
      on:click={onClick}
      on:keydown={onKeydown}
      on:keyup={onKeyup}
+     on:pointerdown|stopPropagation
      role=textbox
      tabindex=0>
     {#if editorButton}

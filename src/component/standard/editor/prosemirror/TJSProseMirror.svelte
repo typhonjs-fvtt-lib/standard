@@ -119,6 +119,8 @@
     *
     * @property {boolean}   [enrichContent=true] When set to false content won't be enriched by `TextEditor.enrichHTML`.
     *
+    * @property {EnrichmentOptions} [enrichOptions] Additional `TextEditor.enrichHTML` options.
+    *
     * @property {string}    [fieldName] A field name to load and save to / from associated document. IE `a.b.c`.
     *
     * @property {'all'|'end'|'start'}   [initialSelection='start'] Initial selection range; 'all', 'end' or 'start'.
@@ -222,7 +224,7 @@
     */
    $:
    {
-      editable = typeof options.editable === 'boolean' ? options.editable : true;
+      editable = typeof options?.editable === 'boolean' ? options.editable : true;
       if (!editable) { destroyEditor(); }
    }
 
@@ -230,31 +232,31 @@
     * When `options.editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
     */
    $: clickToEdit = !editorActive && editable &&
-    (typeof options.clickToEdit === 'boolean' ? options.clickToEdit : false);
+    (typeof options?.clickToEdit === 'boolean' ? options.clickToEdit : false);
 
    /**
     * When `options.button` & `options.editable` is true and the editor is not active and `clickToEdit` is false
     * enable the edit button.
     */
-   $: editorButton = !editorActive && editable && (typeof options.button === 'boolean' ? options.button : true) &&
+   $: editorButton = !editorActive && editable && (typeof options?.button === 'boolean' ? options.button : true) &&
     !clickToEdit;
 
    /**
     * Allows another KeyboardEvent.code to be used to activate the editor.
     */
-   $: keyCode = typeof options.keyCode === 'string' ? options.keyCode : 'Enter';
+   $: keyCode = typeof options?.keyCode === 'string' ? options.keyCode : 'Enter';
 
    /**
     * Respond to changes in `options.document`
     */
-   $: if (options.document !== void 0)
+   $: if (options?.document !== void 0)
    {
       if (!(options.document instanceof globalThis.foundry.abstract.Document))
       {
          throw new TypeError(`TJSProseMirror error: 'options.document' is not a Foundry document.`);
       }
 
-      if (typeof options.fieldName !== 'string')
+      if (typeof options?.fieldName !== 'string')
       {
          throw new TypeError(
           `TJSProseMirror error: 'options.document' is defined, but 'options.fieldName' is not a string.`);
@@ -287,11 +289,12 @@
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 ? globalThis.foundry.utils.getProperty($doc, options.fieldName) :
-       typeof content === 'string' ? content : '';
+      content = $doc !== void 0 && typeof options?.fieldName === 'string' ?
+       globalThis.foundry.utils.getProperty($doc, options.fieldName) :
+        typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
-      onContentChanged(content, typeof options.enrichContent === 'boolean' ? options.enrichContent : true);
+      onContentChanged(content, typeof options?.enrichContent === 'boolean' ? options.enrichContent : true);
    }
 
    onDestroy(() =>
@@ -299,7 +302,7 @@
       // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
       if (editorActive)
       {
-         saveEditor({ remove: typeof options.button === 'boolean' ? options.button : true });
+         saveEditor({ remove: typeof options?.button === 'boolean' ? options.button : true });
       }
       else
       {
@@ -350,7 +353,7 @@
    async function initEditor()
    {
       // If editor button is enabled then remove the menu / editing interface on save.
-      const remove = typeof options.button === 'boolean' ? options.button : true;
+      const remove = typeof options?.button === 'boolean' ? options.button : true;
 
       const editorOptions = {
          ...options,
@@ -370,7 +373,7 @@
 
             tjsPasteRawUUID: Plugins.TJSPasteUUID.build(),
 
-            ...(isObject(options.plugins) ? options.plugins : {})
+            ...(isObject(options?.plugins) ? options.plugins : {})
          }
       };
 
@@ -394,10 +397,8 @@
 
    /**
     * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
-    *
-    * @param {MouseEvent}   event -
     */
-   function onClick(event)
+   function onClick()
    {
       if (!editorActive && clickToEdit) { initEditor(); }
    }
@@ -418,7 +419,22 @@
       {
          if (enrichContent)
          {
-            enrichedContent = await TextEditor.enrichHTML(content, { async: true, secrets: globalThis.game.user.isGM });
+            // Determine if the document is owned by current user falling back to false if there is no document
+            // assigned.
+            const isOwner = $doc?.isOwner ?? false;
+
+            // Use any current associated document as the relative location for UUID generation.
+            const relativeTo = $doc ?? void 0;
+
+            // Combine any external EnrichmentOptions, but always set `async: true`.
+            const enrichOptions = isObject(options?.enrichOptions) ? {
+               secrets: globalThis.game.user.isGM || isOwner,
+               relativeTo,
+               ...options.enrichOptions,
+               async: true
+            } : { async: true, relativeTo, secrets: globalThis.game.user.isGM || isOwner};
+
+            enrichedContent = await TextEditor.enrichHTML(content, enrichOptions);
          }
          else
          {
@@ -440,7 +456,7 @@
     */
    function onDocumentDeleted(document)
    {
-      options.document = void 0;
+      if (isObject(options)) { options.document = void 0; }
 
       destroyEditor();
 
@@ -521,7 +537,7 @@
             }
 
             // Save to document if available
-            if ($doc && options.fieldName)
+            if ($doc && typeof options?.fieldName === 'string')
             {
                $doc.update({ [options.fieldName]: data })
             }
@@ -540,13 +556,14 @@
 </script>
 
 <div bind:this={editorEl}
-     class="editor prosemirror tjs-editor {Array.isArray(options.classes) ? options.classes.join(' ') : ''}"
+     class="editor prosemirror tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
      class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
-     use:applyStyles={options.styles}
+     use:applyStyles={options?.styles}
      on:click={onClick}
      on:keydown={onKeydown}
      on:keyup={onKeyup}
+     on:pointerdown|stopPropagation
      role=textbox
      tabindex=0>
     {#if editorButton}
