@@ -28,6 +28,26 @@ export class MCEImpl
     */
    static #s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
 
+   /**
+    * Provides a slightly roundabout way to add random IDs to secret section blocks that don't presently have an ID
+    * assigned. This is done on saving the content such that it interacts with the Foundry DocumentSheet and the
+    * revealSecrets action.
+    *
+    * @param {string}   content - Editor content to modify.
+    */
+   static addSecretIDs(content)
+   {
+      const container = document.createElement('div');
+      container.innerHTML = content;
+
+      // Find all elements that are a secret section that don't have an ID.
+      const elements = container.querySelectorAll('section.secret:not([id])');
+
+      for (const element of elements) { element.id = `secret-${foundry.utils.randomID()}`; }
+
+      return container.innerHTML;
+   }
+
    static beforeInputHandler(editor, event, options, maxCharacterLength)
    {
       // Early out as `maxCharacterLength` is not defined and `wordcount` MCE plugin not installed.

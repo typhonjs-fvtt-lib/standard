@@ -29,7 +29,7 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
-    * @param {boolean}  [opts.tjsStyles=false] - Includes extensive "TJS" styling options.
+    * @param {boolean}  [opts.tjsStyles=false] - Includes extensive TJS styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
@@ -97,7 +97,7 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.tjsOembed=false] - Includes custom oEmbed plugin to include video from YouTube / Vimeo.
     *
-    * @param {boolean}  [opts.tjsStyles=false] - Includes extensive "TJS" styling options.
+    * @param {boolean}  [opts.tjsStyles=false] - Includes extensive TJS styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
@@ -170,7 +170,7 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.tjsOembed=true] - Includes custom oEmbed plugin to include video from YouTube / Vimeo.
     *
-    * @param {boolean}  [opts.tjsStyles=true] - Includes extensive "TJS" styling options.
+    * @param {boolean}  [opts.tjsStyles=true] - Includes extensive TJS styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
     *
@@ -417,9 +417,9 @@ export class TinyMCEHelper
     * @type {object}
     */
    static #s_CUSTOM_SECRET_FORMAT_ITEM = {
-      title: "Secret",
-      block: "section",
-      classes: "secret",
+      title: 'Secret',
+      block: 'section',
+      classes: 'secret',
       wrapper: true
    };
 

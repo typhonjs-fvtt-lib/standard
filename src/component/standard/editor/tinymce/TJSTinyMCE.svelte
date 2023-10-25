@@ -625,7 +625,8 @@
       // Remove the editor
       if (editor)
       {
-         let data = editor.getContent();
+         // Retrieve editor content and add IDs to secret blocks.
+         let data = MCEImpl.addSecretIDs(editor.getContent());
 
          const saving = data !== content;
 
