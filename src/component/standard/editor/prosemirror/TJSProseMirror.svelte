@@ -165,14 +165,16 @@
       onDestroy,
       onMount,
       tick
-   }                        from '#svelte';
+   }                       from '#svelte';
 
-   import { applyStyles }   from '#runtime/svelte/action/dom';
-   import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
-   import { isObject }      from '#runtime/util/object';
+   import { applyStyles }  from '#runtime/svelte/action/dom';
+   import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isObject }     from '#runtime/util/object';
 
-   import { PMImpl }        from '#standard/prosemirror';
+   import { PMImpl }       from '#standard/prosemirror';
    import * as Plugins  	from '#standard/prosemirror/plugins';
+
+   import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
 
    /** @type {string} */
    export let content = '';
@@ -191,6 +193,9 @@
 
    // Provides reactive updates for any associated Foundry document.
    const doc = new TJSDocument({ delete: onDocumentDeleted });
+
+   // Create the action to mount the secret reveal button when a Foundry document is configured.
+   const mountRevealSecretButtons = createMountRevealSecretButtons(doc, options);
 
    /** @type {boolean} */
    let clickToEdit;
@@ -555,11 +560,13 @@
    }
 </script>
 
+<!-- Passing enrichedContent to the mount secret buttons action causes it to run when the content changes. -->
 <div bind:this={editorEl}
      class="editor prosemirror tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
      class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
      use:applyStyles={options?.styles}
+     use:mountRevealSecretButtons={{ mountRevealButtons: !editorActive, enrichedContent }}
      on:click={onClick}
      on:keydown={onKeydown}
      on:keyup={onKeyup}

@@ -175,6 +175,8 @@
    import { TinyMCEHelper } from './TinyMCEHelper.js';
    import { MCEImpl }       from './MCEImpl.js';
 
+   import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
+
    /** @type {string} */
    export let content = '';
 
@@ -194,6 +196,9 @@
 
    // Provides reactive updates for any associated Foundry document.
    const doc = new TJSDocument({ delete: onDocumentDeleted });
+
+   // Create the action to mount the secret reveal button when a Foundry document is configured.
+   const mountRevealSecretButtons = createMountRevealSecretButtons(doc, options);
 
    /** @type {boolean} */
    let clickToEdit;
@@ -487,10 +492,8 @@
 
    /**
     * Potentially handles saving editor on content blur if `options.saveOnBlur` is true.
-    *
-    * @param {FocusEvent} event -
     */
-   function onBlur(event)
+   function onBlur()
    {
       if (editorActive && typeof options?.saveOnBlur === 'boolean' && options?.saveOnBlur) { saveEditor(); }
    }
@@ -674,7 +677,9 @@
         <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
         <a class=editor-edit on:click={() => initEditor()} role=button tabindex=-1><i class="fas fa-edit"></i></a>
     {/if}
+    <!-- Passing enrichedContent to the mount secret buttons action causes it to run when the content changes. -->
     <div bind:this={editorContentEl}
+         use:mountRevealSecretButtons={{ mountRevealButtons: !editorActive, enrichedContent }}
          class="editor-content tjs-editor-content">
         {#if !editorActive}
             {@html enrichedContent}

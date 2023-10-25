@@ -127,15 +127,15 @@
       createEventDispatcher,
       onDestroy,
       tick
-   }                        from '#svelte';
+   }                       from '#svelte';
 
-   import { applyStyles }   from '#runtime/svelte/action/dom';
-   import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
+   import { applyStyles }  from '#runtime/svelte/action/dom';
+   import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isObject }     from '#runtime/util/object';
 
-   import { CEImpl }        from './CEImpl.js';
-   import {
-      isObject
-   } from "../../../../../../../../../../../win10-64/programs/games/FoundryVTT/v10/data/Data/modules/typhonjs/_dist/util/object/index.js";
+   import { CEImpl }       from './CEImpl.js';
+
+   import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
 
    /** @type {string} */
    export let content = '';
@@ -154,6 +154,9 @@
 
    // Provides reactive updates for any associated Foundry document.
    const doc = new TJSDocument({ delete: onDocumentDeleted });
+
+   // Create the action to mount the secret reveal button when a Foundry document is configured.
+   const mountRevealSecretButtons = createMountRevealSecretButtons(doc, options);
 
    /** @type {boolean} */
    let clickToEdit;
@@ -593,39 +596,42 @@
       }
    }
 </script>
-
-{#if editorActive}
-    <div bind:this={editorEl}
-         class="editor tjs-editor editor-active {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
-         contenteditable=true
-         use:applyStyles={options?.styles}
-         on:blur={onBlur}
-         on:drop|preventDefault|stopPropagation={onDrop}
-         on:keydown={onKeydownActive}
-         on:paste|preventDefault={onPaste}
-         on:pointerdown|stopPropagation
-         role=textbox
-         tabindex=0>
-        {@html content}
-    </div>
-{:else}
-    <div bind:this={editorEl}
-         class="editor tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
-         class:click-to-edit={clickToEdit}
-         on:click={onClick}
-         on:keydown={onKeydownInactive}
-         on:keyup={onKeyupInactive}
-         on:pointerdown|stopPropagation
-         use:applyStyles={options?.styles}
-         role=textbox
-         tabindex=0>
-        {@html enrichedContent}
-        {#if editorButton}
-            <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
-            <a class=editor-edit on:click={() => initEditor()} role=button tabindex=-1><i class="fas fa-edit"></i></a>
-        {/if}
-    </div>
-{/if}
+<!-- Passing enrichedContent to the mount secret buttons action causes it to run when the content changes. -->
+<div class=tjs-editor-wrapper
+     use:mountRevealSecretButtons={{ mountRevealButtons: !editorActive, enrichedContent }}>
+   {#if editorActive}
+       <div bind:this={editorEl}
+            class="editor tjs-editor editor-active {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
+            contenteditable=true
+            use:applyStyles={options?.styles}
+            on:blur={onBlur}
+            on:drop|preventDefault|stopPropagation={onDrop}
+            on:keydown={onKeydownActive}
+            on:paste|preventDefault={onPaste}
+            on:pointerdown|stopPropagation
+            role=textbox
+            tabindex=0>
+           {@html content}
+       </div>
+   {:else}
+       <div bind:this={editorEl}
+            class="editor tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
+            class:click-to-edit={clickToEdit}
+            use:applyStyles={options?.styles}
+            on:click={onClick}
+            on:keydown={onKeydownInactive}
+            on:keyup={onKeyupInactive}
+            on:pointerdown|stopPropagation
+            role=textbox
+            tabindex=0>
+           {@html enrichedContent}
+           {#if editorButton}
+               <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
+               <a class=editor-edit on:click={() => initEditor()} role=button tabindex=-1><i class="fas fa-edit"></i></a>
+           {/if}
+       </div>
+   {/if}
+</div>
 
 <style>
     .tjs-editor {

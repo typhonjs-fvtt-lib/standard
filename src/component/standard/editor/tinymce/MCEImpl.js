@@ -1,4 +1,6 @@
-import { striptags } from '#runtime/util/browser';
+import {
+   processHTML,
+   striptags }       from '#runtime/util/browser';
 import { isObject }  from '#runtime/util/object';
 
 import {
@@ -29,23 +31,31 @@ export class MCEImpl
    static #s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
 
    /**
-    * Provides a slightly roundabout way to add random IDs to secret section blocks that don't presently have an ID
+    * Modifies editor content HTML to add random IDs to secret section blocks that don't presently have an ID
     * assigned. This is done on saving the content such that it interacts with the Foundry DocumentSheet and the
-    * revealSecrets action.
+    * `mountRevealSecretsButton` action. TinyMCEs `style_formats` does not have a way to set an ID on the containing
+    * block.
     *
-    * @param {string}   content - Editor content to modify.
+    * @param {string}   html - Editor content to modify.
     */
-   static addSecretIDs(content)
+   static addSecretIDs(html)
    {
-      const container = document.createElement('div');
-      container.innerHTML = content;
+      return processHTML({
+         html,
+         process: (element) => element.id = `secret-${foundry.utils.randomID()}`,
+         selector: 'section.secret:not([id])',
+         queryAll: true
+      })
 
-      // Find all elements that are a secret section that don't have an ID.
-      const elements = container.querySelectorAll('section.secret:not([id])');
-
-      for (const element of elements) { element.id = `secret-${foundry.utils.randomID()}`; }
-
-      return container.innerHTML;
+      // const container = document.createElement('div');
+      // container.innerHTML = content;
+      //
+      // // Find all elements that are a secret section that don't have an ID.
+      // const elements = container.querySelectorAll('section.secret:not([id])');
+      //
+      // for (const element of elements) { element.id = `secret-${foundry.utils.randomID()}`; }
+      //
+      // return container.innerHTML;
    }
 
    static beforeInputHandler(editor, event, options, maxCharacterLength)
