@@ -668,6 +668,15 @@
         margin-top: 0;
     }
 
+    /* Do add an initial margin top to first paragraph element in `section.secret`. */
+    .tjs-editor .editor-container .editor-content :global(section.secret p:first-of-type) {
+        margin-top: 0.5em;
+    }
+
+    .tjs-editor .editor-enriched :global(section.secret p:first-of-type) {
+        margin-top: 0.5em;
+    }
+
     /* Provides global styles scoped to `.tjs-editor` for dynamic `.editor-menu` element */
     .tjs-editor :global(.editor-menu) {
         background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));

@@ -279,7 +279,7 @@ export class MCEImpl
          cssBodyInlineStyles[entry.property] = currentPropertyValue !== '' ? currentPropertyValue : entry.default;
       }
 
-      return `body { ${Object.entries(cssBodyInlineStyles).map(
-       (array) => `${array[0]}: ${array[1]};`).join(';')} } p:first-of-type { margin-top: 0; }`;
+      return `body { ${Object.entries(cssBodyInlineStyles).map((array) => `${array[0]}: ${array[1]};`).join(';')
+       } } p:first-of-type { margin-top: 0; } section.secret p:first-of-type { margin-top: 0.5em; }`;
    }
 }

@@ -700,4 +700,9 @@
     .tjs-editor :global(p:first-of-type) {
         margin-top: 0;
     }
+
+    /* Do add an initial margin top to first paragraph element in `section.secret`. */
+    .tjs-editor :global(section.secret p:first-of-type) {
+        margin-top: 0.5em;
+    }
 </style>
