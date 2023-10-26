@@ -166,6 +166,8 @@
       tick
    }                        from '#svelte';
 
+   import { writable }      from '#svelte/store';
+
    import { applyStyles }   from '#runtime/svelte/action/dom';
    import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
    import { isObject }      from '#runtime/util/object';
@@ -190,7 +192,9 @@
     */
    export let options = {};
 
-   const positionStore = getContext('#external').application.position;
+   const { application } = getContext('#external');
+
+   const applicationPosition = application?.position ?? writable(false);
 
    const dispatch = createEventDispatcher();
 
@@ -235,7 +239,7 @@
     * that has an associated auxiliary control when the editor is open and the app position changes; this keeps the MCE
     * toolbar state correct. Then clear out any remaining children of the MCE auxiliary div.
     */
-   $: if (editorActive && editorEl && $positionStore)
+   $: if (editorActive && editorEl && $applicationPosition)
    {
       // Auxiliary aria selector is different for TinyMCE v5 & v6.
       const ariaSelector = MCEImpl.isV6 ? `.tox-tbtn[aria-controls^='aria-controls_']` :
@@ -496,6 +500,9 @@
       }
 
       editor.on('blur', (e) => onBlur(e));
+
+      // When the editor IFrame is clicked bring any associated application to top.
+      editor.on('click', () => application?.bringToTop?.());
 
       dispatch('editor:start');
    }
@@ -807,6 +814,7 @@
     .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
         background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
         border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
+        flex-wrap: nowrap;
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__group) {
