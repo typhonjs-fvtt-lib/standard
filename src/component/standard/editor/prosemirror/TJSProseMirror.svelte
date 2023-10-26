@@ -164,10 +164,13 @@
 
    import {
       createEventDispatcher,
+      getContext,
       onDestroy,
       onMount,
       tick
    }                       from '#svelte';
+
+   import { writable }     from '#svelte/store';
 
    import { applyStyles }  from '#runtime/svelte/action/dom';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
@@ -191,6 +194,10 @@
     */
    export let options = {};
 
+   const { application } = getContext('#external');
+
+   const applicationActiveWindow = application?.reactive?.storeUIState?.activeWindow ?? writable(globalThis);
+
    const dispatch = createEventDispatcher();
 
    // Provides reactive updates for any associated Foundry document.
@@ -198,6 +205,9 @@
 
    // Create the action to mount the secret reveal button when a Foundry document is configured.
    const mountRevealSecretButtons = createMountRevealSecretButtons(doc, options);
+
+   /** @type {Window} */
+   let activeWindow = $applicationActiveWindow;
 
    /** @type {boolean} */
    let clickToEdit;
@@ -225,6 +235,15 @@
 
    /** @type {boolean} */
    let keyFocused = false;
+
+   /**
+    * When the active window changes the editor needs to be saved for better PM / plugin support.
+    */
+   $: if (activeWindow !== $applicationActiveWindow)
+   {
+      if (editorActive) { saveEditor(); }
+      activeWindow = $applicationActiveWindow;
+   }
 
    /**
     * Respond to changes in `options.editable`. If `options.editable` is not defined only a GM level user may edit _or_
