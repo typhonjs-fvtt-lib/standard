@@ -581,7 +581,6 @@
      on:click={onClick}
      on:keydown={onKeydown}
      on:keyup={onKeyup}
-     on:pointerdown|stopPropagation
      role=textbox
      tabindex=0>
     {#if editorButton}

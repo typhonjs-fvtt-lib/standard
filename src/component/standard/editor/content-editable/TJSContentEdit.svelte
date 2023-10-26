@@ -570,6 +570,14 @@
       event.preventDefault()
    }
 
+   function onPointerdown(event)
+   {
+      if (editorActive)
+      {
+         event.stopPropagation();
+      }
+   }
+
    /**
     * Saves the editor contents to the associated document or updates content directly.
     */
@@ -619,7 +627,7 @@
             on:drop|preventDefault|stopPropagation={onDrop}
             on:keydown={onKeydownActive}
             on:paste|preventDefault={onPaste}
-            on:pointerdown|stopPropagation
+            on:pointerdown={onPointerdown}
             role=textbox
             tabindex=0>
            {@html content}
@@ -632,7 +640,6 @@
             on:click={onClick}
             on:keydown={onKeydownInactive}
             on:keyup={onKeyupInactive}
-            on:pointerdown|stopPropagation
             role=textbox
             tabindex=0>
            {@html enrichedContent}
