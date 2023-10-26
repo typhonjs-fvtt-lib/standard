@@ -43,19 +43,8 @@ export class MCEImpl
       return processHTML({
          html,
          process: (element) => element.id = `secret-${foundry.utils.randomID()}`,
-         selector: 'section.secret:not([id])',
-         queryAll: true
-      })
-
-      // const container = document.createElement('div');
-      // container.innerHTML = content;
-      //
-      // // Find all elements that are a secret section that don't have an ID.
-      // const elements = container.querySelectorAll('section.secret:not([id])');
-      //
-      // for (const element of elements) { element.id = `secret-${foundry.utils.randomID()}`; }
-      //
-      // return container.innerHTML;
+         selector: 'section.secret:not([id])'
+      });
    }
 
    static beforeInputHandler(editor, event, options, maxCharacterLength)

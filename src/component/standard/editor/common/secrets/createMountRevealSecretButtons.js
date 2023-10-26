@@ -39,7 +39,8 @@ export function createMountRevealSecretButtons(doc, options)
             const newContent = processHTML({
                html,
                process: (element) => element.classList[`${revealed ? 'add' : 'remove'}`]('revealed'),
-               selector: `section.secret[id=${id}]`
+               selector: `section.secret[id=${id}]`,
+               firstMatchOnly: true
             });
 
             foundryDoc.update({ [options?.fieldName]: newContent });
