@@ -127,6 +127,8 @@
     *
     * @property {string}    [keyCode='Enter'] Defines the key event code to activate the editor when focused.
     *
+    * @property {Record<string, ProseMirror.Plugin>}    [plugins] Additional ProseMirror plugins to load.
+    *
     * @property {Object<string, string>}   [styles] Additional CSS property names and values to set as inline styles.
     * This is useful for dynamically overriding any built in styles and in particular setting CSS variables supported.
     */
