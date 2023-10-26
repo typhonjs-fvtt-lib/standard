@@ -514,8 +514,9 @@
 
       editor.on('blur', (e) => onBlur(e));
 
-      // When the editor IFrame is clicked bring any associated application to top.
-      editor.on('click', () => application?.bringToTop?.());
+      // When the editor IFrame is clicked bring any associated application to top. Only perform in main Foundry window.
+      // TODO: Direct Foundry API usage.
+      if (activeWindow === globalThis) { editor.on('click', () => application?.bringToTop?.()); }
 
       dispatch('editor:start');
    }
