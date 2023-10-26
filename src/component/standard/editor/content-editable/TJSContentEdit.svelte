@@ -94,8 +94,8 @@
     * `#runtime/security/client/dompurify`. Sanitizes content client side. Note: TinyMCE already does essential
     * `<script>` sanitization, so this is just an extra option that is available as an extra precaution.
     *
-    * @property {boolean}   [editable=true] Prevents editing and hides button. When set to false any active editor
-    * is cancelled.
+    * @property {boolean}   [editable] Prevents editing and hides button. When set to false any active editor
+    * is cancelled. Default: user is GM or when a document is assigned the user has ownership.
     *
     * @property {boolean}   [enrichContent=true] When set to false content won't be enriched by `TextEditor.enrichHTML`.
     *
@@ -183,22 +183,33 @@
    let maxCharacterLength;
 
    /**
-    * Respond to changes in `options.editable`.
+    * Respond to changes in `options.editable`. If `options.editable` is not defined only a GM level user may edit _or_
+    * if a Foundry document is associated any user that is the owner of the document.
     */
    $:
    {
-      editable = typeof options?.editable === 'boolean' ? options.editable : true;
+      if (typeof options?.editable === 'boolean')
+      {
+         editable = options.editable;
+      }
+      else
+      {
+         // Always editable by GM; otherwise document user ownership if defined. `$doc ?? options.document` is used
+         // due to reactive statements resolution so that the first execution always has a potential document reference.
+         editable = game.user.isGM || (($doc ?? options.document)?.isOwner ?? false);
+      }
+
       if (!editable) { destroyEditor(); }
    }
 
    /**
-    * When `options.editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
+    * When `editable` & `options.clickToEdit` is true and the editor is not active enable clickToEdit.
     */
    $: clickToEdit = !editorActive && editable &&
        (typeof options?.clickToEdit === 'boolean' ? options.clickToEdit : false);
 
    /**
-    * When `options.button` & `options.editable` is true and the editor is not active and `clickToEdit` is false
+    * When `options.button` & `editable` is true and the editor is not active and `clickToEdit` is false
     * enable the edit button.
     */
    $: editorButton = !editorActive && editable && (typeof options?.button === 'boolean' ? options.button : true) &&
@@ -240,9 +251,9 @@
          enrichedContent = '';
          content = '';
          destroyEditor();
-      }
 
-      doc.set(options.document);
+         doc.set(options.document);
+      }
    }
    else
    {
@@ -598,7 +609,7 @@
 </script>
 <!-- Passing enrichedContent to the mount secret buttons action causes it to run when the content changes. -->
 <div class=tjs-editor-wrapper
-     use:mountRevealSecretButtons={{ mountRevealButtons: !editorActive, enrichedContent }}>
+     use:mountRevealSecretButtons={{ mountRevealButtons: !editorActive && editable, enrichedContent }}>
    {#if editorActive}
        <div bind:this={editorEl}
             class="editor tjs-editor editor-active {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"

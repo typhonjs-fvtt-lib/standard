@@ -292,11 +292,7 @@ export class TinyMCEHelper
 
       if (stripStyleFormat)
       {
-         // Only add custom / secret if user is GM.
-         if (globalThis.game.user.isGM)
-         {
-            style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
-         }
+         style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
       }
       else
       {
@@ -305,11 +301,7 @@ export class TinyMCEHelper
 
          style_formats.push(...notCoreFormats);
 
-         // Only add custom / secret if user is GM.
-         if (globalThis.game.user.isGM)
-         {
-            style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
-         }
+         style_formats[customIndex].items.push(this.#s_CUSTOM_SECRET_FORMAT_ITEM);
       }
 
       return style_formats.concat(additionalStyleFormats);
