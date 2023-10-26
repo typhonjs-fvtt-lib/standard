@@ -570,12 +570,12 @@
       event.preventDefault()
    }
 
+   /**
+    * Prevents TRL apps / ApplicationShell focus management from taking focus and saving editor unintentionally.
+    */
    function onPointerdown(event)
    {
-      if (editorActive)
-      {
-         event.stopPropagation();
-      }
+      if (editorActive) { event.stopPropagation(); }
    }
 
    /**
