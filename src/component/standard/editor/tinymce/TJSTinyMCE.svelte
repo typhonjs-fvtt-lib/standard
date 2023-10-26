@@ -195,6 +195,7 @@
    const { application } = getContext('#external');
 
    const applicationPosition = application?.position ?? writable(false);
+   const applicationActiveWindow = application?.reactive?.storeUIState?.activeWindow ?? writable(globalThis);
 
    const dispatch = createEventDispatcher();
 
@@ -203,6 +204,9 @@
 
    // Create the action to mount the secret reveal button when a Foundry document is configured.
    const mountRevealSecretButtons = createMountRevealSecretButtons(doc, options);
+
+   /** @type {Window} */
+   let activeWindow = $applicationActiveWindow;
 
    /** @type {boolean} */
    let clickToEdit;
@@ -233,6 +237,15 @@
 
    /** @type {number} */
    let maxCharacterLength;
+
+   /**
+    * When the active window changes the editor needs to be saved due to the MCE IFrame.
+    */
+   $: if (activeWindow !== $applicationActiveWindow)
+   {
+      if (editorActive) { saveEditor(); }
+      activeWindow = $applicationActiveWindow;
+   }
 
    /**
     * TinyMCE doesn't properly close auxiliary dropdown menus w/ Svelte. Manually force a click on toolbar buttons
