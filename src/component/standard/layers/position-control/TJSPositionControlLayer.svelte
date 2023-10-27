@@ -1,5 +1,10 @@
 <script>
-   import { setContext }      from '#svelte';
+   import {
+      getContext,
+      onDestroy,
+      onMount,
+      setContext }            from '#svelte';
+   import { writable }        from '#svelte/store';
 
    import PositionControl     from './control/PositionControl.svelte';
    import { ControlsStore }   from './ControlsStore.js';
@@ -19,11 +24,44 @@
    setContext('#pclControls', controls);
    setContext('#pclSelectedDragAPI', selectedDragAPI);
 
+   const { application } = getContext('#external');
+
+   const applicationActiveWindow = application?.reactive?.storeUIState?.activeWindow ?? writable(globalThis);
+
+   /** @type {Window} */
+   let activeWindow = $applicationActiveWindow;
+
+   let ctrlKey = false;
+
    $: controls.boundingRect = boundingRect;
    $: controls.validate = validate
    $: controls.updateComponents(components);
 
-   let ctrlKey = false;
+   /**
+    * When the active window changes register key event listeners to new window.
+    */
+   $: if (activeWindow !== $applicationActiveWindow)
+   {
+      activeWindow.removeEventListener('keydown', onKeyDown, true);
+      activeWindow.removeEventListener('keyup', onKeyUp, true);
+
+      activeWindow = $applicationActiveWindow;
+
+      activeWindow.addEventListener('keydown', onKeyDown, true);
+      activeWindow.addEventListener('keyup', onKeyUp, true);
+   }
+
+   onDestroy(() =>
+   {
+      activeWindow.removeEventListener('keydown', onKeyDown, true);
+      activeWindow.removeEventListener('keyup', onKeyUp, true);
+   });
+
+   onMount(() =>
+   {
+      activeWindow.addEventListener('keydown', onKeyDown, true);
+      activeWindow.addEventListener('keyup', onKeyUp, true);
+   });
 
    function onKeyDown(event)
    {
@@ -68,8 +106,6 @@
       }
    }
 </script>
-
-<svelte:body on:keydown|capture={onKeyDown} on:keyup|capture={onKeyUp} />
 
 {#if active}
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
