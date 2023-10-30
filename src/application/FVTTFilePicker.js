@@ -1,17 +1,20 @@
+import { fade }               from 'svelte/transition';
+
 import { TJSDialog }          from '#runtime/svelte/application';
 import { outroAndDestroy }    from '#runtime/svelte/util';
 import { ManagedPromise }     from '#runtime/util/async';
 import { nextAnimationFrame } from '#runtime/util/animate';
-import { isIterable }         from '#runtime/util/object';
+import {
+   isIterable,
+   isObject }                 from '#runtime/util/object';
 
 import { TJSGlassPane }       from '#runtime/svelte/component/core';
-
-import { fade }               from 'svelte/transition';
 
 export class FVTTFilePicker
 {
    static #managedPromise = new ManagedPromise();
 
+   /** @type {TJSFilePicker} */
    static #filepickerApp;
 
    static get canBrowse()
@@ -51,39 +54,6 @@ export class FVTTFilePicker
       if (!this.canBrowse) { return null; }
 
       return this.#browseImpl(options);
-   }
-
-   /**
-    * Creates a new Foundry FilePicker app to browse and return a file path selection.
-    *
-    * @param {FilePickerOptions} options - FilePicker options with additional `zIndex` attribute.
-    *
-    * @param {object}            modalOptions - Additional options for glasspane / modal background & transition.
-    *
-    * @returns {Promise<string>} The file picker / browse result.
-    */
-   static async browseModal(options = {}, modalOptions = {})
-   {
-      if (!this.canBrowse) { return null; }
-
-      const gp = new TJSGlassPane({
-         target: document.body,
-         props: {
-            id: 'fvtt-file-picker-glasspane',
-            background: modalOptions?.background,
-            transition: modalOptions?.transition ?? fade,
-            transitionOptions: modalOptions?.transitionOptions ?? { duration: 200 }
-         }
-      });
-
-      const promise = this.#browseImpl(options, {
-         glasspaneId: 'fvtt-file-picker-glasspane',
-         zIndex: Number.MAX_SAFE_INTEGER
-      });
-
-      promise.finally(() => outroAndDestroy(gp));
-
-      return promise;
    }
 
    /**
@@ -127,7 +97,6 @@ export class FVTTFilePicker
          close = true;
       }
 
-
       if (close) { this.#filepickerApp?.close?.(); }
    }
 
@@ -135,21 +104,19 @@ export class FVTTFilePicker
     * Creates a new Foundry FilePicker app to browse and return a file path selection.
     *
     * @param {FVTTFilePickerOptions} options - FilePicker options with additional `zIndex` attribute.
-    *
-    * @param {object} [modOptions] -
-    *
-    * @param {string} [modOptions.glasspaneId] -
-    *
-    * @param {number} [modOptions.zIndex] -
-    *
-    * @returns {Promise<string>} The file picker / browse result.
+
+    * @returns {Promise<string | null>} The file picker / browse result.
     */
-   static async #browseImpl(options, modOptions = {})
+   static async #browseImpl(options)
    {
-      if (modOptions?.zIndex !== void 0 && !Number.isInteger(modOptions?.zIndex) && modOptions?.zIndex < 0)
+      if (options?.zIndex !== void 0 && !Number.isInteger(options?.zIndex) && options?.zIndex < 0)
       {
          throw new TypeError(`FVTTFilePicker.browse error: 'zIndex' is not a positive integer.`);
       }
+
+      // Store the explicit zIndex / glasspaneId. This may be modified if the file picker is to be modal.
+      let zIndex = options?.zIndex;
+      let glasspaneId = options?.glasspaneId;
 
       // Handle the case when an existing file picker app is visible.
       if (this.#filepickerApp)
@@ -173,14 +140,43 @@ export class FVTTFilePicker
 
       promise.finally(() => this.#filepickerApp = void 0);
 
-      this.#filepickerApp = new ModdedFilePicker({
+      // Handle modal case -------------------------------------------------------------------------------------------
+
+      if (typeof options?.modal === 'boolean' && options.modal)
+      {
+         const modalOptions = isObject(options?.modalOptions) ? options.modalOptions : {};
+
+         glasspaneId = 'fvtt-file-picker-glasspane';
+
+         const gp = new TJSGlassPane({
+            target: document.body,
+            props: {
+               id: glasspaneId,
+               background: typeof modalOptions?.background === 'string' ? modalOptions.background : void 0,
+               closeOnInput: typeof modalOptions?.closeOnInput === 'boolean' ? modalOptions.closeOnInput : void 0,
+               transition: modalOptions?.transition ?? fade,
+               transitionOptions: modalOptions?.transitionOptions ?? { duration: 200 }
+            }
+         });
+
+         // When `closeOnInput` is true and a click on the glasspane occurs close the file picker app.
+         gp.$on('close:glasspane', () => this.#filepickerApp?.close?.());
+
+         // Destroy the glasspane component when the Promise is resolved.
+         promise.finally(() => outroAndDestroy(gp));
+      }
+
+      // -------------------------------------------------------------------------------------------------------------
+
+      this.#filepickerApp = new TJSFilePicker({
          popOutModuleDisable: true,
+         minimizable: false,
          ...options,
          callback: (result) =>
          {
             this.#managedPromise.resolve(result);
          }
-      }, this.#managedPromise, modOptions);
+      }, this.#managedPromise, { glasspaneId, zIndex });
 
       await this.#filepickerApp.browse();
 
@@ -188,16 +184,16 @@ export class FVTTFilePicker
       await nextAnimationFrame(3);
 
       // Potentially move app inside glasspane.
-      if (typeof modOptions?.glasspaneId === 'string')
+      if (typeof glasspaneId === 'string')
       {
-         let gpEl = document.querySelector(`#${modOptions.glasspaneId} .tjs-glass-pane-background`);
+         let gpEl = document.querySelector(`#${glasspaneId} .tjs-glass-pane-background`);
          if (gpEl)
          {
             gpEl.appendChild(this.#filepickerApp.element[0]);
          }
          else
          {
-            gpEl = document.querySelector(`#${modOptions.glasspaneId}-glasspane .tjs-glass-pane-background`);
+            gpEl = document.querySelector(`#${glasspaneId}-glasspane .tjs-glass-pane-background`);
             if (gpEl) { gpEl.appendChild(this.#filepickerApp.element[0]); }
          }
 
@@ -210,17 +206,17 @@ export class FVTTFilePicker
          }
       }
 
-      if (Number.isInteger(modOptions?.zIndex))
+      if (Number.isInteger(zIndex))
       {
          // Directly modify the zIndex to be above everything else.
-         this.#filepickerApp._element[0].style.zIndex = modOptions.zIndex;
+         this.#filepickerApp._element[0].style.zIndex = `${zIndex}`;
       }
 
       return promise;
    }
 }
 
-class ModdedFilePicker extends FilePicker
+class TJSFilePicker extends FilePicker
 {
    #createDirectoryApp;
    #glasspaneId;
@@ -364,11 +360,16 @@ class ModdedFilePicker extends FilePicker
  *
  * @property {string} [glasspaneId]        Provide the CSS ID of the glasspane to move the file picker app to after opening.
  *
+ * @property {boolean} [modal]             When true a modal file picker will be opened.
+ *
  * @property {({
  *    background: string,
+ *    closeOnInput: boolean,
  *    transition: import('#runtime/svelte/transition').TransitionFunction,
  *    transitionOptions: Record<string, any>
  * })} [modalOptions]                      Options for the modal glasspane / TJSGlasspane component.
+ *
+ * @property {import('svelte/store').Writable<string>} [store] A writable Svelte store that is set with result.
  *
  * @property {number} [zIndex]             Provides an explicit `z-index` for the file picker app.
  */
