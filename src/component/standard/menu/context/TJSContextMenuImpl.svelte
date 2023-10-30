@@ -461,6 +461,16 @@
                     <img src={item.image} alt={item.imageAlt}>
                     <span class=tjs-context-menu-item-label>{localize(item.label)}</span>
                 </li>
+            {:else if item['#type'] === 'label'}
+                <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+                <li class="tjs-context-menu-item tjs-context-menu-item-button"
+                    on:click={() => onClick(item)}
+                    on:keyup={(event) => onKeyupItem(event, item)}
+                    role=menuitem
+                    tabindex=0>
+                    <span class=tjs-context-menu-focus-indicator />
+                    <span class=tjs-context-menu-item-label>{localize(item.label)}</span>
+                </li>
             {:else if item['#type'] === 'separator-hr'}
                 <hr>
             {/if}

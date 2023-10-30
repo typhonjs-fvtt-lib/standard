@@ -146,6 +146,7 @@ export class TJSContextMenu
          if (isSvelteComponent(item.class)) { type = 'class'; }
          else if (typeof item.icon === 'string') { type = 'icon'; }
          else if (typeof item.image === 'string') { type = 'image'; }
+         else if (item.icon === void 0 && item.image === void 0 && typeof item.label === 'string') { type = 'label'; }
          else if (typeof item.separator === 'string')
          {
             if (item.separator !== 'hr')

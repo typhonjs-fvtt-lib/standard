@@ -172,6 +172,7 @@
          if (isSvelteComponent(item.class)) { type = 'class'; }
          else if (typeof item.icon === 'string') { type = 'icon'; }
          else if (typeof item.image === 'string') { type = 'image'; }
+         else if (item.icon === void 0 && item.image === void 0 && typeof item.label === 'string') { type = 'label'; }
          else if (typeof item.separator === 'string')
          {
             if (item.separator !== 'hr')
@@ -562,6 +563,16 @@
                  tabindex=0>
                <span class=tjs-menu-focus-indicator />
                <img src={item.image} alt={item.imageAlt}>
+               <span class=tjs-menu-item-label>{localize(item.label)}</span>
+            </li>
+         {:else if item['#type'] === 'label'}
+            <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+            <li class="tjs-menu-item tjs-menu-item-button"
+                on:click={() => onClick(item)}
+                on:keyup={(event) => onKeyupItem(event, item)}
+                role=menuitem
+                tabindex=0>
+               <span class=tjs-menu-focus-indicator />
                <span class=tjs-menu-item-label>{localize(item.label)}</span>
             </li>
          {:else if item['#type'] === 'separator-hr'}
