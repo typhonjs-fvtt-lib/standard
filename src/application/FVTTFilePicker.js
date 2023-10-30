@@ -2,6 +2,7 @@ import { TJSDialog }          from '#runtime/svelte/application';
 import { outroAndDestroy }    from '#runtime/svelte/util';
 import { ManagedPromise }     from '#runtime/util/async';
 import { nextAnimationFrame } from '#runtime/util/animate';
+import { isIterable }         from '#runtime/util/object';
 
 import { TJSGlassPane }       from '#runtime/svelte/component/core';
 
@@ -83,6 +84,51 @@ export class FVTTFilePicker
       promise.finally(() => outroAndDestroy(gp));
 
       return promise;
+   }
+
+   /**
+    * Closes the file picker with optional `id` of a specific file picker app to close. You may also provide a list of
+    * app IDs to close. When provided only the file picker app instance with a matching ID will be closed.
+    *
+    * Note: When `close` is invoked w/ no `id` parameter any current file picker app is closed.
+    *
+    * @param {string | Iterable<string>}  [id] - Specific IDs to match against any current visible file picker app.
+    */
+   static close(id)
+   {
+      if (id !== void 0 && typeof id !== 'string' && !isIterable(id))
+      {
+         throw new TypeError(`FVTTFilePicker.close error: 'id' is not a string or list of strings.`);
+      }
+
+      if (this.#filepickerApp === void 0) { return; }
+
+      let close = false;
+
+      if (id !== void 0)
+      {
+         if (typeof id === 'string' && this.#filepickerApp?.id === id)
+         {
+            close = true;
+         }
+         else if (isIterable(id))
+         {
+            for (const appId of id)
+            {
+               if (typeof appId === 'string' && this.#filepickerApp?.id === appId)
+               {
+                  close = true;
+               }
+            }
+         }
+      }
+      else
+      {
+         close = true;
+      }
+
+
+      if (close) { this.#filepickerApp?.close?.(); }
    }
 
    /**
