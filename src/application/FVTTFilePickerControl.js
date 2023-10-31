@@ -10,6 +10,30 @@ import {
 
 import { TJSGlassPane }       from '#runtime/svelte/component/core';
 
+/**
+ * Provides managed control of the Foundry FilePicker app simplifying asynchronous use cases. While the stock
+ * FilePicker provides a callback it is not easy to make it asynchronous given that a user can close the app.
+ * FVTTFilePickerControl enables a fully asynchronous workflow controlling one FilePicker instance at a time. When
+ * {@link FVTTFilePickerControl.browse} is invoked any previous FilePicker instance is closed and Promise resolved.
+ *
+ * Additionally, the file picker app is modified to work in modal context w/ TJSGlassPane along with any managing
+ * associated dialog instances displayed. A very powerful capability is to display a modal FilePicker app instance.
+ *
+ * For extended options available for {@link FVTTFilePickerControl.browse} see {@link FVTTFilePickerBrowseOptions}.
+ * It is highly recommended that you provide a unique CSS ID for each file picker instance invoked.
+ * A use case where you should use FVTTFilePickerControl is to invoke {@link FVTTFilePickerControl.close}
+ * in an `onDestroy` Svelte callback to close any open file picker apps associated w/ UI layout components you design.
+ *
+ * A demo example is available in `essential-svelte-esm`:
+ * {@link https://github.com/typhonjs-fvtt-demo/essential-svelte-esm}
+ *
+ * Several ready-made Svelte components are available that are designed around FVTTFilePickerControl.
+ *
+ * Please see the following Svelte components that can be imported from `#standard/component/fvtt`:
+ * @see TJSFileButton - A standard form button element.
+ * @see TJSFileIconButton - Uses TJSIconButton for display.
+ * @see TJSFileSlotButton - Provides a slotted button where you can provide any containing content.
+ */
 export class FVTTFilePickerControl
 {
    static #managedPromise = new ManagedPromise();
@@ -17,6 +41,9 @@ export class FVTTFilePickerControl
    /** @type {TJSFilePicker} */
    static #filepickerApp;
 
+   /**
+    * @returns {boolean} Test if the current user can browse files.
+    */
    static get canBrowse()
    {
       return game.world && game.user.can('FILES_BROWSE');
@@ -24,10 +51,25 @@ export class FVTTFilePickerControl
 
    /**
     * Brings any non-modal / glasspane file picker to top. Returning if it is the active file picker.
+    *
+    * @param {string} [id] - The ID of the file picker app.
+    *
+    * @returns {boolean} Whether the file picker app is brought to top.
     */
    static bringToTop(id)
    {
-      if (typeof id !== 'string') { throw new TypeError(`FVTTFilePicker.bringToTop error: 'id' is not a string.`); }
+      // Handle the case when no `id` is defined and potentially bring any file picker app to top.
+      if (id === void 0 && this.#filepickerApp)
+      {
+         // Only invoke `bringToTop` if the file picker app is not contained in a glasspane.
+         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToTop?.(); }
+         return true;
+      }
+
+      if (typeof id !== 'string')
+      {
+         throw new TypeError(`FVTTFilePickerControl.bringToTop error: 'id' is not a string.`);
+      }
 
       let result = false;
 
@@ -45,7 +87,7 @@ export class FVTTFilePickerControl
    /**
     * Creates a new Foundry FilePicker app to browse and return a file path selection.
     *
-    * @param {FVTTFilePickerOptions} options - FVTTFilePickerControl options.
+    * @param {FVTTFilePickerBrowseOptions} options - FVTTFilePickerControl options.
     *
     * @returns {Promise<string|null>} The file picker / browse result.
     */
@@ -68,7 +110,7 @@ export class FVTTFilePickerControl
    {
       if (id !== void 0 && typeof id !== 'string' && !isIterable(id))
       {
-         throw new TypeError(`FVTTFilePicker.close error: 'id' is not a string or list of strings.`);
+         throw new TypeError(`FVTTFilePickerControl.close error: 'id' is not a string or list of strings.`);
       }
 
       if (this.#filepickerApp === void 0) { return; }
@@ -103,7 +145,7 @@ export class FVTTFilePickerControl
    /**
     * Creates a new Foundry FilePicker app to browse and return a file path selection.
     *
-    * @param {FVTTFilePickerOptions} options - FilePicker options with additional `zIndex` attribute.
+    * @param {FVTTFilePickerBrowseOptions} options - FilePicker options with additional `zIndex` attribute.
 
     * @returns {Promise<string | null>} The file picker / browse result.
     */
@@ -111,12 +153,12 @@ export class FVTTFilePickerControl
    {
       if (options?.glasspaneId !== void 0 && typeof options.glasspaneId !== 'string')
       {
-         throw new TypeError(`FVTTFilePicker.browse error: 'glasspaneId' is not a string.`);
+         throw new TypeError(`FVTTFilePickerControl.browse error: 'glasspaneId' is not a string.`);
       }
 
       if (options?.zIndex !== void 0 && !Number.isInteger(options?.zIndex) && options?.zIndex < 0)
       {
-         throw new TypeError(`FVTTFilePicker.browse error: 'zIndex' is not a positive integer.`);
+         throw new TypeError(`FVTTFilePickerControl.browse error: 'zIndex' is not a positive integer.`);
       }
 
       // Store the explicit zIndex / glasspaneId. This may be modified if the file picker is to be modal.
@@ -163,7 +205,7 @@ export class FVTTFilePickerControl
          }
          else
          {
-            console.warn(`FVTTFilePicker.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
+            console.warn(`FVTTFilePickerControl.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
          }
       }
 
@@ -206,7 +248,7 @@ export class FVTTFilePickerControl
 
       await this.#filepickerApp.browse();
 
-      // By awaiting for the next animation frame the app has been rendered.
+      // By awaiting for the next 3 animation frames the app has been rendered. The extra frames provide a buffer.
       await nextAnimationFrame(3);
 
       // Potentially move app inside glasspane.
@@ -219,7 +261,7 @@ export class FVTTFilePickerControl
          }
          else
          {
-            console.warn(`FVTTFilePicker.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
+            console.warn(`FVTTFilePickerControl.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
          }
 
          // For modal dialogs prevent the window header from being draggable.
@@ -231,9 +273,9 @@ export class FVTTFilePickerControl
          }
       }
 
+      // Directly modify the zIndex to be above everything else when supplied.
       if (Number.isInteger(zIndex))
       {
-         // Directly modify the zIndex to be above everything else.
          this.#filepickerApp._element[0].style.zIndex = `${zIndex}`;
       }
 
@@ -241,6 +283,10 @@ export class FVTTFilePickerControl
    }
 }
 
+/**
+ * Extends FilePicker to handle resolving the managed Promise on app close, explicitly center the app when shown above
+ * a modal / glasspane, and manage any associated dialogs.
+ */
 class TJSFilePicker extends FilePicker
 {
    #createDirectoryApp;
@@ -262,6 +308,13 @@ class TJSFilePicker extends FilePicker
     */
    get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
 
+   /**
+    * Overridden to explicitly center the file picker app when displayed above a modal / glasspane.
+    *
+    * @param {object}   pos - Position object.
+    *
+    * @returns {{left: number, top: number, width: number, height: number, scale: number}} Position object.
+    */
    setPosition(pos = {})
    {
       const currentPos = super.setPosition(pos);
@@ -278,6 +331,14 @@ class TJSFilePicker extends FilePicker
       return currentPos;
    }
 
+   /**
+    * Overridden close method that resolves the managed Promise w/ null and closes any associated create directory
+    * dialog.
+    *
+    * @param {object}   options - Application close options.
+    *
+    * @returns {Promise<void>}
+    */
    async close(options)
    {
       // Close any associated create directory dialog.
@@ -312,10 +373,10 @@ class TJSFilePicker extends FilePicker
       // Potentially find any associated glasspane container element and make that dialog Svelte component mount target.
       if (typeof this.#glasspaneId === 'string')
       {
-         const gpEl = document.querySelector(`#${this.#glasspaneId} .tjs-glass-pane-container`);
-         if (gpEl)
+         const gpContainerEl = document.querySelector(`#${this.#glasspaneId} .tjs-glass-pane-container`);
+         if (gpContainerEl)
          {
-            dialogTargetEl = gpEl;
+            dialogTargetEl = gpContainerEl;
          }
          else
          {
@@ -365,7 +426,7 @@ class TJSFilePicker extends FilePicker
 }
 
 /**
- * @typedef {object} FVTTFilePickerOptions
+ * @typedef {object} FVTTFilePickerBrowseOptions - Foundry FilePickerOptions w/ expanded FVTTFilePickerControl options.
  *
  * @property {string} [type='any']         A type of file to target, in 'audio', 'image', 'video', 'imagevideo',
  *                                         'folder', 'font', 'graphics', 'text', or 'any'.
