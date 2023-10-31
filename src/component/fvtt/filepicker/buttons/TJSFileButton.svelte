@@ -7,7 +7,7 @@
    import { isObject }              from '#runtime/util/object';
    import { isWritableStore }       from '#runtime/util/store';
 
-   import { FVTTFilePicker }        from '#standard/application';
+   import { FVTTFilePickerControl } from '#standard/application';
 
    export let filepath = '';
 
@@ -73,7 +73,7 @@
    async function invokePicker()
    {
       // Bring any existing file picker to the top and on success return immediately as this is a successive invocation.
-      if (typeof pickerOptions?.id === 'string' && FVTTFilePicker.bringToTop(pickerOptions?.id)) { return; }
+      if (typeof pickerOptions?.id === 'string' && FVTTFilePickerControl.bringToTop(pickerOptions?.id)) { return; }
 
       // Locate any parent glasspane in order to promote the file picker app to the associated container.
       const glasspaneEl = findParentElement({ source: buttonEl, class: 'tjs-glass-pane' });
@@ -82,7 +82,7 @@
       const options = isObject(pickerOptions) ? { ...pickerOptions, glasspaneId: glasspaneEl?.id } :
        { glasspaneId: glasspaneEl?.id }
 
-      const result = await FVTTFilePicker.browse(options);
+      const result = await FVTTFilePickerControl.browse(options);
 
       if (result)
       {

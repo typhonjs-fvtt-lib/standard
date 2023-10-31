@@ -10,7 +10,7 @@ import {
 
 import { TJSGlassPane }       from '#runtime/svelte/component/core';
 
-export class FVTTFilePicker
+export class FVTTFilePickerControl
 {
    static #managedPromise = new ManagedPromise();
 
@@ -45,7 +45,7 @@ export class FVTTFilePicker
    /**
     * Creates a new Foundry FilePicker app to browse and return a file path selection.
     *
-    * @param {FVTTFilePickerOptions} options - FVTTFilePicker options.
+    * @param {FVTTFilePickerOptions} options - FVTTFilePickerControl options.
     *
     * @returns {Promise<string|null>} The file picker / browse result.
     */
@@ -139,7 +139,7 @@ export class FVTTFilePicker
          await this.#filepickerApp?.close?.();
       }
 
-      // Handle the case when multiple invocations of `FVTTFilePicker.browse` in quick succession. When the managed
+      // Handle the case when multiple invocations of `FVTTFilePickerControl.browse` in quick succession. When the managed
       // Promise is still active resolve immediately with no results.
       if (this.#managedPromise.isActive) { return Promise.resolve(null); }
 
@@ -258,7 +258,7 @@ class TJSFilePicker extends FilePicker
    }
 
    /**
-    * @returns {boolean} Convenience getter for `FVTTFilePicker.bringToTop`.
+    * @returns {boolean} Convenience getter for `FVTTFilePickerControl.bringToTop`.
     */
    get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
 
