@@ -3,6 +3,7 @@
 
    import { applyStyles }           from '#runtime/svelte/action/dom';
    import { localize }              from '#runtime/svelte/helper';
+   import { findParentElement }     from '#runtime/util/browser';
    import { isObject }              from '#runtime/util/object';
    import { isWritableStore }       from '#runtime/util/store';
 
@@ -31,6 +32,9 @@
    export let onClickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
+
+   /** @type {HTMLButtonElement} */
+   let buttonEl;
 
    // ----------------------------------------------------------------------------------------------------------------
 
@@ -68,9 +72,17 @@
     */
    async function invokePicker()
    {
+      // Bring any existing file picker to the top and on success return immediately as this is a successive invocation.
       if (typeof pickerOptions?.id === 'string' && FVTTFilePicker.bringToTop(pickerOptions?.id)) { return; }
 
-      const result = await FVTTFilePicker.browse(isObject(pickerOptions) ? pickerOptions : void 0);
+      // Locate any parent glasspane in order to promote the file picker app to the associated container.
+      const glasspaneEl = findParentElement({ source: buttonEl, class: 'tjs-glass-pane' });
+
+      // Add any glasspane ID to `pickerOptions`.
+      const options = isObject(pickerOptions) ? { ...pickerOptions, glasspaneId: glasspaneEl?.id } :
+       { glasspaneId: glasspaneEl?.id }
+
+      const result = await FVTTFilePicker.browse(options);
 
       if (result)
       {
@@ -114,7 +126,8 @@
    }
 </script>
 
-<button class=tjs-file-button
+<button bind:this={buttonEl}
+        class=tjs-file-button
         on:click={onClick}
         on:contextmenu={onContextMenuPress}
         on:click
