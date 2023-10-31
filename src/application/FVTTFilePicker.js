@@ -109,14 +109,21 @@ export class FVTTFilePicker
     */
    static async #browseImpl(options)
    {
+      if (options?.glasspaneId !== void 0 && typeof options.glasspaneId !== 'string')
+      {
+         throw new TypeError(`FVTTFilePicker.browse error: 'glasspaneId' is not a string.`);
+      }
+
       if (options?.zIndex !== void 0 && !Number.isInteger(options?.zIndex) && options?.zIndex < 0)
       {
          throw new TypeError(`FVTTFilePicker.browse error: 'zIndex' is not a positive integer.`);
       }
 
       // Store the explicit zIndex / glasspaneId. This may be modified if the file picker is to be modal.
-      let zIndex = options?.zIndex;
       let glasspaneId = options?.glasspaneId;
+
+      // If there is an existing glasspaneId to promote to then force the z-index to above everything else.
+      let zIndex = glasspaneId ? Number.MAX_SAFE_INTEGER : options?.zIndex;
 
       // Handle the case when an existing file picker app is visible.
       if (this.#filepickerApp)
@@ -142,10 +149,28 @@ export class FVTTFilePicker
 
       // Handle modal case -------------------------------------------------------------------------------------------
 
-      if (typeof options?.modal === 'boolean' && options.modal)
-      {
-         const modalOptions = isObject(options?.modalOptions) ? options.modalOptions : {};
+      const modalOptions = isObject(options?.modalOptions) ? options.modalOptions : {};
 
+      // If an existing glasspane is specified and `closeOnInput` register a listener on the element for a special
+      // pointerdown:glasspane event to close the file picker app.
+      if (typeof glasspaneId === 'string' && typeof modalOptions?.closeOnInput === 'boolean' &&
+       modalOptions?.closeOnInput)
+      {
+         const gpEl = document.querySelector(`#${glasspaneId}`);
+         if (gpEl)
+         {
+            gpEl.addEventListener('pointerdown:glasspane', () => this.#filepickerApp?.close?.(), { once: true });
+         }
+         else
+         {
+            console.warn(`FVTTFilePicker.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
+         }
+      }
+
+      // Otherwise if there isn't an existing glasspane specified and `modal` is true then create a new TJSGlassPane
+      // component.
+      else if (typeof options?.modal === 'boolean' && options.modal)
+      {
          glasspaneId = 'fvtt-file-picker-glasspane';
 
          const gp = new TJSGlassPane({
@@ -155,7 +180,8 @@ export class FVTTFilePicker
                background: typeof modalOptions?.background === 'string' ? modalOptions.background : void 0,
                closeOnInput: typeof modalOptions?.closeOnInput === 'boolean' ? modalOptions.closeOnInput : void 0,
                transition: modalOptions?.transition ?? fade,
-               transitionOptions: modalOptions?.transitionOptions ?? { duration: 200 }
+               transitionOptions: modalOptions?.transitionOptions ?? { duration: 200 },
+               styles: isObject(modalOptions?.styles) ? modalOptions?.styles : void 0
             }
          });
 
@@ -186,15 +212,14 @@ export class FVTTFilePicker
       // Potentially move app inside glasspane.
       if (typeof glasspaneId === 'string')
       {
-         let gpEl = document.querySelector(`#${glasspaneId} .tjs-glass-pane-background`);
-         if (gpEl)
+         const gpContainerEl = document.querySelector(`#${glasspaneId} .tjs-glass-pane-container`);
+         if (gpContainerEl)
          {
-            gpEl.appendChild(this.#filepickerApp.element[0]);
+            gpContainerEl.appendChild(this.#filepickerApp.element[0]);
          }
          else
          {
-            gpEl = document.querySelector(`#${glasspaneId}-glasspane .tjs-glass-pane-background`);
-            if (gpEl) { gpEl.appendChild(this.#filepickerApp.element[0]); }
+            console.warn(`FVTTFilePicker.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
          }
 
          // For modal dialogs prevent the window header from being draggable.
@@ -281,16 +306,22 @@ class TJSFilePicker extends FilePicker
        <input type=text name=dirname placeholder=directory-name required/>
        </div></form>`;
 
-       let dialogTargetEl;
+      // The initial target is document.body, but if there is a glasspane container the dialog `svelte.target` is set.
+      let dialogTargetEl = globalThis.document.body;
 
       // Potentially find any associated glasspane container element and make that dialog Svelte component mount target.
       if (typeof this.#glasspaneId === 'string')
       {
-         let gpEl = document.querySelector(`#${this.#glasspaneId} .tjs-glass-pane-background`);
-         if (gpEl) { dialogTargetEl = gpEl; }
-
-         gpEl = document.querySelector(`#${this.#glasspaneId}-glasspane .tjs-glass-pane-background`);
-         if (gpEl) { dialogTargetEl = gpEl; }
+         const gpEl = document.querySelector(`#${this.#glasspaneId} .tjs-glass-pane-container`);
+         if (gpEl)
+         {
+            dialogTargetEl = gpEl;
+         }
+         else
+         {
+            console.warn(`TJSFilePicker._createDirectoryDialog warning: Could not locate glasspane for CSS ID: ${
+             this.#glasspaneId}`);
+         }
       }
 
       this.#createDirectoryApp = new TJSDialog({
@@ -325,7 +356,7 @@ class TJSFilePicker extends FilePicker
                label: 'No'
             }
          }
-      }, { dialogTargetEl, popOutModuleDisable: true });
+      }, { svelte: { target: dialogTargetEl }, popOutModuleDisable: true });
 
       // Use wait to be able to remove the reference when any result is chosen.
       await this.#createDirectoryApp.wait();
@@ -365,6 +396,7 @@ class TJSFilePicker extends FilePicker
  * @property {({
  *    background: string,
  *    closeOnInput: boolean,
+ *    styles: Record<string, string>,
  *    transition: import('#runtime/svelte/transition').TransitionFunction,
  *    transitionOptions: Record<string, any>
  * })} [modalOptions]                      Options for the modal glasspane / TJSGlasspane component.
