@@ -33,9 +33,6 @@
 
    const dispatch = createEventDispatcher();
 
-   /** @type {HTMLButtonElement} */
-   let buttonEl;
-
    // ----------------------------------------------------------------------------------------------------------------
 
    $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
@@ -65,18 +62,27 @@
    $: pickerOptions = isObject(button) && isObject(button.pickerOptions) ? button.pickerOptions :
     isObject(pickerOptions) ? pickerOptions : void 0;
 
+
+   // When filepath changes from internal / external set the pickerOptions store.
+   $: if (filepath?.length)
+   {
+      if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(filepath); }
+   }
+
    // ----------------------------------------------------------------------------------------------------------------
 
    /**
     * Invokes the Foundry file picker.
+    *
+    * @param {MouseEvent} event - MouseEvent.
     */
-   async function invokePicker()
+   async function invokePicker(event)
    {
       // Bring any existing file picker to the top and on success return immediately as this is a successive invocation.
       if (typeof pickerOptions?.id === 'string' && FVTTFilePickerControl.bringToTop(pickerOptions?.id)) { return; }
 
       // Locate any parent glasspane in order to promote the file picker app to the associated container.
-      const glasspaneEl = findParentElement({ source: buttonEl, class: 'tjs-glass-pane' });
+      const glasspaneEl = findParentElement({ source: event.target, class: 'tjs-glass-pane' });
 
       // Add any glasspane ID to `pickerOptions`.
       const options = isObject(pickerOptions) ? { ...pickerOptions, glasspaneId: glasspaneEl?.id } :
@@ -87,22 +93,19 @@
       if (result)
       {
          filepath = result;
-         if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(result); }
       }
    }
 
    /**
-    * Handle click event.
-    *
-    * @param {MouseEvent}    event -
+    * @param {MouseEvent}    event - MouseEvent
     */
    function onClick(event)
    {
-      if (typeof onPress === 'function') { onPress(); }
+      if (typeof onPress === 'function') { onPress({ event }); }
 
-      dispatch('press');
+      dispatch('press', { event });
 
-      invokePicker();
+      invokePicker(event);
 
       if (!onClickPropagate)
       {
@@ -112,11 +115,11 @@
    }
 
    /**
-    * @param {MouseEvent}   event -
+    * @param {MouseEvent}   event - MouseEvent
     */
    function onContextMenuPress(event)
    {
-      if (typeof onContextMenu === 'function') { onContextMenu(); }
+      if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
 
       if (!onClickPropagate)
       {
@@ -126,8 +129,7 @@
    }
 </script>
 
-<button bind:this={buttonEl}
-        class=tjs-file-button
+<button class=tjs-file-button
         on:click={onClick}
         on:contextmenu={onContextMenuPress}
         on:click
