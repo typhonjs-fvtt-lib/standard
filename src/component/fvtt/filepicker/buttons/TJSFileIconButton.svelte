@@ -53,4 +53,5 @@
    }
 </script>
 
-<TJSIconButton on:press={invokePicker} {button} />
+<!-- Note: setting of icon directly. It can be customized by setting button.icon -->
+<TJSIconButton on:press={invokePicker} {button} icon={'fas fa-file'} />
