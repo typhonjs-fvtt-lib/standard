@@ -348,20 +348,9 @@ class TJSFilePicker extends FilePicker
       this.#managedPromise?.resolve?.(null);
       this.#managedPromise = void 0;
 
-      // Make any window content overflow hidden to avoid any scrollbars appearing in default Application close
-      // animation.
+      // Make window content overflow hidden to avoid any scrollbars appearing in default Application close animation.
       const content = this._element?.[0]?.querySelector('.window-content');
-      if (content)
-      {
-         content.style.overflow = 'hidden';
-
-         // Set all children of content to overflow hidden as if there is going to be additional scrolling elements
-         // they are likely one level deep.
-         for (let cntr = content.children.length; --cntr >= 0;)
-         {
-            content.children[cntr].style.overflow = 'hidden';
-         }
-      }
+      if (content) { content.style.overflow = 'hidden'; }
 
       return super.close(options);
    }
