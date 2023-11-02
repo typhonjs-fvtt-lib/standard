@@ -258,6 +258,9 @@ export class FVTTFilePickerControl
          if (gpContainerEl)
          {
             gpContainerEl.appendChild(this.#filepickerApp.element[0]);
+
+            // Focus first input.
+            this.#filepickerApp?._element?.[0]?.querySelector('input')?.focus();
          }
          else
          {
@@ -309,26 +312,13 @@ class TJSFilePicker extends FilePicker
    get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
 
    /**
-    * Overridden to explicitly center the file picker app when displayed above a modal / glasspane.
-    *
-    * @param {object}   pos - Position object.
-    *
-    * @returns {{left: number, top: number, width: number, height: number, scale: number}} Position object.
+    * Always focus first input when `bringToTop` is invoked.
     */
-   setPosition(pos = {})
+   bringToTop()
    {
-      const currentPos = super.setPosition(pos);
+      super.bringToTop();
 
-      if (this.#glasspaneId)
-      {
-         const top = (globalThis.innerHeight - currentPos.height) / 2;
-
-         this._element[0].style.top = `${top}px`;
-         this.position.top = top;
-         currentPos.top = top;
-      }
-
-      return currentPos;
+      this?._element?.[0]?.querySelector('input')?.focus();
    }
 
    /**
@@ -427,6 +417,29 @@ class TJSFilePicker extends FilePicker
       // Use wait to be able to remove the reference when any result is chosen.
       await this.#createDirectoryApp.wait();
       this.#createDirectoryApp = void 0;
+   }
+
+   /**
+    * Overridden to explicitly center the file picker app when displayed above a modal / glasspane.
+    *
+    * @param {object}   pos - Position object.
+    *
+    * @returns {{left: number, top: number, width: number, height: number, scale: number}} Position object.
+    */
+   setPosition(pos = {})
+   {
+      const currentPos = super.setPosition(pos);
+
+      if (this.#glasspaneId)
+      {
+         const top = (globalThis.innerHeight - currentPos.height) / 2;
+
+         this._element[0].style.top = `${top}px`;
+         this.position.top = top;
+         currentPos.top = top;
+      }
+
+      return currentPos;
    }
 }
 
