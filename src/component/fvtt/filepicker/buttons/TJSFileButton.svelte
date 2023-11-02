@@ -1,4 +1,6 @@
 <script>
+   import { createEventDispatcher } from '#svelte';
+
    import { findParentElement }     from '#runtime/util/browser';
    import { isObject }              from '#runtime/util/object';
    import { isWritableStore }       from '#runtime/util/store';
@@ -13,6 +15,10 @@
    /** @type {import('#standard/application').FVTTFilePickerBrowseOptions} */
    export let pickerOptions = void 0;
 
+   const dispatch = createEventDispatcher();
+
+   // ----------------------------------------------------------------------------------------------------------------
+
    $: pickerOptions = isObject(button) && isObject(button.pickerOptions) ? button.pickerOptions :
     isObject(pickerOptions) ? pickerOptions : void 0;
 
@@ -22,6 +28,8 @@
       if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(filepath); }
 
       if (typeof pickerOptions?.onFilepath === 'function') { pickerOptions.onFilepath(filepath);}
+
+      dispatch('filepath', { filepath });
    }
 
    // ----------------------------------------------------------------------------------------------------------------

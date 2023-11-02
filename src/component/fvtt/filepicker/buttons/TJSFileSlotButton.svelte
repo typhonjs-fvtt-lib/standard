@@ -48,6 +48,8 @@
 
    let efxEl;
 
+   // ----------------------------------------------------------------------------------------------------------------
+
    $: styles = isObject(button) && isObject(button.styles) ? button.styles :
     isObject(styles) ? styles : void 0;
    $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
@@ -69,12 +71,14 @@
    // When filepath changes from internal / external set any pickerOptions store and invoke any `onFilepath` callback.
    $: if (filepath?.length)
    {
+      // Set context store.
+      $storeFilepath = filepath;
+
       if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(filepath); }
 
       if (typeof pickerOptions?.onFilepath === 'function') { pickerOptions.onFilepath(filepath);}
 
-      // Set context store.
-      $storeFilepath = filepath;
+      dispatch('filepath', { filepath });
    }
 
    // ----------------------------------------------------------------------------------------------------------------
