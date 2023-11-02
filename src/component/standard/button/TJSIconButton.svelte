@@ -87,9 +87,9 @@
     */
    function onClick(event)
    {
-      if (typeof onPress === 'function') { onPress(); }
+      if (typeof onPress === 'function') { onPress({ event }); }
 
-      dispatch('press');
+      dispatch('press', { event });
 
       if (!onClickPropagate)
       {
@@ -103,7 +103,7 @@
     */
    function onContextMenuPress(event)
    {
-      if (typeof onContextMenu === 'function') { onContextMenu(); }
+      if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
 
       if (!onClickPropagate)
       {
@@ -135,9 +135,9 @@
    {
       if (event.code === keyCode)
       {
-         if (typeof onPress === 'function') { onPress(); }
+         if (typeof onPress === 'function') { onPress({ event }); }
 
-         dispatch('press');
+         dispatch('press', { event });
 
          event.preventDefault();
          event.stopPropagation();
