@@ -18,11 +18,12 @@
    $: pickerOptions = isObject(button) && isObject(button.pickerOptions) ? button.pickerOptions :
     isObject(pickerOptions) ? pickerOptions : void 0;
 
-
-   // When filepath changes from internal / external set the pickerOptions store.
+   // When filepath changes from internal / external set any pickerOptions store and invoke any `onFilepath` callback.
    $: if (filepath?.length)
    {
       if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(filepath); }
+
+      if (typeof pickerOptions?.onFilepath === 'function') { pickerOptions.onFilepath(filepath);}
    }
 
    // ----------------------------------------------------------------------------------------------------------------
