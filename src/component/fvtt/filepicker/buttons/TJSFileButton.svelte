@@ -27,7 +27,7 @@
    {
       if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(filepath); }
 
-      if (typeof pickerOptions?.onFilepath === 'function') { pickerOptions.onFilepath(filepath);}
+      if (typeof pickerOptions?.onFilepath === 'function') { pickerOptions.onFilepath({ filepath });}
 
       dispatch('filepath', { filepath });
    }
@@ -60,7 +60,7 @@
 
          if (typeof pickerOptions?.onValidate === 'function')
          {
-            validated = pickerOptions.onValidate(result);
+            validated = pickerOptions.onValidate({ filepath: result });
             if (typeof validated !== 'boolean')
             {
                console.warn(`FVTTFilePickerBrowseOptions.onValidate warning: 'onValidate' did not return a boolean.`);
