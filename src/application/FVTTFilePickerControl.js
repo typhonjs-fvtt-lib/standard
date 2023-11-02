@@ -193,19 +193,22 @@ export class FVTTFilePickerControl
 
       const modalOptions = isObject(options?.modalOptions) ? options.modalOptions : {};
 
-      // If an existing glasspane is specified and `closeOnInput` register a listener on the element for a special
-      // pointerdown:glasspane event to close the file picker app.
-      if (typeof glasspaneId === 'string' && typeof modalOptions?.closeOnInput === 'boolean' &&
-       modalOptions?.closeOnInput)
+      // If there is an existing glasspane is specified do not create a new glasspane.
+      if (typeof glasspaneId === 'string')
       {
-         const gpEl = document.querySelector(`#${glasspaneId}`);
-         if (gpEl)
+         // If `closeOnInput` is true register a listener on the existing glasspane for the `pointerdown:glasspane`
+         // event to close the file picker app.
+         if (typeof modalOptions?.closeOnInput === 'boolean' && modalOptions?.closeOnInput)
          {
-            gpEl.addEventListener('pointerdown:glasspane', () => this.#filepickerApp?.close?.(), { once: true });
-         }
-         else
-         {
-            console.warn(`FVTTFilePickerControl.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
+            const gpEl = document.querySelector(`#${glasspaneId}`);
+            if (gpEl)
+            {
+               gpEl.addEventListener('pointerdown:glasspane', () => this.#filepickerApp?.close?.(), { once: true });
+            }
+            else
+            {
+               console.warn(`FVTTFilePickerControl.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
+            }
          }
       }
 
@@ -479,6 +482,8 @@ class TJSFilePicker extends FilePicker
  *    transition: import('#runtime/svelte/transition').TransitionFunction,
  *    transitionOptions: Record<string, any>
  * })} [modalOptions]                      Options for the modal glasspane / TJSGlasspane component.
+ *
+ * @property {(result: boolean) => boolean} [onValidate] Optional validation function of selected filepath.
  *
  * @property {import('svelte/store').Writable<string>} [store] A writable Svelte store that is set with result.
  *

@@ -10,6 +10,7 @@
 
    export let button = void 0;
 
+   /** @type {import('#standard/application').FVTTFilePickerBrowseOptions} */
    export let pickerOptions = void 0;
 
    $: pickerOptions = isObject(button) && isObject(button.pickerOptions) ? button.pickerOptions :
@@ -40,11 +41,24 @@
       const options = isObject(pickerOptions) ? { ...pickerOptions, glasspaneId: glasspaneEl?.id } :
        { glasspaneId: glasspaneEl?.id }
 
+      // Result is null when the user cancels / closes the file picker app.
       const result = await FVTTFilePickerControl.browse(options);
 
       if (result)
       {
-         filepath = result;
+         let validated = true;
+
+         if (typeof pickerOptions?.onValidate === 'function')
+         {
+            validated = pickerOptions.onValidate(result);
+            if (typeof validated !== 'boolean')
+            {
+               console.warn(`FVTTFilePickerBrowseOptions.onValidate warning: 'onValidate' did not return a boolean.`);
+               return;
+            }
+         }
+
+         if (validated) { filepath = result; }
       }
    }
 </script>
