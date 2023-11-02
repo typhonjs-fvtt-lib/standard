@@ -96,7 +96,6 @@
    .tjs-select-container {
       pointer-events: none;
       display: block;
-      overflow: var(--tjs-select-overflow, var(--tjs-input-overflow, hidden));
       transform-style: preserve-3d;
 
       background: var(--tjs-select-background, var(--tjs-input-background));

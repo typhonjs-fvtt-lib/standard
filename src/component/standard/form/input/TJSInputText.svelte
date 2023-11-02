@@ -184,7 +184,6 @@
 <style>
     .tjs-input-container {
         display: block;
-        overflow: var(--tjs-input-text-overflow, var(--tjs-input-overflow, hidden));
         pointer-events: none;
         transform-style: preserve-3d;
 

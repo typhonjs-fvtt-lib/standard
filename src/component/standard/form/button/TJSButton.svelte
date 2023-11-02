@@ -158,7 +158,6 @@
 <style>
    .tjs-form-button-efx {
       display: flex;
-      overflow: hidden;
       justify-content: center;
       transform-style: preserve-3d;
       width: 100%;

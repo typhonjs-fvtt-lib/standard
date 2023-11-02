@@ -599,7 +599,6 @@
       position: absolute;
       width: max-content;
       height: max-content;
-      overflow: hidden;
 
       background: var(--tjs-menu-background, var(--tjs-default-menu-background, var(--tjs-default-popup-background, #23221d)));
       border: var(--tjs-menu-border, var(--tjs-default-popup-border, 1px solid #000));

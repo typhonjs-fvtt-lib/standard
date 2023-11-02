@@ -239,7 +239,6 @@
       font-size: var(--tjs-toggle-label-font-size, inherit);
       font-weight: var(--tjs-toggle-label-font-weight, inherit);
       font-family: var(--tjs-toggle-label-font-family, inherit);
-      overflow: var(--tjs-toggle-label-overflow, hidden);
       padding: var(--tjs-toggle-label-padding, 0 0.25em);
       transform-style: preserve-3d;
       transition: var(--tjs-toggle-label-transition, background 0.2s ease-in-out);

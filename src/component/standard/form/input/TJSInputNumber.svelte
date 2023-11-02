@@ -179,7 +179,6 @@
     .tjs-input-container {
         display: block;
         pointer-events: none;
-        overflow: var(--tjs-input-number-overflow, var(--tjs-input-overflow, hidden));
         transform-style: preserve-3d;
 
         background: var(--tjs-input-number-background, var(--tjs-input-background));

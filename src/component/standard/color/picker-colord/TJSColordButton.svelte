@@ -217,7 +217,6 @@
         width: 100%;
         height: 100%;
 
-        overflow: hidden;
         border-radius: var(--tjs-icon-button-border-radius, var(--tjs-button-border-radius, 50%));
 
         transform: translateZ(1px);

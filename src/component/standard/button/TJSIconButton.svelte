@@ -182,7 +182,6 @@
         border-width: var(--tjs-icon-button-border-width, var(--tjs-button-border-width));
         cursor: var(--tjs-icon-button-cursor, var(--tjs-button-cursor, pointer));
         position: relative;
-        overflow: hidden;
         clip-path: var(--tjs-icon-button-clip-path, var(--tjs-button-clip-path, none));
         transform-style: preserve-3d;
         width: 100%;
