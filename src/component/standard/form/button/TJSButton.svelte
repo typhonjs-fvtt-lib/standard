@@ -60,8 +60,6 @@
    $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
     typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
 
-
-   $: if (styles) { console.log(`!!! styles: `, styles)}
    // ----------------------------------------------------------------------------------------------------------------
 
    /**
