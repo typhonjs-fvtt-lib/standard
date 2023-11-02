@@ -34,7 +34,7 @@
    // ----------------------------------------------------------------------------------------------------------------
 
    $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
-    typeof icon === 'string' ? icon : 'fas fa-file';
+    typeof icon === 'string' ? icon : void 0;
 
    $: label = isObject(button) && typeof button.label === 'string' ? button.label :
     typeof label === 'string' ? label : void 0;
@@ -143,40 +143,44 @@
    {#if efx !== s_EFX_DEFAULT}
       <span class=tjs-form-button-efx bind:this={efxEl} use:efx>
          <span class=tjs-form-button-span>
-            <i class={icon}></i>
-            {localize(label)}
+            {#if icon}<i class={icon}></i>{/if}
+            <slot>{localize(label)}</slot>
          </span>
       </span>
    {:else}
       <span class=tjs-form-button-span>
-         <i class={icon}></i>
-         {localize(label)}
+         {#if icon}<i class={icon}></i>{/if}
+         <slot>{localize(label)}</slot>
       </span>
    {/if}
 </button>
 
 <style>
    .tjs-form-button-efx {
-      display: inline-flex;
+      display: flex;
       overflow: hidden;
+      justify-content: center;
       transform-style: preserve-3d;
       width: 100%;
       height: 100%;
    }
 
-   .tjs-form-button-efx span {
+   .tjs-form-button-efx .tjs-form-button-span {
       transform: translateZ(1px);
    }
 
    .tjs-form-button-span {
       display: flex;
       align-items: center;
-      gap: 0.25em;
-      padding: 6px;
+      justify-content: center;
+      gap: var(--tjs-form-button-gap, 0.25em);
+      padding: var(--tjs-form-button-padding, 6px);
+      height: var(--tjs-form-button-height, var(--tjs-input-height, inherit));
+      line-height: var(--tjs-form-button-height, var(--tjs-input-height, inherit));
    }
 
    button {
-      /* TODO: Consider setting default values from Foundry styles via TJSStyleManager / cssVariables defined in root index.js
+      /* TODO: cssVariables v2: Consider setting default values from Foundry styles via TJSStyleManager / cssVariables defined in root index.js
       /*background: var(--tjs-form-button-background, var(--tjs-button-background));*/
       /*border: var(--tjs-form-button-border, var(--tjs-button-border));*/
       /*border-radius: var(--tjs-form-button-border-radius, var(--tjs-button-border-radius));*/
@@ -184,7 +188,7 @@
 
       cursor: var(--tjs-form-button-cursor, var(--tjs-button-cursor, pointer));
       height: var(--tjs-form-button-height, var(--tjs-input-height, inherit));
-      width: var(--tjs-form-button-width, fit-content);
+      width: var(--tjs-form-button-width, 100%);
 
       padding: 0;
    }
