@@ -108,6 +108,10 @@
 
    export let y = 0;
 
+   export let offsetX = 2;
+
+   export let offsetY = 2;
+
    export let items = [];
 
    export let zIndex = Number.MAX_SAFE_INTEGER - 100;
@@ -211,14 +215,20 @@
     */
    function animate(node)
    {
-      const expandUp = y + node.clientHeight > activeWindow.document.body.clientHeight
-      const expandLeft = x + node.clientWidth > activeWindow.document.body.clientWidth
+      const browserClientWidth = activeWindow.document.body.clientWidth;
+      const browserClientHeight = activeWindow.document.body.clientHeight;
 
-      node.style.top = expandUp ? null : `${y}px`;
-      node.style.bottom = expandUp ? `${activeWindow.document.body.clientHeight - y}px` : null;
+      const expandLeft = (x + node.clientWidth) > browserClientWidth;
+      const expandUp = (y + node.clientHeight) > browserClientHeight;
 
-      node.style.left = expandLeft ? null : `${x}px`;
-      node.style.right = expandLeft ? `${activeWindow.document.body.clientWidth - x}px` : null;
+      const adjustedX = expandLeft ? Math.min(x + offsetX, browserClientWidth) : Math.max(x - offsetX, 0);
+      const adjustedY = expandUp ? Math.min(y + offsetY, browserClientHeight) : Math.max(y - offsetY, 0);
+
+      node.style.top = expandUp ? null : `${adjustedY}px`;
+      node.style.bottom = expandUp ? `${browserClientHeight - adjustedY}px` : null;
+
+      node.style.left = expandLeft ? null : `${adjustedX}px`;
+      node.style.right = expandLeft ? `${browserClientWidth - adjustedX}px` : null;
 
       return slideFade(node, transitionOptions);
    }

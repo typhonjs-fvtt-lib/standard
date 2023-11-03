@@ -48,6 +48,12 @@ export class TJSContextMenu
     *
     * @param {number}      [opts.y] - Y position override for the top / left of the menu.
     *
+    * @param {number}      [opts.offsetX=2] - Small positive integer offset for context menu so the pointer / mouse is
+    *        over the menu on display.
+    *
+    * @param {number}      [opts.offsetY=2] - Small positive integer offset for context menu so the pointer / mouse is
+    *        over the menu on display.
+    *
     * @param {Iterable<TJSContextMenuItemData>} [opts.items] - Menu items to display.
     *
     * @param {boolean}     [opts.focusDebug] - When true the associated A11yFocusSource object will log focus target
@@ -69,19 +75,25 @@ export class TJSContextMenu
     * @param {Window}      [opts.activeWindow=globalThis] - The active browser window that the context menu is
     *        displaying inside.
     */
-   static create({ id = '', event, x, y, items, focusDebug = false, focusEl, keyCode = 'Enter', styles,
-    zIndex = Number.MAX_SAFE_INTEGER - 100, duration = 200, easing, activeWindow = globalThis} = {})
+   static create({ id = '', event, x, y, items, offsetX = 2, offsetY = 2, focusDebug = false, focusEl,
+    keyCode = 'Enter', styles, zIndex = Number.MAX_SAFE_INTEGER - 100, duration = 200, easing,
+     activeWindow } = {})
    {
       if (this.#contextMenu !== void 0) { return; }
-
-      if (Object.prototype.toString.call(activeWindow) !== '[object Window]')
-      {
-         throw new TypeError(`TJSContextMenu.create error: 'activeWindow' is not a Window / WindowProxy.`);
-      }
 
       if (!event && (typeof x !== 'number' || typeof y !== 'number'))
       {
          throw new Error(`TJSContextMenu.create error: No event or absolute X / Y position not defined.`);
+      }
+
+      if (Number.isInteger(offsetX) && offsetX < 0)
+      {
+         throw new TypeError(`TJSContextMenu.create error: offsetX is not a positive integer.`);
+      }
+
+      if (Number.isInteger(offsetY) && offsetY < 0)
+      {
+         throw new TypeError(`TJSContextMenu.create error: offsetY is not a positive integer.`);
       }
 
       // Perform duck typing on event constructor name.
@@ -89,6 +101,17 @@ export class TJSContextMenu
       {
          throw new TypeError(
           `TJSContextMenu.create error: 'event' is not a KeyboardEvent, MouseEvent, or PointerEvent.`);
+      }
+
+      // If `activeWindow` is not defined determine it from the given event or fallback to `globalThis`.
+      if (activeWindow === void 0)
+      {
+         activeWindow = event !== void 0 ? event?.target?.ownerDocument?.defaultView : globalThis;
+      }
+
+      if (Object.prototype.toString.call(activeWindow) !== '[object Window]')
+      {
+         throw new TypeError(`TJSContextMenu.create error: 'activeWindow' is not a Window / WindowProxy.`);
       }
 
       const focusSource = A11yHelper.getFocusSource({ event, x, y, focusEl, debug: focusDebug });
@@ -101,6 +124,8 @@ export class TJSContextMenu
             id,
             x: focusSource.x,
             y: focusSource.y,
+            offsetX,
+            offsetY,
             items: this.#processItems(items),
             focusSource,
             keyCode,
