@@ -55,7 +55,7 @@
    export let efx = void 0;
    export let keyCode = void 0;
    export let onPress = void 0;
-   export let onContextClick = void 0;
+   export let onContextMenu = void 0;
    export let clickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
@@ -71,8 +71,8 @@
 
    $: onPress = isObject(button) && typeof button.onPress === 'function' ? button.onPress :
     typeof onPress === 'function' ? onPress : void 0;
-   $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
-    typeof onContextClick === 'function' ? onContextClick : void 0;
+   $: onContextMenu = isObject(button) && typeof button.onContextMenu === 'function' ? button.onContextMenu :
+    typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
    $: clickPropagate = isObject(button) && typeof button.clickPropagate === 'boolean' ? button.clickPropagate :
     typeof clickPropagate === 'boolean' ? clickPropagate : false;
@@ -91,9 +91,9 @@
     */
    function onClick(event)
    {
-      if (typeof onPress === 'function') { onPress(hslColor); }
+      if (typeof onPress === 'function') { onPress({ event, color: hslColor }); }
 
-      dispatch('press', { color: hslColor });
+      dispatch('press', { event, color: hslColor });
 
       if (!clickPropagate)
       {
@@ -105,9 +105,9 @@
    /**
     * @param {MouseEvent}   event -
     */
-   function onContextMenu(event)
+   function onContextMenuPress(event)
    {
-      if (typeof onContextClick === 'function') { onContextClick(hslColor); }
+      if (typeof onContextMenu === 'function') { onContextMenu({ event, color: hslColor }); }
 
       if (!clickPropagate)
       {
@@ -139,9 +139,9 @@
    {
       if (event.code === keyCode)
       {
-         if (typeof onPress === 'function') { onPress(hslColor); }
+         if (typeof onPress === 'function') { onPress({ event, color: hslColor }); }
 
-         dispatch('press', { color: hslColor });
+         dispatch('press', { event, color: hslColor });
 
          event.preventDefault();
          event.stopPropagation();
@@ -155,7 +155,7 @@
      style:--tjs-icon-button-background={hslColor}>
     <div class=tjs-color-button-inner
          on:click={onClick}
-         on:contextmenu={onContextMenu}
+         on:contextmenu={onContextMenuPress}
          on:keydown={onKeydown}
          on:keyup={onKeyup}
          on:click

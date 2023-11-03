@@ -108,9 +108,9 @@
       selected = !selected;
       if (store) { store.set(selected); }
 
-      if (typeof onPress === 'function') { onPress(selected); }
+      if (typeof onPress === 'function') { onPress({ event, selected }); }
 
-      dispatch('press', { selected });
+      dispatch('press', { event, selected });
 
       if (!clickPropagate)
       {
@@ -124,7 +124,7 @@
     */
    function onContextMenuPress(event)
    {
-      if (typeof onContextMenu === 'function') { onContextMenu(); }
+      if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
 
       if (!clickPropagate)
       {
@@ -194,9 +194,9 @@
          selected = !selected;
          if (store) { store.set(selected); }
 
-         if (typeof onPress === 'function') { onPress(selected); }
+         if (typeof onPress === 'function') { onPress({ event, selected }); }
 
-         dispatch('press', { selected });
+         dispatch('press', { event, selected });
 
          event.preventDefault();
          event.stopPropagation();

@@ -3,7 +3,7 @@
     * TODO: Finish documentation.
     *
     * Events:
-    * - input: current color
+    * - color: current color
     */
 
    import {
@@ -93,8 +93,8 @@
       // If any external store is set in options then set current color.
       if (externalStore) { externalStore.set(newColor); }
 
-      // Dispatch `on:input` event for current color.
-      dispatch('input', { color: newColor });
+      // Dispatch `on:color` event for current color.
+      dispatch('color', { color: newColor });
    }
 
    // When `color` prop changes detect if it is an external change potentially updating internal state.
