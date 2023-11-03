@@ -56,7 +56,7 @@
    export let keyCode = void 0;
    export let onPress = void 0;
    export let onContextClick = void 0;
-   export let onClickPropagate = void 0;
+   export let clickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
 
@@ -74,8 +74,8 @@
    $: onContextClick = isObject(button) && typeof button.onContextClick === 'function' ? button.onContextClick :
     typeof onContextClick === 'function' ? onContextClick : void 0;
 
-   $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
+   $: clickPropagate = isObject(button) && typeof button.clickPropagate === 'boolean' ? button.clickPropagate :
+    typeof clickPropagate === 'boolean' ? clickPropagate : false;
 
    let hslColor;
 
@@ -95,7 +95,7 @@
 
       dispatch('press', { color: hslColor });
 
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();
@@ -109,7 +109,7 @@
    {
       if (typeof onContextClick === 'function') { onContextClick(hslColor); }
 
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();

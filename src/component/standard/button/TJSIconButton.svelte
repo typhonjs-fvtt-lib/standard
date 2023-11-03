@@ -57,7 +57,7 @@
    export let keyCode = void 0;
    export let onPress = void 0;
    export let onContextMenu = void 0;
-   export let onClickPropagate = void 0;
+   export let clickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
 
@@ -77,8 +77,8 @@
    $: onContextMenu = isObject(button) && typeof button.onContextMenu === 'function' ? button.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
-   $: onClickPropagate = isObject(button) && typeof button.onClickPropagate === 'boolean' ? button.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
+   $: clickPropagate = isObject(button) && typeof button.clickPropagate === 'boolean' ? button.clickPropagate :
+    typeof clickPropagate === 'boolean' ? clickPropagate : false;
 
    /**
     * Handle click event.
@@ -91,7 +91,7 @@
 
       dispatch('press', { event });
 
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();
@@ -105,7 +105,7 @@
    {
       if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
 
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();

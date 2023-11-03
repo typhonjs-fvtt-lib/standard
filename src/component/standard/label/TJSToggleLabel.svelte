@@ -38,7 +38,7 @@
    export let onPress = void 0;
    export let onClose = void 0;
    export let onContextMenu = void 0;
-   export let onClickPropagate = void 0;
+   export let clickPropagate = void 0;
 
    const dispatch = createEventDispatcher();
 
@@ -66,8 +66,8 @@
    $: onContextMenu = isObject(label) && typeof label.onContextMenu === 'function' ? label.onContextMenu :
     typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
-   $: onClickPropagate = isObject(label) && typeof label.onClickPropagate === 'boolean' ? label.onClickPropagate :
-    typeof onClickPropagate === 'boolean' ? onClickPropagate : false;
+   $: clickPropagate = isObject(label) && typeof label.clickPropagate === 'boolean' ? label.clickPropagate :
+    typeof clickPropagate === 'boolean' ? clickPropagate : false;
 
    let spanEl;
    let selected = false;
@@ -91,7 +91,7 @@
 
       dispatch('press', { selected });
 
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();
@@ -100,13 +100,13 @@
 
    /**
     * In this case we can't set pointer-events: none for the div due to the slotted component, so process clicks on the
-    * div in respect to onClickPropagate.
+    * div in respect to clickPropagate.
     *
     * @param {MouseEvent} event -
     */
    function onClickDiv(event)
    {
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();
@@ -140,7 +140,7 @@
    {
       if (typeof onContextMenu === 'function') { onContextMenu(); }
 
-      if (!onClickPropagate)
+      if (!clickPropagate)
       {
          event.preventDefault();
          event.stopPropagation();
