@@ -18,11 +18,18 @@
       "types": "./_dist/application/index.d.ts",
       "import": "./_dist/application/index.js"
     },
+    "./application/dialog": {
+      "types": "./_dist/application/dialog/index.d.ts",
+      "import": "./_dist/application/dialog/index.js"
+    },
     "./component": {
       "import": "./_dist/component/standard/index.js"
     },
     "./component/fvtt": {
       "import": "./_dist/component/fvtt/index.js"
+    },
+    "./component/fvtt/dialog": {
+      "import": "./_dist/component/fvtt/dialog/index.js"
     },
     "./fvtt": {
       "types": "./_dist/fvtt/index.d.ts",

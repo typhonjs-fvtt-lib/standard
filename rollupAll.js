@@ -30,6 +30,22 @@ const rollupConfigs = [
    },
    {
       input: {
+         input: 'src/application/dialog/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin(dtsPluginOptions)
+         ]
+      },
+      output: {
+         file: '_dist/application/dialog/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
+   {
+      input: {
          input: 'src/fvtt/index.js',
          plugins: [
             importsExternal(),
