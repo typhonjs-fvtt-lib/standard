@@ -342,11 +342,13 @@
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
     * transition and destroys the component.
     *
+    * @param {PointerEvent}    event - PointerEvent.
+    *
     * @param {TJSMenuItemData} [item] - Menu item data.
     */
-   function onClick(item)
+   function onClick(event, item)
    {
-      if (typeof item?.onPress === 'function') { item.onPress({ item, focusSource }); }
+      if (typeof item?.onPress === 'function') { item.onPress({ event, item, focusSource }); }
 
       if (!closed)
       {
@@ -466,7 +468,7 @@
    {
       if (event.code === keyCode)
       {
-         if (typeof item?.onPress === 'function') { item.onPress({ item, focusSource }); }
+         if (typeof item?.onPress === 'function') { item.onPress({ event, item, focusSource }); }
 
          if (!closed)
          {
@@ -520,7 +522,7 @@
       {#if $$slots.before}
          <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
          <li class=tjs-menu-item
-             on:click={() => onClick()}
+             on:click={(event) => onClick(event)}
              on:keyup={(event) => onKeyupItem(event)}
              role=menuitem
              tabindex=0>
@@ -536,7 +538,7 @@
          {#if item['#type'] === 'class'}
             <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class=tjs-menu-item
-                on:click={() => onClick(item)}
+                on:click={(event) => onClick(event, item)}
                 on:keyup={(event) => onKeyupItem(event, item)}
                 role=menuitem
                 tabindex=0>
@@ -546,7 +548,7 @@
          {:else if item['#type'] === 'icon'}
             <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class="tjs-menu-item tjs-menu-item-button"
-                 on:click={() => onClick(item)}
+                 on:click={(event) => onClick(event, item)}
                  on:keyup={(event) => onKeyupItem(event, item)}
                  role=menuitem
                  tabindex=0>
@@ -557,7 +559,7 @@
          {:else if item['#type'] === 'image'}
             <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class="tjs-menu-item tjs-menu-item-button"
-                 on:click={() => onClick(item)}
+                 on:click={(event) => onClick(event, item)}
                  on:keyup={(event) => onKeyupItem(event, item)}
                  role=menuitem
                  tabindex=0>
@@ -568,7 +570,7 @@
          {:else if item['#type'] === 'label'}
             <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
             <li class="tjs-menu-item tjs-menu-item-button"
-                on:click={() => onClick(item)}
+                on:click={(event) => onClick(event, item)}
                 on:keyup={(event) => onKeyupItem(event, item)}
                 role=menuitem
                 tabindex=0>
@@ -582,7 +584,7 @@
       {#if $$slots.after}
          <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
          <li class=tjs-menu-item
-             on:click={() => onClick()}
+             on:click={(event) => onClick(event)}
              on:keyup={(event) => onKeyupItem(event)}
              role=menuitem
              tabindex=0>

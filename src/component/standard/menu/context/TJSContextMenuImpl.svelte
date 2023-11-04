@@ -154,10 +154,6 @@
    // Stores if this context menu is closed.
    let closed = false;
 
-   // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keypress` for
-   // close event.
-   // let hasKeyboardFocus = false;
-
    // ----------------------------------------------------------------------------------------------------------------
 
    // Event bindings
@@ -238,13 +234,15 @@
     * Invokes a function on click of a menu item then fires the `close` event and automatically runs the outro
     * transition and destroys the component.
     *
+    * @param {PointerEvent} event - PointerEvent.
+    *
     * @param {object} item - Function to invoke on click.
     */
-   function onClick(item)
+   function onClick(event, item)
    {
       if (typeof item?.onPress === 'function')
       {
-         item.onPress({ item, focusSource });
+         item.onPress({ event, item, focusSource });
       }
       else
       {
@@ -254,7 +252,7 @@
 
       if (!closed)
       {
-         dispatch('close');
+         dispatch('close:contextmenu');
          closed = true;
          outroAndDestroy(local);
       }
@@ -264,9 +262,9 @@
     * Determines if a pointer pressed to the document body closes the context menu. If the click occurs outside the
     * context menu then fire the `close` event and run the outro transition then destroy the component.
     *
-    * @param {PointerEvent|MouseEvent}  event - Pointer or mouse event from document body click / scroll wheel.
+    * @param {PointerEvent | MouseEvent}  event - Pointer or mouse event from document body click / scroll wheel.
     *
-    * @param {boolean}                  [isWheel=false] - True when scroll wheel; do not perform 2nd early out test.
+    * @param {boolean}                    [isWheel=false] - True when scroll wheel; do not perform 2nd early out test.
     */
    function onClose(event, isWheel = false)
    {
@@ -278,7 +276,7 @@
 
       if (!closed)
       {
-         dispatch('close');
+         dispatch('close:contextmenu');
          closed = true;
          outroAndDestroy(local);
       }
@@ -362,7 +360,7 @@
             if (!closed)
             {
                closed = true;
-               dispatch('close');
+               dispatch('close:contextmenu');
                outroAndDestroy(local);
 
                A11yHelper.applyFocusSource(focusSource)
@@ -386,7 +384,7 @@
          if (!closed)
          {
             closed = true;
-            dispatch('close');
+            dispatch('close:contextmenu');
             outroAndDestroy(local);
 
             event.preventDefault();
@@ -395,7 +393,7 @@
 
          if (typeof item?.onPress === 'function')
          {
-            item.onPress({ item, focusSource });
+            item.onPress({ event, item, focusSource });
          }
          else
          {
@@ -412,7 +410,7 @@
    {
       if (!closed)
       {
-         dispatch('close');
+         dispatch('close:contextmenu');
          closed = true;
          outroAndDestroy(local);
 
@@ -426,7 +424,7 @@
 <nav id={id}
      class=tjs-context-menu
      bind:this={menuEl}
-     on:click|preventDefault|stopPropagation={() => null}
+     on:click|preventDefault|stopPropagation
      on:keydown|stopPropagation={onKeydownMenu}
      on:keyup|preventDefault|stopPropagation={onKeyupMenu}
      style:z-index={zIndex}
@@ -440,7 +438,7 @@
             {#if item['#type'] === 'class'}
                 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class=tjs-context-menu-item
-                    on:click={() => onClick(item)}
+                    on:click={(event) => onClick(event, item)}
                     on:keyup={(event) => onKeyupItem(event, item)}
                     role=menuitem
                     tabindex=0>
@@ -450,7 +448,7 @@
             {:else if item['#type'] === 'icon'}
                 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class="tjs-context-menu-item tjs-context-menu-item-button"
-                    on:click={() => onClick(item)}
+                    on:click={(event) => onClick(event, item)}
                     on:keyup={(event) => onKeyupItem(event, item)}
                     role=menuitem
                     tabindex=0>
@@ -461,7 +459,7 @@
             {:else if item['#type'] === 'image'}
                 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class="tjs-context-menu-item tjs-context-menu-item-button"
-                    on:click={() => onClick(item)}
+                    on:click={(event) => onClick(event, item)}
                     on:keyup={(event) => onKeyupItem(event, item)}
                     role=menuitem
                     tabindex=0>
@@ -472,7 +470,7 @@
             {:else if item['#type'] === 'label'}
                 <!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
                 <li class="tjs-context-menu-item tjs-context-menu-item-button"
-                    on:click={() => onClick(item)}
+                    on:click={(event) => onClick(event, item)}
                     on:keyup={(event) => onKeyupItem(event, item)}
                     role=menuitem
                     tabindex=0>

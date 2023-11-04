@@ -31,9 +31,10 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
  * @typedef {object} TJSMenuItemData
  *
  * @property {(
- *    ({
- *       item: TJSMenuItemData,
- *       focusSource: import('#runtime/util/browser').A11yFocusSource
+ *    (data?: {
+ *       event?: (KeyboardEvent || PointerEvent),
+ *       item?: TJSMenuItemData,
+ *       focusSource?: import('#runtime/util/browser').A11yFocusSource
  *    }) => void
  * )} [onPress] A callback function to invoke; The object contains the item menu item data and an A11yFocusSource object
  * to potentially pass to a new application.
