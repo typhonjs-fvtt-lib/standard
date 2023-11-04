@@ -151,13 +151,13 @@
    /** @type {object} */
    export let styles = void 0;
 
-   /** @type {() => void} */
+   /** @type {(data?: { event?: KeyboardEvent | PointerEvent }) => void} */
    export let onClose = void 0;
 
-   /** @type {() => void} */
+   /** @type {(data?: { event?: KeyboardEvent | PointerEvent }) => void} */
    export let onOpen = void 0;
 
-   /** @type {(event?: MouseEvent) => void} */
+   /** @type {(data?: { event?: PointerEvent }) => void} */
    export let onContextMenu = void 0;
 
    /** @type {TJSFolderOptions} */
@@ -174,10 +174,10 @@
     typeof id === 'string' ? id : void 0;
 
    $: iconOpen = isObject(folder) && typeof folder.iconOpen === 'string' ? folder.iconOpen :
-       typeof iconOpen === 'string' ? iconOpen : void 0;
+    typeof iconOpen === 'string' ? iconOpen : void 0;
 
    $: iconClosed = isObject(folder) && typeof folder.iconClosed === 'string' ? folder.iconClosed :
-       typeof iconClosed === 'string' ? iconClosed : void 0;
+    typeof iconClosed === 'string' ? iconClosed : void 0;
 
    $: label = isObject(folder) && typeof folder.label === 'string' ? folder.label :
     typeof label === 'string' ? label : '';
@@ -222,7 +222,7 @@
     typeof onOpen === 'function' ? onOpen : void 0;
 
    $: onContextMenu = isObject(folder) && typeof folder.onContextMenu === 'function' ? folder.onContextMenu :
-    typeof onContextMenu === 'function' ? onContextMenu : () => null;
+    typeof onContextMenu === 'function' ? onContextMenu : void 0;
 
    $:
    {
@@ -268,7 +268,7 @@
    /**
     * Handles opening / closing the details element from either click or keyboard event when summary focused.
     *
-    * @param {KeyboardEvent|MouseEvent} event -
+    * @param {KeyboardEvent | PointerEvent} event - Event.
     *
     * @param {boolean} [fromKeyboard=false] - True when event is coming from keyboard. This is used to ignore the
     * chevronOnly click event handling.
@@ -291,11 +291,11 @@
 
          if ($store && typeof onOpen === 'function')
          {
-            onOpen();
+            onOpen({ event });
          }
          else if (typeof onClose === 'function')
          {
-            onClose();
+            onClose({ event });
          }
 
          event.preventDefault();
@@ -334,6 +334,16 @@
       }
 
       handleOpenClose(event);
+   }
+
+   /**
+    * Handles a context menu press forwarding the event to the handler.
+    *
+    * @param {PointerEvent} event - PointerEvent.
+    */
+   function onContextMenuPress(event)
+   {
+      if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
    }
 
    /**
@@ -414,7 +424,7 @@
     <!-- svelte-ignore a11y-no-redundant-roles -->
     <summary bind:this={summaryEl}
              on:click|capture={onClickSummary}
-             on:contextmenu={onContextMenu}
+             on:contextmenu={onContextMenuPress}
              on:keydown|capture={onKeyDown}
              on:keyup|capture={onKeyUp}
              class:default-cursor={localOptions.chevronOnly}
