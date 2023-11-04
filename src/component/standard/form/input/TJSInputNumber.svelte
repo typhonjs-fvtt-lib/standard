@@ -63,6 +63,7 @@
    export let max = void 0;
    export let min = void 0;
    export let placeholder = void 0;
+   export let readonly = void 0;
    export let step = void 0;
    export let store = void 0;
    export let storeIsValid = void 0;
@@ -96,14 +97,14 @@
    $: placeholder = isObject(input) && typeof input.placeholder === 'string' ? localize(input.placeholder) :
     typeof placeholder === 'string' ? localize(placeholder) : void 0;
 
+   $: readonly = isObject(input) && typeof input.readonly === 'boolean' ? input.readonly :
+    typeof readonly === 'boolean' ? readonly : false;
+
    $: step = isObject(input) && typeof input.step === 'number' ? input.step :
     typeof step === 'number' ? step : void 0;
 
    $: store = isObject(input) && isWritableStore(input.store) ? input.store :
     isWritableStore(store) ? store : writable(void 0);
-
-   $: storeIsValid = isObject(input) && isReadableStore(input.storeIsValid) ? input.storeIsValid :
-    isReadableStore(storeIsValid) ? storeIsValid : writable(true);
 
    $: storeIsValid = isObject(input) && isReadableStore(input.storeIsValid) ? input.storeIsValid :
     isReadableStore(storeIsValid) ? storeIsValid : writable(true);
@@ -159,7 +160,7 @@
    }
 </script>
 
-<div class=tjs-input-container use:efx use:applyStyles={styles}>
+<div class=tjs-input-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
     <input class=tjs-input
            type=number
            bind:this={inputEl}
@@ -170,6 +171,7 @@
            step={step}
            {placeholder}
            {disabled}
+           {readonly}
            on:focusin={onFocusIn}
            on:keydown={onKeyDown}
     />

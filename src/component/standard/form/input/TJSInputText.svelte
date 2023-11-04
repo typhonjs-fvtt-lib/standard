@@ -63,6 +63,7 @@
    export let disabled = void 0;
    export let options = void 0;
    export let placeholder = void 0;
+   export let readonly = void 0;
    export let store = void 0;
    export let storeIsValid = void 0;
    export let styles = void 0;
@@ -109,6 +110,9 @@
 
    $: placeholder = isObject(input) && typeof input.placeholder === 'string' ? localize(input.placeholder) :
     typeof placeholder === 'string' ? localize(placeholder) : void 0;
+
+   $: readonly = isObject(input) && typeof input.readonly === 'boolean' ? input.readonly :
+    typeof readonly === 'boolean' ? readonly : false;
 
    $: store = isObject(input) && isWritableStore(input.store) ? input.store :
     isWritableStore(store) ? store : writable(void 0);
@@ -168,7 +172,7 @@
    }
 </script>
 
-<div class=tjs-input-container use:efx use:applyStyles={styles}>
+<div class=tjs-input-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
     <input class=tjs-input
            {...{ type }}
            bind:this={inputEl}
@@ -176,6 +180,7 @@
            class:is-value-invalid={!$storeIsValid}
            {placeholder}
            {disabled}
+           {readonly}
            on:focusin={onFocusIn}
            on:keydown={onKeyDown}
     />
