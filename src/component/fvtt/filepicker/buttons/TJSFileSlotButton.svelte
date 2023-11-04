@@ -22,7 +22,6 @@
    import { writable }              from '#svelte/store';
 
    import { applyStyles }           from '#runtime/svelte/action/dom';
-   import { findParentElement }     from '#runtime/util/browser';
    import { isObject }              from '#runtime/util/object';
    import { isWritableStore }       from '#runtime/util/store';
 
@@ -92,7 +91,7 @@
       if (typeof pickerOptions?.id === 'string' && FVTTFilePickerControl.bringToTop(pickerOptions?.id)) { return; }
 
       // Locate any parent glasspane in order to promote the file picker app to the associated container.
-      const glasspaneEl = findParentElement({ source: event.target, class: 'tjs-glass-pane' });
+      const glasspaneEl = event.target?.closest('.tjs-glass-pane');
 
       // Add any glasspane ID to `pickerOptions`.
       const options = isObject(pickerOptions) ? { ...pickerOptions, glasspaneId: glasspaneEl?.id } :
