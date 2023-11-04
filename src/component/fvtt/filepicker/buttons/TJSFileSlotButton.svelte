@@ -143,7 +143,13 @@
     */
    function onContextMenuPress(event)
    {
-      if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
+      if (typeof onContextMenu === 'function')
+      {
+         // Because the efx is not the key event listener forward on a new event to trigger effect.
+         if (efxEl) { efxEl.dispatchEvent(new KeyboardEvent('keyup', { key: 'ContextMenu', code: 'ContextMenu' })); }
+
+         onContextMenu({ event });
+      }
 
       if (!clickPropagate)
       {
