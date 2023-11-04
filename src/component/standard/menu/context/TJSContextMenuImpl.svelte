@@ -122,6 +122,7 @@
    /** @type {string} */
    export let keyCode = void 0;
 
+   /** @type {import('#runtime/util/browser').A11yFocusSource} */
    export let focusSource = void 0;
 
    /** @type {{ duration: number, easing: Function }} */
@@ -241,11 +242,9 @@
     */
    function onClick(item)
    {
-      const callback = item?.onPress;
-
-      if (typeof callback === 'function')
+      if (typeof item?.onPress === 'function')
       {
-         callback(item, { focusSource });
+         item.onPress({ item, focusSource });
       }
       else
       {
@@ -394,10 +393,9 @@
             event.stopPropagation();
          }
 
-         const callback = item?.onPress;
-         if (typeof callback === 'function')
+         if (typeof item?.onPress === 'function')
          {
-            callback(item, { focusSource });
+            item.onPress({ item, focusSource });
          }
          else
          {

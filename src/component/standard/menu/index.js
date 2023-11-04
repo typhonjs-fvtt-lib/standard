@@ -30,8 +30,13 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
 /**
  * @typedef {object} TJSMenuItemData
  *
- * @property {(item: TJSMenuItemData, options: object) => void} [onPress] A callback function to invoke; second
- * parameter includes any focus source options to pass to potential new application.
+ * @property {(
+ *    ({
+ *       item: TJSMenuItemData,
+ *       focusSource: import('#runtime/util/browser').A11yFocusSource
+ *    }) => void
+ * )} [onPress] A callback function to invoke; The object contains the item menu item data and an A11yFocusSource object
+ * to potentially pass to a new application.
  *
  * @property {boolean|Function} [condition] If a boolean and false or a function that invoked returns a falsy value
  * this item is not added.

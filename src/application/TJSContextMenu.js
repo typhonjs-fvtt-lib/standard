@@ -42,7 +42,7 @@ export class TJSContextMenu
     *
     * @param {string}      [opts.id] - A custom CSS ID to add to the menu. This allows CSS style targeting.
     *
-    * @param {KeyboardEvent|MouseEvent}  [opts.event] - The source MouseEvent or KeyboardEvent.
+    * @param {KeyboardEvent | MouseEvent}  [opts.event] - The source MouseEvent or KeyboardEvent.
     *
     * @param {number}      [opts.x] - X position override for the top / left of the menu.
     *

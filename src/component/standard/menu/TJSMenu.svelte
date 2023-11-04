@@ -217,7 +217,8 @@
    let closed = false;
 
    // Stores any associated `focusSource` options to pass to menu callbacks when menu was activated by keys.
-   let focusOptions = void 0;
+   /** @type {import('#runtime/util/browser').A11yFocusSource} */
+   let focusSource = void 0;
 
    // Stores if menu has keyboard focus; detected on mount, when tab navigation occurs, and used to set `keyboardFocus`
    // for close event.
@@ -244,7 +245,10 @@
       activeWindow.document.body.addEventListener('wheel', onClose);
       activeWindow.addEventListener('blur', onWindowBlur);
 
+      /** @type {HTMLElement} */
       const activeEl = activeWindow.document.activeElement;
+
+      /** @type {HTMLElement} */
       const parentEl = menuEl.parentElement;
 
       // Determine if the parent element to the menu contains the active element and that it is explicitly focused
@@ -266,14 +270,12 @@
          }
 
          // Menu opened by keyboard navigation; set focus source to activeEl and pass to menu item callbacks.
-         focusOptions = {
-            focusSource: {
-               focusEl: [activeEl]
-            }
+         focusSource = {
+            focusEl: [activeEl]
          };
 
          // Append any optional focus source from `focusEl` prop.
-         if (focusEl) { focusOptions.focusSource.focusEl.push(focusEl); }
+         if (focusEl) { focusSource.focusEl.push(focusEl); }
       }
       else
       {
@@ -283,10 +285,8 @@
          // Create focus source from optional `focusEl` prop.
          if (focusEl)
          {
-            focusOptions = {
-               focusSource: {
-                  focusEl: [focusEl]
-               }
+            focusSource = {
+               focusEl: [focusEl]
             };
          }
       }
@@ -346,9 +346,7 @@
     */
    function onClick(item)
    {
-      const callback = item?.onPress;
-
-      if (typeof callback === 'function') { callback(item, focusOptions); }
+      if (typeof item?.onPress === 'function') { item.onPress({ item, focusSource }); }
 
       if (!closed)
       {
@@ -468,9 +466,7 @@
    {
       if (event.code === keyCode)
       {
-         const callback = item?.onPress;
-
-         if (typeof callback === 'function') { callback(item, focusOptions); }
+         if (typeof item?.onPress === 'function') { item.onPress({ item, focusSource }); }
 
          if (!closed)
          {
