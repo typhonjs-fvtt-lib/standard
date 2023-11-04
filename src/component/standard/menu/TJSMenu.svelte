@@ -525,7 +525,11 @@
              role=menuitem
              tabindex=0>
             <span class=tjs-menu-focus-indicator />
-            <slot name=before />
+            <slot name=before>
+               {#if isSvelteComponent(menu?.slotBefore?.class)}
+                  <svelte:component this={menu.slotBefore.class} {...(isObject(menu?.slotBefore?.props) ? menu.slotBefore.props : {})} />
+               {/if}
+            </slot>
          </li>
       {/if}
       {#each allItems as item}
@@ -583,7 +587,11 @@
              role=menuitem
              tabindex=0>
             <span class=tjs-menu-focus-indicator />
-            <slot name=after />
+            <slot name=after>
+               {#if isSvelteComponent(menu?.slotAfter?.class)}
+                  <svelte:component this={menu.slotAfter.class} {...(isObject(menu?.slotAfter?.props) ? menu.slotAfter.props : {})} />
+               {/if}
+            </slot>
          </li>
       {/if}
    </ol>
