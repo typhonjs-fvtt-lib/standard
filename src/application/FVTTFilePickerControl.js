@@ -393,7 +393,7 @@ class TJSFilePicker extends FilePicker
             onYes: {
                icon: 'fas fa-check',
                label: 'Yes',
-               onPress: async (application) =>
+               onPress: async ({ application }) =>
                {
                   const html = application.elementContent;
 
