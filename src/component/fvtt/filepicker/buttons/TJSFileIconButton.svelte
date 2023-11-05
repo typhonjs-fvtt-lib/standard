@@ -48,9 +48,10 @@
 
       // Add any glasspane ID to `pickerOptions`.
       const options = isObject(pickerOptions) ? { ...pickerOptions, glasspaneId: glasspaneEl?.id } :
-       { glasspaneId: glasspaneEl?.id }
+       { glasspaneId: glasspaneEl?.id };
 
-      const result = await FVTTFilePickerControl.browse(options);
+      // Result is null when the user cancels / closes the file picker app.
+      const result = await FVTTFilePickerControl.browse(options, event.detail?.event);
 
       if (result)
       {
@@ -58,7 +59,7 @@
 
          if (typeof pickerOptions?.onValidate === 'function')
          {
-            validated = pickerOptions.onValidate({ filepath: result });
+            validated = await pickerOptions.onValidate({ filepath: result });
             if (typeof validated !== 'boolean')
             {
                console.warn(`FVTTFilePickerBrowseOptions.onValidate warning: 'onValidate' did not return a boolean.`);
