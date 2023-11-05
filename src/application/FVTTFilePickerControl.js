@@ -2,6 +2,7 @@ import { fade }               from 'svelte/transition';
 
 import { TJSDialog }          from '#runtime/svelte/application';
 import { outroAndDestroy }    from '#runtime/svelte/util';
+import { A11yHelper }         from '#runtime/util/browser';
 import { ManagedPromise }     from '#runtime/util/async';
 import { nextAnimationFrame } from '#runtime/util/animate';
 import {
@@ -36,6 +37,14 @@ import { TJSGlassPane }       from '#runtime/svelte/component/core';
  */
 export class FVTTFilePickerControl
 {
+   /**
+    * Provides the event constructor names to duck type against. This is necessary for when HTML nodes / elements are
+    * moved to another browser window as `instanceof` checks will fail.
+    *
+    * @type {Set<string>}
+    */
+   static #eventTypesAll = new Set(['KeyboardEvent', 'MouseEvent', 'PointerEvent']);
+
    static #managedPromise = new ManagedPromise();
 
    /** @type {TJSFilePicker} */
@@ -87,15 +96,19 @@ export class FVTTFilePickerControl
    /**
     * Creates a new Foundry FilePicker app to browse and return a file path selection.
     *
-    * @param {FVTTFilePickerBrowseOptions} options - FVTTFilePickerControl options.
+    * @param {FVTTFilePickerBrowseOptions} [options] - FVTTFilePickerControl browse options. This may also include any
+    *        Application options.
+    *
+    * @param {KeyboardEvent | MouseEvent} [event] - An event to inspect for focus management when a modal file picker
+    *        is launched.
     *
     * @returns {Promise<string|null>} The file picker / browse result.
     */
-   static async browse(options = {})
+   static async browse(options = {}, event)
    {
       if (!this.canBrowse) { return null; }
 
-      return this.#browseImpl(options);
+      return this.#browseImpl(options, event);
    }
 
    /**
@@ -145,11 +158,15 @@ export class FVTTFilePickerControl
    /**
     * Creates a new Foundry FilePicker app to browse and return a file path selection.
     *
-    * @param {FVTTFilePickerBrowseOptions} options - FilePicker options with additional `zIndex` attribute.
+    * @param {FVTTFilePickerBrowseOptions} [options] - FVTTFilePickerControl browse options. This may also include any
+    *        Application options.
+    *
+    * @param {KeyboardEvent | MouseEvent} [event] - An event to inspect for focus management when a modal file picker
+    *        is launched.
 
     * @returns {Promise<string | null>} The file picker / browse result.
     */
-   static async #browseImpl(options)
+   static async #browseImpl(options, event)
    {
       if (options?.glasspaneId !== void 0 && typeof options.glasspaneId !== 'string')
       {
@@ -159,6 +176,11 @@ export class FVTTFilePickerControl
       if (options?.zIndex !== void 0 && !Number.isInteger(options?.zIndex) && options?.zIndex < 0)
       {
          throw new TypeError(`FVTTFilePickerControl.browse error: 'zIndex' is not a positive integer.`);
+      }
+
+      if (event !== void 0 && !this.#eventTypesAll.has(event?.constructor?.name))
+      {
+         throw new TypeError(`FVTTFilePickerControl.browse error: 'event' is not a KeyboardEvent or MouseEvent.`);
       }
 
       // Store the explicit zIndex / glasspaneId. This may be modified if the file picker is to be modal.
@@ -196,19 +218,29 @@ export class FVTTFilePickerControl
       // If there is an existing glasspane is specified do not create a new glasspane.
       if (typeof glasspaneId === 'string')
       {
-         // If `closeOnInput` is true register a listener on the existing glasspane for the `pointerdown:glasspane`
-         // event to close the file picker app.
-         if (typeof modalOptions?.closeOnInput === 'boolean' && modalOptions?.closeOnInput)
+         const gpEl = document.querySelector(`#${glasspaneId}`);
+         if (gpEl)
          {
-            const gpEl = document.querySelector(`#${glasspaneId}`);
-            if (gpEl)
+            // Capture and act first on `glasspane:keydown:escape` closing the file picker, but stopping any modal
+            // dialog underneath from closing as well.
+            gpEl.addEventListener('glasspane:keydown:escape', (event) =>
             {
-               gpEl.addEventListener('pointerdown:glasspane', () => this.#filepickerApp?.close?.(), { once: true });
-            }
-            else
+               event.preventDefault();
+               event.stopImmediatePropagation();
+
+               this.#filepickerApp?.close?.();
+            }, { capture: true, once: true });
+
+            // If `closeOnInput` is true register a listener on the existing glasspane for the `glasspane:pointerdown`
+            // event to close the file picker app.
+            if (typeof modalOptions?.closeOnInput === 'boolean' && modalOptions?.closeOnInput)
             {
-               console.warn(`FVTTFilePickerControl.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
+               gpEl.addEventListener('glasspane:pointerdown', () => this.#filepickerApp?.close?.(), { once: true });
             }
+         }
+         else
+         {
+            console.warn(`FVTTFilePickerControl.browse warning: Could not locate glasspane for CSS ID: ${glasspaneId}`);
          }
       }
 
@@ -231,11 +263,18 @@ export class FVTTFilePickerControl
          });
 
          // When `closeOnInput` is true and a click on the glasspane occurs close the file picker app.
-         gp.$on('close:glasspane', () => this.#filepickerApp?.close?.());
+         gp.$on('glasspane:close', () => this.#filepickerApp?.close?.());
+
+         // Close the file picker whenever the escape key is pressed.
+         gp.$on('glasspane:keydown:escape', () => this.#filepickerApp?.close?.());
 
          // Destroy the glasspane component when the Promise is resolved.
          promise.finally(() => outroAndDestroy(gp));
       }
+
+      // If an event is defined determine a potential focus source. When the file picker app is closed this element
+      // resumes focus.
+      const focusSource = glasspaneId && event ? A11yHelper.getFocusSource({ event }) : void 0;
 
       // -------------------------------------------------------------------------------------------------------------
 
@@ -247,7 +286,7 @@ export class FVTTFilePickerControl
          {
             this.#managedPromise.resolve(result);
          }
-      }, this.#managedPromise, { glasspaneId, zIndex });
+      }, this.#managedPromise, { focusSource, glasspaneId, zIndex });
 
       await this.#filepickerApp.browse();
 
@@ -295,15 +334,26 @@ export class FVTTFilePickerControl
  */
 class TJSFilePicker extends FilePicker
 {
+   /** @type {TJSDialog} */
    #createDirectoryApp;
+
+   /** @type {import('#runtime/util/browser').A11yFocusSource} */
+   #focusSource;
+
+   /** @type {string} */
    #glasspaneId;
+
+   /** @type {ManagedPromise} */
    #managedPromise;
+
+   /** @type {number} */
    #zIndex;
 
-   constructor(options, managedPromise, { glasspaneId, zIndex } = {})
+   constructor(options, managedPromise, { focusSource, glasspaneId, zIndex } = {})
    {
       super(options);
 
+      this.#focusSource = focusSource;
       this.#glasspaneId = glasspaneId;
       this.#managedPromise = managedPromise;
       this.#zIndex = zIndex;
@@ -321,6 +371,7 @@ class TJSFilePicker extends FilePicker
    {
       super.bringToTop();
 
+      // Always focus first input when app is brought to top.
       this?._element?.[0]?.querySelector('input')?.focus();
    }
 
@@ -345,7 +396,14 @@ class TJSFilePicker extends FilePicker
       const content = this._element?.[0]?.querySelector('.window-content');
       if (content) { content.style.overflow = 'hidden'; }
 
-      return super.close(options);
+      await super.close(options);
+
+      // Apply any stored focus options and then remove them from options.
+      if (this.#focusSource)
+      {
+         A11yHelper.applyFocusSource(this.#focusSource);
+         this.#focusSource = void 0;
+      }
    }
 
    /**
@@ -485,7 +543,7 @@ class TJSFilePicker extends FilePicker
  *
  * @property {({ filepath: string }) => void} [onFilepath] Optional function invoked when filepath changes.
  *
- * @property {({ filepath: string }) => boolean} [onValidate] Optional validation function of selected filepath.
+ * @property {({ filepath: string }) => Promise<boolean>} [onValidate] Optional validation function of selected filepath.
  *
  * @property {import('svelte/store').Writable<string>} [store] A writable Svelte store that is set with result.
  *
