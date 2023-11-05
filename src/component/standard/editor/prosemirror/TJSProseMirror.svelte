@@ -129,7 +129,9 @@
     *
     * @property {Record<string, ProseMirror.Plugin>}    [plugins] Additional ProseMirror plugins to load.
     *
-    * @property {Object<string, string>}   [styles] Additional CSS property names and values to set as inline styles.
+    * @property {boolean}   [menuCompact] Initializes the ProseMirror editor with a compact menu.
+    *
+    * @property {Record<string, string>}   [styles] Additional CSS property names and values to set as inline styles.
     * This is useful for dynamically overriding any built in styles and in particular setting CSS variables supported.
     */
 
@@ -416,6 +418,7 @@
             ...ProseMirror.defaultPlugins,
 
             menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
+               compact: typeof options?.menuCompact === 'boolean' ? options.menuCompact : false,
                destroyOnSave: remove,
                onSave: () => saveEditor({ remove })
             }),
