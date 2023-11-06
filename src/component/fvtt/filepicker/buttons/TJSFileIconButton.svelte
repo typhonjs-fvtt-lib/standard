@@ -73,4 +73,4 @@
 </script>
 
 <!-- Note: setting of icon directly. It can be customized by setting button.icon -->
-<TJSIconButton on:press={invokePicker} {button} icon={'fas fa-file'} />
+<TJSIconButton on:press={invokePicker} {...$$props} icon={'fas fa-file'} />

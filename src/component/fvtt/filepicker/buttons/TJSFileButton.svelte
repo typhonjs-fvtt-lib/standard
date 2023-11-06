@@ -72,4 +72,4 @@
    }
 </script>
 
-<TJSButton on:press={invokePicker} {button} icon={'fas fa-file'} />
+<TJSButton on:press={invokePicker} {...$$props} icon={'fas fa-file'} />

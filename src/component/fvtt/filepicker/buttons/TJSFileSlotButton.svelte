@@ -81,6 +81,6 @@
    }
 </script>
 
-<TJSSlotButton on:press={invokePicker} {button}>
+<TJSSlotButton on:press={invokePicker} {...$$props}>
     <slot />
 </TJSSlotButton>
