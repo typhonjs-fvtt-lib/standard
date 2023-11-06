@@ -14,22 +14,23 @@
     * --tjs-input-label-white-space - nowrap
     */
 
-   import { isObject }          from '#runtime/util/object';
+   import { isObject }           from '#runtime/util/object';
 
-   import TJSInputNumber        from './TJSInputNumber.svelte';
-   import TJSInputText          from './TJSInputText.svelte';
+   import TJSInputNumber         from './TJSInputNumber.svelte';
+   import TJSInputText           from './TJSInputText.svelte';
+
+   import TJSButton              from '../button/TJSButton.svelte';
+   import TJSSelect              from '../select/TJSSelect.svelte';
 
    export let input = void 0;
 
-   export let label = void 0;
-
-   $: label = isObject(input) && typeof input.label === 'string' ? input.label :
-    typeof label === 'string' ? label : void 0;
+   export let type = void 0;
 
    let component;
 
    $: {
-      const type = isObject(input) && typeof input.type === 'string' ? input.type : 'text';
+      type = isObject(input) && typeof input.type === 'string' ? input.type :
+       typeof type === 'string' ? type : 'text';
 
       switch (type)
       {
@@ -45,39 +46,27 @@
             component = TJSInputNumber;
             break;
 
+         case 'button':
+            component = TJSButton;
+            break;
+
+         case 'select':
+            component = TJSSelect;
+            break;
+
          default:
-            throw new Error(
-             `'TJSInput' currently only supports text input types: 'email', 'number', 'password', 'search', 'text', 'url'.`);
+            throw new Error(`'TJSInput' currently only supports text input types: 'button', 'email', 'number', ` +
+             `'password', 'search', 'select', 'text', and 'url'.`);
       }
    }
 </script>
 
-{#if label}
-   <!-- svelte-ignore a11y-label-has-associated-control -->
-   <label class=tjs-input-label>
-      <slot name=label-before />
-
-      {#if typeof label === 'string'}
-         <span class=tjs-input-label-span>{label}</span>
-      {/if}
-
-      <slot name=label-after />
-
-      <svelte:component this={component} {...$$props} />
-
-      <slot />
-   </label>
+{#if type === 'button'}
+   <svelte:component this={component} {...$$props} button={input} />
+{:else if type === 'select'}
+   <svelte:component this={component} {...$$props} select={input} />
 {:else}
    <svelte:component this={component} {...$$props} />
 {/if}
 
-<style>
-   label {
-      display: var(--tjs-input-label-display, contents);
-   }
 
-   span {
-      text-align: var(--tjs-input-label-text-align, right);
-      white-space: var(--tjs-input-label-white-space, nowrap);
-   }
-</style>

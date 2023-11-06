@@ -63,9 +63,14 @@
    import { isWritableStore } from '#runtime/util/store';
    import { isObject }        from '#runtime/util/object';
 
+   import {
+      TJSSlotLabel,
+      TJSSlotLabelUtil }      from '../../label';
+
    export let select = void 0;
 
    export let disabled = void 0;
+   export let label = void 0;
    export let selected = void 0;
    export let options = void 0;
    export let store = void 0;
@@ -73,8 +78,12 @@
 
    export let efx = void 0;
 
+   // ----------------------------------------------------------------------------------------------------------------
+
    $: disabled = isObject(select) && typeof select.disabled === 'boolean' ? select.disabled :
     typeof disabled === 'boolean' ? disabled : false;
+   $: label = isObject(select) && TJSSlotLabelUtil.isValid(select.label) ? select.label :
+    TJSSlotLabelUtil.isValid(label) ? label : void 0;
    $: selected = isObject(select) && typeof select.selected === 'string' ? select.selected :
     typeof selected === 'string' ? selected : void 0;
    $: options = isObject(select) && Array.isArray(select.options) ? select.options :
@@ -86,6 +95,8 @@
    $: efx = isObject(select) && typeof select.efx === 'function' ? select.efx :
     typeof efx === 'function' ? efx : () => {};
 
+   // ----------------------------------------------------------------------------------------------------------------
+
    onMount(() =>
    {
       // On mount verify that the current store value is included in options otherwise check the `selected` value if set
@@ -94,19 +105,21 @@
    });
 </script>
 
-<div on:change class=tjs-select-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
-   <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
-   <select on:change
-           class=tjs-select
-           bind:value={$store}
-           {disabled}>
-      {#each options as option}
-         <option class=tjs-select-option value={option.value}>
-            {option.label}
-         </option>
-      {/each}
-   </select>
-</div>
+<TJSSlotLabel {label}>
+   <div on:change class=tjs-select-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
+      <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
+      <select on:change
+              class=tjs-select
+              bind:value={$store}
+              {disabled}>
+         {#each options as option}
+            <option class=tjs-select-option value={option.value}>
+               {option.label}
+            </option>
+         {/each}
+      </select>
+   </div>
+</TJSSlotLabel>
 
 <style>
    .tjs-select-container {
@@ -153,6 +166,7 @@
    }
 
    select option {
+      /* TODO: add defaults via cssVariables */
       background: var(--tjs-select-option-background, var(--tjs-default-popup-background, #23221d));
       color: var(--tjs-select-option-color, var(--tjs-default-popup-primary-color, #b5b3a4));
    }

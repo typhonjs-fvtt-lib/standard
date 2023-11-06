@@ -56,19 +56,24 @@
     * --tjs-input-text-width
     */
 
-   import { writable }          from '#svelte/store';
+   import { writable }     from '#svelte/store';
 
-   import { applyStyles }       from '#runtime/svelte/action/dom';
-   import { localize }          from '#runtime/svelte/helper';
-   import { isObject }          from '#runtime/util/object';
+   import { applyStyles }  from '#runtime/svelte/action/dom';
+   import { localize }     from '#runtime/svelte/helper';
+   import { isObject }     from '#runtime/util/object';
 
    import {
       isReadableStore,
-      isWritableStore }         from '#runtime/util/store';
+      isWritableStore }    from '#runtime/util/store';
+
+   import {
+      TJSSlotLabel,
+      TJSSlotLabelUtil }   from '../../label';
 
    export let input = void 0;
 
    export let disabled = void 0;
+   export let label = void 0;
    export let options = void 0;
    export let placeholder = void 0;
    export let readonly = void 0;
@@ -86,6 +91,8 @@
    }
 
    let inputEl;
+
+   // ----------------------------------------------------------------------------------------------------------------
 
    $: {
       type = isObject(input) && typeof input.type === 'string' ? input.type :
@@ -108,6 +115,9 @@
 
    $: disabled = isObject(input) && typeof input.disabled === 'boolean' ? input.disabled :
     typeof disabled === 'boolean' ? disabled : false;
+
+   $: label = isObject(input) && TJSSlotLabelUtil.isValid(input.label) ? input.label :
+    TJSSlotLabelUtil.isValid(label) ? label : void 0;
 
    $: {
       options = isObject(input) && isObject(input.options) ? input.options :
@@ -135,6 +145,8 @@
 
    $: efx = isObject(input) && typeof input.efx === 'function' ? input.efx :
     typeof efx === 'function' ? efx : () => {};
+
+   // ----------------------------------------------------------------------------------------------------------------
 
    let initialValue;
 
@@ -182,19 +194,21 @@
    }
 </script>
 
-<div class=tjs-input-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
-    <input class=tjs-input
-           {...{ type }}
-           bind:this={inputEl}
-           bind:value={$store}
-           class:is-value-invalid={!$storeIsValid}
-           {placeholder}
-           {disabled}
-           {readonly}
-           on:focusin={onFocusIn}
-           on:keydown={onKeyDown}
-    />
-</div>
+<TJSSlotLabel {label}>
+   <div class=tjs-input-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
+      <input class=tjs-input
+             {...{ type }}
+             bind:this={inputEl}
+             bind:value={$store}
+             class:is-value-invalid={!$storeIsValid}
+             {placeholder}
+             {disabled}
+             {readonly}
+             on:focusin={onFocusIn}
+             on:keydown={onKeyDown}
+      />
+   </div>
+</TJSSlotLabel>
 
 <style>
     .tjs-input-container {
