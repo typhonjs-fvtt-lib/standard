@@ -11,10 +11,14 @@
     * --tjs-input-background
     * --tjs-input-border
     * --tjs-input-border-radius
+    * --tjs-input-border-disabled
     * --tjs-input-box-shadow-focus
     * --tjs-input-box-shadow-focus-visible
     * --tjs-input-caret-color
+    * --tjs-input-color
+    * --tjs-input-color-disabled
     * --tjs-input-cursor
+    * --tjs-input-cursor-disabled
     * --tjs-input-flex
     * --tjs-input-height
     * --tjs-input-padding
@@ -31,10 +35,14 @@
     * --tjs-input-text-background
     * --tjs-input-text-border
     * --tjs-input-text-border-radius
+    * --tjs-input-text-border-disabled
     * --tjs-input-text-box-shadow-focus
     * --tjs-input-text-box-shadow-focus-visible
     * --tjs-input-text-caret-color
+    * --tjs-input-text-color
+    * --tjs-input-text-color-disabled
     * --tjs-input-text-cursor
+    * --tjs-input-text-cursor-disabled
     * --tjs-input-text-flex
     * --tjs-input-text-height
     * --tjs-input-text-outline-focus-visible
@@ -59,7 +67,7 @@
       isWritableStore }         from '#runtime/util/store';
 
    export let input = void 0;
-   export let type = void 0;
+
    export let disabled = void 0;
    export let options = void 0;
    export let placeholder = void 0;
@@ -67,6 +75,8 @@
    export let store = void 0;
    export let storeIsValid = void 0;
    export let styles = void 0;
+   export let type = void 0;
+
    export let efx = void 0;
 
    const localOptions = {
@@ -209,7 +219,7 @@
         display: inline-block;
         position: relative;
 
-        appearance: var(--tjs-input-text-appearance, var(--tjs-input-appearance, inherit));
+        appearance: var(--tjs-input-text-appearance, var(--tjs-input-appearance, auto));
 
         background: transparent;
 
@@ -221,7 +231,7 @@
 
         padding: var(--tjs-input-text-padding, var(--tjs-input-padding, initial));
 
-        color: inherit;
+        color: var(--tjs-input-text-color, var(--tjs-input-color, inherit));
         caret-color: var(--tjs-input-text-caret-color, var(--tjs-input-caret-color));
         font-family: inherit;
         font-size: inherit;
@@ -232,6 +242,12 @@
         cursor: var(--tjs-input-text-cursor, var(--tjs-input-cursor, text));
 
         transform: translateZ(1px);
+    }
+
+    input:disabled {
+       border: var(--tjs-input-text-border-disabled, var(--tjs-input-border-disabled, none));
+       color: var(--tjs-input-text-color-disabled, var(--tjs-input-color-disabled, revert));
+       cursor: var(--tjs-input-text-cursor-disabled, var(--tjs-input-cursor-disabled, default));
     }
 
     input:focus {

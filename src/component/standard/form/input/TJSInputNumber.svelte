@@ -1,15 +1,21 @@
 <script>
    /**
     * A number input type.
+    *        border: var(--tjs-input-number-border-disabled, var(--tjs-input-border-disabled, none));
+    *        cursor: var(--tjs-input-number-cursor-disabled, var(--tjs-input-cursor-disabled, default));
     *
     * --tjs-input-appearance
     * --tjs-input-background
     * --tjs-input-border
     * --tjs-input-border-radius
+    * --tjs-input-border-disabled
     * --tjs-input-box-shadow-focus
     * --tjs-input-box-shadow-focus-visible
     * --tjs-input-caret-color
+    * --tjs-input-color
+    * --tjs-input-color-disabled
     * --tjs-input-cursor
+    * --tjs-input-cursor-disabled
     * --tjs-input-flex
     * --tjs-input-height
     * --tjs-input-padding
@@ -26,10 +32,14 @@
     * --tjs-input-number-background
     * --tjs-input-number-border
     * --tjs-input-number-border-radius
+    * --tjs-input-number-border-disabled
     * --tjs-input-number-box-shadow-focus
     * --tjs-input-number-box-shadow-focus-visible
     * --tjs-input-number-caret-color
+    * --tjs-input-number-color
+    * --tjs-input-number-color-disabled
     * --tjs-input-number-cursor
+    * --tjs-input-number-cursor-disabled
     * --tjs-input-number-flex
     * --tjs-input-number-height
     * --tjs-input-number-outline-focus-visible
@@ -58,6 +68,7 @@
       isWritableStore }     from '#runtime/util/store';
 
    export let input = void 0;
+
    export let disabled = void 0;
    export let options = void 0;
    export let max = void 0;
@@ -68,6 +79,7 @@
    export let store = void 0;
    export let storeIsValid = void 0;
    export let styles = void 0;
+
    export let efx = void 0;
 
    const localOptions = {
@@ -200,7 +212,7 @@
         display: inline-block;
         position: relative;
 
-        appearance: var(--tjs-input-number-appearance, var(--tjs-input-appearance, inherit));
+        appearance: var(--tjs-input-number-appearance, var(--tjs-input-appearance, auto));
 
         background: transparent;
 
@@ -212,7 +224,7 @@
 
         padding: var(--tjs-input-number-padding, var(--tjs-input-padding, initial));
 
-        color: inherit;
+        color: var(--tjs-input-number-color, var(--tjs-input-color, inherit));
         caret-color: var(--tjs-input-number-caret-color, var(--tjs-input-caret-color));
         font-family: inherit;
         font-size: inherit;
@@ -223,6 +235,12 @@
         cursor: var(--tjs-input-number-cursor, var(--tjs-input-cursor, text));
 
         transform: translateZ(1px);
+    }
+
+    input:disabled {
+       border: var(--tjs-input-number-border-disabled, var(--tjs-input-border-disabled, none));
+       color: var(--tjs-input-number-color-disabled, var(--tjs-input-color-disabled, revert));
+       cursor: var(--tjs-input-number-cursor-disabled, var(--tjs-input-cursor-disabled, default));
     }
 
     input:focus {
