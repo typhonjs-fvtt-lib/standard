@@ -11,6 +11,7 @@
     * --tjs-slot-button-border-radius
     * --tjs-slot-button-box-shadow-focus-visible
     * --tjs-slot-button-cursor
+    * --tjs-slot-button-cursor-disabled
     * --tjs-slot-button-diameter
     * --tjs-slot-button-outline-focus-visible
     * --tjs-slot-button-transition
@@ -23,6 +24,7 @@
 
    export let button = void 0;
 
+   export let disabled = void 0;
    export let styles = void 0;
    export let efx = void 0;
    export let keyCode = void 0;
@@ -37,7 +39,8 @@
    let efxEl;
 
    // ----------------------------------------------------------------------------------------------------------------
-
+   $: disabled = isObject(button) && typeof button.disabled === 'boolean' ? button.disabled :
+    typeof disabled === 'boolean' ? disabled : false;
    $: styles = isObject(button) && isObject(button.styles) ? button.styles :
     isObject(styles) ? styles : void 0;
    $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
@@ -62,6 +65,8 @@
     */
    function onClick(event)
    {
+      if (disabled) { return; }
+
       if (typeof onPress === 'function') { onPress({ event }); }
 
       dispatch('press', { event });
@@ -78,6 +83,8 @@
     */
    function onContextMenuPress(event)
    {
+      if (disabled) { return; }
+
       if (typeof onContextMenu === 'function')
       {
          // Because the efx is not the key event listener forward on a new event to trigger effect.
@@ -100,6 +107,8 @@
     */
    function onKeydown(event)
    {
+      if (disabled) { return; }
+
       if (event.code === keyCode)
       {
          event.preventDefault();
@@ -114,6 +123,8 @@
     */
    function onKeyup(event)
    {
+      if (disabled) { return; }
+
       if (event.code === keyCode)
       {
          // Because the efx is not the key event listener forward on a new event to trigger effect.
@@ -130,6 +141,7 @@
 </script>
 
 <div class=tjs-slot-button
+     class:disabled={disabled}
      on:click={onClick}
      on:contextmenu={onContextMenuPress}
      on:keydown={onKeydown}
@@ -137,10 +149,10 @@
      on:click
      on:contextmenu
      role=button
-     tabindex=0
+     tabindex={disabled ? null : 0}
      use:applyStyles={styles}>
    <slot />
-   {#if efx !== s_EFX_DEFAULT}
+   {#if efx !== s_EFX_DEFAULT && !disabled}
       <div bind:this={efxEl}
            class=tjs-slot-button-efx
            use:efx />
@@ -159,6 +171,10 @@
         border-radius: var(--tjs-slot-button-border-radius, var(--tjs-input-border-radius));
         cursor: var(--tjs-slot-button-cursor, pointer);
         transition: var(--tjs-slot-button-transition, background 0.2s ease-in-out);
+    }
+
+    .tjs-slot-button.disabled {
+       cursor: var(--tjs-slot-button-cursor-disabled, default);
     }
 
     .tjs-slot-button:focus {
