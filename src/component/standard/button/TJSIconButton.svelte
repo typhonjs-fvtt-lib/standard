@@ -16,6 +16,7 @@
     * --tjs-button-clip-path-hover
     * --tjs-button-clip-path-focus
     * --tjs-button-cursor
+    * --tjs-button-cursor-disabled
     * --tjs-button-diameter
     * --tjs-button-outline-focus-visible
     * --tjs-button-text-shadow-focus: undefined
@@ -36,6 +37,7 @@
     * --tjs-icon-button-clip-path-focus
     * --tjs-icon-button-clip-path-hover
     * --tjs-icon-button-cursor
+    * --tjs-icon-button-cursor-disabled
     * --tjs-icon-button-diameter
     * --tjs-icon-button-outline-focus-visible
     * --tjs-icon-button-text-shadow-focus: undefined
@@ -50,6 +52,8 @@
    import { isObject }              from '#runtime/util/object';
 
    export let button = void 0;
+
+   export let disabled = void 0;
    export let icon = void 0;
    export let title = void 0;
    export let styles = void 0;
@@ -61,6 +65,12 @@
 
    const dispatch = createEventDispatcher();
 
+   const s_EFX_DEFAULT = () => {};
+
+   // ----------------------------------------------------------------------------------------------------------------
+
+   $: disabled = isObject(button) && typeof button.disabled === 'boolean' ? button.disabled :
+    typeof disabled === 'boolean' ? disabled : false;
    $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : '';
    $: title = isObject(button) && typeof button.title === 'string' ? button.title :
@@ -68,7 +78,7 @@
    $: styles = isObject(button) && isObject(button.styles) ? button.styles :
     isObject(styles) ? styles : void 0;
    $: efx = isObject(button) && typeof button.efx === 'function' ? button.efx :
-    typeof efx === 'function' ? efx : () => {};
+    typeof efx === 'function' ? efx : s_EFX_DEFAULT;
    $: keyCode = isObject(button) && typeof button.keyCode === 'string' ? button.keyCode :
     typeof keyCode === 'string' ? keyCode : 'Enter';
 
@@ -80,6 +90,8 @@
    $: clickPropagate = isObject(button) && typeof button.clickPropagate === 'boolean' ? button.clickPropagate :
     typeof clickPropagate === 'boolean' ? clickPropagate : false;
 
+   // ----------------------------------------------------------------------------------------------------------------
+
    /**
     * Handle click event.
     *
@@ -87,6 +99,8 @@
     */
    function onClick(event)
    {
+      if (disabled) { return; }
+
       if (typeof onPress === 'function') { onPress({ event }); }
 
       dispatch('press', { event });
@@ -103,6 +117,8 @@
     */
    function onContextMenuPress(event)
    {
+      if (disabled) { return; }
+
       if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
 
       if (!clickPropagate)
@@ -119,6 +135,8 @@
     */
    function onKeydown(event)
    {
+      if (disabled) { return; }
+
       if (event.code === keyCode)
       {
          event.preventDefault();
@@ -133,6 +151,8 @@
     */
    function onKeyup(event)
    {
+      if (disabled) { return; }
+
       if (event.code === keyCode)
       {
          if (typeof onPress === 'function') { onPress({ event }); }
@@ -146,7 +166,9 @@
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class=tjs-icon-button use:applyStyles={styles}>
+<div class=tjs-icon-button
+     class:disabled={disabled}
+     use:applyStyles={styles}>
     <!-- svelte-ignore a11y-missing-attribute -->
     <a on:click={onClick}
        on:contextmenu={onContextMenuPress}
@@ -155,9 +177,9 @@
        on:click
        on:contextmenu
        role=button
-       tabindex=0
+       tabindex={disabled ? null : 0}
        title={localize(title)}
-       use:efx>
+       use:efx={{ disabled }}>
         <i class={icon}></i>
     </a>
 </div>
@@ -171,6 +193,17 @@
         width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
         align-self: center;
         text-align: center;
+    }
+
+    div.disabled a {
+       color: #4b4a44; /* TODO replace with cssVariables default */
+       cursor: var(--tjs-icon-button-cursor-disabled, var(--tjs-button-cursor-disabled, default));
+    }
+
+    div.disabled a:hover {
+       background: none;
+       clip-path: none;
+       text-shadow: none;
     }
 
     a {

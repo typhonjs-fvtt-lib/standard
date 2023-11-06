@@ -27,6 +27,8 @@
    import { isWritableStore }    from '#runtime/util/store';
 
    export let label = void 0;
+
+   export let disabled = void 0;
    export let text = void 0;
    export let comp = void 0;
    export let title = void 0;
@@ -42,6 +44,12 @@
 
    const dispatch = createEventDispatcher();
 
+   const s_EFX_DEFAULT = () => {};
+
+   // ----------------------------------------------------------------------------------------------------------------
+
+   $: disabled = isObject(label) && typeof label.disabled === 'boolean' ? label.disabled :
+    typeof disabled === 'boolean' ? disabled : false;
    $: text = isObject(label) && typeof label.text === 'string' ? label.text :
     typeof text === 'string' ? text : void 0;
    $: comp = isObject(label) && isSvelteComponent(label.comp) ? label.comp :
@@ -55,7 +63,7 @@
    $: styles = isObject(label) && isObject(label.styles) ? label.styles :
     isObject(styles) ? styles : void 0;
    $: efx = isObject(label) && typeof label.efx === 'function' ? label.efx :
-    typeof efx === 'function' ? efx : () => {};
+    typeof efx === 'function' ? efx : s_EFX_DEFAULT;
    $: keyCode = isObject(label) && typeof label.keyCode === 'string' ? label.keyCode :
     typeof keyCode === 'string' ? keyCode : 'Enter';
 
@@ -74,8 +82,12 @@
 
    $: if (store) { selected = $store; }
 
+   $: if (store && disabled) { $store = false; }
+
    // Chose the current title when `selected` changes; if there is no `titleSelected` fallback to `title`.
    $: titleCurrent = selected && titleSelected !== '' ? titleSelected : title
+
+   // ----------------------------------------------------------------------------------------------------------------
 
    /**
     * Handle click event.
@@ -84,6 +96,8 @@
     */
    function onClick(event)
    {
+      if (disabled) { return; }
+
       selected = !selected;
       if (store) { store.set(selected); }
 
@@ -106,6 +120,8 @@
     */
    function onClickDiv(event)
    {
+      if (disabled) { return; }
+
       if (!clickPropagate)
       {
          event.preventDefault();
@@ -138,6 +154,8 @@
     */
    function onContextMenuPress(event)
    {
+      if (disabled) { return; }
+
       if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
 
       if (!clickPropagate)
@@ -154,6 +172,8 @@
     */
    function onKeydown(event)
    {
+      if (disabled) { return; }
+
       if (event.code === keyCode)
       {
          event.preventDefault();
@@ -168,6 +188,8 @@
     */
    function onKeyup(event)
    {
+      if (disabled) { return; }
+
       if (event.code === keyCode)
       {
          selected = !selected;
@@ -185,10 +207,12 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions -->
 <div class=tjs-toggle-label
+     class:disabled={disabled}
      on:click={onClickDiv}
      on:close:popup={onClosePopup}
      title={localize(titleCurrent)}
-     use:applyStyles={styles}>
+     use:applyStyles={styles}
+     on:pointerdown|stopPropagation>
    <slot name=outer />
    <span bind:this={spanEl}
          class:selected
@@ -199,8 +223,8 @@
          on:click
          on:contextmenu
          role=button
-         tabindex=0
-         use:efx>
+         tabindex={disabled ? null : 0}
+         use:efx={{ disabled }}>
       <slot name=left />
       {#if comp}
          <svelte:component this={comp}/>
@@ -219,6 +243,17 @@
    div {
       display: block;
       position: relative;
+      height: var(--tjs-toggle-label-height, var(--tjs-input-height));
+   }
+
+   div.disabled > * {
+      color: #4b4a44; /* TODO replace with cssVariables default */
+      cursor: var(--tjs-toggle-label-cursor-disabled, default);
+   }
+
+   div.disabled *:hover {
+      text-shadow: none;
+      cursor: var(--tjs-toggle-label-cursor-disabled, default);
    }
 
    span {

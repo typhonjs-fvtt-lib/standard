@@ -39,6 +39,7 @@
    let efxEl;
 
    // ----------------------------------------------------------------------------------------------------------------
+
    $: disabled = isObject(button) && typeof button.disabled === 'boolean' ? button.disabled :
     typeof disabled === 'boolean' ? disabled : false;
    $: styles = isObject(button) && isObject(button.styles) ? button.styles :
