@@ -3,6 +3,7 @@
 
    import { applyStyles }           from '#runtime/svelte/action/dom';
    import { localize }              from '#runtime/svelte/helper';
+   import { isTJSSvelteConfig }     from '#runtime/svelte/util';
    import { isObject }              from '#runtime/util/object';
 
    export let button = void 0;
@@ -41,8 +42,8 @@
    $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : void 0;
 
-   $: label = isObject(button) && typeof button.label === 'string' ? button.label :
-    typeof label === 'string' ? label : void 0;
+   $: label = isObject(button) && (typeof button.label === 'string' || isTJSSvelteConfig(button.label)) ? button.label :
+    (typeof label === 'string' || isTJSSvelteConfig(label)) ? label : void 0;
 
    $: title = isObject(button) && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : void 0;
@@ -152,19 +153,19 @@
         {disabled}
         title={localize(title)}
         use:applyStyles={styles}>
-   {#if efx !== s_EFX_DEFAULT && !disabled}
-      <span class=tjs-form-button-efx bind:this={efxEl} use:efx>
-         <span class=tjs-form-button-span>
-            {#if icon}<i class={icon}></i>{/if}
-            <slot>{localize(label)}</slot>
-         </span>
-      </span>
-   {:else}
+   <span class=tjs-form-button-efx bind:this={efxEl} use:efx={{ disabled }}>
       <span class=tjs-form-button-span>
          {#if icon}<i class={icon}></i>{/if}
-         <slot>{localize(label)}</slot>
+
+         {#if $$slots.default}
+            <slot />
+         {:else if typeof label === 'string'}
+            {localize(label)}
+         {:else if isTJSSvelteConfig(label)}
+            <svelte:component this={label.class} {...(isObject(label.props) ? label.props : {})} />
+         {/if}
       </span>
-   {/if}
+   </span>
 </button>
 
 <style>
