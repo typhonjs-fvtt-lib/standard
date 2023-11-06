@@ -137,7 +137,7 @@
       selected = false;
       if (store) { store.set(false); }
 
-      if (typeof onClose === 'function') { onClose(selected); }
+      if (typeof onClose === 'function') { onClose({ event, selected }); }
 
       // The close event was triggered from a key press, so focus the anchor element / button.
       if (typeof event?.detail?.keyboardFocus === 'boolean' && event.detail.keyboardFocus && spanEl?.isConnected)
