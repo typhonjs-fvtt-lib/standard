@@ -9,6 +9,8 @@
 
    // Button props --------------------------------------------------------------------------------------------------
 
+   export let disabled = void 0;
+
    export let icon = void 0;
 
    export let label = void 0;
@@ -32,6 +34,9 @@
    let efxEl;
 
    // ----------------------------------------------------------------------------------------------------------------
+
+   $: disabled = isObject(button) && typeof button.disabled === 'boolean' ? button.disabled :
+    typeof disabled === 'boolean' ? disabled : false;
 
    $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : void 0;
@@ -144,9 +149,10 @@
         on:keyup={onKeyup}
         on:click
         on:contextmenu
+        {disabled}
         title={localize(title)}
         use:applyStyles={styles}>
-   {#if efx !== s_EFX_DEFAULT}
+   {#if efx !== s_EFX_DEFAULT && !disabled}
       <span class=tjs-form-button-efx bind:this={efxEl} use:efx>
          <span class=tjs-form-button-span>
             {#if icon}<i class={icon}></i>{/if}
@@ -196,6 +202,14 @@
       width: var(--tjs-form-button-width, 100%);
 
       padding: 0;
+   }
+
+   button:disabled {
+      cursor: var(--tjs-form-button-cursor-disabled, var(--tjs-input-cursor-disabled, default));
+   }
+
+   button:disabled > * {
+      text-shadow: var(--tjs-form-button-text-shadow-disabled, var(--tjs-default-text-shadow-disabled, none));
    }
 
    button:hover {
