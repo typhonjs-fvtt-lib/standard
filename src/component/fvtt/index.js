@@ -1,2 +1,3 @@
-export * from './filepicker/buttons/index.js';
-export * from './sidebar/index.js';
+export * from './filepicker/buttons';
+export * from './media';
+export * from './sidebar';
