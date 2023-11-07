@@ -68,6 +68,9 @@
    {
       if (disabled) { return; }
 
+      // Because the efx div has `pointer-events: none` manually trigger event.
+      if (efxEl) { efxEl.dispatchEvent(new CustomEvent('efx-trigger', { detail: { event } })); }
+
       if (typeof onPress === 'function') { onPress({ event }); }
 
       dispatch('press', { event });
@@ -88,8 +91,8 @@
 
       if (typeof onContextMenu === 'function')
       {
-         // Because the efx is not the key event listener forward on a new event to trigger effect.
-         if (efxEl) { efxEl.dispatchEvent(new MouseEvent('contextmenu')); }
+         // Because the efx div has `pointer-events: none` manually trigger event.
+         if (efxEl) { efxEl.dispatchEvent(new CustomEvent('efx-trigger', { detail: { event } })); }
 
          onContextMenu({ event });
       }
@@ -203,5 +206,6 @@
 
        height: 100%;
        width: 100%;
+       pointer-events: none;
     }
 </style>
