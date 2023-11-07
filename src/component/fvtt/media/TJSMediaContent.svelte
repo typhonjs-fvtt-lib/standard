@@ -129,6 +129,10 @@
        typeof videoPlayOnHover === 'boolean' ? videoPlayOnHover : false;
 
       videoAutoplay = !videoPlayOnHover;
+
+      // Start / pause current play state based on `videoPlayOnHover`.
+      if (videoPlayOnHover) { videoEl?.pause(); }
+      else { videoEl?.play(); }
    }
 
    $: {
