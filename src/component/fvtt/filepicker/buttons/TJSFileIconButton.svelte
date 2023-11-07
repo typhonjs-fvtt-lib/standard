@@ -1,4 +1,14 @@
 <script>
+   /**
+    * Provides a pre-configured icon button interfacing w/ the Foundry file picker.
+    *
+    * Please see {@link FVTTFilePickerBrowseOptions} for the `pickerOptions` prop.
+    * Please see {@link TJSIconButton} for the button component / CSS variable support.
+    *
+    * This component provides one way binding by default. You may explicitly bind to the `filepath` prop to create a
+    * two-way binding.
+    */
+
    import { createEventDispatcher } from '#svelte';
 
    import { isObject }              from '#runtime/util/object';
