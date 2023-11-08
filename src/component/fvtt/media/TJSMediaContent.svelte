@@ -60,6 +60,13 @@
    export let imgAlt = void 0;
 
    /**
+    * A title for the media element.
+    *
+    * @type {string}
+    */
+   export let title = void 0;
+
+   /**
     * Automatically start video playback; default: true
     *
     * @type {boolean}
@@ -124,6 +131,9 @@
    $: videoMuted = isObject(media) && typeof media.videoMuted === 'boolean' ? media.videoMuted :
     typeof videoMuted === 'boolean' ? videoMuted : true;
 
+   $: title = isObject(media) && typeof media.title === 'string' ? media.title :
+    typeof title === 'string' ? title : void 0;
+
    $: {
       videoPlayOnHover = isObject(media) && typeof media.videoPlayOnHover === 'boolean' ? media.videoPlayOnHover :
        typeof videoPlayOnHover === 'boolean' ? videoPlayOnHover : false;
@@ -180,14 +190,15 @@
 <div class=tjs-media-content>
     {#key parsed}
        {#if parsed?.elementType === 'img'}
-          <img src={parsed.filepath} alt={imgAlt} />
+          <img src={parsed.filepath} alt={imgAlt} title={title} />
        {:else if parsed?.elementType === 'video'}
           <video bind:this={videoEl}
                  on:pointerenter={onPointerenter}
                  on:pointerleave={onPointerleave}
                  autoplay={videoAutoplay}
                  loop={videoLoop}
-                 muted={videoMuted}>
+                 muted={videoMuted}
+                 title={title}>
              <source src={parsed.filepath} type={`video/${parsed.extension}`}>
 
              <!-- Potentially use the default asset if an image as a fallback. -->
