@@ -59,6 +59,10 @@
       flex: var(--tjs-slot-label-flex, unset);
       flex-direction: var(--tjs-slot-label-flex-direction, unset);
       flex-wrap: var(--tjs-slot-label-flex-wrap, unset);
+      gap: var(--tjs-slot-label-gap, unset);
+      justify-content: var(--tjs-slot-label-justify-content, unset);
+
+      align-items: var(--tjs-slot-label-align-items, center);
    }
 
    span {
