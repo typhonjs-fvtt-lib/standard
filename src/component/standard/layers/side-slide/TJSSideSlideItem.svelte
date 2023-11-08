@@ -1,13 +1,35 @@
 <script>
+   import { getContext }         from '#svelte';
+
    import { slideFade }          from '#runtime/svelte/transition';
 
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
    import { isObject }           from '#runtime/util/object';
 
+   /**
+    * Duration of transition effect.
+    *
+    * @type {number}
+    */
    export let duration = 200;
+
+   /**
+    * The side slide item icon (Font awesome string) and a Svelte configuration object.
+    *
+    * @type {{ icon: string, svelte: import('#runtime/svelte/util').TJSSvelteConfig }}
+    */
    export let item = void 0;
 
+   /**
+    * The side in layers parent element to display.
+    *
+    * @type {'left' | 'right'}
+    */
    export let side = void 0;
+
+   // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
+   // item icon. This allows each item that is being shown to always be on top regardless of item order.
+   const storeZIndex = getContext('#side-slide-layer-item-z-index');
 
    /**
     * Tracks current hover state over icon & panel.
@@ -17,25 +39,35 @@
    let hover = false;
 
    /** @type {HTMLDivElement} */
-   let iconEl, panelEl;
+   let containerEl, iconEl, panelEl;
 
    /**
-    * After a small delay when the pointer leaves the item container check
+    * Triggered when the pointer enters the item icon. Increments the z-index of the item container to always show on
+    * top of any existing open items.
+    */
+   function onPointerenter()
+   {
+      containerEl.style.zIndex = `${$storeZIndex++}`;
+
+      hover = true;
+   }
+
+   /**
+    * After a small delay when the pointer leaves the item container only set `hover` to false if both `panelEl` and
+    * `itemEl` do not have the `:hover` style property. This will keep the panel open when the pointer / mouse travels
+    * from the item icon to the panel itself.
     */
    function onPointerleave()
    {
       setTimeout(() =>
       {
-         if (!panelEl?.matches(':hover') && !iconEl.matches(':hover'))
-         {
-            hover = false;
-         }
+         if (!panelEl?.matches(':hover') && !iconEl.matches(':hover')) { hover = false; }
       }, 80);
    }
 </script>
 
 <div class=tjs-side-slide-layer-item-container
-     on:pointerenter={() => hover = true}
+     bind:this={containerEl}
      on:pointerleave={onPointerleave}>
 
    {#if hover && isTJSSvelteConfig(item.svelte)}
@@ -51,6 +83,7 @@
    <div class=tjs-side-slide-layer-item
         class:left={side === 'left'}
         class:right={side === 'right'}
+        on:pointerenter={onPointerenter}
         bind:this={iconEl}>
       <i class={item.icon}></i>
    </div>
