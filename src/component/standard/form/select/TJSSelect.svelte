@@ -12,7 +12,10 @@
     * --tjs-input-cursor
     * --tjs-input-cursor-disabled
     * --tjs-input-flex
+    * --tjs-input-font-family
+    * --tjs-input-font-size
     * --tjs-input-height
+    * --tjs-input-line-height
     * --tjs-input-outline-focus-visible
     * --tjs-input-outline-offset
     * --tjs-input-overflow
@@ -32,7 +35,10 @@
     * --tjs-select-cursor
     * --tjs-select-cursor-disabled
     * --tjs-select-flex
+    * --tjs-select-font-family
+    * --tjs-select-font-size
     * --tjs-select-height
+    * --tjs-select-line-height
     * --tjs-select-outline-focus-visible
     * --tjs-select-outline-offset
     * --tjs-select-overflow
@@ -153,9 +159,9 @@
       padding: var(--tjs-select-padding, var(--tjs-input-padding, initial));
 
       color: var(--tjs-select-color, var(--tjs-input-color, inherit));
-      font-family: inherit;
-      font-size: inherit;
-      line-height: inherit;
+      font-family: var(--tjs-select-font-family, var(--tjs-input-font-family, inherit));
+      font-size: var(--tjs-select-font-size, var(--tjs-input-font-size, inherit));
+      line-height: var(--tjs-select-line-height, var(--tjs-input-line-height, inherit));
       outline-offset: var(--tjs-select-outline-offset, var(--tjs-input-outline-offset));
       text-align: var(--tjs-select-text-align, var(--tjs-input-text-align));
       text-overflow: var(--tjs-select-text-overflow, var(--tjs-input-text-overflow, ellipsis));
