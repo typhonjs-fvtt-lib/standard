@@ -60,8 +60,8 @@
             break;
 
          default:
-            throw new Error(`'TJSInput' currently only supports text input types: 'button', 'checkbox', 'email', ` +
-             `'number', 'password', 'search', 'select', 'text', and 'url'.`);
+            throw new Error(`'TJSInput' currently only supports the following input types: 'button', 'checkbox', ` +
+             `'email', 'number', 'password', 'search', 'select', 'text', and 'url'.`);
       }
    }
 </script>

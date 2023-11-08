@@ -17,7 +17,10 @@
     * --tjs-input-cursor
     * --tjs-input-cursor-disabled
     * --tjs-input-flex
+    * --tjs-input-font-family
+    * --tjs-input-font-size
     * --tjs-input-height
+    * --tjs-input-line-height
     * --tjs-input-padding
     * --tjs-input-placeholder-color
     * --tjs-input-outline-focus-visible
@@ -41,7 +44,10 @@
     * --tjs-input-number-cursor
     * --tjs-input-number-cursor-disabled
     * --tjs-input-number-flex
+    * --tjs-input-number-font-family
+    * --tjs-input-number-font-size
     * --tjs-input-number-height
+    * --tjs-input-number-line-height
     * --tjs-input-number-outline-focus-visible
     * --tjs-input-number-outline-offset
     * --tjs-input-number-overflow
@@ -240,9 +246,9 @@
 
         color: var(--tjs-input-number-color, var(--tjs-input-color, inherit));
         caret-color: var(--tjs-input-number-caret-color, var(--tjs-input-caret-color));
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
+        font-family: var(--tjs-input-number-font-family, var(--tjs-input-font-family, inherit));
+        font-size: var(--tjs-input-number-font-size, var(--tjs-input-font-size, inherit));
+        line-height: var(--tjs-input-number-line-height, var(--tjs-input-line-height, inherit));
         outline-offset: var(--tjs-input-number-outline-offset, var(--tjs-input-outline-offset));
         text-align: var(--tjs-input-number-text-align, var(--tjs-input-text-align));
 

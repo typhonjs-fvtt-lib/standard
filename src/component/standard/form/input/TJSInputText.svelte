@@ -20,7 +20,10 @@
     * --tjs-input-cursor
     * --tjs-input-cursor-disabled
     * --tjs-input-flex
+    * --tjs-input-font-family
+    * --tjs-input-font-size
     * --tjs-input-height
+    * --tjs-input-line-height
     * --tjs-input-padding
     * --tjs-input-placeholder-color
     * --tjs-input-outline-focus-visible
@@ -44,7 +47,10 @@
     * --tjs-input-text-cursor
     * --tjs-input-text-cursor-disabled
     * --tjs-input-text-flex
+    * --tjs-input-text-font-family
+    * --tjs-input-text-font-size
     * --tjs-input-text-height
+    * --tjs-input-text-line-height
     * --tjs-input-text-outline-focus-visible
     * --tjs-input-text-outline-offset
     * --tjs-input-text-overflow
@@ -54,6 +60,14 @@
     * --tjs-input-text-transition-focus-visible
     * --tjs-input-text-value-invalid-color
     * --tjs-input-text-width
+    */
+
+   /*
+
+--tjs-input-text-font-family, var(--tjs-input-font-family, inherit));
+        font-size: var(--tjs-input-text-font-size, var(--tjs-input-font-size, inherit));
+        line-height: var(--tjs-input-text-line-height, var(--tjs-input-line-height, inherit));
+
     */
 
    import { writable }     from '#svelte/store';
@@ -247,9 +261,9 @@
 
         color: var(--tjs-input-text-color, var(--tjs-input-color, inherit));
         caret-color: var(--tjs-input-text-caret-color, var(--tjs-input-caret-color));
-        font-family: inherit;
-        font-size: inherit;
-        line-height: inherit;
+        font-family: var(--tjs-input-text-font-family, var(--tjs-input-font-family, inherit));
+        font-size: var(--tjs-input-text-font-size, var(--tjs-input-font-size, inherit));
+        line-height: var(--tjs-input-text-line-height, var(--tjs-input-line-height, inherit));
         outline-offset: var(--tjs-input-text-outline-offset, var(--tjs-input-outline-offset));
         text-align: var(--tjs-input-text-text-align, var(--tjs-input-text-align));
 
