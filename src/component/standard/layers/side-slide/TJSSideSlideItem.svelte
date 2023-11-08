@@ -1,6 +1,5 @@
 <script>
    import { getContext }         from '#svelte';
-   import { linear }             from '#svelte/easing';
 
    import { localize }           from '#runtime/svelte/helper';
    import { slideFade }          from '#runtime/svelte/transition';
