@@ -16,6 +16,7 @@
 
    import { isObject }           from '#runtime/util/object';
 
+   import TJSInputCheckbox       from './TJSInputCheckbox.svelte';
    import TJSInputNumber         from './TJSInputNumber.svelte';
    import TJSInputText           from './TJSInputText.svelte';
 
@@ -34,6 +35,14 @@
 
       switch (type)
       {
+         case 'button':
+            component = TJSButton;
+            break;
+
+         case 'checkbox':
+            component = TJSInputCheckbox;
+            break;
+
          case 'email':
          case 'password':
          case 'search':
@@ -46,17 +55,13 @@
             component = TJSInputNumber;
             break;
 
-         case 'button':
-            component = TJSButton;
-            break;
-
          case 'select':
             component = TJSSelect;
             break;
 
          default:
-            throw new Error(`'TJSInput' currently only supports text input types: 'button', 'email', 'number', ` +
-             `'password', 'search', 'select', 'text', and 'url'.`);
+            throw new Error(`'TJSInput' currently only supports text input types: 'button', 'checkbox', 'email', ` +
+             `'number', 'password', 'search', 'select', 'text', and 'url'.`);
       }
    }
 </script>
