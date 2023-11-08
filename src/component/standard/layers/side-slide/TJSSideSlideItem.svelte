@@ -1,8 +1,8 @@
 <script>
    import { getContext }         from '#svelte';
 
+   import { localize }           from '#runtime/svelte/helper';
    import { slideFade }          from '#runtime/svelte/transition';
-
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
    import { isObject }           from '#runtime/util/object';
 
@@ -16,7 +16,7 @@
    /**
     * The side slide item icon (Font awesome string) and a Svelte configuration object.
     *
-    * @type {{ icon: string, svelte: import('#runtime/svelte/util').TJSSvelteConfig }}
+    * @type {{ icon: string, svelte: import('#runtime/svelte/util').TJSSvelteConfig, title?: string }}
     */
    export let item = void 0;
 
@@ -74,13 +74,13 @@
    }
 </script>
 
-<div class=tjs-side-slide-layer-item-container
-     bind:this={containerEl}
+<div bind:this={containerEl}
+     class=tjs-side-slide-layer-item-container
      on:pointerleave={onPointerleave}>
 
    {#if hover && isTJSSvelteConfig(item.svelte)}
-      <div class=tjs-side-slide-layer-item-host
-           bind:this={panelEl}
+      <div bind:this={panelEl}
+           class=tjs-side-slide-layer-item-host
            class:left={side === 'left'}
            class:right={side === 'right'}
            transition:slideFade={{ axis: 'x', duration }}>
@@ -88,11 +88,12 @@
       </div>
    {/if}
 
-   <div class=tjs-side-slide-layer-item
+   <div bind:this={iconEl}
+        class=tjs-side-slide-layer-item
         class:left={side === 'left'}
         class:right={side === 'right'}
-        on:pointerenter={onPointerenter}
-        bind:this={iconEl}>
+        title={localize(item.title)}
+        on:pointerenter={onPointerenter}>
       <i class={item.icon}></i>
    </div>
 </div>

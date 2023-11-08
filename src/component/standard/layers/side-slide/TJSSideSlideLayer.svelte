@@ -1,22 +1,33 @@
 <script>
-   import { setContext }   from '#svelte';
-   import { writable }     from '#svelte/store';
+   /**
+    * Provides a component to display an absolutely positioned side layer in a parent element featuring a column of
+    * icons that slide out panels defined as Svelte components.
+    */
 
-   import { applyStyles }  from '#runtime/svelte/action/dom';
+   import { setContext }         from '#svelte';
+   import { writable }           from '#svelte/store';
 
-   import TJSSideSlideItem from './TJSSideSlideItem.svelte';
+   import { applyStyles }        from '#runtime/svelte/action/dom';
+   import { isTJSSvelteConfig }  from '#runtime/svelte/util';
+   import {
+      isIterable,
+      isObject }                 from '#runtime/util/object';
+
+   import TJSSideSlideItem       from './TJSSideSlideItem.svelte';
 
    /**
-    * An array of side slide items including icon (Font awesome string) and a Svelte configuration object.
+    * An iterable list of side slide items including icon (Font awesome string), a Svelte configuration object, and
+    * title.
     *
-    * You may provide a `condition` boolean or function to hide the item. This is useful for adding items / panels
-    * only visible for the GM amongst other conditional tests.
+    * You may provide a `condition` boolean or function that returns a boolean to hide the item. This is useful for
+    * adding items / panels only visible for the GM amongst other conditional tests.
     *
-    * @type {({
+    * @type {(Iterable<{
     *    condition?: boolean | (() => boolean)
     *    icon: string,
-    *    svelte: import('#runtime/svelte/util').TJSSvelteConfig
-    * }[])}
+    *    svelte: import('#runtime/svelte/util').TJSSvelteConfig,
+    *    title?: string
+    * }>)}
     */
    export let items = [];
 
@@ -30,9 +41,11 @@
    /**
     * A valid CSS value for the `top` positioning attribute for the top of the side slide layer.
     *
-    * @type {string}
+    * When top is a number it will be treated as pixels.
+    *
+    * @type {string | number}
     */
-   export let top = '0';
+   export let top = 0;
 
    /**
     * The side in layers parent element to display.
@@ -56,8 +69,10 @@
 
    /**
     * The z-index for the side slide layer inside the parent element.
+    *
+    * @type {number}
     */
-   export let zIndex = '10';
+   export let zIndex = 10;
 
    // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
@@ -68,10 +83,46 @@
    let filteredItems = [];
 
    $: {
+      if (!isIterable(items))
+      {
+         throw new TypeError(`'TJSSideSlideLayer error: 'items' prop is not an iterable list.`);
+      }
+
       const newItems = [];
+
+      let cntr = -1;
 
       for (const item of items)
       {
+         cntr++;
+
+         if (!isObject(item))
+         {
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}]' is not an object.`)
+         }
+
+         if (item.condition !== void 0 && typeof item.condition !== 'boolean' && typeof item.condition !== 'function')
+         {
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].condition' is not a boolean or function.`)
+         }
+
+         if (typeof item.icon !== 'string')
+         {
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].icon' is not a string.`)
+         }
+
+         if (!isTJSSvelteConfig(item.svelte))
+         {
+            throw new TypeError(
+             `TJSSideSlideLayer error: 'items[${cntr}].svelte' is not a Svelte configuration object.`)
+         }
+
+         if (item.title !== void 0 && typeof item.title !== 'string')
+         {
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].title' is not a string.`)
+         }
+
+         // Filter on any given condition.
          if (typeof item.condition === 'function' && !item.condition()) { continue; }
          if (typeof item.condition === 'boolean' && !item.condition) { continue; }
 
@@ -85,11 +136,23 @@
       switch (side)
       {
          case 'left':
-            allStyles = { left: 0, right: null, top, 'z-index': zIndex, ...styles }
+            allStyles = {
+               left: 0,
+               right: null,
+               top: typeof top === 'number' ? `${top}px` : top,
+               'z-index': zIndex,
+               ...styles
+            };
             break;
 
          case 'right':
-            allStyles = { left: null, right: 0, top, 'z-index': zIndex, ...styles }
+            allStyles = {
+               left: null,
+               right: 0,
+               top: typeof top === 'number' ? `${top}px` : top,
+               'z-index': zIndex,
+               ...styles
+            };
             break;
 
          default:
@@ -110,6 +173,7 @@
       display: flex;
       flex-direction: column;
       gap: var(--tjs-side-slide-layer-item-gap, 2px);
+      margin: var(--tjs-side-slide-layer-margin, 0);
 
       --tjs-side-slide-layer-item-diameter: 30px;
    }
