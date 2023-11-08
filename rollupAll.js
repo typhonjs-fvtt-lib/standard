@@ -30,7 +30,7 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/application/dialog/index.js',
+         input: 'src/application/dialog/document/index.js',
          plugins: [
             importsExternal(),
             resolve(),
@@ -38,7 +38,7 @@ const rollupConfigs = [
          ]
       },
       output: {
-         file: '_dist/application/dialog/index.js',
+         file: '_dist/application/dialog/document/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          sourcemap

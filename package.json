@@ -18,9 +18,9 @@
       "types": "./_dist/application/index.d.ts",
       "import": "./_dist/application/index.js"
     },
-    "./application/dialog": {
-      "types": "./_dist/application/dialog/index.d.ts",
-      "import": "./_dist/application/dialog/index.js"
+    "./application/dialog/document": {
+      "types": "./_dist/application/dialog/document/index.d.ts",
+      "import": "./_dist/application/dialog/document/index.js"
     },
     "./component": {
       "import": "./_dist/component/standard/index.js"
