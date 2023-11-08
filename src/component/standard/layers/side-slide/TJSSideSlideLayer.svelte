@@ -6,6 +6,18 @@
 
    import TJSSideSlideItem from './TJSSideSlideItem.svelte';
 
+   /**
+    * An array of side slide items including icon (Font awesome string) and a Svelte configuration object.
+    *
+    * You may provide a `condition` boolean or function to hide the item. This is useful for adding items / panels
+    * only visible for the GM amongst other conditional tests.
+    *
+    * @type {({
+    *    condition?: boolean | (() => boolean)
+    *    icon: string,
+    *    svelte: import('#runtime/svelte/util').TJSSvelteConfig
+    * }[])}
+    */
    export let items = [];
 
    /**
@@ -30,6 +42,12 @@
    export let side = void 0;
 
    /**
+    * Always keeps the side panel items open / prevents closure. This is a development flag allowing you to use HMR
+    * to develop your side item panel without the need to constantly activate the panel.
+    */
+   export let stayOpen = false;
+
+   /**
     * Additional inline styles to apply to the side slide layer. Useful for setting CSS variables.
     *
     * @type {Record<string, string>}
@@ -46,6 +64,22 @@
    setContext('#side-slide-layer-item-z-index', writable(1))
 
    let allStyles;
+
+   let filteredItems = [];
+
+   $: {
+      const newItems = [];
+
+      for (const item of items)
+      {
+         if (typeof item.condition === 'function' && !item.condition()) { continue; }
+         if (typeof item.condition === 'boolean' && !item.condition) { continue; }
+
+         newItems.push(item);
+      }
+
+      filteredItems = newItems;
+   }
 
    $: {
       switch (side)
@@ -65,8 +99,8 @@
 </script>
 
 <section class=tjs-side-slide-layer use:applyStyles={allStyles}>
-   {#each items as item}
-      <TJSSideSlideItem {item} {duration} {side} />
+   {#each filteredItems as item (item.icon)}
+      <TJSSideSlideItem {item} {duration} {side} {stayOpen} />
    {/each}
 </section>
 

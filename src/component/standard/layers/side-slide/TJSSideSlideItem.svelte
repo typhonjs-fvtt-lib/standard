@@ -27,6 +27,12 @@
     */
    export let side = void 0;
 
+   /**
+    * Always keeps the side panel items open / prevents closure. This is a development flag allowing you to use HMR
+    * to develop your side item panel without the need to constantly activate the panel.
+    */
+   export let stayOpen = false;
+
    // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeZIndex = getContext('#side-slide-layer-item-z-index');
@@ -59,6 +65,8 @@
     */
    function onPointerleave()
    {
+      if (stayOpen) { return; }
+
       setTimeout(() =>
       {
          if (!panelEl?.matches(':hover') && !iconEl.matches(':hover')) { hover = false; }
