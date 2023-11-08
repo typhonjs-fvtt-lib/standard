@@ -192,7 +192,7 @@
    }
 
    button {
-      /* TODO: cssVariables v2: Consider setting default values from Foundry styles via TJSStyleManager / cssVariables defined in root index.js
+      /* TODO: cssVariables defaults v2: Consider setting default values from Foundry styles via TJSStyleManager / cssVariables defined in root index.js
       /*background: var(--tjs-form-button-background, var(--tjs-button-background));*/
       /*border: var(--tjs-form-button-border, var(--tjs-button-border));*/
       /*border-radius: var(--tjs-form-button-border-radius, var(--tjs-button-border-radius));*/
@@ -214,10 +214,10 @@
    }
 
    button:hover {
-      box-shadow: var(--tjs-form-button-box-shadow-focus-hover, var(--tjs-default-box-shadow-focus-hover));
-      outline: var(--tjs-form-button-outline-focus-hover, var(--tjs-default-outline-focus-hover, revert));
-      transition: var(--tjs-form-button-transition-focus-hover, var(--tjs-default-transition-focus-hover));
-      text-shadow: var(--tjs-form-button-text-shadow-focus-hover, var(--tjs-default-text-shadow-focus-hover, inherit));
+      box-shadow: var(--tjs-form-button-box-shadow-hover, var(--tjs-default-box-shadow-hover));
+      outline: var(--tjs-form-button-outline-hover, var(--tjs-default-outline-hover, revert));
+      transition: var(--tjs-form-button-transition-hover, var(--tjs-default-transition-hover));
+      text-shadow: var(--tjs-form-button-text-shadow-hover, var(--tjs-default-text-shadow-hover, inherit));
    }
 
    button:focus-visible {
