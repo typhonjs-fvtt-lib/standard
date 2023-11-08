@@ -39,6 +39,13 @@
    export let duration = 200;
 
    /**
+    * Svelte easing function.
+    *
+    * @type {(time: number) => number}
+    */
+   export let easing = linear;
+
+   /**
     * A valid CSS value for the `top` positioning attribute for the top of the side slide layer.
     *
     * When top is a number it will be treated as pixels.
@@ -163,7 +170,7 @@
 
 <section class=tjs-side-slide-layer use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
-      <TJSSideSlideItem {item} {duration} {side} {stayOpen} />
+      <TJSSideSlideItem {item} {duration} {easing} {side} {stayOpen} />
    {/each}
 </section>
 

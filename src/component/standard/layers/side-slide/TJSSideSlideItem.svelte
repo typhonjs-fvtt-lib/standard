@@ -1,5 +1,6 @@
 <script>
    import { getContext }         from '#svelte';
+   import { linear }             from '#svelte/easing';
 
    import { localize }           from '#runtime/svelte/helper';
    import { slideFade }          from '#runtime/svelte/transition';
@@ -12,6 +13,13 @@
     * @type {number}
     */
    export let duration = 200;
+
+   /**
+    * Svelte easing function.
+    *
+    * @type {(time: number) => number}
+    */
+   export let easing = void 0;
 
    /**
     * The side slide item icon (Font awesome string) and a Svelte configuration object.
@@ -83,7 +91,7 @@
            class=tjs-side-slide-layer-item-host
            class:left={side === 'left'}
            class:right={side === 'right'}
-           transition:slideFade={{ axis: 'x', duration }}>
+           transition:slideFade={{ axis: 'x', duration, easingSlide: easing }}>
          <svelte:component this={item.svelte.class} {...(isObject(item.svelte.props) ? item.svelte.props : {})} />
       </div>
    {/if}
