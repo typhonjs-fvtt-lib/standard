@@ -24,6 +24,7 @@
    import { getContext }      from 'svelte';
 
    import { clamp }           from '#runtime/math/util';
+   import { localize }        from '#runtime/svelte/helper';
    import { isWritableStore } from '#runtime/util/store';
    import { isObject }        from '#runtime/util/object';
 
@@ -198,7 +199,7 @@
                  autoplay={videoAutoplay}
                  loop={videoLoop}
                  muted={videoMuted}
-                 title={title}>
+                 title={localize(title)}>
              <source src={parsed.filepath} type={`video/${parsed.extension}`}>
 
              <!-- Potentially use the default asset if an image as a fallback. -->
