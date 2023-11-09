@@ -18,6 +18,7 @@
 
    import TJSInputCheckbox       from './TJSInputCheckbox.svelte';
    import TJSInputNumber         from './TJSInputNumber.svelte';
+   import TJSInputRange          from './TJSInputRange.svelte';
    import TJSInputText           from './TJSInputText.svelte';
 
    import TJSButton              from '../button/TJSButton.svelte';
@@ -43,6 +44,14 @@
             component = TJSInputCheckbox;
             break;
 
+         case 'number':
+            component = TJSInputNumber;
+            break;
+
+         case 'range':
+            component = TJSInputRange;
+            break;
+
          case 'email':
          case 'password':
          case 'search':
@@ -51,9 +60,6 @@
             component = TJSInputText;
             break;
 
-         case 'number':
-            component = TJSInputNumber;
-            break;
 
          case 'select':
             component = TJSSelect;
@@ -61,13 +67,13 @@
 
          default:
             throw new Error(`'TJSInput' currently only supports the following input types: 'button', 'checkbox', ` +
-             `'email', 'number', 'password', 'search', 'select', 'text', and 'url'.`);
+             `'email', 'number', 'password', 'range, 'search', 'select', 'text', and 'url'.`);
       }
    }
 </script>
 
 {#if type === 'button'}
-   <svelte:component this={component} {...$$props} button={input} />
+   <svelte:component this={component} on:click on:press on:contextmenu {...$$props} button={input} />
 {:else if type === 'select'}
    <svelte:component this={component} {...$$props} select={input} />
 {:else}
