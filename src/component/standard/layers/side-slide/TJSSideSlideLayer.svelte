@@ -6,6 +6,7 @@
 
    import { setContext }         from '#svelte';
    import { writable }           from '#svelte/store';
+   import { linear }             from '#svelte/easing';
 
    import { applyStyles }        from '#runtime/svelte/action/dom';
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
@@ -44,6 +45,20 @@
     * @type {(time: number) => number}
     */
    export let easing = linear;
+
+   /**
+    * Svelte easing function.
+    *
+    * @type {(time: number) => number}
+    */
+   export let inEasing = void 0;
+
+   /**
+    * Svelte easing function.
+    *
+    * @type {(time: number) => number}
+    */
+   export let outEasing = void 0;
 
    /**
     * A valid CSS value for the `top` positioning attribute for the top of the side slide layer.
@@ -166,11 +181,28 @@
             throw new Error(`'side' prop must be either 'left' or 'right'`);
       }
    }
+
+   // Tracks last transition state.
+   let oldEasing = linear;
+
+   // Run this reactive block when the last transition state is not equal to the current state.
+   $: if (oldEasing !== easing)
+   {
+      // If transition is defined and not the default transition then set it to both in and out transition otherwise
+      // set the default transition to both in & out transitions.
+      const newEasing = typeof easing === 'function' ? easing : linear;
+
+      inEasing = newEasing;
+      outEasing = newEasing;
+
+      oldEasing = newEasing;
+   }
+
 </script>
 
 <section class=tjs-side-slide-layer use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
-      <TJSSideSlideItem {item} {duration} {easing} {side} {stayOpen} />
+      <TJSSideSlideItem {item} {duration} {inEasing} {outEasing} {side} {stayOpen} />
    {/each}
 </section>
 
@@ -181,7 +213,5 @@
       flex-direction: column;
       gap: var(--tjs-side-slide-layer-item-gap, 2px);
       margin: var(--tjs-side-slide-layer-margin, 0);
-
-      --tjs-side-slide-layer-item-diameter: 30px;
    }
 </style>

@@ -18,7 +18,14 @@
     *
     * @type {(time: number) => number}
     */
-   export let easing = void 0;
+   export let inEasing = void 0;
+
+   /**
+    * Svelte easing function.
+    *
+    * @type {(time: number) => number}
+    */
+   export let outEasing = void 0;
 
    /**
     * The side slide item icon (Font awesome string) and a Svelte configuration object.
@@ -93,7 +100,8 @@
            class=tjs-side-slide-layer-item-host
            class:left={side === 'left'}
            class:right={side === 'right'}
-           transition:slideFade={{ axis: 'x', duration, easingSlide: easing }}>
+           in:slideFade={{ axis: 'x', duration, easingSlide: inEasing }}
+           out:slideFade={{ axis: 'x', duration, easingSlide: outEasing }}>
          <svelte:component this={item.svelte.class} {...(isObject(item.svelte.props) ? item.svelte.props : {})} />
       </div>
    {/if}
@@ -129,8 +137,8 @@
       color: var(--tjs-side-slide-layer-item-color, rgba(255, 255, 255, 0.7));
       font-size: var(--tjs-side-slide-layer-item-font-size, 14px);
 
-      width: var(--tjs-side-slide-layer-item-diameter);
-      height: var(--tjs-side-slide-layer-item-diameter);
+      width: var(--tjs-side-slide-layer-item-diameter, 30px);
+      height: var(--tjs-side-slide-layer-item-diameter, 30px);
    }
 
    .tjs-side-slide-layer-item.left {
@@ -153,16 +161,15 @@
       border: var(--tjs-side-slide-layer-item-host-border, solid 2px black);
       box-shadow: var(--tjs-side-slide-layer-item-host-box-shadow, var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px));
       color: var(--tjs-side-slide-layer-item-host-color, white);
-      ;
    }
 
    .tjs-side-slide-layer-item-host.left {
-      left: calc(var(--tjs-side-slide-layer-item-diameter) + 2px);
+      left: calc(var(--tjs-side-slide-layer-item-diameter, 30px) + 2px);
       border-radius: var(--tjs-side-slide-layer-item-host-border-radius-left, 5% 10% 30% 5%);
    }
 
    .tjs-side-slide-layer-item-host.right {
-      right: calc(var(--tjs-side-slide-layer-item-diameter) + 2px);
+      right: calc(var(--tjs-side-slide-layer-item-diameter, 30px) + 2px);
       border-radius: var(--tjs-side-slide-layer-item-host-border-radius-right, 5% 5% 10% 30%);
    }
 </style>
