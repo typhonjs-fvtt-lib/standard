@@ -61,15 +61,6 @@
     * --tjs-input-text-value-invalid-color
     * --tjs-input-text-width
     */
-
-   /*
-
---tjs-input-text-font-family, var(--tjs-input-font-family, inherit));
-        font-size: var(--tjs-input-text-font-size, var(--tjs-input-font-size, inherit));
-        line-height: var(--tjs-input-text-line-height, var(--tjs-input-line-height, inherit));
-
-    */
-
    import { writable }     from '#svelte/store';
 
    import { applyStyles }  from '#runtime/svelte/action/dom';
