@@ -150,6 +150,7 @@
         on:keyup={onKeyup}
         on:click
         on:contextmenu
+        on:press
         {disabled}
         title={localize(title)}
         use:applyStyles={styles}>
