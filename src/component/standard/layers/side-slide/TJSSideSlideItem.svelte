@@ -44,6 +44,9 @@
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeZIndex = getContext('#side-slide-layer-item-z-index');
 
+   // Flip the hover state to false whenever stayOpen is false.
+   $: if (!stayOpen) { hover = false; }
+
    /**
     * Tracks current hover state over icon & panel.
     *
