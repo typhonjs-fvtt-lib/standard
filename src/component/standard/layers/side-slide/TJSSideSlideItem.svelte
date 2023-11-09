@@ -125,6 +125,7 @@
 
       background: var(--tjs-side-slide-layer-item-background, rgba(0, 0, 0, 0.3));
       border: var(--tjs-side-slide-layer-item-border, solid 2px black);
+      box-shadow: var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px);
       color: var(--tjs-side-slide-layer-item-color, rgba(255, 255, 255, 0.7));
       font-size: var(--tjs-side-slide-layer-item-font-size, 14px);
 
@@ -146,11 +147,13 @@
       width: fit-content;
       height: fit-content;
 
-      background: var(--tjs-side-slide-layer-item-host-background, linear-gradient(135deg, rgba(52, 51, 52, 0.9) 10%, rgba(15, 14, 28, 0.9) 90%));
       padding: var(--tjs-side-slide-layer-item-host-padding, 10px);
 
-      color: var(--tjs-side-slide-layer-item-host-color, white);
+      background: var(--tjs-side-slide-layer-item-host-background, linear-gradient(135deg, rgba(52, 51, 52, 0.9) 10%, rgba(15, 14, 28, 0.9) 90%));
       border: var(--tjs-side-slide-layer-item-host-border, solid 2px black);
+      box-shadow: var(--tjs-side-slide-layer-item-host-box-shadow, var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px));
+      color: var(--tjs-side-slide-layer-item-host-color, white);
+      ;
    }
 
    .tjs-side-slide-layer-item-host.left {
