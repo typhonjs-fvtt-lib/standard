@@ -6,8 +6,11 @@
 
    import TJSSideSlideItemHost   from './TJSSideSlideItemHost.svelte';
 
+   /** @type {boolean} */
+   export let clickToOpen = void 0;
+
    /** @type {number} */
-   export let duration = 200;
+   export let duration = void 0;
 
    /** @type {(time: number) => number} */
    export let inEasing = void 0;
@@ -25,12 +28,6 @@
    /** @type {'left' | 'right'} */
    export let side = void 0;
 
-   /**
-    * Always keeps the side panel items open / prevents closure. This is a development flag allowing you to use HMR
-    * to develop your side item panel without the need to constantly activate the panel.
-    */
-   export let stayOpen = false;
-
    // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeZIndex = getContext('#side-slide-layer-item-z-index');
@@ -39,8 +36,8 @@
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeOpenedItem = getContext('#side-slide-layer-item-opened');
 
-   // Flip the opened state to false whenever stayOpen is false.
-   $: if (!stayOpen) { setOpened(false); }
+   // Flip the opened state to false whenever clickToOpen is false / changes state.
+   $: if (!clickToOpen) { setOpened(false); }
 
    // If this item doesn't match the opened item store state then close this item.
    $: if ($storeOpenedItem !== item) { setOpened(false); }
@@ -69,7 +66,8 @@
       event.preventDefault();
       event.stopPropagation();
 
-      setOpened(true);
+      // When `clickToOpen` is true reverse opened state otherwise only open for pointer hover activation.
+      setOpened(clickToOpen ? !opened : true);
    }
 
    /**
@@ -102,6 +100,9 @@
     */
    function onPointerenter()
    {
+      // Ignore if clickToOpen is true ignoring pointer entered.
+      if (clickToOpen) { return; }
+
       setOpened(true);
    }
 
@@ -112,6 +113,9 @@
     */
    function onPointerleave()
    {
+      // Ignore if clickToOpen is true ignoring pointer leave.
+      if (clickToOpen) { return; }
+
       setTimeout(() =>
       {
          if (!containerEl.matches(':hover')) { setOpened(false); }
@@ -142,9 +146,6 @@
       }
       else
       {
-         // Reject changing state if `stayOpen` is true.
-         if (stayOpen) { return; }
-
          opened = false;
       }
    }

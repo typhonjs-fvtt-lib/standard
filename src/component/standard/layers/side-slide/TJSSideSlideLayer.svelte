@@ -33,6 +33,13 @@
    export let items = [];
 
    /**
+    * When true items are only opened / closed by click / keyboard interaction.
+    *
+    * @type {boolean}
+    */
+   export let clickToOpen = false;
+
+   /**
     * Duration of transition effect.
     *
     * @type {number}
@@ -75,12 +82,6 @@
     * @type {'left' | 'right'}
     */
    export let side = void 0;
-
-   /**
-    * Always keeps the side panel items open / prevents closure. This is a development flag allowing you to use HMR
-    * to develop your side item panel without the need to constantly activate the panel.
-    */
-   export let stayOpen = false;
 
    /**
     * Additional inline styles to apply to the side slide layer. Useful for setting CSS variables.
@@ -206,7 +207,7 @@
 
 <section class=tjs-side-slide-layer use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
-      <TJSSideSlideItem {item} {duration} {inEasing} {outEasing} {side} {stayOpen} />
+      <TJSSideSlideItem {item} {clickToOpen} {duration} {inEasing} {outEasing} {side} />
    {/each}
 </section>
 
