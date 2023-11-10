@@ -1,32 +1,18 @@
 <script>
    import { getContext }         from '#svelte';
 
-   import { TJSFocusWrap }       from '#runtime/svelte/component/core';
    import { localize }           from '#runtime/svelte/helper';
-   import { slideFade }          from '#runtime/svelte/transition';
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
-   import { A11yHelper }         from '#runtime/util/browser';
-   import { isObject }           from '#runtime/util/object';
 
-   /**
-    * Duration of transition effect.
-    *
-    * @type {number}
-    */
+   import TJSSideSlideItemHost   from './TJSSideSlideItemHost.svelte';
+
+   /** @type {number} */
    export let duration = 200;
 
-   /**
-    * Svelte easing function.
-    *
-    * @type {(time: number) => number}
-    */
+   /** @type {(time: number) => number} */
    export let inEasing = void 0;
 
-   /**
-    * Svelte easing function.
-    *
-    * @type {(time: number) => number}
-    */
+   /** @type {(time: number) => number} */
    export let outEasing = void 0;
 
    /**
@@ -36,11 +22,7 @@
     */
    export let item = void 0;
 
-   /**
-    * The side in layers parent element to display.
-    *
-    * @type {'left' | 'right'}
-    */
+   /** @type {'left' | 'right'} */
    export let side = void 0;
 
    /**
@@ -49,35 +31,25 @@
     */
    export let stayOpen = false;
 
-   // Provides options to `A11yHelper.getFocusableElements` to ignore TJSFocusWrap by CSS class.
-   const s_FOCUS_IGNORE_CLASSES = { ignoreClasses: ['tjs-focus-wrap'] };
-
    // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeZIndex = getContext('#side-slide-layer-item-z-index');
 
-   // Retrieve any host application to determine active global window. This may be undefined, so fallback to
-   // `globalThis` in focus management.
-   const application = getContext('#external')?.application;
-
-   // Flip the hover state to false whenever stayOpen is false.
-   $: if (!stayOpen) { setHoverFalse(); }
-
-   $: if (panelEl)
-   {
-      // console.log(`!!! TJSSideSlideItem - panelEl defined - item.icon: `, item.icon)
-      containerEl.focus();
-   }
+   // Flip the opened state to false whenever stayOpen is false.
+   $: if (!stayOpen) { setOpened(false); }
 
    /**
-    * Tracks current hover state over icon & panel.
+    * Tracks current opened state over icon & panel.
     *
     * @type {boolean}
     */
-   let hover = false;
+   let opened = false;
+
+   /** @type {HTMLButtonElement} */
+   let buttonEl;
 
    /** @type {HTMLDivElement} */
-   let containerEl, iconEl, panelEl;
+   let containerEl;
 
    /**
     * Handles the case when the `Escape` key is pressed and the pointer hasn't left the containing item. A click
@@ -90,7 +62,7 @@
       event.preventDefault();
       event.stopPropagation();
 
-      if (!hover) { hover = true; }
+      setOpened(true);
    }
 
    /**
@@ -104,39 +76,16 @@
     */
    function onKeydown(event)
    {
-      if (event.shiftKey && event.code === 'Tab')
-      {
-         // Collect all focusable elements from `containerEl` and ignore TJSFocusWrap.
-         const allFocusable = A11yHelper.getFocusableElements(containerEl, s_FOCUS_IGNORE_CLASSES);
-
-         // Find first and last focusable elements.
-         const firstFocusEl = allFocusable.length > 0 ? allFocusable[0] : void 0;
-         const lastFocusEl = allFocusable.length > 0 ? allFocusable[allFocusable.length - 1] : void 0;
-
-         // This component may not be embedded in an application so fallback to `globalThis`.
-         const activeWindow = application?.reactive?.activeWindow ?? globalThis;
-
-         // console.log(`!!! TJSSideSlideItem - onKeydown - Shift-Tab - A - firstFocusEl: `, firstFocusEl);
-         // console.log(`!!! TJSSideSlideItem - onKeydown - Shift-Tab - B - lastFocusEl: `, lastFocusEl);
-
-         // Only cycle focus to the last keyboard focusable app element if `elementRoot` or first focusable element
-         // is the active element.
-         if (firstFocusEl === activeWindow.document.activeElement)
-         {
-            if (lastFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
-
-            event.preventDefault();
-            event.stopPropagation();
-         }
-      }
-
       // Close the panel if hovering / open.
       if (event.code === 'Escape')
       {
          event.preventDefault();
          event.stopPropagation();
 
-         setHoverFalse();
+         setOpened(false);
+
+         // Focus container so that keyboard navigation continues w/ the button on next `tab` press.
+         containerEl.focus();
       }
    }
 
@@ -146,34 +95,46 @@
     */
    function onPointerenter()
    {
-      containerEl.style.zIndex = `${$storeZIndex++}`;
-
-      hover = true;
+      setOpened(true);
    }
 
    /**
-    * After a small delay when the pointer leaves the item container only set `hover` to false if both `panelEl` and
-    * `itemEl` do not have the `:hover` style property. This will keep the panel open when the pointer / mouse travels
-    * from the item icon to the panel itself.
+    * After a small delay when the pointer leaves the item container only set opened to false if the container does not
+    * have the `:hover` style property. This will keep the host panel open when the pointer / mouse travels from the
+    * item icon to the panel itself.
     */
    function onPointerleave()
    {
       setTimeout(() =>
       {
-         if (!panelEl?.matches(':hover') && !iconEl.matches(':hover')) { setHoverFalse(); }
+         if (!containerEl.matches(':hover')) { setOpened(false); }
       }, 80);
    }
 
    /**
-    * Invoked when the panel is about to be closed. This allows focus management to handle the case when the active
-    * focus is inside the closing panel. Doing nothing in this case will result in `document.body` receiving focus.
-    * The goal is to focus the containingEl / item button.
+    * Adjusts panel host open state.
+    *
+    * @param {boolean} state - New opened state.
     */
-   function setHoverFalse()
+   function setOpened(state)
    {
-      if (stayOpen) { return; }
+      if (opened === state) { return; }
 
-      if (hover) { hover = false; }
+      if (state)
+      {
+         // Increment the z-index of the container to make it always on top.
+         containerEl.style.zIndex = `${$storeZIndex++}`;
+         containerEl.focus();
+
+         opened = true;
+      }
+      else
+      {
+         // Reject changing state if `stayOpen` is true.
+         if (stayOpen) { return; }
+
+         opened = false;
+      }
    }
 </script>
 
@@ -181,41 +142,32 @@
      class=tjs-side-slide-layer-item-container
      class:left={side === 'left'}
      class:right={side === 'right'}
-     on:click={onClick}
+     class:opened={opened}
      on:keydown={onKeydown}
      on:pointerleave={onPointerleave}
-     tabindex=0>
+     tabindex=-1>
 
-   {#if hover && isTJSSvelteConfig(item.svelte)}
-      <div bind:this={panelEl}
-           class=tjs-side-slide-layer-item-host
-           in:slideFade={{ axis: 'x', duration, easingSlide: inEasing }}
-           out:slideFade={{ axis: 'x', duration, easingSlide: outEasing }}>
-         <svelte:component this={item.svelte.class} {...(isObject(item.svelte.props) ? item.svelte.props : {})} />
-         <TJSFocusWrap elementRoot={panelEl} />
-      </div>
+   {#if opened && isTJSSvelteConfig(item.svelte)}
+      <TJSSideSlideItemHost {duration} {item} {inEasing} {outEasing} {side} />
    {/if}
 
-   <div bind:this={iconEl}
-        class=tjs-side-slide-layer-item
-        title={localize(item.title)}
-        on:pointerenter={onPointerenter}>
+   <button bind:this={buttonEl}
+           class=tjs-side-slide-layer-item
+           title={localize(item.title)}
+           on:click={onClick}
+           on:pointerenter={onPointerenter}>
       <i class={item.icon}></i>
-   </div>
+   </button>
 </div>
 
 <style>
    .tjs-side-slide-layer-item-container:focus-visible {
-      box-shadow: var(--tjs-side-slide-layer-item-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
-      outline: var(--tjs-side-slide-layer-item-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
-      transition: var(--tjs-side-slide-layer-item-transition-focus-visible, var(--tjs-default-transition-focus-visible));
+      outline: none;
    }
 
-   .tjs-side-slide-layer-item-container:hover .tjs-side-slide-layer-item {
+   .tjs-side-slide-layer-item-container.opened .tjs-side-slide-layer-item {
       border-color: var(--tjs-side-slide-layer-item-border-color-hover, red);
       color: var(--tjs-side-slide-layer-item-color-hover, rgba(255, 255, 255, 0.9));
-
-      transition: var(--tjs-side-slide-layer-item-transition, all 200ms ease-in-out);
    }
 
    .tjs-side-slide-layer-item-container.left, .tjs-side-slide-layer-item-container.left .tjs-side-slide-layer-item {
@@ -226,17 +178,10 @@
       border-radius: var(--tjs-side-slide-layer-item-border-radius-right, 20% 30% 20% 50%);
    }
 
-   .tjs-side-slide-layer-item-container.left .tjs-side-slide-layer-item-host {
-      left: calc(var(--tjs-side-slide-layer-item-diameter, 30px) + 2px);
-      border-radius: var(--tjs-side-slide-layer-item-host-border-radius-left, 5% 10% 30% 5%);
-   }
-
-   .tjs-side-slide-layer-item-container.right .tjs-side-slide-layer-item-host {
-      right: calc(var(--tjs-side-slide-layer-item-diameter, 30px) + 2px);
-      border-radius: var(--tjs-side-slide-layer-item-host-border-radius-right, 5% 5% 10% 30%);
-   }
-
    .tjs-side-slide-layer-item {
+      appearance: none;
+      margin: 0;
+
       display: flex;
       align-items: center;
       justify-content: center;
@@ -253,17 +198,13 @@
       height: var(--tjs-side-slide-layer-item-diameter, 30px);
    }
 
-   .tjs-side-slide-layer-item-host {
-      position: absolute;
-      pointer-events: all;
-      width: fit-content;
-      height: fit-content;
+   .tjs-side-slide-layer-item:focus-visible {
+      outline: var(--tjs-side-slide-layer-item-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+      transition: var(--tjs-side-slide-layer-item-transition-focus-visible, var(--tjs-default-transition-focus-visible));
+   }
 
-      padding: var(--tjs-side-slide-layer-item-host-padding, 10px);
-
-      background: var(--tjs-side-slide-layer-item-host-background, linear-gradient(135deg, rgba(52, 51, 52, 0.9) 10%, rgba(15, 14, 28, 0.9) 90%));
-      border: var(--tjs-side-slide-layer-item-host-border, solid 2px black);
-      box-shadow: var(--tjs-side-slide-layer-item-host-box-shadow, var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px));
-      color: var(--tjs-side-slide-layer-item-host-color, white);
+   i {
+      margin: 0;
+      padding: 0;
    }
 </style>
