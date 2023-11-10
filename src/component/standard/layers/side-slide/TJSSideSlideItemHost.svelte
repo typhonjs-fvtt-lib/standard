@@ -107,7 +107,7 @@
       width: fit-content;
       height: fit-content;
 
-      padding: var(--tjs-side-slide-layer-item-host-padding, 10px);
+      padding: var(--tjs-side-slide-layer-item-host-padding, 15px);
 
       background: var(--tjs-side-slide-layer-item-host-background, linear-gradient(135deg, rgba(52, 51, 52, 0.9) 10%, rgba(15, 14, 28, 0.9) 90%));
       border: var(--tjs-side-slide-layer-item-host-border, solid 2px black);

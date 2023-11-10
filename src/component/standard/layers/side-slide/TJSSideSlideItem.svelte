@@ -85,8 +85,12 @@
       // Close the panel if hovering / open.
       if (event.code === 'Escape')
       {
-         event.preventDefault();
-         event.stopPropagation();
+         // Only prevent event propagation if the item is opened.
+         if (opened)
+         {
+            event.preventDefault();
+            event.stopPropagation();
+         }
 
          setOpened(false);
 
