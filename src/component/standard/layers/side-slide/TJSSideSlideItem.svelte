@@ -3,6 +3,7 @@
 
    import { localize }           from '#runtime/svelte/helper';
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
+   import { isObject }           from '#runtime/util/object';
 
    import TJSSideSlideItemHost   from './TJSSideSlideItemHost.svelte';
 
@@ -170,7 +171,11 @@
            title={localize(item.title)}
            on:click={onClick}
            on:pointerenter={onPointerenter}>
-      <i class={item.icon}></i>
+      {#if isTJSSvelteConfig(item.icon)}
+         <svelte:component this={item.icon.class} {...(isObject(item.icon.props) ? item.icon.props : {})} />
+      {:else}
+         <i class={item.icon}></i>
+      {/if}
    </button>
 </div>
 
@@ -195,6 +200,7 @@
    .tjs-side-slide-layer-item {
       appearance: none;
       margin: 0;
+      padding: 0;
 
       display: flex;
       align-items: center;
@@ -206,7 +212,10 @@
       border: var(--tjs-side-slide-layer-item-border, solid 2px black);
       box-shadow: var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px);
       color: var(--tjs-side-slide-layer-item-color, rgba(255, 255, 255, 0.7));
+      cursor: var(--tjs-side-slide-layer-item-cursor, pointer);
       font-size: var(--tjs-side-slide-layer-item-font-size, calc(var(--tjs-side-slide-layer-item-diameter, 30px) / 2.25));
+      line-height: var(--tjs-side-slide-layer-item-diameter, 30px);
+      overflow: var(--tjs-side-slide-layer-item-overflow, hidden);
 
       width: var(--tjs-side-slide-layer-item-diameter, 30px);
       height: var(--tjs-side-slide-layer-item-diameter, 30px);

@@ -25,7 +25,7 @@
     *
     * @type {(Iterable<{
     *    condition?: boolean | (() => boolean)
-    *    icon: string,
+    *    icon: string | import('#runtime/svelte/util').TJSSvelteConfig,
     *    svelte: import('#runtime/svelte/util').TJSSvelteConfig,
     *    title?: string
     * }>)}
@@ -132,28 +132,29 @@
 
          if (!isObject(item))
          {
-            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}]' is not an object.`)
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}]' is not an object.`);
          }
 
          if (item.condition !== void 0 && typeof item.condition !== 'boolean' && typeof item.condition !== 'function')
          {
-            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].condition' is not a boolean or function.`)
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].condition' is not a boolean or function.`);
          }
 
-         if (typeof item.icon !== 'string')
+         if (typeof item.icon !== 'string' && !isTJSSvelteConfig(item.icon))
          {
-            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].icon' is not a string.`)
+            throw new TypeError(
+             `TJSSideSlideLayer error: 'items[${cntr}].icon' is not a string or Svelte configuration object.`);
          }
 
          if (!isTJSSvelteConfig(item.svelte))
          {
             throw new TypeError(
-             `TJSSideSlideLayer error: 'items[${cntr}].svelte' is not a Svelte configuration object.`)
+             `TJSSideSlideLayer error: 'items[${cntr}].svelte' is not a Svelte configuration object.`);
          }
 
          if (item.title !== void 0 && typeof item.title !== 'string')
          {
-            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].title' is not a string.`)
+            throw new TypeError(`TJSSideSlideLayer error: 'items[${cntr}].title' is not a string.`);
          }
 
          // Filter on any given condition.
@@ -209,7 +210,6 @@
 
       oldEasing = newEasing;
    }
-
 </script>
 
 <section class={`tjs-side-slide-layer${isIterable(classes) ? ` ${Array.from(classes).join(' ')}` : ''}`}
