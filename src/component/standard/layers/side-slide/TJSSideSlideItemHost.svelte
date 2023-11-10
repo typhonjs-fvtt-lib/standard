@@ -113,6 +113,8 @@
       border: var(--tjs-side-slide-layer-item-host-border, solid 2px black);
       box-shadow: var(--tjs-side-slide-layer-item-host-box-shadow, var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px));
       color: var(--tjs-side-slide-layer-item-host-color, white);
+
+      transition: var(--tjs-side-slide-layer-item-transition, all 200ms ease-in-out)
    }
 
    .tjs-side-slide-layer-item-host.left {

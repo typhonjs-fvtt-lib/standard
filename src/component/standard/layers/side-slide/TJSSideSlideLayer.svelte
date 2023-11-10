@@ -33,6 +33,13 @@
    export let items = [];
 
    /**
+    * An iterable list of additional classes to add to the main slide layer element
+    *
+    * @type {Iterable<string>}
+    */
+   export let classes = void 0;
+
+   /**
     * When true items are only opened / closed by click / keyboard interaction.
     *
     * @type {boolean}
@@ -205,7 +212,8 @@
 
 </script>
 
-<section class=tjs-side-slide-layer use:applyStyles={allStyles}>
+<section class={`tjs-side-slide-layer${isIterable(classes) ? ` ${Array.from(classes).join(' ')}` : ''}`}
+         use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
       <TJSSideSlideItem {item} {clickToOpen} {duration} {easingIn} {easingOut} {side} />
    {/each}
