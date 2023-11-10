@@ -11,10 +11,10 @@
    export let duration;
 
    /** @type {(time: number) => number} */
-   export let inEasing;
+   export let easingIn;
 
    /** @type {(time: number) => number} */
-   export let outEasing;
+   export let easingOut;
 
    /** @type {{ icon: string, svelte: import('#runtime/svelte/util').TJSSvelteConfig, title?: string }} */
    export let item;
@@ -89,13 +89,14 @@
 
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div bind:this={hostEl}
      class=tjs-side-slide-layer-item-host
      class:left={side === 'left'}
      class:right={side === 'right'}
      on:keydown={onKeydown}
-     in:slideFade={{ axis: 'x', duration, easingSlide: inEasing }}
-     out:slideFade={{ axis: 'x', duration, easingSlide: outEasing }}>
+     in:slideFade={{ axis: 'x', duration, easingSlide: easingIn }}
+     out:slideFade={{ axis: 'x', duration, easingSlide: easingOut }}>
    <svelte:component this={item.svelte.class} {...(isObject(item.svelte.props) ? item.svelte.props : {})} />
 </div>
 

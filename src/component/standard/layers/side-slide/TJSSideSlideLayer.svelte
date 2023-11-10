@@ -58,14 +58,14 @@
     *
     * @type {(time: number) => number}
     */
-   export let inEasing = void 0;
+   export let easingIn = void 0;
 
    /**
     * Svelte easing function.
     *
     * @type {(time: number) => number}
     */
-   export let outEasing = void 0;
+   export let easingOut = void 0;
 
    /**
     * A valid CSS value for the `top` positioning attribute for the top of the side slide layer.
@@ -197,8 +197,8 @@
       // set the default transition to both in & out transitions.
       const newEasing = typeof easing === 'function' ? easing : linear;
 
-      inEasing = newEasing;
-      outEasing = newEasing;
+      easingIn = newEasing;
+      easingOut = newEasing;
 
       oldEasing = newEasing;
    }
@@ -207,7 +207,7 @@
 
 <section class=tjs-side-slide-layer use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
-      <TJSSideSlideItem {item} {clickToOpen} {duration} {inEasing} {outEasing} {side} />
+      <TJSSideSlideItem {item} {clickToOpen} {duration} {easingIn} {easingOut} {side} />
    {/each}
 </section>
 
@@ -216,7 +216,7 @@
       position: absolute;
       display: flex;
       flex-direction: column;
-      gap: var(--tjs-side-slide-layer-item-gap, 2px);
+      gap: var(--tjs-side-slide-layer-item-gap, calc(var(--tjs-side-slide-layer-item-diameter, 30px) / 8));
       margin: var(--tjs-side-slide-layer-margin, 0);
    }
 </style>

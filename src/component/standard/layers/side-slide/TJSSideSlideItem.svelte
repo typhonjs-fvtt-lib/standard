@@ -13,10 +13,10 @@
    export let duration = void 0;
 
    /** @type {(time: number) => number} */
-   export let inEasing = void 0;
+   export let easingIn = void 0;
 
    /** @type {(time: number) => number} */
-   export let outEasing = void 0;
+   export let easingOut = void 0;
 
    /**
     * The side slide item icon (Font awesome string) and a Svelte configuration object.
@@ -151,6 +151,7 @@
    }
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div bind:this={containerEl}
      class=tjs-side-slide-layer-item-container
      class:left={side === 'left'}
@@ -161,7 +162,7 @@
      tabindex=-1>
 
    {#if opened && isTJSSvelteConfig(item.svelte)}
-      <TJSSideSlideItemHost {duration} {item} {inEasing} {outEasing} {side} />
+      <TJSSideSlideItemHost {duration} {item} {easingIn} {easingOut} {side} />
    {/if}
 
    <button bind:this={buttonEl}
@@ -205,7 +206,7 @@
       border: var(--tjs-side-slide-layer-item-border, solid 2px black);
       box-shadow: var(--tjs-side-slide-layer-item-box-shadow, rgba(0, 0, 0, 0.35) 0px 5px 15px);
       color: var(--tjs-side-slide-layer-item-color, rgba(255, 255, 255, 0.7));
-      font-size: var(--tjs-side-slide-layer-item-font-size, 14px);
+      font-size: var(--tjs-side-slide-layer-item-font-size, calc(var(--tjs-side-slide-layer-item-diameter, 30px) / 2.25));
 
       width: var(--tjs-side-slide-layer-item-diameter, 30px);
       height: var(--tjs-side-slide-layer-item-diameter, 30px);
