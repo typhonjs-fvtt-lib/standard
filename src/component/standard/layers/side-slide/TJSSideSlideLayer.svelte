@@ -5,8 +5,8 @@
     */
 
    import { setContext }         from '#svelte';
-   import { writable }           from '#svelte/store';
    import { linear }             from '#svelte/easing';
+   import { writable }           from '#svelte/store';
 
    import { applyStyles }        from '#runtime/svelte/action/dom';
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
@@ -98,7 +98,11 @@
 
    // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
-   setContext('#side-slide-layer-item-z-index', writable(1))
+   setContext('#side-slide-layer-item-z-index', writable(1));
+
+   // Provides a store for all items to share that is updated when an item opens. In cases for keyboard activation this
+   // allows other items to close when the actively opened item differs.
+   setContext('#side-slide-layer-item-opened', writable());
 
    let allStyles;
 

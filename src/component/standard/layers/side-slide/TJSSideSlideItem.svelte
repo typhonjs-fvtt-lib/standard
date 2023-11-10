@@ -35,8 +35,15 @@
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeZIndex = getContext('#side-slide-layer-item-z-index');
 
+   // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
+   // item icon. This allows each item that is being shown to always be on top regardless of item order.
+   const storeOpenedItem = getContext('#side-slide-layer-item-opened');
+
    // Flip the opened state to false whenever stayOpen is false.
    $: if (!stayOpen) { setOpened(false); }
+
+   // If this item doesn't match the opened item store state then close this item.
+   $: if ($storeOpenedItem !== item) { setOpened(false); }
 
    /**
     * Tracks current opened state over icon & panel.
@@ -124,7 +131,12 @@
       {
          // Increment the z-index of the container to make it always on top.
          containerEl.style.zIndex = `${$storeZIndex++}`;
+
+         // Give container silent focus such that keyboard navigation starts at the container.
          containerEl.focus();
+
+         // Set the active opened item to this item allowing other independent items to close.
+         $storeOpenedItem = item
 
          opened = true;
       }
