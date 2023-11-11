@@ -108,7 +108,7 @@
       width: fit-content;
       height: fit-content;
 
-      padding: var(--tjs-side-slide-layer-item-host-padding, 15px);
+      padding: var(--tjs-side-slide-layer-item-host-padding, 10px);
 
       background: var(--tjs-side-slide-layer-item-host-background, linear-gradient(135deg, rgba(52, 51, 52, 0.9) 10%, rgba(15, 14, 28, 0.9) 90%));
       border: var(--tjs-side-slide-layer-item-host-border, solid 2px black);
@@ -120,11 +120,11 @@
 
    .tjs-side-slide-layer-item-host.left {
       left: calc(var(--tjs-side-slide-layer-item-diameter, 30px) + 2px);
-      border-radius: var(--tjs-side-slide-layer-item-host-border-radius-left, 5% 10% 30% 5%);
+      border-radius: var(--tjs-side-slide-layer-item-host-border-radius-left, 5% 10% 20% 5%);
    }
 
    .tjs-side-slide-layer-item-host.right {
       right: calc(var(--tjs-side-slide-layer-item-diameter, 30px) + 2px);
-      border-radius: var(--tjs-side-slide-layer-item-host-border-radius-right, 5% 5% 10% 30%);
+      border-radius: var(--tjs-side-slide-layer-item-host-border-radius-right, 5% 5% 10% 20%);
    }
 </style>
