@@ -95,6 +95,9 @@
     */
    let locked = false;
 
+   /** @type {HTMLButtonElement} */
+   let buttonEl;
+
    /** @type {HTMLDivElement} */
    let containerEl;
 
@@ -153,7 +156,7 @@
    function onKeydown(event)
    {
       // Close the panel if hovering / open.
-      if (event.code === 'Escape' && !locked)
+      if (event.code === 'Escape')
       {
          // Only prevent event propagation if the item is opened.
          if (opened)
@@ -162,10 +165,19 @@
             event.stopPropagation();
          }
 
-         setOpened(false);
+         if (!locked)
+         {
+            setOpened(false);
 
-         // Focus container so that keyboard navigation continues w/ the button on next `tab` press.
-         containerEl.focus();
+            // Focus container so that keyboard navigation continues w/ the button on next `tab` press.
+            containerEl.focus();
+         }
+         else
+         {
+            // In the case of a locked item and `Escape` is pressed the button is focused to allow keyboard navigation
+            // exit the focus trapping of the item host.
+            buttonEl.focus();
+         }
       }
    }
 
@@ -255,7 +267,8 @@
       <TJSSideSlideItemHost {duration} {item} {easingIn} {easingOut} {side} />
    {/if}
 
-   <button class=tjs-side-slide-layer-item
+   <button bind:this={buttonEl}
+           class=tjs-side-slide-layer-item
            class:locked={locked}
            title={localize(item.title)}
            on:click={onClick}
