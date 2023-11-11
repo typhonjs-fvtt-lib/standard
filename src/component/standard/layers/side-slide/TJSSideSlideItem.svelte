@@ -107,6 +107,18 @@
    let containerEl, hostEl;
 
    /**
+    * Local helper to invoke `A11yHelper` with the active window as applicable.
+    *
+    * @param element - Element to test focus within.
+    */
+   function isFocusWithin(element)
+   {
+      // This component may not be embedded in an application so fallback to `globalThis`.
+      const activeWindow = application?.reactive?.activeWindow ?? globalThis;
+      return A11yHelper.isFocusWithin(element, activeWindow);
+   }
+
+   /**
     * Handles the case when the `Escape` key is pressed and the pointer hasn't left the containing item. A click
     * reopens the panel.
     *
@@ -121,7 +133,7 @@
    }
 
    /**
-    * Handles locking items.
+    * Handles locking / unlocking items.
     *
     * @param {PointerEvent}  event - PointerEvent.
     */
@@ -142,56 +154,32 @@
             $storeLocked = item;
             locked = true;
             setOpened(true);
+
+            if (!isFocusWithin(hostEl)) { containerEl.focus(); }
          }
-      }
-
-      if (opened)
-      {
-         // This component may not be embedded in an application so fallback to `globalThis`.
-         const activeWindow = application?.reactive?.activeWindow ?? globalThis;
-
-         if (!A11yHelper.isFocusWithin(hostEl, activeWindow)) { containerEl.focus(); }
       }
    }
 
    /**
-    * Provides focus cycling inside the application capturing `<Shift-Tab>` and if `elementRoot` or `firstFocusEl` is
-    * the actively focused element then last focusable element is focused skipping `TJSFocusWrap`.
-    *
-    * Also, if a popout app all key down events will bring this application to the top such that when focus is trapped
-    * the app is top most.
+    * Handles escaping from the host panel focus trapping via keyboard navigation.
     *
     * @param {KeyboardEvent} event - Keyboard Event.
     */
    function onKeydown(event)
    {
-      // Close the panel if hovering / open.
       if (event.code === 'Escape')
       {
-         // Only prevent event propagation if the item is opened.
-         if (opened)
+         // When opened and focus is inside the host panel the first `<Escape>` key press will focus the button
+         // element. This allows keyboard navigation to exit the focus trapping of the host panel.
+         if (opened && isFocusWithin(hostEl))
          {
-            event.preventDefault();
-            event.stopPropagation();
-         }
-
-         if (!locked)
-         {
-            // When not `clickToOpen` and the button is currently being hovered reject closing on `Escape` key pressed.
-            if (!clickToOpen && buttonEl?.matches(':hover')) { return; }
-
-            setOpened(false);
-
-            // Focus container so that keyboard navigation continues w/ the button on next `tab` press.
-            // This does not give immediate visible focus to the button for typical pointer / mouse users.
-            containerEl.focus();
-         }
-         else
-         {
-            // In the case of a locked item and `Escape` is pressed the button is focused to allow keyboard navigation
-            // exit any focus trapping of the item host.
             buttonEl.focus();
+            return;
          }
+
+         // Otherwise on first (no focus trapping) or second `<Escape>` key press blur the target allowing other key
+         // handlers to take effect.
+         if (event.target === containerEl || event.target === buttonEl) { event.target.blur(); }
       }
    }
 
@@ -215,18 +203,8 @@
          event.preventDefault();
          event.stopPropagation();
 
-         // This component may not be embedded in an application so fallback to `globalThis`.
-         const activeWindow = application?.reactive?.activeWindow ?? globalThis;
-
          // Only focus container when there isn't focus within an existing host panel.
-         if (!A11yHelper.isFocusWithin(hostEl, activeWindow)) { containerEl.focus(); }
-      }
-
-      // Prevent non-main button click (context click) from changing active element when `clickToOpen` is active.
-      if (clickToOpen && !opened && event?.button !== 0)
-      {
-         event.preventDefault();
-         event.stopPropagation();
+         if (!isFocusWithin(hostEl)) { containerEl.focus(); }
       }
    }
 

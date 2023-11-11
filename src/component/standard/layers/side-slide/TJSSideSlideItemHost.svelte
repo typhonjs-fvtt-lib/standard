@@ -57,7 +57,7 @@
       if (event.code === 'Tab')
       {
          // Collect all focusable elements from `containerEl` and ignore TJSFocusWrap.
-         const allFocusable = A11yHelper.getFocusableElements(hostEl);
+         const allFocusable = A11yHelper.getFocusableElements(hostEl, { ignoreElements: new Set() });
 
          // Find first and last focusable elements.
          const firstFocusEl = allFocusable.length > 0 ? allFocusable[0] : void 0;
