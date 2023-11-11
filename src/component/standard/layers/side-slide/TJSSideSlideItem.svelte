@@ -294,6 +294,7 @@
      class:right={side === 'right'}
      class:opened={opened}
      on:keydown={onKeydown}
+     on:pointerdown={onPointerdown}
      on:pointerleave={onPointerleave}
      tabindex=-1>
 
@@ -307,7 +308,6 @@
            title={localize(item.title)}
            on:click={onClick}
            on:contextmenu={onContextmenu}
-           on:pointerdown={onPointerdown}
            on:pointerenter={onPointerenter}
            disabled={isOtherLocked}>
       {#if isTJSSvelteConfig(item.icon)}
@@ -365,6 +365,7 @@
    }
 
    .tjs-side-slide-layer-item:disabled {
+      pointer-events: none;
       cursor: default;
    }
 
