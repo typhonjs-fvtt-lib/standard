@@ -172,7 +172,7 @@
    }
 
    select option {
-      /* TODO: add defaults via cssVariables */
+      /* TODO: cssVariables v2; add defaults */
       background: var(--tjs-select-option-background, var(--tjs-default-popup-background, #23221d));
       color: var(--tjs-select-option-color, var(--tjs-default-popup-primary-color, #b5b3a4));
    }
@@ -180,6 +180,7 @@
    select:disabled {
       color: var(--tjs-select-color-disabled, var(--tjs-input-color-disabled, revert));
       cursor: var(--tjs-select-cursor-disabled, var(--tjs-input-cursor-disabled, default));
+      pointer-events: none;
    }
 
    select:focus {

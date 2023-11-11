@@ -115,6 +115,7 @@
     input:disabled {
        border: var(--tjs-input-checkbox-border-disabled, var(--tjs-input-border-disabled, none));
        cursor: var(--tjs-input-checkbox-cursor-disabled, var(--tjs-input-cursor-disabled, default));
+       pointer-events: none;
     }
 
     input:focus {

@@ -236,6 +236,7 @@
        border: var(--tjs-input-range-border-disabled, var(--tjs-input-border-disabled, none));
        color: var(--tjs-input-range-color-disabled, var(--tjs-input-color-disabled, revert));
        cursor: var(--tjs-input-range-cursor-disabled, var(--tjs-input-cursor-disabled, default));
+       pointer-events: none;
     }
 
     input:focus {
