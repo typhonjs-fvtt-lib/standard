@@ -33,6 +33,13 @@
    export let items = [];
 
    /**
+    * Controls whether items can be locked when `clickToOpen` is false. By default, items can be locked.
+    *
+    * @type {boolean}
+    */
+   export let allowLocking = true;
+
+   /**
     * An iterable list of additional classes to add to the main slide layer element
     *
     * @type {Iterable<string>}
@@ -104,13 +111,17 @@
     */
    export let zIndex = 10;
 
-   // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
-   // item icon. This allows each item that is being shown to always be on top regardless of item order.
-   setContext('#side-slide-layer-item-z-index', writable(1));
+   // Provides a store for all items to share that is updated when an item is locked. When `clickToOpen` is false an
+   // item can be locked w/ contextmenu click or key activation.
+   setContext('#side-slide-layer-item-locked', writable());
 
    // Provides a store for all items to share that is updated when an item opens. In cases for keyboard activation this
    // allows other items to close when the actively opened item differs.
    setContext('#side-slide-layer-item-opened', writable());
+
+   // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
+   // item icon. This allows each item that is being shown to always be on top regardless of item order.
+   setContext('#side-slide-layer-item-z-index', writable(1));
 
    let allStyles;
 
@@ -215,7 +226,7 @@
 <section class={`tjs-side-slide-layer${isIterable(classes) ? ` ${Array.from(classes).join(' ')}` : ''}`}
          use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
-      <TJSSideSlideItem {item} {clickToOpen} {duration} {easingIn} {easingOut} {side} />
+      <TJSSideSlideItem {item} {allowLocking} {clickToOpen} {duration} {easingIn} {easingOut} {side} />
    {/each}
 </section>
 

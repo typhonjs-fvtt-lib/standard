@@ -8,6 +8,9 @@
    import TJSSideSlideItemHost   from './TJSSideSlideItemHost.svelte';
 
    /** @type {boolean} */
+   export let allowLocking = void 0;
+
+   /** @type {boolean} */
    export let clickToOpen = void 0;
 
    /** @type {number} */
@@ -22,23 +25,58 @@
    /**
     * The side slide item icon (Font awesome string) and a Svelte configuration object.
     *
-    * @type {{ icon: string, svelte: import('#runtime/svelte/util').TJSSvelteConfig, title?: string }}
+    * @type {({
+    *    icon: string | import('#runtime/svelte/util').TJSSvelteConfig,
+    *    svelte: import('#runtime/svelte/util').TJSSvelteConfig,
+    *    title?: string
+    * })}
     */
    export let item = void 0;
 
    /** @type {'left' | 'right'} */
    export let side = void 0;
 
-   // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
-   // item icon. This allows each item that is being shown to always be on top regardless of item order.
-   const storeZIndex = getContext('#side-slide-layer-item-z-index');
+   // Provides a store for all items to share that is updated when an item is locked. When `clickToOpen` is false an
+   // item can be locked w/ contextmenu click or key activation.
+   const storeLocked = getContext('#side-slide-layer-item-locked');
 
    // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    const storeOpenedItem = getContext('#side-slide-layer-item-opened');
 
-   // Flip the opened state to false whenever clickToOpen is false / changes state.
-   $: if (!clickToOpen) { setOpened(false); }
+   // Provides a store for all items to share and use to increment the item container z-index when pointer enters the
+   // item icon. This allows each item that is being shown to always be on top regardless of item order.
+   const storeZIndex = getContext('#side-slide-layer-item-z-index');
+
+   // Tracks the locked state of any / other items.
+   let isAnyLocked, isOtherLocked;
+
+   // When not `clickToOpen` and `storeLocked` is undefined then no items are locked.
+   $: isAnyLocked = !clickToOpen && $storeLocked !== void 0;
+
+   // When not `clickToOpen` and `storeLocked` is not this item then another item is locked.
+   $: isOtherLocked = !clickToOpen && $storeLocked !== void 0 && $storeLocked !== item;
+
+   // Handles state change of `allowLocking`; when not allowed remove locked state.
+   $: if (!allowLocking)
+   {
+      setOpened(false);
+      locked = false;
+      $storeLocked = void 0;
+   }
+
+   // Handles state change to `clickToOpen`.
+   $: if (!clickToOpen)
+   {
+      // Flip the opened state to false whenever clickToOpen is false / changes state.
+      setOpened(false);
+   }
+   else
+   {
+      // Ensure that locked state is removed when `clickToOpen` is true.
+      locked = false;
+      $storeLocked = void 0;
+   }
 
    // If this item doesn't match the opened item store state then close this item.
    $: if ($storeOpenedItem !== item) { setOpened(false); }
@@ -50,8 +88,12 @@
     */
    let opened = false;
 
-   /** @type {HTMLButtonElement} */
-   let buttonEl;
+   /**
+    * Tracks current locked state that always keeps the item panel open.
+    *
+    * @type {boolean}
+    */
+   let locked = false;
 
    /** @type {HTMLDivElement} */
    let containerEl;
@@ -60,15 +102,43 @@
     * Handles the case when the `Escape` key is pressed and the pointer hasn't left the containing item. A click
     * reopens the panel.
     *
-    * @param {MouseEvent}  event - MouseEvent.
+    * @param {PointerEvent}  event - PointerEvent.
     */
    function onClick(event)
    {
       event.preventDefault();
       event.stopPropagation();
 
-      // When `clickToOpen` is true reverse opened state otherwise only open for pointer hover activation.
-      setOpened(clickToOpen ? !opened : true);
+      if (!isAnyLocked)
+      {
+         setOpened(!opened);
+      }
+   }
+
+   /**
+    * Handles locking items.
+    *
+    * @param {PointerEvent}  event - PointerEvent.
+    */
+   function onContextmenu(event)
+   {
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (!isOtherLocked && !clickToOpen)
+      {
+         if (locked)
+         {
+            $storeLocked = void 0;
+            locked = false;
+         }
+         else
+         {
+            $storeLocked = item;
+            locked = true;
+            setOpened(true);
+         }
+      }
    }
 
    /**
@@ -83,7 +153,7 @@
    function onKeydown(event)
    {
       // Close the panel if hovering / open.
-      if (event.code === 'Escape')
+      if (event.code === 'Escape' && !locked)
       {
          // Only prevent event propagation if the item is opened.
          if (opened)
@@ -100,13 +170,27 @@
    }
 
    /**
+    * Prevents disabled items when clicked / pointer down from becoming the active element.
+    *
+    * @param {MouseEvent}  event - MouseEvent.
+    */
+   function onPointerdown(event)
+   {
+      if (isOtherLocked)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+      }
+   }
+
+   /**
     * Triggered when the pointer enters the item icon. Increments the z-index of the item container to always show on
     * top of any existing open items.
     */
    function onPointerenter()
    {
       // Ignore if clickToOpen is true ignoring pointer entered.
-      if (clickToOpen) { return; }
+      if (clickToOpen || isAnyLocked) { return; }
 
       setOpened(true);
    }
@@ -119,7 +203,7 @@
    function onPointerleave()
    {
       // Ignore if clickToOpen is true ignoring pointer leave.
-      if (clickToOpen) { return; }
+      if (clickToOpen || isAnyLocked) { return; }
 
       setTimeout(() =>
       {
@@ -163,6 +247,7 @@
      class:right={side === 'right'}
      class:opened={opened}
      on:keydown={onKeydown}
+     on:pointerdown={onPointerdown}
      on:pointerleave={onPointerleave}
      tabindex=-1>
 
@@ -170,11 +255,13 @@
       <TJSSideSlideItemHost {duration} {item} {easingIn} {easingOut} {side} />
    {/if}
 
-   <button bind:this={buttonEl}
-           class=tjs-side-slide-layer-item
+   <button class=tjs-side-slide-layer-item
+           class:locked={locked}
            title={localize(item.title)}
            on:click={onClick}
-           on:pointerenter={onPointerenter}>
+           on:contextmenu={onContextmenu}
+           on:pointerenter={onPointerenter}
+           disabled={isOtherLocked}>
       {#if isTJSSvelteConfig(item.icon)}
          <svelte:component this={item.icon.class} {...(isObject(item.icon.props) ? item.icon.props : {})} />
       {:else}
@@ -218,11 +305,19 @@
       color: var(--tjs-side-slide-layer-item-color, rgba(255, 255, 255, 0.7));
       cursor: var(--tjs-side-slide-layer-item-cursor, pointer);
       font-size: var(--tjs-side-slide-layer-item-font-size, calc(var(--tjs-side-slide-layer-item-diameter, 30px) / 2.25));
-      line-height: var(--tjs-side-slide-layer-item-diameter, 30px);
+      line-height: var(--tjs-side-slide-layer-item-diameter, 100%);
       overflow: var(--tjs-side-slide-layer-item-overflow, hidden);
 
       width: var(--tjs-side-slide-layer-item-diameter, 30px);
       height: var(--tjs-side-slide-layer-item-diameter, 30px);
+   }
+
+   .tjs-side-slide-layer-item.locked {
+      border-style: dashed;
+   }
+
+   .tjs-side-slide-layer-item:disabled {
+      cursor: default;
    }
 
    .tjs-side-slide-layer-item:focus-visible {
