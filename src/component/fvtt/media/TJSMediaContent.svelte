@@ -199,7 +199,8 @@
                  autoplay={videoAutoplay}
                  loop={videoLoop}
                  muted={videoMuted}
-                 title={localize(title)}>
+                 title={localize(title)}
+                 tabindex=-1>  <!-- tabindex is necessary to prevent focus on Firefox -->
              <source src={parsed.filepath} type={`video/${parsed.extension}`}>
 
              <!-- Potentially use the default asset if an image as a fallback. -->
