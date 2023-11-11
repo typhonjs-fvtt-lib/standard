@@ -7,6 +7,9 @@
    import { A11yHelper }   from '#runtime/util/browser';
    import { isObject }     from '#runtime/util/object';
 
+   /** @type {HTMLDivElement} */
+   export let hostEl;
+
    /** @type {number} */
    export let duration;
 
@@ -25,8 +28,6 @@
    // Retrieve any host application to determine active global window. This may be undefined, so fallback to
    // `globalThis` in focus management.
    const application = getContext('#external')?.application;
-
-   let hostEl;
 
    onDestroy(() =>
    {

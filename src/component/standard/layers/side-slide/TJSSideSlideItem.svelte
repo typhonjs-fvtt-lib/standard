@@ -3,6 +3,7 @@
 
    import { localize }           from '#runtime/svelte/helper';
    import { isTJSSvelteConfig }  from '#runtime/svelte/util';
+   import { A11yHelper }         from '#runtime/util/browser';
    import { isObject }           from '#runtime/util/object';
 
    import TJSSideSlideItemHost   from './TJSSideSlideItemHost.svelte';
@@ -35,6 +36,10 @@
 
    /** @type {'left' | 'right'} */
    export let side = void 0;
+
+   // Retrieve any host application to determine active global window. This may be undefined, so fallback to
+   // `globalThis` in focus management.
+   const application = getContext('#external')?.application;
 
    // Provides a store for all items to share that is updated when an item is locked. When `clickToOpen` is false an
    // item can be locked w/ contextmenu click or key activation.
@@ -99,7 +104,7 @@
    let buttonEl;
 
    /** @type {HTMLDivElement} */
-   let containerEl;
+   let containerEl, hostEl;
 
    /**
     * Handles the case when the `Escape` key is pressed and the pointer hasn't left the containing item. A click
@@ -112,10 +117,7 @@
       event.preventDefault();
       event.stopPropagation();
 
-      if (!isAnyLocked)
-      {
-         setOpened(!opened);
-      }
+      if (!isAnyLocked) { setOpened(!opened); }
    }
 
    /**
@@ -142,6 +144,14 @@
             setOpened(true);
          }
       }
+
+      if (opened)
+      {
+         // This component may not be embedded in an application so fallback to `globalThis`.
+         const activeWindow = application?.reactive?.activeWindow ?? globalThis;
+
+         if (!A11yHelper.isFocusWithin(hostEl, activeWindow)) { containerEl.focus(); }
+      }
    }
 
    /**
@@ -167,15 +177,19 @@
 
          if (!locked)
          {
+            // When not `clickToOpen` and the button is currently being hovered reject closing on `Escape` key pressed.
+            if (!clickToOpen && buttonEl?.matches(':hover')) { return; }
+
             setOpened(false);
 
             // Focus container so that keyboard navigation continues w/ the button on next `tab` press.
+            // This does not give immediate visible focus to the button for typical pointer / mouse users.
             containerEl.focus();
          }
          else
          {
             // In the case of a locked item and `Escape` is pressed the button is focused to allow keyboard navigation
-            // exit the focus trapping of the item host.
+            // exit any focus trapping of the item host.
             buttonEl.focus();
          }
       }
@@ -188,7 +202,28 @@
     */
    function onPointerdown(event)
    {
+      // Prevent button click when any other item is locked.
       if (isOtherLocked)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+         return;
+      }
+
+      if (opened)
+      {
+         event.preventDefault();
+         event.stopPropagation();
+
+         // This component may not be embedded in an application so fallback to `globalThis`.
+         const activeWindow = application?.reactive?.activeWindow ?? globalThis;
+
+         // Only focus container when there isn't focus within an existing host panel.
+         if (!A11yHelper.isFocusWithin(hostEl, activeWindow)) { containerEl.focus(); }
+      }
+
+      // Prevent non-main button click (context click) from changing active element when `clickToOpen` is active.
+      if (clickToOpen && !opened && event?.button !== 0)
       {
          event.preventDefault();
          event.stopPropagation();
@@ -219,7 +254,7 @@
 
       setTimeout(() =>
       {
-         if (!containerEl.matches(':hover')) { setOpened(false); }
+         if (containerEl && !containerEl.matches(':hover')) { setOpened(false); }
       }, 80);
    }
 
@@ -259,12 +294,11 @@
      class:right={side === 'right'}
      class:opened={opened}
      on:keydown={onKeydown}
-     on:pointerdown={onPointerdown}
      on:pointerleave={onPointerleave}
      tabindex=-1>
 
    {#if opened && isTJSSvelteConfig(item.svelte)}
-      <TJSSideSlideItemHost {duration} {item} {easingIn} {easingOut} {side} />
+      <TJSSideSlideItemHost bind:hostEl {duration} {item} {easingIn} {easingOut} {side} />
    {/if}
 
    <button bind:this={buttonEl}
@@ -273,6 +307,7 @@
            title={localize(item.title)}
            on:click={onClick}
            on:contextmenu={onContextmenu}
+           on:pointerdown={onPointerdown}
            on:pointerenter={onPointerenter}
            disabled={isOtherLocked}>
       {#if isTJSSvelteConfig(item.icon)}
