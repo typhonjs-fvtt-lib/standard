@@ -43,11 +43,12 @@
    })
 
    /**
-    * Provides focus cycling inside the application capturing `<Shift-Tab>` and if `elementRoot` or `firstFocusEl` is
-    * the actively focused element then last focusable element is focused skipping `TJSFocusWrap`.
+    * Provides focus cycling inside the the host element acting on `<Shift-Tab>` and if `firstFocusEl` is
+    * the actively focused element then last focusable element is focused.
     *
-    * Also, if a popout app all key down events will bring this application to the top such that when focus is trapped
-    * the app is top most.
+    * Note: When popped out to different browser window the `<Shift-Tab>` is not received when the first element is
+    * focused. On Chrome focus will traverse backward to another element outside the host element. On Firefox the key
+    * event is not received either, but the first focusable element stays focused.
     *
     * @param {KeyboardEvent} event - Keyboard Event.
     */
@@ -69,7 +70,7 @@
          {
             if (firstFocusEl === activeWindow.document.activeElement)
             {
-               if (lastFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
+               if (lastFocusEl && firstFocusEl !== lastFocusEl) { lastFocusEl.focus(); }
 
                event.preventDefault();
                event.stopPropagation();
@@ -79,7 +80,7 @@
          {
             if (lastFocusEl === activeWindow.document.activeElement)
             {
-               if (firstFocusEl instanceof HTMLElement && firstFocusEl !== lastFocusEl) { firstFocusEl.focus(); }
+               if (firstFocusEl && firstFocusEl !== lastFocusEl) { firstFocusEl.focus(); }
 
                event.preventDefault();
                event.stopPropagation();
@@ -87,7 +88,6 @@
          }
       }
    }
-
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
