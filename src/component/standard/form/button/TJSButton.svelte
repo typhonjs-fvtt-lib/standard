@@ -208,10 +208,12 @@
 
    button:disabled {
       cursor: var(--tjs-form-button-cursor-disabled, var(--tjs-input-cursor-disabled, default));
+      pointer-events: none;
    }
 
    button:disabled > * {
       text-shadow: var(--tjs-form-button-text-shadow-disabled, var(--tjs-default-text-shadow-disabled, none));
+      pointer-events: none;
    }
 
    button:hover {
