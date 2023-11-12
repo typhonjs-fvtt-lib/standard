@@ -142,6 +142,8 @@
       event.preventDefault();
       event.stopPropagation();
 
+      if (!allowLocking) { return; }
+
       if (!isOtherLocked && !clickToOpen)
       {
          if (locked)
