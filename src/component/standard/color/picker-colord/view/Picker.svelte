@@ -182,6 +182,7 @@
         height: 100%;
         outline: none;
         user-select: none;
+        touch-action: none;
 
         background: linear-gradient(#ffffff00, #000000ff), linear-gradient(0.25turn, #ffffffff, #00000000),
          var(--_tjs-color-picker-current-color-hsl-hue);

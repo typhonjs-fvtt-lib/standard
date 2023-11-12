@@ -198,6 +198,7 @@
 
         outline: none;
         user-select: none;
+        touch-action: none;
 
         --_tjs-color-picker-slider-gradient: #ff0000, #ffff00 17.2%, #ffff00 18.2%, #00ff00 33.3%, #00ffff 49.5%,
         #00ffff 51.5%, #0000ff 67.7%, #ff00ff 83.3%, #ff0000;

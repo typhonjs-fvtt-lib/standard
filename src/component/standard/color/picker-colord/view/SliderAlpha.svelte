@@ -203,7 +203,6 @@
         width: 100%;
         height: 100%;
 
-
         background: var(--tjs-checkerboard-background-10);
         box-shadow: var(--tjs-color-picker-slider-box-shadow);
 
@@ -211,5 +210,6 @@
 
         outline: none;
         user-select: none;
+        touch-action: none;
     }
 </style>
