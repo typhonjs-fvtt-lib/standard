@@ -119,25 +119,11 @@
    }
 
    /**
-    * Handles the case when the `Escape` key is pressed and the pointer hasn't left the containing item. A click
-    * reopens the panel.
-    *
-    * @param {PointerEvent}  event - PointerEvent.
-    */
-   function onClick(event)
-   {
-      event.preventDefault();
-      event.stopPropagation();
-
-      if (!isAnyLocked) { setOpened(!opened); }
-   }
-
-   /**
     * Handles locking / unlocking items.
     *
     * @param {PointerEvent}  event - PointerEvent.
     */
-   function onContextmenu(event)
+   function onContextmenuButton(event)
    {
       event.preventDefault();
       event.stopPropagation();
@@ -167,7 +153,7 @@
     *
     * @param {KeyboardEvent} event - Keyboard Event.
     */
-   function onKeydown(event)
+   function onKeydownContainer(event)
    {
       if (event.code === 'Escape')
       {
@@ -176,6 +162,10 @@
          if (opened && isFocusWithin(hostEl))
          {
             buttonEl.focus();
+
+            event.preventDefault();
+            event.stopPropagation();
+
             return;
          }
 
@@ -186,19 +176,43 @@
    }
 
    /**
-    * Prevents disabled items when clicked / pointer down from becoming the active element.
+    * Handles flipping state on key press / up.
     *
-    * @param {MouseEvent}  event - MouseEvent.
+    * @param {KeyboardEvent}  event - KeyboardEvent.
     */
-   function onPointerdown(event)
+   function onKeyupButton(event)
    {
-      // Prevent button click when any other item is locked.
-      if (isOtherLocked)
+      if (event.code === 'Enter' && !isAnyLocked)
       {
          event.preventDefault();
          event.stopPropagation();
-         return;
+
+         setOpened(!opened);
       }
+   }
+
+   /**
+    * Prevents disabled items when clicked / pointer down from becoming the active element.
+    *
+    * @param {PointerEvent}  event - PointerEvent.
+    */
+   function onPointerdownButton(event)
+   {
+      const isMouse = event.pointerType === 'mouse';
+
+      if (isMouse && event.button !== 0) { return; }
+
+      if (clickToOpen || (!isMouse && !isAnyLocked)) { setOpened(!opened); }
+   }
+
+   /**
+    * Focuses the container element if there is no focus within a host element.
+    *
+    * @param {PointerEvent}  event - PointerEvent.
+    */
+   function onPointerdownContainer(event)
+   {
+      if (event.pointerType === 'mouse' && event.button !== 0) { return; }
 
       if (opened)
       {
@@ -211,13 +225,14 @@
    }
 
    /**
-    * Triggered when the pointer enters the item icon. Increments the z-index of the item container to always show on
-    * top of any existing open items.
+    * Triggered when the pointer enters the item button for mouse and when not `clickToOpen` or any item is locked.
+    *
+    * @param {PointerEvent} event - PointerEvent.
     */
-   function onPointerenter()
+   function onPointerenterButton(event)
    {
-      // Ignore if clickToOpen is true ignoring pointer entered.
-      if (clickToOpen || isAnyLocked) { return; }
+      // Ignore if not mouse or `clickToOpen` is true ignoring pointer entered.
+      if (event.pointerType !== 'mouse' || clickToOpen || isAnyLocked) { return; }
 
       setOpened(true);
    }
@@ -226,11 +241,13 @@
     * After a small delay when the pointer leaves the item container only set opened to false if the container does not
     * have the `:hover` style property. This will keep the host panel open when the pointer / mouse travels from the
     * item icon to the panel itself.
+    *
+    * @param {PointerEvent} event - PointerEvent.
     */
-   function onPointerleave()
+   function onPointerleaveContainer(event)
    {
-      // Ignore if clickToOpen is true ignoring pointer leave.
-      if (clickToOpen || isAnyLocked) { return; }
+      // Ignore if not mouse or `clickToOpen` is true ignoring pointer leave.
+      if (event.pointerType !== 'mouse' || clickToOpen || isAnyLocked) { return; }
 
       setTimeout(() =>
       {
@@ -273,32 +290,42 @@
      class:left={side === 'left'}
      class:right={side === 'right'}
      class:opened={opened}
-     on:keydown={onKeydown}
-     on:pointerdown={onPointerdown}
-     on:pointerleave={onPointerleave}
+     on:keydown={onKeydownContainer}
+     on:pointerdown={onPointerdownContainer}
+     on:pointerleave={onPointerleaveContainer}
      tabindex=-1>
 
    {#if opened && isTJSSvelteConfig(item.svelte)}
       <TJSSideSlideItemHost bind:hostEl {duration} {item} {easingIn} {easingOut} {side} />
    {/if}
 
-   <button bind:this={buttonEl}
-           class=tjs-side-slide-layer-item
-           class:locked={locked}
-           title={localize(item.title)}
-           on:click={onClick}
-           on:contextmenu={onContextmenu}
-           on:pointerenter={onPointerenter}
-           disabled={isOtherLocked}>
-      {#if isTJSSvelteConfig(item.icon)}
-         <svelte:component this={item.icon.class} {...(isObject(item.icon.props) ? item.icon.props : {})} />
-      {:else}
-         <i class={item.icon}></i>
-      {/if}
-   </button>
+   <!-- The button capture div prevents pointer events from propagating when the button is disabled -->
+   <div class=button-capture on:pointerdown={(event) => { if (isOtherLocked) { event.stopPropagation(); event.preventDefault(); } }}>
+      <button bind:this={buttonEl}
+              class=tjs-side-slide-layer-item
+              class:locked={locked}
+              title={localize(item.title)}
+              on:keyup={onKeyupButton}
+              on:contextmenu={onContextmenuButton}
+              on:pointerdown={onPointerdownButton}
+              on:pointerenter={onPointerenterButton}
+              disabled={isOtherLocked}>
+         {#if isTJSSvelteConfig(item.icon)}
+            <svelte:component this={item.icon.class} {...(isObject(item.icon.props) ? item.icon.props : {})} />
+         {:else}
+            <i class={item.icon}></i>
+         {/if}
+      </button>
+   </div>
 </div>
 
 <style>
+   .button-capture {
+      pointer-events: all;
+      user-select: none;
+      -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
+   }
+
    .tjs-side-slide-layer-item-container:focus-visible {
       outline: none;
    }

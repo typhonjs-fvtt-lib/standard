@@ -175,6 +175,8 @@
         border-radius: var(--tjs-slot-button-border-radius, var(--tjs-input-border-radius));
         cursor: var(--tjs-slot-button-cursor, pointer);
         transition: var(--tjs-slot-button-transition, background 0.2s ease-in-out);
+        user-select: none;
+       -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
     }
 
     .tjs-slot-button.disabled {

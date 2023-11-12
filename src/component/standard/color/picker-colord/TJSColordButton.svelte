@@ -188,6 +188,9 @@
 
         transition: var(--tjs-icon-button-transition, var(--tjs-button-transition, background 0.2s ease-in-out, clip-path 0.2s ease-in-out));
         transform-style: preserve-3d;
+
+        user-select: none;
+        -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
     }
 
     .tjs-color-button:before {

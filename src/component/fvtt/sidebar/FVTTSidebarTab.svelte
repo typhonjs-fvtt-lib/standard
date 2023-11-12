@@ -38,3 +38,10 @@
       <i class={sidebarData.icon}></i>
    {/if}
 </a>
+
+<style>
+   a {
+      user-select: none;
+      -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
+   }
+</style>

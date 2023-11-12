@@ -264,6 +264,8 @@
       width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
       align-self: center;
       text-align: center;
+      user-select: none;
+      -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
    }
 
    div.disabled a {

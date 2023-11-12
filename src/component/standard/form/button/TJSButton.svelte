@@ -204,6 +204,9 @@
       width: var(--tjs-form-button-width, 100%);
 
       padding: 0;
+
+      user-select: none;
+      -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
    }
 
    button:disabled {

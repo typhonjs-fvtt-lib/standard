@@ -193,6 +193,8 @@
         width: var(--tjs-icon-button-diameter, var(--tjs-button-diameter, 2em));
         align-self: center;
         text-align: center;
+        user-select: none;
+        -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
     }
 
     div.disabled a {
@@ -221,6 +223,7 @@
         height: 100%;
         transition: var(--tjs-icon-button-transition, var(--tjs-button-transition, background 0.2s ease-in-out, clip-path 0.2s ease-in-out));
         text-decoration: none;
+        user-select: none;
     }
 
     a:focus {
