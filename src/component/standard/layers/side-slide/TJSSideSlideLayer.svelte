@@ -5,7 +5,7 @@
     */
 
    import { setContext }         from '#svelte';
-   import { linear }             from '#svelte/easing';
+   import * as easings           from '#svelte/easing';
    import { writable }           from '#svelte/store';
 
    import { applyStyles }        from '#runtime/svelte/action/dom';
@@ -61,23 +61,16 @@
    export let duration = 200;
 
    /**
-    * Svelte easing function.
+    * Either the name of a Svelte easing function or a Svelte compatible easing function.
     *
-    * @type {(time: number) => number}
-    */
-   export let easing = linear;
-
-   /**
-    * Svelte easing function.
-    *
-    * @type {(time: number) => number}
+    * @type {string | ((time: number) => number)}
     */
    export let easingIn = void 0;
 
    /**
-    * Svelte easing function.
+    * Either the name of a Svelte easing function or a Svelte compatible easing function.
     *
-    * @type {(time: number) => number}
+    * @type {string | ((time: number) => number)}
     */
    export let easingOut = void 0;
 
@@ -123,8 +116,17 @@
    // item icon. This allows each item that is being shown to always be on top regardless of item order.
    setContext('#side-slide-layer-item-z-index', writable(1));
 
+   /**
+    * The actual easing functions after lookup or direct assignment if easing props are functions.
+    *
+    * @type {(time: number) => number}
+    */
+   let actualEasingIn, actualEasingOut;
+
+   /** @type {Record<string, string>} */
    let allStyles;
 
+   // Items after conditional filtering and verification.
    let filteredItems = [];
 
    $: {
@@ -206,27 +208,65 @@
       }
    }
 
-   // Tracks last transition state.
-   let oldEasing = linear;
-
-   // Run this reactive block when the last transition state is not equal to the current state.
-   $: if (oldEasing !== easing)
+   // Run this reactive block to set the actual `easingIn` function from string lookup or accept the function provided.
+   $: if (easingIn)
    {
-      // If transition is defined and not the default transition then set it to both in and out transition otherwise
-      // set the default transition to both in & out transitions.
-      const newEasing = typeof easing === 'function' ? easing : linear;
+      switch (typeof easingIn)
+      {
+         case 'function':
+            actualEasingIn = easingIn;
+            break;
 
-      easingIn = newEasing;
-      easingOut = newEasing;
+         case 'string':
+            if (typeof easings[easingIn] === 'function')
+            {
+               actualEasingIn = easings[easingIn];
+            }
+            else
+            {
+               console.warn(`TJSSideSlideLayer warning: 'easingIn' is an unknown Svelte easing function name.`);
+               actualEasingIn = easings.linear;
+            }
+            break;
 
-      oldEasing = newEasing;
+         default:
+            actualEasingIn = easings.linear;
+            break;
+      }
+   }
+
+   // Run this reactive block to set the actual `easingIn` function from string lookup or accept the function provided.
+   $: if (easingOut)
+   {
+      switch (typeof easingOut)
+      {
+         case 'function':
+            actualEasingOut = easingOut;
+            break;
+
+         case 'string':
+            if (typeof easings[easingOut] === 'function')
+            {
+               actualEasingOut = easings[easingOut];
+            }
+            else
+            {
+               console.warn(`TJSSideSlideLayer warning: 'easingOut' is an unknown Svelte easing function name.`);
+               actualEasingOut = easings.linear;
+            }
+            break;
+
+         default:
+            actualEasingIn = easings.linear;
+            break;
+      }
    }
 </script>
 
 <section class={`tjs-side-slide-layer${isIterable(classes) ? ` ${Array.from(classes).join(' ')}` : ''}`}
          use:applyStyles={allStyles}>
    {#each filteredItems as item (item.icon)}
-      <TJSSideSlideItem {item} {allowLocking} {clickToOpen} {duration} {easingIn} {easingOut} {side} />
+      <TJSSideSlideItem {item} {allowLocking} {clickToOpen} {duration} easingIn={actualEasingIn} easingOut={actualEasingOut} {side} />
    {/each}
 </section>
 
