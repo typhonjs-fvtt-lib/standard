@@ -77,11 +77,21 @@
    /**
     * A valid CSS value for the `top` positioning attribute for the top of the side slide layer.
     *
-    * When top is a number it will be treated as pixels.
+    * When top is a number it will be treated as pixels unless `topUnit` is defined.
     *
     * @type {string | number}
     */
    export let top = 0;
+
+   /**
+    * When `top` is defined as a number and `topUnit` is defined then it is used to create the top style. This
+    * facilitates creating a UI for editing side slide layer via a range input and separately storing the unit type.
+    *
+    * Examples are: `px`, `%`, `em`, `rem`. Either `px` or `%` make the most sense depending on the layout constraints.
+    *
+    * @type {string}
+    */
+   export let topUnit = void 0;
 
    /**
     * The side in layers parent element to display.
@@ -187,7 +197,7 @@
             allStyles = {
                left: 0,
                right: null,
-               top: typeof top === 'number' ? `${top}px` : top,
+               top: typeof top === 'number' ? `${top}${typeof topUnit === 'string' ? topUnit : 'px'}` : top,
                'z-index': zIndex,
                ...styles
             };
@@ -197,7 +207,7 @@
             allStyles = {
                left: null,
                right: 0,
-               top: typeof top === 'number' ? `${top}px` : top,
+               top: typeof top === 'number' ? `${top}${typeof topUnit === 'string' ? topUnit : 'px'}` : top,
                'z-index': zIndex,
                ...styles
             };
