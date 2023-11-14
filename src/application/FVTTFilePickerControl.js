@@ -12,7 +12,7 @@ import {
 import { TJSGlassPane }       from '#runtime/svelte/component/core';
 
 /**
- * Provides managed control of the Foundry FilePicker app simplifying asynchronous use cases. While the stock
+ * Provides managed control of the Foundry {@link globalThis.FilePicker} app simplifying asynchronous use cases. While the stock
  * FilePicker provides a callback it is not easy to make it asynchronous given that a user can close the app.
  * FVTTFilePickerControl enables a fully asynchronous workflow controlling one FilePicker instance at a time. When
  * {@link FVTTFilePickerControl.browse} is invoked any previous FilePicker instance is closed and Promise resolved.
@@ -505,7 +505,8 @@ class TJSFilePicker extends FilePicker
 }
 
 /**
- * @typedef {object} FVTTFilePickerBrowseOptions - Foundry FilePickerOptions w/ expanded FVTTFilePickerControl options.
+ * @typedef {object} FVTTFilePickerBrowseOptions - Foundry {@link globalThis.FilePicker} w/ expanded
+ *          FVTTFilePickerControl options.
  *
  * @property {string} [type='any']         A type of file to target, in 'audio', 'image', 'video', 'imagevideo',
  *                                         'folder', 'font', 'graphics', 'text', or 'any'.
