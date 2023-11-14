@@ -65,14 +65,14 @@
     *
     * @type {string | ((time: number) => number)}
     */
-   export let easingIn = void 0;
+   export let easingIn = 'linear';
 
    /**
     * Either the name of a Svelte easing function or a Svelte compatible easing function.
     *
     * @type {string | ((time: number) => number)}
     */
-   export let easingOut = void 0;
+   export let easingOut = 'linear';
 
    /**
     * A valid CSS value for the `top` positioning attribute for the top of the side slide layer.
@@ -98,14 +98,14 @@
     *
     * @type {'left' | 'right'}
     */
-   export let side = void 0;
+   export let side = 'right';
 
    /**
     * Additional inline styles to apply to the side slide layer. Useful for setting CSS variables.
     *
     * @type {Record<string, string>}
     */
-   export let styles = {};
+   export let styles = void 0;
 
    /**
     * The z-index for the side slide layer inside the parent element.
@@ -198,8 +198,8 @@
                left: 0,
                right: null,
                top: typeof top === 'number' ? `${top}${typeof topUnit === 'string' ? topUnit : 'px'}` : top,
-               'z-index': zIndex,
-               ...styles
+               'z-index': typeof zIndex === 'number' ? zIndex : 10,
+               ...(isObject(styles) ? styles : {})
             };
             break;
 
@@ -208,8 +208,8 @@
                left: null,
                right: 0,
                top: typeof top === 'number' ? `${top}${typeof topUnit === 'string' ? topUnit : 'px'}` : top,
-               'z-index': zIndex,
-               ...styles
+               'z-index': typeof zIndex === 'number' ? zIndex : 10,
+               ...(isObject(styles) ? styles : {})
             };
             break;
 
