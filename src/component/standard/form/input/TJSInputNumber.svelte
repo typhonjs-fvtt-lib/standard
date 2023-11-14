@@ -190,7 +190,7 @@
    }
 </script>
 
-<TJSSlotLabel {label}>
+<TJSSlotLabel {label} {disabled}>
    <div class=tjs-input-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
        <input class=tjs-input
               type=number

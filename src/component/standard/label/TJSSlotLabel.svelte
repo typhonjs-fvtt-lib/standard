@@ -33,16 +33,25 @@
 
    export let label = void 0;
 
+   /** @type {boolean} */
+   export let disabled = void 0;
+
    $: label = TJSSlotLabelUtil.isValid(label) ? label : void 0;
+
+   $: disabled = isObject(label) && typeof label.disabled === 'boolean' ? label.disabled :
+    typeof disabled === 'boolean' ? disabled : false;
 </script>
 
 {#if label}
    <!-- svelte-ignore a11y-label-has-associated-control -->
    <label class=tjs-slot-label>
       {#if typeof label === 'string'}
-         <span class=tjs-slot-label-span>{localize(label)}</span>
+         <span class=tjs-slot-label-span
+               class:disabled={disabled}>
+            {localize(label)}
+         </span>
       {:else if isTJSSvelteConfig(label)}
-         <svelte:component this={label.class} {...(isObject(label.props) ? label.props : {})} />
+         <svelte:component this={label.class} {...(isObject(label.props) ? label.props : {})} {disabled} />
       {/if}
 
       <slot />
@@ -55,22 +64,26 @@
    label {
       display: var(--tjs-slot-label-display, contents);
 
+      align-items: var(--tjs-slot-label-align-items, center);
+
       /* Unset, but available when 'display' is changed */
       flex: var(--tjs-slot-label-flex, unset);
       flex-direction: var(--tjs-slot-label-flex-direction, unset);
       flex-wrap: var(--tjs-slot-label-flex-wrap, unset);
       gap: var(--tjs-slot-label-gap, unset);
       justify-content: var(--tjs-slot-label-justify-content, unset);
-
-      align-items: var(--tjs-slot-label-align-items, center);
    }
 
    span {
-      color: var(--tjs-slot-label-color, inherit);
-      font-family: var(--tjs-slot-label-font-family, inherit);
-      font-size: var(--tjs-slot-label-font-size, inherit);
-      line-height: var(--tjs-slot-label-line-height, inherit);
-      text-align: var(--tjs-slot-label-text-align, right);
-      white-space: var(--tjs-slot-label-white-space, nowrap);
+      color: var(--tjs-slot-label-span-color, inherit);
+      font-family: var(--tjs-slot-label-span-font-family, inherit);
+      font-size: var(--tjs-slot-label-span-font-size, inherit);
+      line-height: var(--tjs-slot-label-span-line-height, inherit);
+      text-align: var(--tjs-slot-label-span-text-align, right);
+      white-space: var(--tjs-slot-label-span-white-space, nowrap);
+   }
+
+   span.disabled {
+      filter: var(--tjs-slot-label-filter-disabled, grayscale(100%) contrast(20%) brightness(120%));
    }
 </style>

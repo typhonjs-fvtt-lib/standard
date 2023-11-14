@@ -181,6 +181,7 @@
 
     .tjs-slot-button.disabled {
        cursor: var(--tjs-slot-button-cursor-disabled, default);
+       filter: var(--tjs-slot-button-filter-disabled, grayscale(100%) contrast(50%));
     }
 
     .tjs-slot-button:focus {

@@ -81,7 +81,7 @@
 
 </script>
 
-<TJSSlotLabel {label}>
+<TJSSlotLabel {label} {disabled}>
    <input class=tjs-input
           type=checkbox
           bind:checked={$store}

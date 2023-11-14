@@ -171,7 +171,7 @@
    }
 </script>
 
-<TJSSlotLabel {label}>
+<TJSSlotLabel {label} {disabled}>
    <div class=tjs-input-container use:efx use:applyStyles={styles} on:pointerdown|stopPropagation>
       <input class=tjs-input
              type=range
@@ -236,6 +236,7 @@
        border: var(--tjs-input-range-border-disabled, var(--tjs-input-border-disabled, none));
        color: var(--tjs-input-range-color-disabled, var(--tjs-input-color-disabled, revert));
        cursor: var(--tjs-input-range-cursor-disabled, var(--tjs-input-cursor-disabled, default));
+       filter: var(--tjs-input-range-filter-disabled, var(--tjs-input-filter-disabled, grayscale(100%) contrast(20%) brightness(140%)));
        pointer-events: none;
     }
 
