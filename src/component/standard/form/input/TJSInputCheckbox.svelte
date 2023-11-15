@@ -94,22 +94,22 @@
 
 <style>
     input {
-        /* TODO: cssVariable defaults */
-        accent-color: var(--tjs-input-checkbox-accent-color, var(--color-checkbox-checked));
-        flex: var(--tjs-input-checkbox-flex, 0 0 20px);
-        width: var(--tjs-input-checkbox-diameter, var(--tjs-input-checkbox-width, 20px));
-        height: var(--tjs-input-checkbox-diameter, var(--tjs-input-checkbox-height, 20px));
+       /* TODO: cssVariable defaults */
+       accent-color: var(--tjs-input-checkbox-accent-color, var(--color-checkbox-checked));
+       flex: var(--tjs-input-checkbox-flex, 0 0 20px);
+       width: var(--tjs-input-checkbox-diameter, var(--tjs-input-checkbox-width, 20px));
+       height: var(--tjs-input-checkbox-diameter, var(--tjs-input-checkbox-height, 20px));
 
-        appearance: var(--tjs-input-checkbox-appearance, var(--tjs-input-appearance, auto));
+       appearance: var(--tjs-input-checkbox-appearance, var(--tjs-input-appearance, auto));
 
-        border: var(--tjs-input-checkbox-border, var(--tjs-input-border));
-        border-radius: var(--tjs-input-checkbox-border-radius, var(--tjs-input-border-radius));
+       border: var(--tjs-input-checkbox-border, var(--tjs-input-border));
+       border-radius: var(--tjs-input-checkbox-border-radius, var(--tjs-input-border-radius));
 
-        margin: var(--tjs-input-checkbox-margin, 0);
+       margin: var(--tjs-input-checkbox-margin, 0);
 
-        outline-offset: var(--tjs-input-checkbox-outline-offset, var(--tjs-input-outline-offset));
+       outline-offset: var(--tjs-input-checkbox-outline-offset, var(--tjs-input-outline-offset));
 
-        cursor: var(--tjs-input-checkbox-cursor, var(--tjs-input-cursor, default));
+       cursor: var(--tjs-input-checkbox-cursor, var(--tjs-input-cursor, default));
     }
 
     input:disabled {
@@ -119,7 +119,15 @@
     }
 
     input:focus {
-        box-shadow: var(--tjs-input-checkbox-box-shadow-focus, var(--tjs-input-box-shadow-focus, unset));
+       outline: var(--tjs-input-checkbox-outline-focus, var(--tjs-default-outline-focus, unset));
+       box-shadow: var(--tjs-input-checkbox-box-shadow-focus, var(--tjs-input-box-shadow-focus, unset));
+    }
+
+    /* checkbox requires an additional `:hover:focus-visible` field to control outline when focused and hovering */
+    input:hover:focus-visible {
+       box-shadow: var(--tjs-input-checkbox-box-shadow-focus-visible, var(--tjs-default-box-shadow-focus-visible));
+       outline: var(--tjs-input-checkbox-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+       transition: var(--tjs-input-checkbox-transition-focus-visible, var(--tjs-default-transition-focus-visible));
     }
 
     input:focus-visible {
