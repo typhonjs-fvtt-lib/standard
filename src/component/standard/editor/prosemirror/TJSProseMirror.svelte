@@ -196,7 +196,7 @@
     */
    export let options = {};
 
-   const { application } = getContext('#external');
+   const application = getContext('#external')?.application;
 
    const applicationActiveWindow = application?.reactive?.storeUIState?.activeWindow ?? writable(globalThis);
 

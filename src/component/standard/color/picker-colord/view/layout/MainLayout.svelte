@@ -11,7 +11,7 @@
    export let containerEl = void 0;
    export let inputEl = void 0;
 
-   const { application } = getContext('#external');
+   const application = getContext('#external')?.application;
 
    /** @type {import('svelte/store').Writable<Window>} */
    const activeWindow = application?.reactive?.storeUIState?.activeWindow ?? writable(globalThis);

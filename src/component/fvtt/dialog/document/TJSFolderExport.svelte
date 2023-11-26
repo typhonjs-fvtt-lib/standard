@@ -16,7 +16,7 @@
    $: merge = typeof merge === 'boolean' ? merge : true;
    $: keepId = typeof keepId === 'boolean' ? keepId : true;
 
-   const { application } = getContext('#external');
+   const application = getContext('#external')?.application;
 
    const managedPromise = getContext('#managedPromise');
 

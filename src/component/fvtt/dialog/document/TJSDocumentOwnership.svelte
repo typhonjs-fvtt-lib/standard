@@ -8,7 +8,7 @@
 
    export let document = void 0;
 
-   const { application } = getContext('#external');
+   const application = getContext('#external')?.application;
 
    const managedPromise = getContext('#managedPromise');
 
