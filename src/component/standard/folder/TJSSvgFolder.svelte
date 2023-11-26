@@ -117,7 +117,10 @@
     * `1em * 0.8`.
     */
 
-   import { onDestroy }          from '#svelte';
+   import {
+      getContext,
+      onDestroy }                from '#svelte';
+
    import { writable }           from '#svelte/store';
 
    import { toggleDetails }      from '#runtime/svelte/action/animate';
@@ -159,6 +162,8 @@
 
    /** @type {(data?: { event?: PointerEvent }) => void} */
    export let onContextMenu = void 0;
+
+   const application = getContext('#external')?.application;
 
    /** @type {TJSFolderOptions} */
    const localOptions = {
@@ -266,8 +271,7 @@
 
       const chevronTarget = target === svgEl || svgEl.contains(target);
 
-      if (target === summaryEl || target === labelEl || chevronTarget ||
-       target.querySelector('.summary-click') !== null)
+      if (target === summaryEl || target === labelEl || chevronTarget)
       {
          if (!fromKeyboard && localOptions.chevronOnly && !chevronTarget)
          {
@@ -280,27 +284,16 @@
 
          if ($store && typeof onOpen === 'function')
          {
-            onOpen({ event });
+            onOpen({ event, element: detailsEl, folder, id, label, store });
          }
          else if (typeof onClose === 'function')
          {
-            onClose({ event });
+            onClose({ event, element: detailsEl, folder, id, label, store });
          }
+      }
 
-         event.preventDefault();
-         event.stopPropagation();
-      }
-      else
-      {
-         // Handle exclusion cases when no-summary-click class is in target, targets children, or targets parent
-         // element.
-         if (target.classList.contains('no-summary-click') || target.querySelector('.no-summary-click') !== null ||
-          (target.parentElement && target.parentElement.classList.contains('no-summary-click')))
-         {
-            event.preventDefault();
-            event.stopPropagation();
-         }
-      }
+      event.preventDefault();
+      event.stopPropagation();
    }
 
    /**
@@ -312,10 +305,12 @@
     */
    function onClickSummary(event)
    {
+      const activeWindow = application?.reactive?.activeWindow ?? globalThis;
+
       // Firefox sends a `click` event / non-standard response so check for mozInputSource equaling 6 (keyboard) or
       // a negative pointerId from Chromium and prevent default. This allows `onKeyUp` to handle any open / close
       // action.
-      if (document.activeElement === summaryEl && (event?.pointerId === -1 || event?.mozInputSource === 6))
+      if (activeWindow.document.activeElement === summaryEl && (event?.pointerId === -1 || event?.mozInputSource === 6))
       {
          event.preventDefault();
          event.stopPropagation();
@@ -332,7 +327,10 @@
     */
    function onContextMenuPress(event)
    {
-      if (typeof onContextMenu === 'function') { onContextMenu({ event }); }
+      if (typeof onContextMenu === 'function')
+      {
+         onContextMenu({ event, element: detailsEl, folder, id, label, store });
+      }
    }
 
    /**
@@ -342,7 +340,9 @@
     */
    function onKeyDown(event)
    {
-      if (document.activeElement === summaryEl && event.code === keyCode)
+      const activeWindow = application?.reactive?.activeWindow ?? globalThis;
+
+      if (activeWindow.document.activeElement === summaryEl && event.code === keyCode)
       {
          event.preventDefault();
          event.stopPropagation();
@@ -356,7 +356,9 @@
     */
    function onKeyUp(event)
    {
-      if (document.activeElement === summaryEl && event.code === keyCode)
+      const activeWindow = application?.reactive?.activeWindow ?? globalThis;
+
+      if (activeWindow.document.activeElement === summaryEl && event.code === keyCode)
       {
          handleOpenClose(event, true);
 
@@ -388,14 +390,17 @@
    }
 </script>
 
+<!-- Note: the manual control of the `open` state `on:toggle`. This circumvents the automatic browser handling when
+clicking on the `summary` element allowing any child element to use `on:click|stopPropagation` to prevent clicks from
+changing the open state.  -->
+
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <details class=tjs-svg-folder
          bind:this={detailsEl}
 
          on:close={onLocalClose}
-         on:closeAny={onLocalClose}
          on:open={onLocalOpen}
-         on:openAny={onLocalOpen}
+         on:toggle={() => detailsEl.open = $store}
 
          on:click
          on:keydown
@@ -412,11 +417,12 @@
          data-closing='false'>
    <!-- svelte-ignore a11y-no-redundant-roles -->
    <summary bind:this={summaryEl}
-            on:click|capture={onClickSummary}
+            on:click={onClickSummary}
             on:contextmenu={onContextMenuPress}
             on:keydown|capture={onKeyDown}
             on:keyup|capture={onKeyUp}
             class:default-cursor={localOptions.chevronOnly}
+            class:focus-indicator={localOptions.focusIndicator}
             role=button
             tabindex=0>
       <svg bind:this={svgEl} viewBox="0 0 24 24">
@@ -514,6 +520,10 @@
       background: var(--tjs-folder-summary-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
    }
 
+   summary:focus-visible.focus-indicator {
+      outline: transparent;
+   }
+
    summary:hover svg {
       opacity: var(--tjs-folder-summary-chevron-opacity-hover, 1);
    }
@@ -525,6 +535,7 @@
       flex: 0 0 var(--tjs-folder-summary-focus-indicator-width, var(--tjs-default-focus-indicator-width, 0.25em));
       height: var(--tjs-folder-summary-focus-indicator-height, var(--tjs-default-focus-indicator-height));
       transition: var(--tjs-folder-summary-focus-indicator-transition, var(--tjs-default-focus-indicator-transition));
+      pointer-events: none;
    }
 
    details[open] > summary {
@@ -536,6 +547,9 @@
    }
 
    .contents {
+      display: var(--tjs-folder-contents-display, flex);
+      flex-direction: var(--tjs-folder-contents-flex-direction, column);
+      gap: var(--tjs-folder-contents-gap);
       position: relative;
       background-blend-mode: var(--tjs-folder-contents-background-blend-mode, initial);
       background: var(--tjs-folder-contents-background, none);
