@@ -506,6 +506,7 @@ changing the open state.  -->
    }
 
    summary i {
+      flex-shrink: 0;
       color: var(--tjs-folder-summary-chevron-color, currentColor);
       cursor: var(--tjs-folder-summary-cursor, pointer);
       opacity: var(--tjs-folder-summary-chevron-opacity, 1);
