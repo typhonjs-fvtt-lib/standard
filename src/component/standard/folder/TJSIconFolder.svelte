@@ -80,8 +80,10 @@
     *
     * Summary icon / chevron element (attributes follow `--tjs-folder-summary-chevron-`):
     *
-    * --tjs-folder-summary-chevron-color: currentColor
+    * --tjs-folder-summary-chevron-border-radius: 0
+    * --tjs-folder-summary-chevron-color: inherit
     * --tjs-folder-summary-chevron-opacity: 1; Opacity when not hovering.
+    * --tjs-folder-summary-chevron-opacity-focus-visible: 1; When summary focus-visible.
     * --tjs-folder-summary-chevron-opacity-hover: 1; Opacity when hovering.
     * --tjs-folder-summary-chevron-margin: 0 0 0 0.25em;
     * --tjs-folder-summary-chevron-transition: opacity 0.2s, transform 0.1s
@@ -172,6 +174,7 @@
    /** @type {TJSFolderOptions} */
    const localOptions = {
       chevronOnly: false,
+      focusChevron: false,
       focusIndicator: false
    }
 
@@ -202,6 +205,7 @@
        isObject(options) ? options : {};
 
       if (typeof options?.chevronOnly === 'boolean') { localOptions.chevronOnly = options.chevronOnly; }
+      if (typeof options?.focusChevron === 'boolean') { localOptions.focusChevron = options.focusChevron; }
       if (typeof options?.focusIndicator === 'boolean') { localOptions.focusIndicator = options.focusIndicator; }
    }
 
@@ -442,10 +446,10 @@ changing the open state.  -->
             on:keydown|capture={onKeyDown}
             on:keyup|capture={onKeyUp}
             class:default-cursor={localOptions.chevronOnly}
-            class:focus-indicator={localOptions.focusIndicator}
+            class:remove-focus-visible={localOptions.focusIndicator || localOptions.focusChevron}
             role=button
             tabindex=0>
-      {#if currentIcon}<i bind:this={iconEl} class={currentIcon}></i>{/if}
+      {#if currentIcon}<i bind:this={iconEl} class={currentIcon} class:focus-chevron={localOptions.focusChevron}></i>{/if}
 
       {#if localOptions.focusIndicator}
          <div class=tjs-folder-focus-indicator />
@@ -507,7 +511,8 @@ changing the open state.  -->
 
    summary i {
       flex-shrink: 0;
-      color: var(--tjs-folder-summary-chevron-color, currentColor);
+      border-radius: var(--tjs-folder-summary-chevron-border-radius, 0);
+      color: var(--tjs-folder-summary-chevron-color, inherit);
       cursor: var(--tjs-folder-summary-cursor, pointer);
       opacity: var(--tjs-folder-summary-chevron-opacity, 1);
       margin: var(--tjs-folder-summary-chevron-margin, 0 0 0 0.25em);
@@ -529,8 +534,16 @@ changing the open state.  -->
       background: var(--tjs-folder-summary-focus-indicator-background, var(--tjs-default-focus-indicator-background, white));
    }
 
-   summary:focus-visible.focus-indicator {
-      outline: transparent;
+   summary:focus-visible i {
+      opacity: var(--tjs-folder-summary-chevron-opacity-focus-visible, 1);
+   }
+
+   summary:focus-visible i.focus-chevron::before {
+      outline: var(--tjs-folder-summary-outline-focus-visible, var(--tjs-default-outline-focus-visible, revert));
+   }
+
+   summary:focus-visible.remove-focus-visible {
+      outline: none;
    }
 
    summary:hover i {

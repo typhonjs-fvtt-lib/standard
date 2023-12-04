@@ -6,6 +6,9 @@ export { default as TJSIconFolder } from './TJSIconFolder.svelte';
  *
  * @property {boolean} [chevronOnly=false] When true only clicks on the folder chevron open / close the summary.
  *
+ * @property {boolean} [focusChevron=false] When true the focus-visible outline for the summary will only be around the
+ * chevron.
+ *
  * @property {boolean} [focusIndicator=false] When true a `focus-visible` focus indicator is inserted between the
  * chevron and summary label. This is a useful a11y focus indicator when `outline` isn't suitable.
  */
