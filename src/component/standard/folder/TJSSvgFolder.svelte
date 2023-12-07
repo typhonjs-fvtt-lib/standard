@@ -296,7 +296,7 @@
          {
             onOpen({ event, element: detailsEl, folder, id, label, store });
          }
-         else if (typeof onClose === 'function')
+         else if (!$store && typeof onClose === 'function')
          {
             onClose({ event, element: detailsEl, folder, id, label, store });
          }
