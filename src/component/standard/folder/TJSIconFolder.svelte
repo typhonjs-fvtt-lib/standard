@@ -509,6 +509,11 @@ changing the open state.  -->
       width: var(--tjs-folder-summary-width, fit-content);
    }
 
+   /* For Safari */
+   summary::-webkit-details-marker {
+      display: none;
+   }
+
    summary i {
       flex-shrink: 0;
       border-radius: var(--tjs-folder-summary-chevron-border-radius, 0);
