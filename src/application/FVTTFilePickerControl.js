@@ -519,7 +519,7 @@ class TJSFilePicker extends FilePicker
  *
  * @property {boolean} [allowUpload=true]  A flag which permits explicitly disallowing upload, true by default.
  *
- * @property {Map<string, FavoriteFolder>} [favorites] A map of favorite folder configuration objects.
+ * @property {Map<string, globalThis.FavoriteFolder>} [favorites] A map of favorite folder configuration objects.
  *
  * @property {string} [displayMode]        The picker display mode in FilePicker.DISPLAY_MODES.
  *
