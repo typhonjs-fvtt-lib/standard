@@ -26,6 +26,9 @@ export class ControlsStore
       validate: true
    };
 
+   /**
+    * @type {SelectedAPI}
+    */
    #selectedAPI;
 
    #selectedDragAPI;
@@ -39,11 +42,27 @@ export class ControlsStore
     */
    #subscriptions = [];
 
+   /**
+    * Creates a new instance of ControlsStore and the selected drag API.
+    *
+    * @returns {[ControlsStore, object]}
+    */
+   static create()
+   {
+      const controlsStore = new ControlsStore();
+
+      let selectedDragAPI;
+
+      [controlsStore.#selectedAPI, selectedDragAPI] = SelectedAPI.create(controlsStore.#data);
+
+      controlsStore.#selectedDragAPI = selectedDragAPI;
+
+      return [controlsStore, selectedDragAPI];
+   }
+
    constructor()
    {
       const dataStore = writable(this.#data);
-
-      [this.#selectedAPI, this.#selectedDragAPI] = new SelectedAPI(this.#data);
 
       this.#stores = {
          boundingRect: propertyStore(dataStore, 'boundingRect'),
@@ -52,8 +71,6 @@ export class ControlsStore
       };
 
       Object.freeze(this.#stores);
-
-      return [this, this.#selectedDragAPI];
    }
 
    /**
@@ -334,9 +351,28 @@ class SelectedAPI
    #unsubscribeMap = new Map();
 
    /**
-    * @type {Map<*, Function>}
+    * @type {Map<*, import('#runtime/svelte/store/position').quickToCallback & { initialPosition?: import('#runtime/svelte/store/position').TJSPositionData }>}
     */
    #quickToMap = new Map();
+
+   /**
+    * @param {ControlsData} data - The main ControlStore data object.
+    *
+    * @returns {[SelectedAPI, object]}
+    */
+   static create(data)
+   {
+      const selectedAPI = new SelectedAPI(data);
+
+      const selectedDragAPI = {
+         onStart: selectedAPI.#onDragStart.bind(selectedAPI),
+         onMove: selectedAPI.#onDragMove.bind(selectedAPI)
+      };
+
+      Object.freeze(selectedDragAPI);
+
+      return [selectedAPI, selectedDragAPI];
+   }
 
    /**
     * @param {ControlsData} data - The main ControlStore data object.
@@ -344,13 +380,6 @@ class SelectedAPI
    constructor(data)
    {
       this.#data = data;
-
-      const selectedDragAPI = {
-         onStart: this.#onDragStart.bind(this),
-         onMove: this.#onDragMove.bind(this)
-      };
-
-      return [this, selectedDragAPI];
    }
 
    /**
@@ -433,6 +462,9 @@ class SelectedAPI
       return this.#selectedMap.keys();
    }
 
+   /**
+    * @param {DragEvent}   event - DragEvent.
+    */
    #onDragMove(event)
    {
       let { tX, tY } = event.detail;
@@ -470,6 +502,7 @@ class SelectedAPI
       {
          dragUpdate.left = quickTo.initialPosition.left + tX;
          dragUpdate.top = quickTo.initialPosition.top + tY;
+         dragUpdate.bogus = false;
 
          quickTo(dragUpdate);
       }

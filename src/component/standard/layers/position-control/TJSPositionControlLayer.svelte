@@ -11,8 +11,11 @@
 
    import { selection }       from './selection.js';
 
-   const [controlsStore, selectedDragAPI] = new ControlsStore();
+   const [controlsStore, selectedDragAPI] = ControlsStore.create();
 
+   /**
+    * @type {ControlsStore}
+    */
    export let controls = controlsStore;
 
    export let components = void 0;
