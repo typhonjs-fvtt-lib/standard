@@ -24,7 +24,7 @@ export { default as TJSContentEdit } from './TJSContentEdit.svelte';
  *
  * @property {boolean}   [enrichContent=true] When set to false content won't be enriched by `TextEditor.enrichHTML`.
  *
- * @property {EnrichmentOptions} [enrichOptions] Additional `TextEditor.enrichHTML` options.
+ * @property {globalThis.EnrichmentOptions} [enrichOptions] Additional `TextEditor.enrichHTML` options.
  *
  * @property {string}    [fieldName] A field name to load and save to / from associated document. IE `a.b.c`.
  *
