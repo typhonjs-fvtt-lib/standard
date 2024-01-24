@@ -110,10 +110,10 @@
 
    import { TJSFocusWrap }       from '#runtime/svelte/component/core';
 
-   /** @type {TJSMenuData} */
+   /** @type {import('./index').TJSMenuData} */
    export let menu = void 0;
 
-   /** @type {Iterable<TJSMenuItemData>} */
+   /** @type {Iterable<import('./index').TJSMenuItemData>} */
    export let items = void 0;
 
    /** @type {HTMLElement|string} */
@@ -147,7 +147,7 @@
     */
    const activeWindow = getContext('#external')?.application?.reactive?.activeWindow ?? globalThis;
 
-   /** @type {Iterable<TJSMenuItemData>} */
+   /** @type {Iterable<import('./index').TJSMenuItemData>} */
    let allItems;
 
    $: {
@@ -344,7 +344,7 @@
     *
     * @param {PointerEvent}    event - PointerEvent.
     *
-    * @param {TJSMenuItemData} [item] - Menu item data.
+    * @param {import('./index').TJSMenuItemData} [item] - Menu item data.
     */
    function onClick(event, item)
    {
@@ -462,7 +462,7 @@
     *
     * @param {KeyboardEvent}     event - KeyboardEvent.
     *
-    * @param {TJSMenuItemData}   [item] - Menu item data.
+    * @param {import('./index').TJSMenuItemData}   [item] - Menu item data.
     */
    function onKeyupItem(event, item)
    {

@@ -84,6 +84,8 @@
 
    export let efx = void 0;
 
+   const s_DEFAULT_EFX = () => {};
+
    // ----------------------------------------------------------------------------------------------------------------
 
    $: disabled = isObject(select) && typeof select.disabled === 'boolean' ? select.disabled :
@@ -99,7 +101,7 @@
    $: styles = isObject(select) && isObject(select.styles) ? select.styles :
     isObject(styles) ? styles : void 0;
    $: efx = isObject(select) && typeof select.efx === 'function' ? select.efx :
-    typeof efx === 'function' ? efx : () => {};
+    typeof efx === 'function' ? efx : s_DEFAULT_EFX;
 
    // ----------------------------------------------------------------------------------------------------------------
 
@@ -116,6 +118,7 @@
       <!-- Please see note at top / above on why on:change is used over `bind:value={$store}`. -->
       <select on:change
               class=tjs-select
+              class:has-efx={efx !== s_DEFAULT_EFX}
               bind:value={$store}
               {disabled}>
          {#each options as option}

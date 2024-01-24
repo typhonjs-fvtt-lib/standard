@@ -375,7 +375,7 @@
     *
     * @param {KeyboardEvent}     event - KeyboardEvent.
     *
-    * @param {TJSMenuItemData}   item - Menu item data.
+    * @param {import('./index').TJSMenuItemData}   item - Menu item data.
     */
    function onKeyupItem(event, item)
    {
