@@ -53,7 +53,7 @@
    /**
     * Export folder documents to compendium.
     *
-    * @returns {Promise<CompendiumCollection|boolean>}
+    * @returns {Promise<globalThis.CompendiumCollection | boolean>}
     */
    export async function exportData()
    {

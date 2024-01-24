@@ -30,7 +30,7 @@
    /**
     * Removes a folder without deleting documents.
     *
-    * @returns {Promise<Folder>}
+    * @returns {Promise<globalThis.Folder>}
     */
    export async function removeFolder()
    {

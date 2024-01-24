@@ -30,7 +30,7 @@
    /**
     * Creates roll table from folder documents.
     *
-    * @returns {Promise<RollTable>}
+    * @returns {Promise<globalThis.RollTable>}
     */
    export async function createTable()
    {
