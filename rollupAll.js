@@ -7,10 +7,6 @@ import { rollup }          from 'rollup';
 
 const sourcemap = true; // Defines whether source maps are generated.
 
-const dtsPluginOptions = {
-   dtsReplace: { '/\\/\\/ <reference.*\\/>': '' } // Svelte v4 types currently add triple slash references.
-};
-
 const rollupConfigs = [
    {
       input: {
@@ -18,7 +14,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            generateDTS.plugin()
          ]
       },
       output: {
@@ -34,7 +30,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            generateDTS.plugin()
          ]
       },
       output: {
@@ -50,7 +46,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            generateDTS.plugin()
          ]
       },
       output: {
@@ -66,7 +62,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            generateDTS.plugin()
          ]
       },
       output: {
@@ -82,7 +78,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            generateDTS.plugin()
          ]
       },
       output: {
@@ -98,7 +94,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            generateDTS.plugin()
          ]
       },
       output: {
@@ -135,3 +131,6 @@ for (const compFile of compFiles)
    fileData = fileData.replaceAll('#svelte', 'svelte');
    fs.writeFileSync(compFile, fileData);
 }
+
+await generateDTS({ input: '_dist/component/fvtt/index.js' })
+await generateDTS({ input: '_dist/component/standard/index.js' })
