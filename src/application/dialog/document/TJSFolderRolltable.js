@@ -3,7 +3,7 @@ import { localize }              from '#runtime/svelte/helper';
 import { hasSetter }             from '#runtime/util/object';
 
 import { TJSFolderRolltable
-    as TJSFolderRolltableImpl }  from '#standard/component/fvtt/dialog';
+    as TJSFolderRolltableImpl }  from '#standard/component/fvtt-internal';
 
 /**
  * Provides a reactive dialog for creating a RollTable from a folder that by default is modal and not draggable. An

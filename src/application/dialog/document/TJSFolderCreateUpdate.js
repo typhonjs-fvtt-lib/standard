@@ -3,7 +3,7 @@ import { localize }                 from '#runtime/svelte/helper';
 import { hasSetter }                from '#runtime/util/object';
 
 import { TJSFolderCreateUpdate
-    as TJSFolderCreateUpdateImpl }  from '#standard/component/fvtt/dialog';
+    as TJSFolderCreateUpdateImpl }  from '#standard/component/fvtt-internal';
 
 /**
  * Provides a reactive dialog for modifying folders that by default is modal and not draggable. An additional set of

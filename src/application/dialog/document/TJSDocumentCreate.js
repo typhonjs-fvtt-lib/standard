@@ -2,7 +2,7 @@ import { TJSDialog }             from '#runtime/svelte/application';
 import { localize }              from '#runtime/svelte/helper';
 
 import { TJSDocumentCreate
-    as TJSDocumentCreateImpl }   from '#standard/component/fvtt/dialog';
+    as TJSDocumentCreateImpl }   from '#standard/component/fvtt-internal';
 
 /**
  * Provides a dialog for creating documents that by default is modal and not draggable.

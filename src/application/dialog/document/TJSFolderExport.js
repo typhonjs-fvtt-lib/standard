@@ -2,7 +2,7 @@ import { TJSDialog }          from '#runtime/svelte/application';
 import { localize }           from '#runtime/svelte/helper';
 
 import { TJSFolderExport
-    as TJSFolderExportImpl }  from '#standard/component/fvtt/dialog';
+    as TJSFolderExportImpl }  from '#standard/component/fvtt-internal';
 
 /**
  * Provides a reactive dialog for exporting folders to a compendium that by default is modal and not draggable.

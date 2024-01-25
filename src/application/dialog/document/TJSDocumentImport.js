@@ -3,7 +3,7 @@ import { localize }              from '#runtime/svelte/helper';
 import { hasSetter }             from '#runtime/util/object';
 
 import { TJSDocumentImport
-    as TJSDocumentImportImpl }   from '#standard/component/fvtt/dialog';
+    as TJSDocumentImportImpl }   from '#standard/component/fvtt-internal';
 
 /**
  * Provides a reactive dialog for importing documents that by default is modal and not draggable. An additional set of

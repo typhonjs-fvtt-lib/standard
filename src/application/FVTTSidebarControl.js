@@ -11,7 +11,7 @@ import {
 import {
    FVTTSidebarPopout,
    FVTTSidebarTab,
-   FVTTSidebarWrapper }          from '#standard/component/fvtt';
+   FVTTSidebarWrapper }          from '#standard/component/fvtt-internal';
 
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.

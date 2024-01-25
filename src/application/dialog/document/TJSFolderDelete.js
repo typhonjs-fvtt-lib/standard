@@ -3,7 +3,7 @@ import { localize }           from '#runtime/svelte/helper';
 import { hasSetter }          from '#runtime/util/object';
 
 import { TJSFolderDelete
-    as TJSFolderDeleteImpl }  from '#standard/component/fvtt/dialog';
+    as TJSFolderDeleteImpl }  from '#standard/component/fvtt-internal';
 
 /**
  * Provides a reactive dialog for deleting a folder that by default is modal and not draggable. An additional set of
