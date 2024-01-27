@@ -3,33 +3,37 @@
     * Provides a reactive wrapper for direct content editable elements. Allows editing Foundry document data or
     * directly from content prop. Automatic HTML enrichment occurs for the content when saved.
     *
-    * There are no required props, but the following are available to set.
-    * `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
+    * ### Props
+    * There are no required props, but the following are available to set:
+    * - `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
     *             updates when `content` changes. Two-way binding.
     *
-    * `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
+    * - `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
     *             You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
     *             recommended to change `enrichedContent` externally. One-way binding.
     *
-    * `options` - Defines the options object for this component. Please review all the options defined below
+    * - `options` - Defines the options object for this component. Please review all the options defined below
     *             {@link TJSContentEditOptions}.
     *
-    * Events: There are three events fired when the editor is canceled, saved, and started.
-    * ---------------------------------
-    * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
+    * ### Events
+    * There are five events fired when the editor is canceled, saved, and started:
     *
-    * `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
-    *                             `event.detail.document`.
+    * - `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
     *
-    * `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
-    *                            `event.detail.enrichedContent`.
+    * - `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
+    *  `event.detail.document`.
     *
-    * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    * - `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
+    *  `event.detail.enrichedContent`.
     *
-    * `editor:start` - Fired when editing is started.
+    * - `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
     *
-    * The following CSS variables control the associated styles with the default values.
+    * - `editor:start` - Fired when editing is started.
     *
+    * ### CSS Variables
+    * The following CSS variables control the associated styles with the default values:
+    *
+    * ```
     * `.editor` HTMLDivElement:
     * ---------------------------------
     * --tjs-editor-background - none
@@ -73,7 +77,7 @@
     * ---------------------------------
     * --tjs-editor-edit-button-right - 5px
     * --tjs-editor-edit-button-top - 0
-    *
+    * ```
     * @componentDescription
     */
 

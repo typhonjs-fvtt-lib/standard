@@ -8,7 +8,7 @@ import SavedColorsSummaryEnd  from '../view/SavedColorsSummaryEnd.svelte';
  * session storage for saving / restoring colors.
  *
  * An oddon for TJSColordPicker must provide a static accessor for a unique `id` and also provide a
- * {@link import('../../../../../folder').TJSFolderData} object via a `folderData` accessor.
+ * {@link TJSFolderData} object via a `folderData` accessor.
  */
 export class TJSColordPickerSavedColors
 {

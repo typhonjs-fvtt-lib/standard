@@ -1,5 +1,8 @@
 <script>
    /**
+    * ### CSS Variables
+    *
+    * ```
     * --tjs-toggle-label-background
     * --tjs-toggle-label-background-focus-visible
     * --tjs-toggle-label-background-hover
@@ -17,7 +20,7 @@
     * --tjs-toggle-label-text-shadow-selected - undefined; default: --tjs-default-text-shadow-focus-hover
     * --tjs-toggle-label-transition - global default: 'background 0.2s ease-in-out'
     * --tjs-toggle-label-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
-    *
+    * ```
     * @componentDescription
     */
    import { createEventDispatcher } from '#svelte';

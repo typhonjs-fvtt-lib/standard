@@ -7,12 +7,14 @@
     * element uses `display: contents` which ignores the label element and lays out the children as if the
     * label element does not exist which is perfect for a grid layout.
     *
-    * The following CSS variables control the associated styles with the default values.
+    * ### CSS Variables
     *
+    * The following CSS variables control the associated styles with the default values:
+    * ```
     * --tjs-input-label-display - content
     * --tjs-input-label-text-align - right
     * --tjs-input-label-white-space - nowrap
-    *
+    * ```
     * @componentDescription
     */
 

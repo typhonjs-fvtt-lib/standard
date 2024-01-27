@@ -1,9 +1,9 @@
 <script>
    /**
     * A number input type.
-    *        border: var(--tjs-input-number-border-disabled, var(--tjs-input-border-disabled, none));
-    *        cursor: var(--tjs-input-number-cursor-disabled, var(--tjs-input-cursor-disabled, default));
     *
+    * ### CSS Variables:
+    * ```
     * --tjs-input-appearance
     * --tjs-input-background
     * --tjs-input-border
@@ -61,7 +61,7 @@
     * Webkit unique variables:
     * --tjs-input-number-webkit-inner-spin-button-opacity
     * --tjs-input-number-webkit-outer-spin-button-opacity
-    *
+    * ```
     * @componentDescription
     */
 

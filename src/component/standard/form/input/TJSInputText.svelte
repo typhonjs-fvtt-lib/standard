@@ -7,6 +7,8 @@
     *
     * Only use this component for text inputs presently. More work to come.
     *
+    * ### CSS Variables:
+    * ```
     * --tjs-input-appearance
     * --tjs-input-background
     * --tjs-input-border
@@ -60,7 +62,7 @@
     * --tjs-input-text-transition-focus-visible
     * --tjs-input-text-value-invalid-color
     * --tjs-input-text-width
-    *
+    * ```
     * @componentDescription
     */
    import { writable }     from '#svelte/store';

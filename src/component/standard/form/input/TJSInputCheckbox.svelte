@@ -2,6 +2,8 @@
    /**
     * Provides a data driven checkbox input w/ label.
     *
+    * ### CSS Variables:
+    * ```
     * --tjs-input-appearance
     * --tjs-input-border
     * --tjs-input-border-radius
@@ -34,7 +36,7 @@
     * --tjs-input-checkbox-transition-focus-visible
     * --tjs-input-checkbox-transition-hover
     * --tjs-input-checkbox-width
-    *
+    * ```
     * @componentDescription
     */
 

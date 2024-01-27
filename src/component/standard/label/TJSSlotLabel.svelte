@@ -6,8 +6,11 @@
     * Optionally, there are CSS variables available to change the `display` and additional flex layout configuration
     * possibilities.
     *
-    * The following CSS variables control the associated styles with the default values.
+    * ### CSS Variables
     *
+    * The following CSS variables control the associated styles with the default values:
+    *
+    * ```
     * For layout:
     * -----------------------------------------------------
     * --tjs-slot-label-display - contents
@@ -23,7 +26,7 @@
     * --tjs-slot-label-line-height - inherit
     * --tjs-slot-label-text-align - right
     * --tjs-slot-label-white-space - nowrap
-    *
+    * ```
     * @componentDescription
     */
 

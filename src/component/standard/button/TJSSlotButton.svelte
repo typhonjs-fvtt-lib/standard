@@ -1,5 +1,8 @@
 <script>
    /**
+    * ### CSS Variables:
+    *
+    * ```
     * --tjs-default-text-shadow-focus-hover: system default
     * --tjs-default-outline-focus-visible: undefined; global replacement for focus-visible outline.
     *
@@ -16,7 +19,7 @@
     * --tjs-slot-button-outline-focus-visible
     * --tjs-slot-button-transition
     * --tjs-slot-button-transition-focus-visible
-    *
+    * ```
     * @componentDescription
     */
    import { createEventDispatcher } from '#svelte';

@@ -10,23 +10,30 @@
     * 'icon / label', 'image / label', 'class / Svelte component', and 'separator / hr'. The main difference is that
     * TJSContextMenu does not support default or named slots.
     *
-    * ----------------------------------------------------------------------------------------------------------------
-    * Exported props include:
-    * `menu` ({@link TJSMenuData}): An object defining all properties of a menu.
+    * ### Exported props
+    * - `menu` ({@link TJSMenuData}): An object defining all properties of a menu.
     *
     * Or in lieu of passing the folder object you can assign these props directly:
-    * `items`: An iterable list of {@link TJSContextMenuItemData}; defines data driven menu items.
-    * `styles`: Styles to be applied inline via `applyStyles` action.
-    * `efx`: Currently unused; for any future action effects.
-    * `keyCode`: The key code to activate menu items.
-    * `focusSource`: A `A11yFocusSource` object containing the target element to return focus to on close.
-    * `transitionOptions`: Custom transition options for duration and easing function.
     *
-    * ----------------------------------------------------------------------------------------------------------------
-    * Events: There is a single that is fired and _not_ bubbled up through parent elements:
-    * `close`- Fired when the menu closes allowing {@link TJSContextMenu} to clean up resources.
+    * - `items`: An iterable list of {@link TJSContextMenuItemData}; defines data driven menu items.
     *
-    * ----------------------------------------------------------------------------------------------------------------
+    * - `styles`: Styles to be applied inline via `applyStyles` action.
+    *
+    * - `efx`: Currently unused; for any future action effects.
+    *
+    * - `keyCode`: The key code to activate menu items.
+    *
+    * - `focusSource`: A `A11yFocusSource` object containing the target element to return focus to on close.
+    *
+    * - `transitionOptions`: Custom transition options for duration and easing function.
+    *
+    * ### Events
+    *
+    * There is a single that is fired and _not_ bubbled up through parent elements:
+    * - `close`- Fired when the menu closes allowing {@link TJSContextMenu} to clean up resources.
+    *
+    * ### CSS Variables
+    *
     * Styling: To style this component use `.tjs-context-menu` as the base selector.
     *
     * There are several local CSS variables that you can use to change the appearance dynamically. Either use
@@ -34,7 +41,8 @@
     * target both TJSMenu and TJSContextMenu. The few `popover` defaults target components that independently pop over
     * other elements browser wide.
     *
-    * The following CSS variables are supported, but not defined by default.
+    * ```
+    * The following CSS variables are supported, but not defined by default
     * --tjs-context-menu-background - fallback: --tjs-default-menu-background; fallback: --tjs-default-popup-background; default: #23221d
     * --tjs-context-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
     * --tjs-context-menu-border-radius - fallback: --tjs-default-popup-border-radius; default: 5px
@@ -79,7 +87,7 @@
     * --tjs-context-menu-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
     * --tjs-context-menu-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
-    *
+    * ```
     * @componentDescription
     */
 

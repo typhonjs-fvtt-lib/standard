@@ -3,37 +3,44 @@
     * Provides a reactive wrapper for Foundry TinyMCE editor support. Allows editing Foundry document data or
     * directly from content prop. Automatic HTML enrichment occurs for the content when saved.
     *
-    * There are no required props, but the following are available to set.
-    * `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
-    *             updates when `content` changes. Two-way binding.
+    * ### Props
+    * There are no required props, but the following are available to set:
     *
-    * `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
-    *             You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
-    *             recommended to change `enrichedContent` externally. One-way binding.
+    * - `content` - Provides an initial content string; you can bind to `content` from a parent component to get
+    *  reactive updates when `content` changes. Two-way binding.
     *
-    * `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
-    *             Please review all the options defined below {@link TJSTinyMCEOptions}.
+    * - `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
+    *  You can bind to `enrichedContent` from a parent component to get reactive updates though it is not recommended
+    *  to change `enrichedContent` externally. One-way binding.
     *
-    * Notable options passed onto TinyMCE instance.
-    * ---------------------------------
-    * `options.mceConfig` - [object] TinyMCE configuration object.
+    * - `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
+    *  Please review all the options defined below {@link TJSTinyMCEOptions}.
     *
-    * Events: There are three events fired when the editor is canceled, saved, and started.
-    * ---------------------------------
-    * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
+    * Notable options passed onto TinyMCE instance:
     *
-    * `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
-    *                             `event.detail.document`.
+    * - `options.mceConfig` - [object] TinyMCE configuration object.
     *
-    * `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
-    *                            `event.detail.enrichedContent`.
+    * ### Events
     *
-    * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    * There are five events fired when the editor is canceled, saved, and started.
     *
-    * `editor:start` - Fired when editing is started.
+    * - `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
     *
-    * The following CSS variables control the associated styles with the default values.
+    * - `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
+    *  `event.detail.document`.
     *
+    * - `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
+    *  `event.detail.enrichedContent`.
+    *
+    * - `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    *
+    * - `editor:start` - Fired when editing is started.
+    *
+    * ### CSS Variables
+    *
+    * The following CSS variables control the associated styles with the default values:
+    *
+    * ```
     * `.editor` HTMLDivElement:
     * ---------------------------------
     * --tjs-editor-background - none
@@ -97,7 +104,7 @@
     * --tjs-editor-toolbar-separator-border - 1px solid var(--color-text-light-3, #ccc)
     * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
     * --tjs-editor-toolbar-width - 100%
-    *
+    * ```
     * @componentDescription
     */
 

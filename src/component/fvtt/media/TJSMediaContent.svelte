@@ -8,10 +8,8 @@
     * You can either set the `filepath` prop or use {@link TJSFileSlotButton} and embed TJSMediaContent as a child.
     * A `filepath` context / store will be examined if it exists to obtain a file path to load.
     *
-    * The following CSS variables control the associated styles with the default values.
-    *
-    * ---------------------------------
-    *
+    * The following CSS variables control the associated styles with the default values:
+    * ```
     * --tjs-media-content-background - transparent
     * --tjs-media-content-border - none
     * --tjs-media-content-border-radius - 0
@@ -19,7 +17,7 @@
     * --tjs-media-content-height - 100px
     * --tjs-media-content-object-fit - contain
     * --tjs-media-content-width - 100px
-    *
+    * ```
     * @componentDescription
     */
 

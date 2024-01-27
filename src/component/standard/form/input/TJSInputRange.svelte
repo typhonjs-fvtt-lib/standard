@@ -1,12 +1,7 @@
 <script>
    /**
-    * A generic input type has issues w/ 2-way binding w/ Svelte.
-    * https://github.com/sveltejs/svelte/issues/3921
-    *
-    * A "hack" is used to set the type on the input element: `{...{ type }}`
-    *
-    * Only use this component for text inputs presently. More work to come.
-    *
+    * ### CSS Variables:
+    * ```
     * --tjs-input-appearance
     * --tjs-input-background
     * --tjs-input-border
@@ -60,7 +55,7 @@
     * --tjs-input-range-transition-focus-visible
     * --tjs-input-range-value-invalid-color
     * --tjs-input-range-width
-    *
+    * ```
     * @componentDescription
     */
    import { writable }     from '#svelte/store';

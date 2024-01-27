@@ -3,43 +3,47 @@
     * Provides a reactive wrapper for Foundry ProseMirror editor support. Allows editing Foundry document data or
     * directly from content prop. Automatic HTML enrichment occurs for the content when saved.
     *
-    * There are no required props, but the following are available to set.
-    * `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
-    *             updates when `content` changes. Two-way binding.
+    * ### Props
+    * There are no required props, but the following are available to set:
     *
-    * `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
-    *             You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
-    *             recommended to change `enrichedContent` externally. One-way binding.
+    * - `content` - Provides an initial content string; you can bind to `content` from a parent component to get reactive
+    *  updates when `content` changes. Two-way binding.
     *
-    * `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
-    *             Please review all the options defined below {@link TJSProseMirrorOptions}.
+    * - `enrichedContent` - Provides the enriched content via {@link TextEditor.enrichHTML} when `content` changes.
+    *  You can bind to `enrichedContent` from a parent component to get reactive updates though it is not
+    *  recommended to change `enrichedContent` externally. One-way binding.
     *
+    * - `options` - Defines the options object for this component and passed on to the Foundry TinyMCE support.
+    *  Please review all the options defined below {@link TJSProseMirrorOptions}.
     *
-    * Notable options passed onto Foundry ProseMirror support.
-    * ---------------------------------
+    * Notable options passed onto Foundry ProseMirror support:
     *
-    * `options.collaborate` - [boolean: false] When a `document` and `fieldName` is provided set this to true to enable
-    *                         collaborative editing.
+    * - `options.collaborate` - [boolean: false] When a `document` and `fieldName` is provided set this to true to
+    *  enable collaborative editing.
     *
-    * `options.plugins` - [object] An additional set of ProseMirror plugins to load.
+    * - `options.plugins` - [object] An additional set of ProseMirror plugins to load.
     *
+    * ### Events
     *
-    * Events: There are three events fired when the editor is canceled, saved, and started.
-    * ---------------------------------
-    * `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
+    * There are five events fired when the editor is canceled, saved, and started:
     *
-    * `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
-    *                             `event.detail.document`.
+    * - `editor:cancel` - Fired when editing is canceled by a user action or reactive response to document changes.
     *
-    * `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
-    *                            `event.detail.enrichedContent`.
+    * - `editor:document:deleted` - Fired when the edited document is deleted. Access the document from
+    *  `event.detail.document`.
     *
-    * `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
+    * - `editor:enrichedContent` - Fired when content is enriched. Access enriched content from
+    *  `event.detail.enrichedContent`.
     *
-    * `editor:start` - Fired when editing is started.
+    * - `editor:save` - Fired when editing is saved. Access the content from `event.detail.content`.
     *
-    * The following CSS variables control the associated styles with the default values.
+    * - `editor:start` - Fired when editing is started.
     *
+    * ### CSS Variables
+    *
+    * The following CSS variables control the associated styles with the default values:
+    *
+    * ```
     * `.editor` HTMLDivElement:
     * ---------------------------------
     * --tjs-editor-background - none
@@ -91,7 +95,7 @@
     * --tjs-editor-toolbar-box-shadow - 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%)
     * --tjs-editor-toolbar-padding - 2px 0
     * --tjs-editor-toolbar-width - 100%
-    *
+    * ```
     * @componentDescription
     */
 

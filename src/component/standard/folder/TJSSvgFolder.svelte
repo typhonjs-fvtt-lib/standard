@@ -8,32 +8,46 @@
     * useful for say an "expand all" button.
     *
     * ----------------------------------------------------------------------------------------------------------------
-    * Exported props include:
-    * `folder` ({@link TJSFolderData}): An object defining all properties of a folder including potentially data driven
-    * minimal Svelte configuration objects (`slotDefault`, `slotLabel`, and `slotSummaryEnd`) providing default
+    * ### Exported props
+    *
+    * - `folder` ({@link TJSFolderData}): An object defining all properties of a folder including potentially data
+    * driven minimal Svelte configuration objects (`slotDefault`, `slotLabel`, and `slotSummaryEnd`) providing default
     * component implementations.
     *
     * Or in lieu of passing the folder object you can assign these props directly:
-    * `id`: Anything used for an ID.
-    * `label`: The label name of the folder; string.
-    * `store`: The store tracking the open / close state: writable<boolean>
-    * `styles`: Styles to be applied inline via `applyStyles` action.
+    *
+    * - `id`: Anything used for an ID.
+    *
+    * -`label`: The label name of the folder; string.
+    *
+    * -`store`: The store tracking the open / close state: Writable<boolean>
+    *
+    * -`styles`: Styles to be applied inline via `applyStyles` action.
     *
     * ----------------------------------------------------------------------------------------------------------------
-    * Events: There are several events that are fired and / or bubbled up through parent elements. There are four
+    * ### Events
+    *
+    * There are several events that are fired and / or bubbled up through parent elements. There are four
     * custom events that pass a details object including: `the details element, id, label, and store`.
     *
     * The following events are bubbled up such that assigning a listener in any parent component receives them
     * from all children folders:
-    * `click` - Basic MouseEvent of folder being clicked.
-    * `keydown` - Key down event.
-    * `keyup` - Key up event.
-    * `closeAny` - Triggered when any child folder is closed w/ details object.
-    * `openAny` - Triggered when any child folder is opened w/ details object.
+    *
+    * - `click` - Basic MouseEvent of folder being clicked.
+    *
+    * - `keydown` - Key down event.
+    *
+    * - `keyup` - Key up event.
+    *
+    * - `closeAny` - Triggered when any child folder is closed w/ details object.
+    *
+    * - `openAny` - Triggered when any child folder is opened w/ details object.
     *
     * The following events do not propagate / bubble up and can be registered with:
-    * `close` - Triggered when direct descendent folder is closed w/ details object.
-    * `open` - Triggered when direct descendent folder is opened w/ details object.
+    *
+    * - `close` - Triggered when direct descendent folder is closed w/ details object.
+    *
+    * - `open` - Triggered when direct descendent folder is opened w/ details object.
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Styling: To style this component use `details.tjs-folder` as a selector. Each element also contains data
@@ -42,8 +56,10 @@
     * There are several local CSS variables that you can use to change the appearance dynamically. Either use
     * CSS props or pass in a `styles` object w/ key / value props to set to the details element.
     *
-    * The following CSS variables are supported, but not defined by default.
+    * ### CSS Variables
+    * The following CSS variables are supported, but not defined by default:
     *
+    * ```
     * Details element (attributes follow `--tjs-folder-details-`):
     * --tjs-folder-details-margin-left: -0.4em;
     * --tjs-folder-details-padding-left: 0.4em; set for children to indent more;
@@ -96,7 +112,7 @@
     *
     * Summary label element (attributes follow `--tjs-folder-summary-label-):
     *
-    * By default the label element does not wrap and uses ellipsis for text overflow.
+    * By default, the label element does not wrap and uses ellipsis for text overflow.
     *
     * --tjs-folder-summary-label-overflow: hidden
     * --tjs-folder-summary-label-text-overflow: ellipsis
@@ -117,7 +133,7 @@
     *
     * If neither `--tjs-folder-contents-padding` or `--tjs-folder-summary-font-size` is defined the default is
     * `1em * 0.8`.
-    *
+    * ```
     * @componentDescription
     */
 

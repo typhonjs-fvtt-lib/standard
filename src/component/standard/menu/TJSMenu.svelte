@@ -11,35 +11,48 @@
     *
     * ----------------------------------------------------------------------------------------------------------------
     * Exported props include:
-    * `menu` ({@link TJSMenuData}): An object defining all properties of a menu including potentially data driven
+    *
+    * - `menu` ({@link TJSMenuData}): An object defining all properties of a menu including potentially data driven
     * minimal Svelte configuration objects (`slotAfter`, `slotBefore`, and `slotDefault`) providing default
     * component implementations.
     *
     * Or in lieu of passing the folder object you can assign these props directly:
-    * `items`: An iterable list of {@link TJSMenuItemData}; defines data driven menu items.
-    * `offset`: Optional X / Y offsets for the menu display.
-    * `styles`: Styles to be applied inline via `applyStyles` action.
-    * `efx`: Currently unused; for any future action effects.
-    * `keyCode`: The key code to activate menu items.
-    * `transitionOptions`: Custom transition options for duration and easing function.
+    * - `items`: An iterable list of {@link TJSMenuItemData}; defines data driven menu items.
+    *
+    * - `offset`: Optional X / Y offsets for the menu display.
+    *
+    * - `styles`: Styles to be applied inline via `applyStyles` action.
+    *
+    * - `efx`: Currently unused; for any future action effects.
+    *
+    * - `keyCode`: The key code to activate menu items.
+    *
+    * - `transitionOptions`: Custom transition options for duration and easing function.
     *
     * ----------------------------------------------------------------------------------------------------------------
-    * Events: There is a single that is fired and bubbled up through parent elements:
+    * ### Events
     *
-    * `close:popup` - A CustomEvent fired when the menu closes allowing any parent components to update state. The
+    * There is a single that is fired and bubbled up through parent elements:
+    *
+    * - `close:popup` - A CustomEvent fired when the menu closes allowing any parent components to update state. The
     *                 `detail` data may have two optional fields of data including `keyboardFocus` / boolean if the
-    *                 close action originated from keyboard navigation and the other is `target` / HTMLElement that is
-    *                 the original event target for the close action.
+    *                  close action originated from keyboard navigation and the other is `target` / HTMLElement that is
+    *                  the original event target for the close action.
     *
     * ----------------------------------------------------------------------------------------------------------------
-    * Styling: To style this component use `.tjs-menu` as the base selector.
+    *
+    * ### Styling
+    * To style this component use `.tjs-menu` as the base selector.
     *
     * There are several local CSS variables that you can use to change the appearance dynamically. Either use
     * CSS props or pass in a `styles` object w/ key / value props to set to the details. The default fallback variables
     * target both TJSMenu and TJSContextMenu. The few `popup` defaults target first level overlaid components inside an
     * application.
     *
-    * The following CSS variables are supported, but not defined by default.
+    * ### CSS Variables
+    * ```
+    * The following CSS variables are supported, but not defined by default:
+    *
     * --tjs-menu-background - fallback: --tjs-default-menu-background; fallback: --tjs-default-popup-background; default: #23221d
     * --tjs-menu-border - fallback: --tjs-default-popup-border; default: 1px solid #000
     * --tjs-menu-border-radius - fallback: --tjs-default-popup-border-radius; default: 5px
@@ -85,7 +98,7 @@
     * --tjs-menu-focus-indicator-height - fallback: --tjs-default-focus-indicator-height; default: undefined
     * --tjs-menu-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
-    *
+    * ```
     * @componentDescription
     */
 
