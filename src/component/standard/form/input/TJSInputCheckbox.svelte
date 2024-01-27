@@ -34,6 +34,8 @@
     * --tjs-input-checkbox-transition-focus-visible
     * --tjs-input-checkbox-transition-hover
     * --tjs-input-checkbox-width
+    *
+    * @componentDescription
     */
 
    import { writable }        from '#svelte/store';

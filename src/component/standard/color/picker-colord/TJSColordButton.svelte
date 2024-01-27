@@ -40,6 +40,8 @@
     * --tjs-icon-button-text-shadow-hover: undefined
     * --tjs-icon-button-transition
     * --tjs-icon-button-transition-focus-visible
+    *
+    * @componentDescription
     */
    import { createEventDispatcher } from '#svelte';
 

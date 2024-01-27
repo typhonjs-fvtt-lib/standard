@@ -7,6 +7,8 @@
     *
     * A main slot is provided for a content component, but a fallback allows a child content component to be defined
     * by the `class` and `props` fields in {@link TJSScrollContainerData}.
+    *
+    * @componentDescription
     */
 
    import { writable }           from '#svelte/store';

@@ -60,6 +60,8 @@
     * --tjs-input-text-transition-focus-visible
     * --tjs-input-text-value-invalid-color
     * --tjs-input-text-width
+    *
+    * @componentDescription
     */
    import { writable }     from '#svelte/store';
 

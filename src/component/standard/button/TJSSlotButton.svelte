@@ -16,6 +16,8 @@
     * --tjs-slot-button-outline-focus-visible
     * --tjs-slot-button-transition
     * --tjs-slot-button-transition-focus-visible
+    *
+    * @componentDescription
     */
    import { createEventDispatcher } from '#svelte';
 

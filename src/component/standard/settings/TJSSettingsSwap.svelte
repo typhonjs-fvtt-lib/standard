@@ -9,6 +9,8 @@
     * Controlling the swap state is accessible from {@link TJSGameSettings.showSettings} accessor (get or set).
     * This allows for instance the creation of an app header button to swap between the main slotted component and
     * `TJSSettingsEdit`.
+    *
+    * @componentDescription
     */
 
    import TJSSettingsEdit from './TJSSettingsEdit.svelte';

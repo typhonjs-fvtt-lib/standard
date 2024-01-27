@@ -39,6 +39,8 @@
     * --tjs-settings-section-border-radius - 0
     * --tjs-settings-section-margin-bottom - 0.75em
     * --tjs-settings-section-padding - 0.5em
+    *
+    * @componentDescription
     */
 
    import { onDestroy }          from '#svelte';

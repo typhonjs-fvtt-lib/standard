@@ -1,4 +1,9 @@
 <script>
+   /**
+    * TODO: Add description
+    *
+    * @componentDescription
+    */
    import SectionColor  from './sections/SectionColor.svelte';
 
    export let themeStore = void 0;

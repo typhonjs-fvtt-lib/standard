@@ -1,4 +1,10 @@
 <script>
+   /**
+    * TODO: Add description
+    *
+    * @componentDescription
+    */
+
    import { createEventDispatcher } from '#svelte';
 
    import { applyStyles }           from '#runtime/svelte/action/dom';

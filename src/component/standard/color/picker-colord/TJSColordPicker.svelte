@@ -4,6 +4,8 @@
     *
     * Events:
     * - color: current color
+    *
+    * @componentDescription
     */
 
    import {

@@ -73,6 +73,8 @@
     * ---------------------------------
     * --tjs-editor-edit-button-right - 5px
     * --tjs-editor-edit-button-top - 0
+    *
+    * @componentDescription
     */
 
    import {

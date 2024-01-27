@@ -91,6 +91,8 @@
     * --tjs-editor-toolbar-box-shadow - 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%)
     * --tjs-editor-toolbar-padding - 2px 0
     * --tjs-editor-toolbar-width - 100%
+    *
+    * @componentDescription
     */
 
    /**

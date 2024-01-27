@@ -61,6 +61,8 @@
     * Webkit unique variables:
     * --tjs-input-number-webkit-inner-spin-button-opacity
     * --tjs-input-number-webkit-outer-spin-button-opacity
+    *
+    * @componentDescription
     */
 
    import { writable }     from '#svelte/store';
