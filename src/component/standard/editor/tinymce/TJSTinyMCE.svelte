@@ -105,7 +105,7 @@
     * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
     * --tjs-editor-toolbar-width - 100%
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import {

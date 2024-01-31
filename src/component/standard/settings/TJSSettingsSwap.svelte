@@ -10,7 +10,7 @@
     * This allows for instance the creation of an app header button to swap between the main slotted component and
     * `TJSSettingsEdit`.
     *
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import TJSSettingsEdit from './TJSSettingsEdit.svelte';

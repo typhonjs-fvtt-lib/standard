@@ -96,7 +96,7 @@
     * --tjs-editor-toolbar-padding - 2px 0
     * --tjs-editor-toolbar-width - 100%
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    /**

@@ -15,7 +15,7 @@
     * --tjs-input-label-text-align - right
     * --tjs-input-label-white-space - nowrap
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import { isObject }           from '#runtime/util/object';

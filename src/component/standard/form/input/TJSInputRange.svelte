@@ -56,7 +56,7 @@
     * --tjs-input-range-value-invalid-color
     * --tjs-input-range-width
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
    import { writable }     from '#svelte/store';
 

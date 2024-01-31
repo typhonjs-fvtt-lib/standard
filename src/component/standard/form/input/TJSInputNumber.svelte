@@ -62,7 +62,7 @@
     * --tjs-input-number-webkit-inner-spin-button-opacity
     * --tjs-input-number-webkit-outer-spin-button-opacity
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import { writable }     from '#svelte/store';

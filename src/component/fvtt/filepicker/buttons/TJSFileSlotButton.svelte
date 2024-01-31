@@ -10,7 +10,7 @@
     * This component provides one way binding by default. You may explicitly bind to the `filepath` prop to create a
     * two-way binding.
     *
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import {

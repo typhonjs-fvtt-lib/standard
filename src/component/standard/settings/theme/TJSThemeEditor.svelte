@@ -2,7 +2,7 @@
    /**
     * TODO: Add description
     *
-    * @componentDescription
+    * @componentDocumentation
     */
    import SectionColor  from './sections/SectionColor.svelte';
 

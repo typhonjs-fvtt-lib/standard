@@ -134,7 +134,7 @@
     * If neither `--tjs-folder-contents-padding` or `--tjs-folder-summary-font-size` is defined the default is
     * `1em * 0.8`.
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import {

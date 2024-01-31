@@ -18,7 +18,7 @@
     * --tjs-media-content-object-fit - contain
     * --tjs-media-content-width - 100px
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import { getContext }      from 'svelte';

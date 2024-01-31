@@ -27,7 +27,7 @@
     * --tjs-slot-label-text-align - right
     * --tjs-slot-label-white-space - nowrap
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import { localize }           from '#runtime/svelte/helper';

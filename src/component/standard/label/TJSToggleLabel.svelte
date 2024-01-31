@@ -21,7 +21,7 @@
     * --tjs-toggle-label-transition - global default: 'background 0.2s ease-in-out'
     * --tjs-toggle-label-transition-focus-visible - fallback: --tjs-default-transition-focus-visible
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
    import { createEventDispatcher } from '#svelte';
 

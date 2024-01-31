@@ -88,7 +88,7 @@
     * --tjs-context-menu-focus-indicator-width - fallback: --tjs-default-focus-indicator-width; default: 0.25em
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    import {

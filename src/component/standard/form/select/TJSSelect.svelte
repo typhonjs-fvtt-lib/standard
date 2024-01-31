@@ -51,7 +51,7 @@
     * --tjs-select-option-background; fallback: --tjs-default-popup-background; default: #23221d
     * --tjs-select-option-color; fallback: --tjs-default-popup-primary-color; default: #b5b3a4
     * ```
-    * @componentDescription
+    * @componentDocumentation
     */
 
    /**
