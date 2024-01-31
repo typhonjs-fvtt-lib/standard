@@ -125,10 +125,10 @@
 
    import { TJSFocusWrap }       from '#runtime/svelte/component/core';
 
-   /** @type {import('./index').TJSMenuData} */
+   /** @type {import('.').TJSMenuData} */
    export let menu = void 0;
 
-   /** @type {Iterable<import('./index').TJSMenuItemData>} */
+   /** @type {Iterable<import('.').TJSMenuItemData>} */
    export let items = void 0;
 
    /** @type {HTMLElement|string} */
