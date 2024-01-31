@@ -1,5 +1,5 @@
 export { default as TJSMenu }             from './TJSMenu.svelte';
-export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.svelte';
+// export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.svelte';
 
 /**
  * @typedef {object} TJSMenuData
@@ -32,7 +32,7 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
  *
  * @property {(
  *    (data?: {
- *       event?: (KeyboardEvent || PointerEvent),
+ *       event?: (KeyboardEvent | PointerEvent),
  *       item?: TJSMenuItemData,
  *       focusSource?: import('#runtime/util/browser').A11yFocusSource
  *    }) => any
