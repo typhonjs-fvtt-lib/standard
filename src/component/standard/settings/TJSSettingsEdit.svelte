@@ -58,10 +58,10 @@
 
    import SettingEntry           from './SettingEntry.svelte';
 
-   /** @type {TJSGameSettings} */
+   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
    export let settings = void 0;
 
-   /** @type {TJSSettingsCreateOptions} */
+   /** @type {import('.').TJSSettingsCreateOptions} */
    export let options = void 0;
 
    /**

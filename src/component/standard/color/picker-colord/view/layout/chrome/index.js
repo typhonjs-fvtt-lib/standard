@@ -4,7 +4,7 @@ import { default as ChromeWrapper }          from './Wrapper.svelte';
 /**
  * The `chrome` style layout components.
  *
- * @type {import('../../../model').PickerComponents}
+ * @type {import('../../../').TJSColordPickerComponents}
  */
 export const components = {
    pickerWrapper: ChromePickerWrapper,

@@ -26,7 +26,7 @@
 
    import { isWritableStore }   from '#runtime/util/store';
 
-   import { InternalState }     from './model/InternalState.js';
+   import { InternalState }     from './model/index.js';
 
    import {
       Input,
@@ -34,13 +34,15 @@
 
    /**
     * color properties
+    *
+    * @type {import('.').TJSColordPickerColor}
     */
    export let color = void 0;
 
    /**
     * User settable options / customization properties.
     *
-    * @type {TJSColordPickerOptions}
+    * @type {import('../../').TJSColordPickerOptions}
     */
    export let options = void 0;
 

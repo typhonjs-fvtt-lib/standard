@@ -79,7 +79,7 @@ export class ColorState
     *
     * @param {object|string}  color -
     *
-    * @param {import('../').TJSColordPickerOptions}  options -
+    * @param {import('../../../').TJSColordPickerOptions}  options -
     */
    constructor(internalState, color, options)
    {
@@ -411,7 +411,7 @@ export class ColorState
    /**
     * Updates options related to ColorState.
     *
-    * @param {import('../').TJSColordPickerOptions}   options -
+    * @param {import('../../../').TJSColordPickerOptions}   options -
     */
    updateOptions(options)
    {
@@ -448,7 +448,7 @@ export class ColorState
    /**
     * Validates external user defined options.
     *
-    * @param {import('../').TJSColordPickerOptions} opts -
+    * @param {import('../../../').TJSColordPickerOptions} opts -
     */
    #validateOptions(opts)
    {

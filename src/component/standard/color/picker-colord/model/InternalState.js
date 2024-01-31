@@ -35,7 +35,7 @@ export class InternalState
    /**
     * Stores external user configurable settings.
     *
-    * @type {import('./').TJSColordPickerOptions}
+    * @type {import('../../').TJSColordPickerOptions}
     */
    #externalData = {};
 
@@ -61,7 +61,7 @@ export class InternalState
    /**
     * @param {object|string}           color -
     *
-    * @param {import('./').TJSColordPickerOptions}  options -
+    * @param {import('../../').TJSColordPickerOptions}  options -
     *
     * @param {import('#runtime/svelte/store/web-storage').TJSWebStorage}  tjsSessionStorage - External
     *        TJSWebStorage (session) instance.
@@ -217,9 +217,9 @@ export class InternalState
    /**
     * Prepares layout components based on any user provided `options.layout`
     *
-    * @param {import('./').TJSColordPickerOptions} opts -
+    * @param {import('../../').TJSColordPickerOptions} opts -
     *
-    * @returns {import('./').PickerComponents} Configured layout components.
+    * @returns {import('../../').TJSColordPickerComponents} Configured layout components.
     */
    #prepareComponents(opts)
    {
@@ -261,7 +261,7 @@ export class InternalState
    /**
     * Updates external & internal data on changes to the `options` prop.
     *
-    * @param {import('./').TJSColordPickerOptions} options -
+    * @param {import('../../').TJSColordPickerOptions} options -
     */
    updateOptions(options)
    {
@@ -319,7 +319,7 @@ export class InternalState
    /**
     * Validates external user defined options.
     *
-    * @param {import('./').TJSColordPickerOptions} opts -
+    * @param {import('../../').TJSColordPickerOptions} opts -
     */
    #validateOptions(opts)
    {

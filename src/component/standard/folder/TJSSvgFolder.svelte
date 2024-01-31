@@ -153,7 +153,7 @@
       isWritableStore,
       subscribeIgnoreFirst }     from '#runtime/util/store';
 
-   /** @type {TJSFolderData} */
+   /** @type {import('.').TJSFolderData} */
    export let folder = void 0;
 
    /** @type {boolean} */
@@ -168,7 +168,7 @@
    /** @type {string} */
    export let keyCode = void 0;
 
-   /** @type {TJSFolderOptions} */
+   /** @type {import('.').TJSFolderOptions} */
    export let options = void 0;
 
    /** @type {import('svelte/store').Writable<boolean>} */

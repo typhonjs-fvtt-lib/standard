@@ -21,7 +21,7 @@
 
    import { isObject }           from '#runtime/util/object';
 
-   /** @type {TJSScrollContainerData} */
+   /** @type {import('.').TJSScrollContainerData} */
    export let container = void 0;
 
    /** @type {import('svelte/store').Writable<number>} */

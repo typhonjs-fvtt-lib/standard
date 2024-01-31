@@ -8,7 +8,7 @@ import { default as Wrapper }          from './Wrapper.svelte';
 /**
  * The default layout components.
  *
- * @type {import('../../../model').PickerComponents}
+ * @type {import('../../../').TJSColordPickerComponents}
  */
 export const components = {
    alphaIndicator: SliderIndicator,
