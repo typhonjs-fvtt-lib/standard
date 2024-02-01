@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * ```
     * --tjs-default-text-shadow-focus-hover: system default
     * --tjs-default-outline-focus-visible: undefined; global replacement for focus-visible outline.

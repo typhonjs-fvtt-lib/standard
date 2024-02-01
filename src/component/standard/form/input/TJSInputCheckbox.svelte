@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a data driven checkbox input w/ label.
     *
     * ### CSS Variables:

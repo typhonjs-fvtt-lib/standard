@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * ### CSS Variables
     * ```
     * --tjs-default-text-shadow-focus-hover: system default

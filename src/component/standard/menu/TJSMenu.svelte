@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * TJSMenu provides a menu component that can be slotted into toggle components like TJSToggleIconButton and
     * TJSToggleLabel.
     *

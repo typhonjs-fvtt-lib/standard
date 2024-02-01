@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a reactive wrapper for direct content editable elements. Allows editing Foundry document data or
     * directly from content prop. Automatic HTML enrichment occurs for the content when saved.
     *

@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a component to display an absolutely positioned side layer in a parent element featuring a column of
     * icons that slide out panels defined as Svelte components.
     *

@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a pre-configured slotted button interfacing w/ the Foundry file picker. You may assign a child component
     * that obtains the `filepath` store.
     *

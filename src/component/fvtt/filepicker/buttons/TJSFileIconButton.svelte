@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a pre-configured icon button interfacing w/ the Foundry file picker.
     *
     * Please see {@link FVTTFilePickerBrowseOptions} for the `pickerOptions` prop.

@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a slotted component wrapped in a label element. The `label` prop can either be a string or a Svelte
     * configuration object to be used as the label text. The label element uses `display: contents` which ignores the
     * label element and lays out the children as if the label element does not exist which is perfect for a grid layout.

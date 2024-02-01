@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * TJSContextMenuImpl provides a context menu implementation component that is not meant to be directly used as it is
     * controlled as a single browser wide context menu from {@link TJSContextMenu} that is imported via:
     * `import { TJSContextMenu } from '#standard/application';` The front end for TJSContextMenuImpl processes data and

@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * ### CSS Variables
     *
     * ```

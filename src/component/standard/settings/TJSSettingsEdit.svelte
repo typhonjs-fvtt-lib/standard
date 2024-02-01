@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * TJSSettingsEdit provides the main Svelte component to display and modify settings registered with
     * {@link TJSGameSettings}. Refer to the documentation in {@link TJSGameSettings.register} and
     * {@link TJSGameSettings.registerAll}. Adding custom defined sections is accomplished with
@@ -61,7 +63,7 @@
    /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
    export let settings = void 0;
 
-   /** @type {import('.').TJSSettingsCreateOptions} */
+   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSSettingsCreateOptions} */
    export let options = void 0;
 
    /**

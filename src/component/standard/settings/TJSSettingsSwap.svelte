@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * TJSSettingsSwap provides a convenience component to swap a main slotted component with `TJSSettingsEdit`.
     *
     * The component props are the same and documented in {@link TJSSettingsEdit}. The only difference is that to
@@ -18,7 +20,7 @@
    /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
    export let settings = void 0;
 
-   /** @type {import('.').TJSSettingsCreateOptions} */
+   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSSettingsCreateOptions} */
    export let options = void 0;
 
    const showSettings = settings.uiControl.stores.showSettings;

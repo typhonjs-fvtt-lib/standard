@@ -1,5 +1,7 @@
 <script>
    /**
+    * @svelteComponent
+    *
     * Provides a generic "input" component that creates the specific input component based on 'type'. If no `type`
     * property is available in the input object `text` is the default.
     *
