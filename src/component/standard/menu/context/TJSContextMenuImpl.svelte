@@ -91,6 +91,7 @@
     * --tjs-menu-focus-indicator-transition - fallback: --tjs-default-focus-indicator-transition
     * ```
     * @componentDocumentation
+    * @internal
     */
 
    import {
