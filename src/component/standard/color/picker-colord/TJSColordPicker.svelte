@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * TODO: Finish documentation.
     *
     * Events:

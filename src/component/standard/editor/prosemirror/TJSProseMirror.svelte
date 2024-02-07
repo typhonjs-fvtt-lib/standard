@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * Provides a reactive wrapper for Foundry ProseMirror editor support. Allows editing Foundry document data or
     * directly from content prop. Automatic HTML enrichment occurs for the content when saved.
     *

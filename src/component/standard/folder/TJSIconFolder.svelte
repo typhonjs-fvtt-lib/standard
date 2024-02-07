@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * TJSFolder provides a collapsible folder using the details and summary HTMLElements.
     *
     * This is a slotted component. The default slot is the collapsible contents. There are also two additional optional

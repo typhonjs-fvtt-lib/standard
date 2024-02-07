@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * A number input type.
     *
     * ### CSS Variables:

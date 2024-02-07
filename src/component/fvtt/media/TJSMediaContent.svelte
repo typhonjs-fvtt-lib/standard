@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * Provides an initial implementation to display image or video content from a given file path.
     *
     * Note: currently this component is available in the `standard/component/fvtt` sub-path export and after it is

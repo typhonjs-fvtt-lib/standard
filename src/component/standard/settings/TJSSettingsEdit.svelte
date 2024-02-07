@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * TJSSettingsEdit provides the main Svelte component to display and modify settings registered with
     * {@link TJSGameSettings}. Refer to the documentation in {@link TJSGameSettings.register} and
     * {@link TJSGameSettings.registerAll}. Adding custom defined sections is accomplished with

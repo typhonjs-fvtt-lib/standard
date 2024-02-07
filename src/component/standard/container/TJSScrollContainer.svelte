@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * Provides a convenient scrollable container / DIV that always allows keyboard scroll navigation by stopping
     * propagation of page up / down key events when the active element is or is contained by the container.
     *

@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * A generic input type has issues w/ 2-way binding w/ Svelte.
     * https://github.com/sveltejs/svelte/issues/3921
     *

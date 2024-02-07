@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * ### CSS Variables
     * ```
     * --tjs-input-appearance

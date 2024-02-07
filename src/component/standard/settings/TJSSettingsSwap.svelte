@@ -1,7 +1,5 @@
 <script>
    /**
-    * @svelteComponent
-    *
     * TJSSettingsSwap provides a convenience component to swap a main slotted component with `TJSSettingsEdit`.
     *
     * The component props are the same and documented in {@link TJSSettingsEdit}. The only difference is that to
