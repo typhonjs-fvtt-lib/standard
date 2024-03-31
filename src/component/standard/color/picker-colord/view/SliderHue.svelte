@@ -2,6 +2,7 @@
    import { getContext }    from '#svelte';
    import { writable }      from '#svelte/store';
 
+   import { clamp }         from '#runtime/math/util';
    import { isFocused }     from '#runtime/svelte/action/dom';
 
    import {
@@ -83,7 +84,7 @@
       const rect = sliderEl.getBoundingClientRect();
 
       const size = sliderHorizontal ? rect.width : rect.height;
-      const boundedPos = Math.max(0, Math.min(size, constraint));
+      const boundedPos = clamp(constraint, 0, size);
 
       $hue = (boundedPos / size) * 360;
    }
@@ -105,7 +106,7 @@
                const movement = sliderHorizontal ? keys.value('ArrowRight') - keys.value('ArrowLeft') :
                 keys.value('ArrowDown') - keys.value('ArrowUp');
 
-               $hue = Math.min(360, Math.max(0, internalState.colorState.hue + movement * 360 * focusMovementFactor));
+               $hue = clamp(internalState.colorState.hue + movement * 360 * focusMovementFactor, 0, 360);
             }, 10);
          }
       }
@@ -158,7 +159,7 @@
    {
       if (event.deltaY !== 0)
       {
-         $hue = Math.max(0, Math.min(360, event.deltaY > 0 ? $hue + 1 : $hue - 1));
+         $hue = clamp(event.deltaY > 0 ? $hue + 1 : $hue - 1, 0, 360);
       }
    }
 </script>

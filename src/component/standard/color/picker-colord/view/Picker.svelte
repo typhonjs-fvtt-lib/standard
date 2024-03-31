@@ -2,6 +2,7 @@
    import { getContext }    from '#svelte';
    import { writable }      from '#svelte/store';
 
+   import { clamp }         from '#runtime/math/util';
    import { isFocused }     from '#runtime/svelte/action/dom';
 
    import {
@@ -58,18 +59,6 @@
    }
 
    /**
-    * @param {number}    value -
-    * @param {number}    min -
-    * @param {number}    max -
-    *
-    * @returns {number} Clamped value.
-    */
-   function clamp(value, min, max)
-   {
-      return Math.min(Math.max(min, value), max);
-   }
-
-   /**
     * @param {{ offsetX: number; offsetY: number }}    e -
     */
    function onClick(e)
@@ -101,11 +90,11 @@
                let focusMovementFactor = easeInOutSin(++focusMovementCounter);
 
                $sv = {
-                  s: Math.min(100, Math.max(0, $sv.s + (keys.value('ArrowRight') - keys.value('ArrowLeft')) *
-                   focusMovementFactor * 100)),
+                  s: clamp($sv.s + (keys.value('ArrowRight') - keys.value('ArrowLeft')) * focusMovementFactor * 100,
+                   0, 100),
 
-                  v: Math.min(100, Math.max(0, $sv.v + (keys.value('ArrowUp') - keys.value('ArrowDown')) *
-                   focusMovementFactor * 100))
+                  v: clamp($sv.v + (keys.value('ArrowUp') - keys.value('ArrowDown')) * focusMovementFactor * 100,
+                   0, 100)
                };
             }, 10);
          }
@@ -149,8 +138,8 @@
          const rect = pickerEl.getBoundingClientRect();
 
          onClick({
-            offsetX: Math.max(0, Math.min(rect.width, event.clientX - rect.left)),
-            offsetY: Math.max(0, Math.min(rect.height, event.clientY - rect.top))
+            offsetX: clamp(event.clientX - rect.left, 0, rect.width),
+            offsetY: clamp(event.clientY - rect.top, 0, rect.height)
          });
       }
    }
