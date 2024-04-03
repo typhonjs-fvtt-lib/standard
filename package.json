@@ -9,6 +9,10 @@
   ],
   "imports": {
     "#runtime/*": "@typhonjs-fvtt/runtime/*",
+    "#standard/component": {
+      "types": "./_dist/component/standard/index.d.ts",
+      "default": "@typhonjs-fvtt/svelte-standard/component"
+    },
     "#standard/*": "@typhonjs-fvtt/svelte-standard/*",
     "#svelte/*": "svelte/*",
     "#svelte": "svelte"
@@ -23,13 +27,15 @@
       "import": "./_dist/application/dialog/document/index.js"
     },
     "./component": {
+      "types": "./_dist/component/standard/index.d.ts",
       "import": "./_dist/component/standard/index.js"
     },
     "./component/fvtt": {
+      "types": "./_dist/component/fvtt/index.d.ts",
       "import": "./_dist/component/fvtt/index.js"
     },
-    "./component/fvtt/dialog": {
-      "import": "./_dist/component/fvtt/dialog/index.js"
+    "./component/fvtt-internal": {
+      "import": "./_dist/component/fvtt-internal/index.js"
     },
     "./fvtt": {
       "types": "./_dist/fvtt/index.d.ts",
@@ -55,14 +61,15 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@typhonjs-build-test/esm-d-ts": "0.2.0-next.1",
-    "@typhonjs-build-test/rollup-plugin-pkg-imports": "^0.0.4",
+    "@typhonjs-build-test/esm-d-ts": "^0.3.0-next.4",
+    "@typhonjs-build-test/esm-d-ts-plugin-svelte": "^0.1.0-next.1",
+    "@typhonjs-build-test/rollup-plugin-pkg-imports": "^0.3.0",
     "@typhonjs-config/eslint-config": "^0.6.3",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
-    "@typhonjs-utils/file-util": "^0.0.10",
-    "eslint": "^8.53.0",
-    "fs-extra": "^11.1.1",
-    "rollup": "^4.4.1"
+    "@typhonjs-utils/file-util": "^0.1.0",
+    "eslint": "^8.57.0",
+    "fs-extra": "^11.2.0",
+    "rollup": "^4.13.0"
   },
   "engines": {
     "node": ">=18"
