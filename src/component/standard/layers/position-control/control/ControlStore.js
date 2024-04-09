@@ -5,6 +5,13 @@ import { propertyStore }   from '#runtime/svelte/store/writable-derived';
 
 export class ControlStore
 {
+   /**
+    * Defines the options used for {@link TJSPosition.set}.
+    *
+    * @type {Readonly<{immediateElementUpdate: boolean}>}
+    */
+   static #tjsPositionSetOptions = Object.freeze({ immediateElementUpdate: true });
+
    #component;
 
    #data = {
@@ -39,7 +46,7 @@ export class ControlStore
       {
          if (!ignoreRoundRobin)
          {
-            component.position.set({ ...data, immediateElementUpdate: true });
+            component.position.set(data, ControlStore.#tjsPositionSetOptions);
          }
       }));
 
@@ -49,7 +56,7 @@ export class ControlStore
       this.#unsubscribe.push(component.position.subscribe((data) =>
       {
          ignoreRoundRobin = true;
-         this.#position.set({ ...data, immediateElementUpdate: true });
+         this.#position.set(data, ControlStore.#tjsPositionSetOptions);
          ignoreRoundRobin = false;
       }));
 
