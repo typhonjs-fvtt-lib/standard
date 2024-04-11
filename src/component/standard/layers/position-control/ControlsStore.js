@@ -351,7 +351,11 @@ class SelectedAPI
    #unsubscribeMap = new Map();
 
    /**
-    * @type {Map<*, import('#runtime/svelte/store/position').quickToCallback & { initialPosition?: import('#runtime/svelte/store/position').TJSPositionData }>}
+    * @type {(Map<
+    *    *,
+    *    import('#runtime/svelte/store/position').quickToCallback &
+    *     { initialPosition?: import('#runtime/svelte/store/position').Data.TJSPositionData }
+    * >)}
     */
    #quickToMap = new Map();
 
