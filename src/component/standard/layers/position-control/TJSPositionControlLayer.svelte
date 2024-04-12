@@ -25,7 +25,7 @@
 
    export let components = void 0;
 
-   export let active = true;
+   export let enabled = true;
    export let boundingRect = void 0;
    export let validate = true;
 
@@ -115,7 +115,7 @@
    }
 </script>
 
-{#if active}
+{#if enabled}
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div use:selection={{ active: ctrlKey, width: 4 }}
      on:mousedown|capture={onMouseDown}
