@@ -164,7 +164,7 @@ export class FontManager
       }
 
       const timeout = new Promise((resolve) => setTimeout(resolve, ms));
-      const ready = Promise.all(promises).then(() => document.fonts.ready);
+      const ready = Promise.allSettled(promises).then(() => document.fonts.ready);
 
       return Promise.race([ready, timeout]);
    }
