@@ -2,6 +2,9 @@ import { writable }        from '#svelte/store';
 
 import { TJSPosition }     from '#runtime/svelte/store/position';
 import { propertyStore }   from '#runtime/svelte/store/writable-derived';
+import {
+   isIterable,
+   isObject }              from '#runtime/util/object';
 
 import { ControlStore }    from './control/ControlStore.js';
 
@@ -210,43 +213,16 @@ export class ControlsStore
 
       const removeIDs = new Set(controlMap.keys());
 
-      for (const component of components)
+      if (isIterable(components))
       {
-         const componentId = component.id;
-
-         if (componentId === void 0 || componentId === null)
+         for (const component of components)
          {
-            throw new Error(`updateComponents error: component data does not have a defined 'id' property.`);
+            this.#updateComponent(component, removeIDs);
          }
-
-         if (!(component.position instanceof TJSPosition))
-         {
-            throw new Error(`updateComponents error: component data does not have a valid 'position' property.`);
-         }
-
-         if (controlMap.has(componentId))
-         {
-            const control = controlMap.get(componentId);
-
-            // Evaluate if the components TJSPosition instance has changed.
-            if (control.component.position !== component.position)
-            {
-               // Remove old control
-               selected.removeById(componentId);
-               controlMap.delete(componentId);
-               control.destroy();
-
-               controlMap.set(component.id, new ControlStore(component));
-            }
-            else
-            {
-               removeIDs.delete(componentId);
-            }
-         }
-         else
-         {
-            controlMap.set(component.id, new ControlStore(component));
-         }
+      }
+      else if (isObject(components))
+      {
+         this.#updateComponent(components, removeIDs);
       }
 
       for (const id of removeIDs)
@@ -263,6 +239,48 @@ export class ControlsStore
       this.#controls = [...controlMap.values()];
 
       this.#updateSubscribers();
+   }
+
+   #updateComponent(component, removeIDs)
+   {
+      const controlMap = this.#controlMap;
+      const selected = this.#selectedAPI;
+
+      const componentId = component.id;
+
+      if (componentId === void 0 || componentId === null)
+      {
+         throw new Error(`updateComponents error: component data does not have a defined 'id' property.`);
+      }
+
+      if (!(component.position instanceof TJSPosition))
+      {
+         throw new Error(`updateComponents error: component data does not have a valid 'position' property.`);
+      }
+
+      if (controlMap.has(componentId))
+      {
+         const control = controlMap.get(componentId);
+
+         // Evaluate if the components TJSPosition instance has changed.
+         if (control.component.position !== component.position)
+         {
+            // Remove old control
+            selected.removeById(componentId);
+            controlMap.delete(componentId);
+            control.destroy();
+
+            controlMap.set(component.id, new ControlStore(component));
+         }
+         else
+         {
+            removeIDs.delete(componentId);
+         }
+      }
+      else
+      {
+         controlMap.set(component.id, new ControlStore(component));
+      }
    }
 
    /**
