@@ -136,7 +136,7 @@
    /** @type {import('#runtime/util/browser').A11yFocusSource} */
    export let focusSource = void 0;
 
-   /** @type {{ duration: number, easing: Function }} */
+   /** @type {{ duration: number, easing: import('#runtime/svelte/easing').EasingFunction }} */
    export let transitionOptions = void 0;
 
    /**

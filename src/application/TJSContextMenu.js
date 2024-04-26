@@ -70,7 +70,7 @@ export class TJSContextMenu
     *
     * @param {number}      [opts.duration] - Transition option for duration of transition.
     *
-    * @param {import('svelte/transition').EasingFunction}   [opts.easing] - Transition option for easing function.
+    * @param {import('#runtime/svelte/easing').EasingFunction}   [opts.easing] - Transition option for easing function.
     *
     * @param {Window}      [opts.activeWindow=globalThis] - The active browser window that the context menu is
     *        displaying inside.
