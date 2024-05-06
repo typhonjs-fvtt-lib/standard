@@ -20,12 +20,13 @@ export class ControlStore
       selected: false
    };
 
+   /** @type {import('#runtime/svelte/store/position').TJSPosition} */
    #position;
 
    #stores;
 
    /**
-    * @type {Function[]}
+    * @type {import('svelte/store').Unsubscriber[]}
     */
    #unsubscribe = [];
 
