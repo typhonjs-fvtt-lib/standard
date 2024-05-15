@@ -105,25 +105,25 @@
    import {
       getContext,
       onDestroy,
-      onMount }                  from '#svelte';
+      onMount }               from '#svelte';
 
-   import { quintOut }           from '#svelte/easing';
+   import { quintOut }        from '#svelte/easing';
 
-   import { applyStyles }        from '#runtime/svelte/action/dom';
-   import { localize }           from '#runtime/svelte/helper';
-   import { slideFade }          from '#runtime/svelte/transition';
+   import { applyStyles }     from '#runtime/svelte/action/dom';
+   import { localize }        from '#runtime/svelte/helper';
+   import { slideFade }       from '#runtime/svelte/transition';
 
-   import { isSvelteComponent }  from '#runtime/svelte/util';
+   import { TJSSvelteUtil }   from '#runtime/svelte/util';
 
    import {
       getStackingContext,
-      A11yHelper }               from '#runtime/util/browser';
+      A11yHelper }            from '#runtime/util/browser';
 
    import {
       isIterable,
-      isObject }                 from '#runtime/util/object';
+      isObject }              from '#runtime/util/object';
 
-   import { TJSFocusWrap }       from '#runtime/svelte/component/core';
+   import { TJSFocusWrap }    from '#runtime/svelte/component/core';
 
    /** @type {import('.').TJSMenuData} */
    export let menu = void 0;
@@ -184,7 +184,7 @@
 
          let type;
 
-         if (isSvelteComponent(item.class)) { type = 'class'; }
+         if (TJSSvelteUtil.isComponent(item.class)) { type = 'class'; }
          else if (typeof item.icon === 'string') { type = 'icon'; }
          else if (typeof item.image === 'string') { type = 'image'; }
          else if (item.icon === void 0 && item.image === void 0 && typeof item.label === 'string') { type = 'label'; }
@@ -529,7 +529,7 @@
    <ol class=tjs-menu-items role=menu>
       <!-- TJSMenu supports hosting a slot for menu content -->
       <slot>
-         {#if isSvelteComponent(menu?.slotDefault?.class)}
+         {#if TJSSvelteUtil.isComponent(menu?.slotDefault?.class)}
             <svelte:component this={menu.slotDefault.class} {...(isObject(menu?.slotDefault?.props) ? menu.slotDefault.props : {})} />
          {/if}
       </slot>
@@ -543,7 +543,7 @@
              tabindex=0>
             <span class=tjs-menu-focus-indicator />
             <slot name=before>
-               {#if isSvelteComponent(menu?.slotBefore?.class)}
+               {#if TJSSvelteUtil.isComponent(menu?.slotBefore?.class)}
                   <svelte:component this={menu.slotBefore.class} {...(isObject(menu?.slotBefore?.props) ? menu.slotBefore.props : {})} />
                {/if}
             </slot>
@@ -605,7 +605,7 @@
              tabindex=0>
             <span class=tjs-menu-focus-indicator />
             <slot name=after>
-               {#if isSvelteComponent(menu?.slotAfter?.class)}
+               {#if TJSSvelteUtil.isComponent(menu?.slotAfter?.class)}
                   <svelte:component this={menu.slotAfter.class} {...(isObject(menu?.slotAfter?.props) ? menu.slotAfter.props : {})} />
                {/if}
             </slot>

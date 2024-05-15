@@ -11,15 +11,15 @@
     * @componentDocumentation
     */
 
-   import { writable }           from '#svelte/store';
+   import { writable }        from '#svelte/store';
 
    import {
       applyScrolltop,
-      applyStyles }              from '#runtime/svelte/action/dom';
+      applyStyles }           from '#runtime/svelte/action/dom';
 
-   import { isSvelteComponent }  from '#runtime/svelte/util';
+   import { TJSSvelteUtil }   from '#runtime/svelte/util';
 
-   import { isObject }           from '#runtime/util/object';
+   import { isObject }        from '#runtime/util/object';
 
    /** @type {import('.').TJSScrollContainerData} */
    export let container = void 0;
@@ -36,7 +36,7 @@
    $: styles = isObject(container) && isObject(container.styles) ? container.styles :
     isObject(styles) ? styles : void 0;
 
-   $: child = isObject(container) && isSvelteComponent(container.class) ? container.class : void 0;
+   $: child = isObject(container) && TJSSvelteUtil.isComponent(container.class) ? container.class : void 0;
    $: props = isObject(container) && isObject(container.props) ? container.props : {};
 
    /** @type {HTMLElement} */

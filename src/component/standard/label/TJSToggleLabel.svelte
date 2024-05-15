@@ -25,11 +25,11 @@
     */
    import { createEventDispatcher } from '#svelte';
 
-   import { applyStyles }        from '#runtime/svelte/action/dom';
-   import { localize }           from '#runtime/svelte/helper';
-   import { isSvelteComponent }  from '#runtime/svelte/util';
-   import { isObject }           from '#runtime/util/object';
-   import { isWritableStore }    from '#runtime/util/store';
+   import { applyStyles }           from '#runtime/svelte/action/dom';
+   import { localize }              from '#runtime/svelte/helper';
+   import { TJSSvelteUtil }         from '#runtime/svelte/util';
+   import { isObject }              from '#runtime/util/object';
+   import { isWritableStore }       from '#runtime/util/store';
 
    export let label = void 0;
 
@@ -57,8 +57,8 @@
     typeof disabled === 'boolean' ? disabled : false;
    $: text = isObject(label) && typeof label.text === 'string' ? label.text :
     typeof text === 'string' ? text : void 0;
-   $: comp = isObject(label) && isSvelteComponent(label.comp) ? label.comp :
-    isSvelteComponent(comp) ? comp : void 0;
+   $: comp = isObject(label) && TJSSvelteUtil.isComponent(label.comp) ? label.comp :
+    TJSSvelteUtil.isComponent(comp) ? comp : void 0;
    $: title = isObject(label) && typeof label.title === 'string' ? label.title :
     typeof title === 'string' ? title : '';
    $: titleSelected = isObject(label) && typeof label.titleSelected === 'string' ? label.titleSelected :

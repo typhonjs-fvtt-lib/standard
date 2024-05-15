@@ -1,6 +1,6 @@
 import { TJSContextMenuImpl } from '#standard/component';
 
-import { isSvelteComponent }  from '#runtime/svelte/util';
+import { TJSSvelteUtil }      from '#runtime/svelte/util';
 
 import { A11yHelper }         from '#runtime/util/browser';
 
@@ -168,7 +168,7 @@ export class TJSContextMenu
 
          let type;
 
-         if (isSvelteComponent(item.class)) { type = 'class'; }
+         if (TJSSvelteUtil.isComponent(item.class)) { type = 'class'; }
          else if (typeof item.icon === 'string') { type = 'icon'; }
          else if (typeof item.image === 'string') { type = 'image'; }
          else if (item.icon === void 0 && item.image === void 0 && typeof item.label === 'string') { type = 'label'; }

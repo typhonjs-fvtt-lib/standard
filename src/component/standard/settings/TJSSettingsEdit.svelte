@@ -45,18 +45,18 @@
     * @componentDocumentation
     */
 
-   import { onDestroy }          from '#svelte';
+   import { onDestroy }       from '#svelte';
 
    import {
       applyScrolltop,
-      applyStyles }              from '#runtime/svelte/action/dom';
+      applyStyles }           from '#runtime/svelte/action/dom';
 
-   import { isSvelteComponent }  from '#runtime/svelte/util';
-   import { isObject }           from '#runtime/util/object';
+   import { TJSSvelteUtil }   from '#runtime/svelte/util';
+   import { isObject }        from '#runtime/util/object';
 
-   import { TJSSvgFolder }       from '../folder/index.js';
+   import { TJSSvgFolder }    from '../folder/index.js';
 
-   import SettingEntry           from './SettingEntry.svelte';
+   import SettingEntry        from './SettingEntry.svelte';
 
    /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
    export let settings = void 0;
@@ -102,7 +102,7 @@
                   <svelte:component this={section.class} {...(isObject(section.props) ? section.props : {})}/>
 
                   <svelte:fragment slot=summary-end>
-                     {#if isSvelteComponent(section?.folder?.summaryEnd?.class)}
+                     {#if TJSSvelteUtil.isComponent(section?.folder?.summaryEnd?.class)}
                         <svelte:component this={section.folder.summaryEnd.class} {...(isObject(section?.folder?.summaryEnd?.props) ? section.folder.summaryEnd.props : {})}/>
                      {/if}
                   </svelte:fragment>
