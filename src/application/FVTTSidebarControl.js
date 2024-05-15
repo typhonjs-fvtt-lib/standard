@@ -1,6 +1,6 @@
 import { SvelteApplication }     from '#runtime/svelte/application';
 
-import { parseTJSSvelteConfig }  from '#runtime/svelte/util';
+import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
 import { ManagedPromise }        from '#runtime/util/async';
 import { StyleParse }            from '#runtime/util/browser';
 
@@ -168,7 +168,7 @@ export class FVTTSidebarControl
 
          try
          {
-            svelteConfig = parseTJSSvelteConfig(sidebarData.svelte);
+            svelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.svelte);
          }
          catch (err)
          {
@@ -183,7 +183,7 @@ export class FVTTSidebarControl
          {
             try
             {
-               iconSvelteConfig = parseTJSSvelteConfig(sidebarData.icon);
+               iconSvelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.icon);
             }
             catch (err)
             {
@@ -443,7 +443,7 @@ export class FVTTSidebarControl
 
          try
          {
-            svelteConfig = parseTJSSvelteConfig(sidebarData.svelte);
+            svelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.svelte);
          }
          catch (err)
          {
@@ -458,7 +458,7 @@ export class FVTTSidebarControl
          {
             try
             {
-               iconSvelteConfig = parseTJSSvelteConfig(sidebarData.icon);
+               iconSvelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.icon);
             }
             catch (err)
             {

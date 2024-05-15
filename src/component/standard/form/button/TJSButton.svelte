@@ -9,7 +9,7 @@
 
    import { applyStyles }           from '#runtime/svelte/action/dom';
    import { localize }              from '#runtime/svelte/helper';
-   import { isTJSSvelteConfig }     from '#runtime/svelte/util';
+   import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
    import { isObject }              from '#runtime/util/object';
 
    export let button = void 0;
@@ -48,8 +48,9 @@
    $: icon = isObject(button) && typeof button.icon === 'string' ? button.icon :
     typeof icon === 'string' ? icon : void 0;
 
-   $: label = isObject(button) && (typeof button.label === 'string' || isTJSSvelteConfig(button.label)) ? button.label :
-    (typeof label === 'string' || isTJSSvelteConfig(label)) ? label : void 0;
+   $: label = isObject(button) && (typeof button.label === 'string' || TJSSvelteConfigUtil.isConfig(button.label)) ?
+    button.label :
+     (typeof label === 'string' || TJSSvelteConfigUtil.isConfig(label)) ? label : void 0;
 
    $: title = isObject(button) && typeof button.title === 'string' ? button.title :
     typeof title === 'string' ? title : void 0;
@@ -168,7 +169,7 @@
             <slot />
          {:else if typeof label === 'string'}
             {localize(label)}
-         {:else if isTJSSvelteConfig(label)}
+         {:else if TJSSvelteConfigUtil.isConfig(label)}
             <svelte:component this={label.class} {...(isObject(label.props) ? label.props : {})} />
          {/if}
       </span>

@@ -1,12 +1,12 @@
 <script>
-   import { getContext }         from '#svelte';
+   import { getContext }            from '#svelte';
 
-   import { localize }           from '#runtime/svelte/helper';
-   import { isTJSSvelteConfig }  from '#runtime/svelte/util';
-   import { A11yHelper }         from '#runtime/util/browser';
-   import { isObject }           from '#runtime/util/object';
+   import { localize }              from '#runtime/svelte/helper';
+   import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
+   import { A11yHelper }            from '#runtime/util/browser';
+   import { isObject }              from '#runtime/util/object';
 
-   import TJSSideSlideItemHost   from './TJSSideSlideItemHost.svelte';
+   import TJSSideSlideItemHost      from './TJSSideSlideItemHost.svelte';
 
    /** @type {boolean} */
    export let allowLocking = void 0;
@@ -295,7 +295,7 @@
      on:pointerleave={onPointerleaveContainer}
      tabindex=-1>
 
-   {#if opened && isTJSSvelteConfig(item.svelte)}
+   {#if opened && TJSSvelteConfigUtil.isConfig(item.svelte)}
       <TJSSideSlideItemHost bind:hostEl {duration} {item} {easingIn} {easingOut} {side} />
    {/if}
 
@@ -310,7 +310,7 @@
               on:pointerdown={onPointerdownButton}
               on:pointerenter={onPointerenterButton}
               disabled={isOtherLocked}>
-         {#if isTJSSvelteConfig(item.icon)}
+         {#if TJSSvelteConfigUtil.isConfig(item.icon)}
             <svelte:component this={item.icon.class} {...(isObject(item.icon.props) ? item.icon.props : {})} />
          {:else}
             <i class={item.icon}></i>
