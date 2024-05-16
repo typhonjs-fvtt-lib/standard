@@ -23,8 +23,11 @@ export { default as TJSContextMenuImpl }  from './context/TJSContextMenuImpl.sve
  *
  * @property {string}  [keyCode='Enter'] The key code to activate menu items.
  *
- * @property {{ duration: number, easing: Function }}  [transitionOptions={ duration: 200, easing: Function }] Custom
- * transition options for duration and easing function. The default easing function is `quintOut`.
+ * @property {({
+ *    duration: number,
+ *    easing: import('#runtime/svelte/easing').EasingReference
+ * })}  [transitionOptions={ duration: 200, easing: 'quintOut' }] Custom transition options for duration and easing
+ * function reference. The default easing function is `quintOut`.
  */
 
 /**

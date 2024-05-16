@@ -7,10 +7,10 @@
     */
 
    import { setContext }            from '#svelte';
-   import * as easings              from '#svelte/easing';
    import { writable }              from '#svelte/store';
 
    import { applyStyles }           from '#runtime/svelte/action/dom';
+   import { getEasingFunc }         from '#runtime/svelte/easing';
    import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
    import {
       isIterable,
@@ -65,14 +65,14 @@
    /**
     * Either the name of a Svelte easing function or a Svelte compatible easing function.
     *
-    * @type {string | ((time: number) => number)}
+    * @type {import('#runtime/svelte/easing').EasingReference}
     */
    export let easingIn = 'linear';
 
    /**
     * Either the name of a Svelte easing function or a Svelte compatible easing function.
     *
-    * @type {string | ((time: number) => number)}
+    * @type {import('#runtime/svelte/easing').EasingReference}
     */
    export let easingOut = 'linear';
 
@@ -131,7 +131,7 @@
    /**
     * The actual easing functions after lookup or direct assignment if easing props are functions.
     *
-    * @type {(time: number) => number}
+    * @type {import('#runtime/svelte/easing').EasingFunction}
     */
    let actualEasingIn, actualEasingOut;
 
@@ -221,58 +221,10 @@
    }
 
    // Run this reactive block to set the actual `easingIn` function from string lookup or accept the function provided.
-   $: if (easingIn)
-   {
-      switch (typeof easingIn)
-      {
-         case 'function':
-            actualEasingIn = easingIn;
-            break;
+   $: actualEasingIn = getEasingFunc(easingIn);
 
-         case 'string':
-            if (typeof easings[easingIn] === 'function')
-            {
-               actualEasingIn = easings[easingIn];
-            }
-            else
-            {
-               console.warn(`TJSSideSlideLayer warning: 'easingIn' is an unknown Svelte easing function name.`);
-               actualEasingIn = easings.linear;
-            }
-            break;
-
-         default:
-            actualEasingIn = easings.linear;
-            break;
-      }
-   }
-
-   // Run this reactive block to set the actual `easingIn` function from string lookup or accept the function provided.
-   $: if (easingOut)
-   {
-      switch (typeof easingOut)
-      {
-         case 'function':
-            actualEasingOut = easingOut;
-            break;
-
-         case 'string':
-            if (typeof easings[easingOut] === 'function')
-            {
-               actualEasingOut = easings[easingOut];
-            }
-            else
-            {
-               console.warn(`TJSSideSlideLayer warning: 'easingOut' is an unknown Svelte easing function name.`);
-               actualEasingOut = easings.linear;
-            }
-            break;
-
-         default:
-            actualEasingIn = easings.linear;
-            break;
-      }
-   }
+   // Run this reactive block to set the actual `easingOut` function from string lookup or accept the function provided.
+   $: actualEasingOut = getEasingFunc(easingOut);
 </script>
 
 <section class={`tjs-side-slide-layer${isIterable(classes) ? ` ${Array.from(classes).join(' ')}` : ''}`}
