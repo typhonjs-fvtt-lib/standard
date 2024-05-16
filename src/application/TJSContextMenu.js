@@ -1,5 +1,6 @@
 import { TJSContextMenuImpl } from '#standard/component';
 
+import { getEasingFunc }      from '#runtime/svelte/easing';
 import { TJSSvelteUtil }      from '#runtime/svelte/util';
 
 import { A11yHelper }         from '#runtime/util/browser';
@@ -70,7 +71,8 @@ export class TJSContextMenu
     *
     * @param {number}      [opts.duration] - Transition option for duration of transition.
     *
-    * @param {import('#runtime/svelte/easing').EasingFunction}   [opts.easing] - Transition option for easing function.
+    * @param {import('#runtime/svelte/easing').EasingReference}   [opts.easing] - Transition option for ease. Either an
+    *        easing function or easing function name.
     *
     * @param {Window}      [opts.activeWindow=globalThis] - The active browser window that the context menu is
     *        displaying inside.
@@ -116,6 +118,8 @@ export class TJSContextMenu
 
       const focusSource = A11yHelper.getFocusSource({ event, x, y, focusEl, debug: focusDebug });
 
+      const easingFn = getEasingFunc(easing, { default: false });
+
       // Create the new context menu with the last click x / y point.
       this.#contextMenu = new TJSContextMenuImpl({
          target: activeWindow.document.body,
@@ -130,7 +134,7 @@ export class TJSContextMenu
             focusSource,
             keyCode,
             styles,
-            transitionOptions: { duration, easing },
+            transitionOptions: { duration, easing: easingFn },
             zIndex,
             activeWindow
          }
