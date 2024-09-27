@@ -1,5 +1,6 @@
 // Protect for absent global `ProseMirror` on Foundry v9.
 const Plugin = globalThis.ProseMirror ? globalThis.ProseMirror.Plugin : class {};
+const PluginKey = globalThis.ProseMirror ? globalThis.ProseMirror.PluginKey : class {};
 
 /**
  * A ProseMirror plugin to transform pasted text that is a raw document UUID into a document link suitable for
@@ -21,7 +22,7 @@ export class TJSPasteUUID
    {
       const instance = new this();
       return new Plugin({
-         // key: new PluginKey('tjsPasteRawUUID'), // TODO: Add back when exported by Foundry / ProseMirror bundle.
+         key: new PluginKey('tjsPasteRawUUID'),
          props: {
             transformPastedText: (text) => instance.#transformUUID(text)
          }
@@ -40,14 +41,18 @@ export class TJSPasteUUID
    {
       if (typeof text === 'string')
       {
-         if (TJSPasteUUID.#s_UUID_REGEX.test(text))
+         try
          {
-            const uuidDoc = globalThis.fromUuidSync(text);
-            if (uuidDoc)
+            if (TJSPasteUUID.#s_UUID_REGEX.test(text))
             {
-               text = `@UUID[${text}]{${typeof uuidDoc.name === 'string' ? uuidDoc.name : 'Unknown'}}`;
+               const uuidDoc = globalThis.fromUuidSync(text);
+               if (uuidDoc)
+               {
+                  text = `@UUID[${text}]{${typeof uuidDoc.name === 'string' ? uuidDoc.name : 'Unknown'}}`;
+               }
             }
          }
+         catch (err) { /* noop */ }
       }
 
       return text;
