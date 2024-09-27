@@ -1,4 +1,6 @@
-import { isObject }     from '#runtime/util/object';
+import {
+   isObject,
+   klona }              from '#runtime/util/object';
 
 import { FVTTVersion }  from '../util/FVTTVersion.js';
 
@@ -20,47 +22,18 @@ export class FontManager
       /** @type { {[key: string]: globalThis.FontFamilyDefinition}[] } */
       const fonts = [];
 
-      if (FVTTVersion.isAtLeast(10))
+      if (FVTTVersion.isAtLeast(11))
       {
-         let legacyFamilies;
-
-         /**
-          * @deprecated since v10, so check that it exists.
-          */
-         if (Array.isArray(globalThis.CONFIG?._fontFamilies))
+         if (isObject(globalThis.CONFIG?.fontDefinitions))
          {
-            legacyFamilies = globalThis.CONFIG._fontFamilies.reduce((obj, f) =>
-            {
-               obj[f] = { editor: true, fonts: [] };
-               return obj;
-            }, {});
-         }
-
-         if (Array.isArray(globalThis.CONFIG?.fontDefinitions))
-         {
-            fonts.push(globalThis.foundry.utils.duplicate(globalThis.CONFIG.fontDefinitions));
+            fonts.push(klona(globalThis.CONFIG.fontDefinitions));
          }
 
          const coreFonts = globalThis.game?.settings.get('core', 'fonts');
+
          if (Array.isArray(coreFonts))
          {
-            fonts.push(globalThis.foundry.utils.duplicate(coreFonts));
-         }
-
-         if (legacyFamilies) { fonts.push(legacyFamilies); }
-      }
-      else
-      {
-         if (Array.isArray(globalThis.CONFIG?.fontFamilies))
-         {
-            // Handle v9 and below legacy font families.
-            const legacyFamilies = globalThis.CONFIG.fontFamilies.reduce((obj, f) =>
-            {
-               obj[f] = { editor: true, fonts: [] };
-               return obj;
-            }, {});
-
-            fonts.push(legacyFamilies);
+            fonts.push(klona(coreFonts));
          }
       }
 
@@ -155,8 +128,10 @@ export class FontManager
 
                const fontSpecification = `1rem "${family}"`;
 
+               // TODO: If there is a better / reliable way to check if a font is already loaded then implement below.
+               // `document.fonts.check` doesn't quite work for the intended purpose.
                // Early out if the font is already loaded.
-               if (document.fonts.check(fontSpecification)) { continue; }
+               // if (document.fonts.check(fontSpecification)) { continue; }
 
                promises.push(this.#loadFont(fontSpecification, family, definition, document));
             }
