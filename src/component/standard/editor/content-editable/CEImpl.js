@@ -155,8 +155,12 @@ export class CEImpl
          // a UUID.
          if (FVTTVersion.isAtLeast(10) && this.#UUID_REGEX.test(text))
          {
-            const uuidDoc = globalThis.fromUuidSync(text);
-            if (uuidDoc) { text = `@UUID[${text}]{${uuidDoc.name}}`; }
+            try
+            {
+               const uuidDoc = globalThis.fromUuidSync(text);
+               if (uuidDoc) { text = `@UUID[${text}]{${uuidDoc.name}}`; }
+            }
+            catch (err) { /* noop */ }
          }
       }
 

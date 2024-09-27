@@ -224,11 +224,15 @@ export class MCEImpl
          // a UUID.
          if (FVTTVersion.isAtLeast(10) && this.#s_UUID_REGEX.test(text))
          {
-            const uuidDoc = globalThis.fromUuidSync(text);
-            if (uuidDoc)
+            try
             {
-               text = `@UUID[${text}]{${uuidDoc.name}}`;
+               const uuidDoc = globalThis.fromUuidSync(text);
+               if (uuidDoc)
+               {
+                  text = `@UUID[${text}]{${uuidDoc.name}}`;
+               }
             }
+            catch (err) { /* noop */ }
          }
 
          args.content = text;
