@@ -411,22 +411,16 @@
                                                     // requires `paste` plugin on TinyMCE v5.
       }
 
-      // Turns off TinyMCE v5 drop / paste filtering and insert due to using the 'paste' plugin.
-      if (MCEImpl.isV5)
-      {
-         mceConfig.paste_filter_drop = false;
-      }
-
       // Handle `preventEnterKey` / `saveOnEnterKey`. It's necessary to set this is up in the config / setup hook as
       // this event handler will be invoked before any other event handler is set up.
-     mceConfig.setup = (editor) =>
-     {
-        editor.on('beforeinput', (event) => MCEImpl.beforeInputHandler(editor, event, options, maxCharacterLength));
-        editor.on('keydown', (event) => MCEImpl.keydownHandler(editor, event, options, saveEditor, content));
+      mceConfig.setup = (editor) =>
+      {
+         editor.on('beforeinput', (event) => MCEImpl.beforeInputHandler(editor, event, options, maxCharacterLength));
+         editor.on('keydown', (event) => MCEImpl.keydownHandler(editor, event, options, saveEditor, content));
 
-        // Invoke any existing setup function in the config object provided.
-        if (typeof existingSetupFn === 'function') { existingSetupFn(editor); }
-     };
+         // Invoke any existing setup function in the config object provided.
+         if (typeof existingSetupFn === 'function') { existingSetupFn(editor); }
+      };
 
       /**
        * Handle `preventPaste` option and `maxCharacterLength` limitation on paste.
