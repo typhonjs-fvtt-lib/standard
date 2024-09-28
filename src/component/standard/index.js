@@ -5,16 +5,7 @@ import { FoundryStyles }      from '#standard/fvtt';
 
 import { cssVariables }       from '../internal/index.js';     // TODO: Figure out better build to use #internal again.
 
-export * from './button/index.js';
-export * from './color/index.js';
-export * from './container/index.js';
-export * from './editor/index.js';
-export * from './folder/index.js';
-export * from './form/index.js';
-export * from './label/index.js';
-export * from './layers/index.js';
-export * from './menu/index.js';
-export * from './settings/index.js';
+export * from '@typhonjs-svelte/standard/component';
 
 // -------------------------------------------------------------------------------------------------------------------
 
