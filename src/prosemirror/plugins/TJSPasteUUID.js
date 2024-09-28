@@ -16,7 +16,7 @@ export class TJSPasteUUID
    static #s_UUID_REGEX = /(\.).*([a-zA-Z0-9]{16})/;
 
    /**
-    * @returns {Plugin<any>} PM Plugin.
+    * @returns {Plugin} PM Plugin.
     */
    static build()
    {
