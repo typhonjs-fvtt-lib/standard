@@ -14,11 +14,10 @@
     * TODO: replace range input support below w/ TJSInputRange when available.
     */
 
-   import { TJSIconButton } from '../button/index.js';
-
    import {
+      TJSIconButton,
       TJSInput,
-      TJSSelect }           from '../form/index.js';
+      TJSSelect }           from '#standard/component';
 
    /** @type {object} */
    export let setting = void 0;
