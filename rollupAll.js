@@ -14,7 +14,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin({ bundlePackageExports: true })
          ]
       },
       output: {
@@ -126,11 +126,9 @@ const compFiles = await getFileList({ dir: './_dist/component', resolve: true, w
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
-   fileData = fileData.replaceAll('#standard/', '@typhonjs-fvtt/svelte-standard/');
    fileData = fileData.replaceAll('#svelte', 'svelte');
    fs.writeFileSync(compFile, fileData);
 }
 
 await generateDTS({ input: '_dist/component/fvtt/index.js' })
-await generateDTS({ input: '_dist/component/standard/index.js' })
+await generateDTS({ input: '_dist/component/standard/index.js', bundlePackageExports: true })
