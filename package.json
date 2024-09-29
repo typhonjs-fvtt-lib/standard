@@ -15,24 +15,73 @@
     },
     "#standard/*": "@typhonjs-fvtt/svelte-standard/*",
     "#svelte/*": "svelte/*",
-    "#svelte": "svelte"
+    "#svelte": "svelte",
+    "#internal/configure": "./src/component/internal/FVTTConfigure.js"
   },
   "exports": {
-    "./application": {
-      "types": "./_dist/application/index.d.ts",
-      "import": "./_dist/application/index.js"
-    },
     "./application/dialog/document": {
       "types": "./_dist/application/dialog/document/index.d.ts",
       "import": "./_dist/application/dialog/document/index.js"
     },
-    "./component": {
-      "types": "./_dist/component/standard/index.d.ts",
-      "import": "./_dist/component/standard/index.js"
+    "./application/filepicker": {
+      "types": "./_dist/application/filepicker/index.d.ts",
+      "import": "./_dist/application/filepicker/index.js"
     },
-    "./component/fvtt": {
-      "types": "./_dist/component/fvtt/index.d.ts",
-      "import": "./_dist/component/fvtt/index.js"
+    "./application/menu": {
+      "types": "./_dist/application/menu/index.d.ts",
+      "import": "./_dist/application/menu/index.js"
+    },
+    "./application/sidebar": {
+      "types": "./_dist/application/sidebar/index.d.ts",
+      "import": "./_dist/application/sidebar/index.js"
+    },
+    "./component/button": {
+      "types": "./_dist/component/standard/button/index.d.ts",
+      "import": "./_dist/component/standard/button/index.js"
+    },
+    "./component/color/picker": {
+      "types": "./_dist/component/standard/color/picker/index.d.ts",
+      "import": "./_dist/component/standard/color/picker/index.js"
+    },
+    "./component/container": {
+      "types": "./_dist/component/standard/container/index.d.ts",
+      "import": "./_dist/component/standard/container/index.js"
+    },
+    "./component/folder": {
+      "types": "./_dist/component/standard/folder/index.d.ts",
+      "import": "./_dist/component/standard/folder/index.js"
+    },
+    "./component/form": {
+      "types": "./_dist/component/standard/form/index.d.ts",
+      "import": "./_dist/component/standard/form/index.js"
+    },
+    "./component/label": {
+      "types": "./_dist/component/standard/label/index.d.ts",
+      "import": "./_dist/component/standard/label/index.js"
+    },
+    "./component/layer": {
+      "types": "./_dist/component/standard/layer/index.d.ts",
+      "import": "./_dist/component/standard/layer/index.js"
+    },
+    "./component/media": {
+      "types": "./_dist/component/standard/media/index.d.ts",
+      "import": "./_dist/component/standard/media/index.js"
+    },
+    "./component/menu": {
+      "types": "./_dist/component/standard/menu/index.d.ts",
+      "import": "./_dist/component/standard/menu/index.js"
+    },
+    "./component/fvtt/editor": {
+      "types": "./_dist/component/fvtt/editor/index.d.ts",
+      "import": "./_dist/component/fvtt/editor/index.js"
+    },
+    "./component/fvtt/filepicker/button": {
+      "types": "./_dist/component/fvtt/filepicker/button/index.d.ts",
+      "import": "./_dist/component/fvtt/filepicker/button/index.js"
+    },
+    "./component/fvtt/settings": {
+      "types": "./_dist/component/fvtt/settings/index.d.ts",
+      "import": "./_dist/component/fvtt/settings/index.js"
     },
     "./component/fvtt-internal": {
       "import": "./_dist/component/fvtt-internal/index.js"
@@ -40,14 +89,6 @@
     "./fvtt": {
       "types": "./_dist/fvtt/index.d.ts",
       "import": "./_dist/fvtt/index.js"
-    },
-    "./prosemirror": {
-      "types": "./_dist/prosemirror/index.d.ts",
-      "import": "./_dist/prosemirror/index.js"
-    },
-    "./prosemirror/plugins": {
-      "types": "./_dist/prosemirror/plugins/index.d.ts",
-      "import": "./_dist/prosemirror/plugins/index.js"
     },
     "./store": {
       "types": "./_dist/store/index.d.ts",

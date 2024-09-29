@@ -10,22 +10,6 @@ const sourcemap = true; // Defines whether source maps are generated.
 const rollupConfigs = [
    {
       input: {
-         input: 'src/application/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin({ bundlePackageExports: true })
-         ]
-      },
-      output: {
-         file: '_dist/application/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
-   {
-      input: {
          input: 'src/application/dialog/document/index.js',
          plugins: [
             importsExternal(),
@@ -42,6 +26,54 @@ const rollupConfigs = [
    },
    {
       input: {
+         input: 'src/application/filepicker/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
+         ]
+      },
+      output: {
+         file: '_dist/application/filepicker/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/application/menu/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin({ bundlePackageExports: true })
+         ]
+      },
+      output: {
+         file: '_dist/application/menu/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/application/sidebar/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin()
+         ]
+      },
+      output: {
+         file: '_dist/application/sidebar/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
+   {
+      input: {
          input: 'src/fvtt/index.js',
          plugins: [
             importsExternal(),
@@ -51,38 +83,6 @@ const rollupConfigs = [
       },
       output: {
          file: '_dist/fvtt/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
-   {
-      input: {
-         input: 'src/prosemirror/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin()
-         ]
-      },
-      output: {
-         file: '_dist/prosemirror/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
-   {
-      input: {
-         input: 'src/prosemirror/plugins/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin()
-         ]
-      },
-      output: {
-         file: '_dist/prosemirror/plugins/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          sourcemap
@@ -130,5 +130,16 @@ for (const compFile of compFiles)
    fs.writeFileSync(compFile, fileData);
 }
 
-await generateDTS({ input: '_dist/component/fvtt/index.js' })
-await generateDTS({ input: '_dist/component/standard/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/button/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/color/picker/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/container/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/folder/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/form/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/label/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/layer/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/media/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/menu/index.js', bundlePackageExports: true })
+
+await generateDTS({ input: '_dist/component/fvtt/editor/index.js' })
+await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js' })
+await generateDTS({ input: '_dist/component/fvtt/settings/index.js' })
