@@ -136,8 +136,8 @@
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
    import { isObject }     from '#runtime/util/object';
 
-   import { PMImpl }       from '#standard/prosemirror';
-   import * as Plugins  	from '#standard/prosemirror/plugins';
+   import { PMImpl }       from './PMImpl.js';
+   import * as Plugins  	from './plugins';
 
    import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
 
