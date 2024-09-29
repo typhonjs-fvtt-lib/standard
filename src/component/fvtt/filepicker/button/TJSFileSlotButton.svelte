@@ -21,7 +21,8 @@
    import { isObject }              from '#runtime/util/object';
    import { isWritableStore }       from '#runtime/util/store';
 
-   import { FVTTFilePickerControl } from '#standard/application';
+   import { FVTTFilePickerControl } from '#standard/application/filepicker';
+
    import { TJSSlotButton }         from '#standard/component';
 
    export let urlString = '';
@@ -29,7 +30,7 @@
    /** @type {object} */
    export let button = void 0;
 
-   /** @type {import('#standard/application').FVTTFilePickerBrowseOptions} */
+   /** @type {import('#standard/application/filepicker').FVTTFilePickerBrowseOptions} */
    export let pickerOptions = void 0;
 
    const dispatch = createEventDispatcher();
