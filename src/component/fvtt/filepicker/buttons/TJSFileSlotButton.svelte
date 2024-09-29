@@ -1,13 +1,13 @@
 <script>
    /**
     * Provides a pre-configured slotted button interfacing w/ the Foundry file picker. You may assign a child component
-    * that obtains the `filepath` store.
+    * that obtains the `urlString` store.
     *
     * Please see {@link FVTTFilePickerBrowseOptions} for the `pickerOptions` prop.
     * Please see {@link TJSSlotButton} for the button component / CSS variable support.
     *
     *
-    * This component provides one way binding by default. You may explicitly bind to the `filepath` prop to create a
+    * This component provides one way binding by default. You may explicitly bind to the `urlString` prop to create a
     * two-way binding.
     *
     * @componentDocumentation
@@ -24,8 +24,9 @@
    import { FVTTFilePickerControl } from '#standard/application';
    import { TJSSlotButton }         from '#standard/component';
 
-   export let filepath = '';
+   export let urlString = '';
 
+   /** @type {object} */
    export let button = void 0;
 
    /** @type {import('#standard/application').FVTTFilePickerBrowseOptions} */
@@ -33,25 +34,26 @@
 
    const dispatch = createEventDispatcher();
 
-   const storeFilepath = writable(filepath);
-   setContext('filepath', storeFilepath);
+   const storeURLString = writable(urlString);
+   setContext('urlString', storeURLString);
 
    // ----------------------------------------------------------------------------------------------------------------
 
    $: pickerOptions = isObject(button) && isObject(button.pickerOptions) ? button.pickerOptions :
     isObject(pickerOptions) ? pickerOptions : void 0;
 
-   // When filepath changes from internal / external set any pickerOptions store and invoke any `onFilepath` callback.
-   $: if (filepath?.length)
+   // When `urlString` changes from internal / external set any pickerOptions store and invoke any `onURLString`
+   // callback.
+   $: if (urlString?.length)
    {
       // Set context store.
-      $storeFilepath = filepath;
+      $storeURLString = urlString;
 
-      if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(filepath); }
+      if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(urlString); }
 
-      if (typeof pickerOptions?.onFilepath === 'function') { pickerOptions.onFilepath({ filepath });}
+      if (typeof pickerOptions?.onURLString === 'function') { pickerOptions.onURLString({ urlString });}
 
-      dispatch('filepath', { filepath });
+      dispatch('filepicker:urlString', { urlString });
    }
 
    // ----------------------------------------------------------------------------------------------------------------
@@ -80,17 +82,17 @@
       {
          let validated = true;
 
-         if (typeof pickerOptions?.onValidate === 'function')
+         if (typeof pickerOptions?.onValidateURLString === 'function')
          {
-            validated = await pickerOptions.onValidate({ filepath: result });
+            validated = await pickerOptions.onValidateURLString({ urlString: result });
             if (typeof validated !== 'boolean')
             {
-               console.warn(`FVTTFilePickerBrowseOptions.onValidate warning: 'onValidate' did not return a boolean.`);
+               console.warn(`FVTTFilePickerBrowseOptions.onValidate warning: boolean not returned.`);
                return;
             }
          }
 
-         if (validated) { filepath = result; }
+         if (validated) { urlString = result; }
       }
    }
 </script>

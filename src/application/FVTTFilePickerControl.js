@@ -542,9 +542,10 @@ class TJSFilePicker extends FilePicker
  *    transitionOptions: Record<string, any>
  * })} [modalOptions]                      Options for the modal glasspane / TJSGlasspane component.
  *
- * @property {({ filepath: string }) => void} [onFilepath] Optional function invoked when filepath changes.
+ * @property {({ urlString: string }) => void} [onURLString] Optional function invoked when URL string changes.
  *
- * @property {({ filepath: string }) => Promise<boolean>} [onValidate] Optional validation function of selected filepath.
+ * @property {({ urlString: string }) => Promise<boolean>} [onValidateURLString] Optional validation function of
+ * selected URL string.
  *
  * @property {import('svelte/store').Writable<string>} [store] A writable Svelte store that is set with result.
  *
