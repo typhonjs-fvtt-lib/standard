@@ -18,7 +18,7 @@
 
    import { FVTTFilePickerControl } from '#standard/application/filepicker';
 
-   import { TJSButton }             from '#standard/component';
+   import { TJSButton }             from '#standard/component/form';
 
    export let urlString = '';
 

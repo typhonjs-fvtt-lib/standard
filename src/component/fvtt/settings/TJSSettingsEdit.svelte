@@ -54,7 +54,7 @@
    import { TJSSvelteUtil }   from '#runtime/svelte/util';
    import { isObject }        from '#runtime/util/object';
 
-   import { TJSSvgFolder }    from '#standard/component';
+   import { TJSSvgFolder }    from '#standard/component/folder';
 
    import SettingEntry        from './SettingEntry.svelte';
 

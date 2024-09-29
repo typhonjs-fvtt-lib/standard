@@ -1,7 +1,7 @@
 <script>
    import { localize }          from '#runtime/svelte/helper';
 
-   import { TJSColordPicker }   from '#standard/component';
+   import { TJSColordPicker }   from '#standard/component/color/picker';
 
    export let options = void 0;
 

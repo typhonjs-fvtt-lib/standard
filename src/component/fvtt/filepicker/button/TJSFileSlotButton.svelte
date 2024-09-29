@@ -23,7 +23,7 @@
 
    import { FVTTFilePickerControl } from '#standard/application/filepicker';
 
-   import { TJSSlotButton }         from '#standard/component';
+   import { TJSSlotButton }         from '#standard/component/button';
 
    export let urlString = '';
 
