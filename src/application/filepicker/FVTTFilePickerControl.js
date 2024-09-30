@@ -2,9 +2,9 @@ import { fade }               from 'svelte/transition';
 
 import { TJSDialog }          from '#runtime/svelte/application';
 import { TJSSvelteUtil }      from '#runtime/svelte/util';
-import { A11yHelper }         from '#runtime/util/browser';
 import { ManagedPromise }     from '#runtime/util/async';
 import { nextAnimationFrame } from '#runtime/util/animate';
+import { A11yHelper }         from '#runtime/util/browser';
 import {
    isIterable,
    isObject }                 from '#runtime/util/object';

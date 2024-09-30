@@ -1,8 +1,8 @@
 <script>
    import { getContext }   from '#svelte';
 
-   import { localize }     from '#runtime/svelte/helper';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { localize }     from '#runtime/util/i18n';
 
    /** @type {foundry.abstract.Document} */
    export let document = void 0;

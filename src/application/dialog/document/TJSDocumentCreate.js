@@ -1,5 +1,5 @@
 import { TJSDialog }             from '#runtime/svelte/application';
-import { localize }              from '#runtime/svelte/helper';
+import { localize }              from '#runtime/util/i18n';
 
 import { TJSDocumentCreate
     as TJSDocumentCreateImpl }   from '#standard/component/fvtt-internal';

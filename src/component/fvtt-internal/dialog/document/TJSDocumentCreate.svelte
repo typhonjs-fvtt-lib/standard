@@ -1,9 +1,8 @@
 <script>
-   import { getContext }    from '#svelte';
+   import { getContext }      from '#svelte';
 
-   import {
-      localize,
-      selectOptions }       from '#runtime/svelte/helper';
+   import { localize }        from '#runtime/util/i18n';
+   import { selectOptions }   from '#runtime/svelte/helper';
 
    export let documentCls = void 0;
    export let data = {};
