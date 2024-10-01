@@ -100,6 +100,9 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": [
+    "./src/component/internal/FVTTConfigure.js"
+  ],
   "peerDependencies": {
     "@typhonjs-fvtt/runtime": ">=0.1.0",
     "svelte": ">=4.x.x <5"
