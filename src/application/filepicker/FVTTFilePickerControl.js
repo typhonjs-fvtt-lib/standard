@@ -1,6 +1,7 @@
 import { fade }               from 'svelte/transition';
 
 import { TJSDialog }          from '#runtime/svelte/application';
+import { TJSGlassPane }       from '#runtime/svelte/component/application';
 import { TJSSvelteUtil }      from '#runtime/svelte/util';
 import { nextAnimationFrame } from '#runtime/util/animate';
 import { A11yHelper }         from '#runtime/util/a11y';
@@ -8,8 +9,6 @@ import { ManagedPromise }     from '#runtime/util/async';
 import {
    isIterable,
    isObject }                 from '#runtime/util/object';
-
-import { TJSGlassPane }       from '#runtime/svelte/component/core';
 
 /**
  * Provides managed control of the Foundry {@link globalThis.FilePicker} app simplifying asynchronous use cases. While the stock

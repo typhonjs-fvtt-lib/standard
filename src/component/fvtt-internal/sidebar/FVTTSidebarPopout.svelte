@@ -6,7 +6,7 @@
 
    import { setContext }       from '#svelte';
 
-   import { ApplicationShell } from '#runtime/svelte/component/core';
+   import { ApplicationShell } from '#runtime/svelte/component/application';
 
    /**
     * Application Shell contract.
