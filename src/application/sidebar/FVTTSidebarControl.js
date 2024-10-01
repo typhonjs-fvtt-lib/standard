@@ -2,7 +2,7 @@ import { SvelteApplication }     from '#runtime/svelte/application';
 
 import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
 import { ManagedPromise }        from '#runtime/util/async';
-import { StyleParse }            from '#runtime/util/browser';
+import { StyleParse }            from '#runtime/util/dom/style';
 
 import {
    hasPrototype,

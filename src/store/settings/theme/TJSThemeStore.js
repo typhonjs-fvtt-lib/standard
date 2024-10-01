@@ -3,7 +3,7 @@ import { writable }        from '#svelte/store';
 import { getFormat }       from '#runtime/data/color/colord';
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { propertyStore }   from '#runtime/svelte/store/writable-derived';
-import { TJSStyleManager } from '#runtime/util/browser';
+import { TJSStyleManager } from '#runtime/util/dom/style';
 
 import {
    isIterable,

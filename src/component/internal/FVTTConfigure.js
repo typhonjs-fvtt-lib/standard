@@ -1,5 +1,5 @@
 import { SvelteApplication }  from '#runtime/svelte/application';
-import { TJSStyleManager }    from '#runtime/util/browser';
+import { TJSStyleManager }    from '#runtime/util/dom/style';
 import { isObject }           from '#runtime/util/object';
 
 import { FoundryStyles }      from '#standard/fvtt';
