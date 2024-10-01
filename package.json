@@ -47,6 +47,10 @@
       "types": "./_dist/component/standard/container/index.d.ts",
       "import": "./_dist/component/standard/container/index.js"
     },
+    "./component/dom": {
+      "types": "./_dist/component/standard/dom/index.d.ts",
+      "import": "./_dist/component/standard/dom/index.js"
+    },
     "./component/folder": {
       "types": "./_dist/component/standard/folder/index.d.ts",
       "import": "./_dist/component/standard/folder/index.js"
