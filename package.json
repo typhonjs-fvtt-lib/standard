@@ -9,11 +9,11 @@
   ],
   "imports": {
     "#runtime/*": "@typhonjs-fvtt/runtime/*",
-    "#standard/component": {
-      "types": "./_dist/component/standard/index.d.ts",
-      "default": "@typhonjs-fvtt/svelte-standard/component"
+    "#standard/component/*": {
+      "types": "./_dist/component/*/index.d.ts",
+      "default": "@typhonjs-fvtt/standard/component/*"
     },
-    "#standard/*": "@typhonjs-fvtt/svelte-standard/*",
+    "#standard/*": "@typhonjs-fvtt/standard/*",
     "#svelte/*": "svelte/*",
     "#svelte": "svelte",
     "#internal/configure": "./src/component/internal/FVTTConfigure.js"
@@ -103,6 +103,9 @@
   "peerDependencies": {
     "@typhonjs-fvtt/runtime": ">=0.1.0",
     "svelte": ">=4.x.x <5"
+  },
+  "dependencies": {
+    "@typhonjs-svelte/standard-base": "github:typhonjs-svelte/standard-base"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.0",
