@@ -1,4 +1,4 @@
-# @typhonjs-fvtt/svelte-standard
+# @typhonjs-fvtt/standard
 Provides a standard Svelte component library for the TyphonJS Runtime Library (Foundry VTT version).
 
 More information coming soon. Please refer to demo projects on setup / usage details.
@@ -9,11 +9,11 @@ In your `package.json` `imports` and `dependencies` include:
 {
   "imports": {
     "#runtime/*": "@typhonjs-fvtt/runtime/*",
-    "#standard/*": "@typhonjs-fvtt/svelte-standard/*"
+    "#standard/*": "@typhonjs-fvtt/standard/*"
   },
   "dependencies": {
     "@typhonjs-fvtt/runtime": "^0.1.0",
-    "@typhonjs-fvtt/svelte-standard": "^0.1.0",
+    "@typhonjs-fvtt/standard": "^0.1.0",
     "svelte": "^4.0.0"
   }
 }
