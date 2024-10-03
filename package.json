@@ -1,5 +1,5 @@
 {
-  "name": "@typhonjs-fvtt/svelte-standard",
+  "name": "@typhonjs-fvtt/standard",
   "version": "0.1.0",
   "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library.",
   "type": "module",
