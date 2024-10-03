@@ -1,1 +1,1 @@
-export * from '@typhonjs-svelte/standard/application/menu';
+export * from '@typhonjs-svelte/standard-base/application/menu';

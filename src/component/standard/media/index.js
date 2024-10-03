@@ -1,3 +1,3 @@
 import '#internal/configure';
 
-export * from '@typhonjs-svelte/standard/component/media';
+export * from '@typhonjs-svelte/standard-base/component/media';

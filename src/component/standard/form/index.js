@@ -1,3 +1,3 @@
 import '#internal/configure';
 
-export * from '@typhonjs-svelte/standard/component/form';
+export * from '@typhonjs-svelte/standard-base/component/form';

@@ -1,3 +1,3 @@
 import '#internal/configure';
 
-export * from '@typhonjs-svelte/standard/component/dom';
+export * from '@typhonjs-svelte/standard-base/component/dom';
