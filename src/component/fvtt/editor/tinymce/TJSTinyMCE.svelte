@@ -118,7 +118,7 @@
 
    import { writable }      from '#svelte/store';
 
-   import { applyStyles }   from '#runtime/svelte/action/dom';
+   import { applyStyles }   from '#runtime/svelte/action/dom/style';
    import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
    import { isObject }      from '#runtime/util/object';
 
