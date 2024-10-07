@@ -1,9 +1,10 @@
 <script>
    import { getContext }      from '#svelte';
 
-   import { selectOptions }   from '#runtime/svelte/helper';
    import { TJSDocument }     from '#runtime/svelte/store/fvtt/document';
    import { localize }        from '#runtime/util/i18n';
+
+   import { selectOptions }   from './util.js';
 
    export let document = void 0;
 

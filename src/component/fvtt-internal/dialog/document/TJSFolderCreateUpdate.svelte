@@ -1,9 +1,10 @@
 <script>
    import { getContext }   from '#svelte';
 
-   import { radioBoxes }   from '#runtime/svelte/helper';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
    import { localize }     from '#runtime/util/i18n';
+
+   import { radioBoxes }   from './util.js';
 
    export let document = void 0;
 
