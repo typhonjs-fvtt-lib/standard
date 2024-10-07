@@ -1,14 +1,14 @@
 <script>
    /**
-    * TJSSettingsSwap provides a convenience component to swap a main slotted component with `TJSSettingsEdit`.
+    * `TJSSettingsSwap` provides a convenience component to swap a main slotted component with `TJSSettingsEdit`.
     *
     * The component props are the same and documented in {@link TJSSettingsEdit}. The only difference is that to
-    * support slot forwarding for TJSSettingsEdit is that you define the `settings-header` and `settings-footer` slots
+    * support slot forwarding for `TJSSettingsEdit` is that you define the `settings-header` and `settings-footer` slots
     * inside the `TJSSettingsSwap` content.
     *
-    * Controlling the swap state is accessible from {@link TJSGameSettings.showSettings} accessor (get or set).
-    * This allows for instance the creation of an app header button to swap between the main slotted component and
-    * `TJSSettingsEdit`.
+    * Controlling the swap state is accessible from `TJSGameSettingsWithUI.uiControl.showSettings` accessor
+    * (get or set). This allows for instance the creation of an app header button to swap between the main slotted
+    * component and `TJSSettingsEdit`.
     *
     * @componentDocumentation
     */

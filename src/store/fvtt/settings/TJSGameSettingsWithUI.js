@@ -10,6 +10,11 @@ import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { localize }        from '#runtime/util/i18n';
 import { isObject }        from '#runtime/util/object';
 
+/**
+ * Extends {@link TJSGameSettings} with UI control for working with `TJSSettingsEdit` and `TJSSettingsSwap`
+ * components. Instead of extending `TJSGameSettings` simply extend `TJSGameSettingsWithUI` instead when creating
+ * reactive game settings that utilize the above components.
+ */
 export class TJSGameSettingsWithUI extends TJSGameSettings
 {
    /** @type {import('./types').UIControl} */

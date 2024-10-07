@@ -1,27 +1,28 @@
 <script>
    /**
-    * TJSSettingsEdit provides the main Svelte component to display and modify settings registered with
-    * {@link TJSGameSettings}. Refer to the documentation in {@link TJSGameSettings.register} and
-    * {@link TJSGameSettings.registerAll}. Adding custom defined sections is accomplished with
-    * {@link TJSGameSettings.addSection}. You must pass an instance of TJSGameSettings as the `settings` prop.
+    * `TJSSettingsEdit` provides the main Svelte component to display and modify settings registered with
+    * `TJSGameSettingsWithUI`. Refer to the documentation in `TJSGameSettings.register` and
+    * `TJSGameSettings.registerAll`. Adding custom defined sections is accomplished with
+    * `TJSGameSettingsWithUI.uiControl.addSection`. You must pass an instance of `TJSGameSettingsWithUI` as the
+    * `settings` prop.
     *
     * Note: to group settings into specific folders instead of a single top level section use the `folder` option when
-    * registering settings with TJSGameSettings. Also please refer to the extra folder options described by
-    * {@link TJSGameSettings.addSection}.
+    * registering settings with TJSGameSettings. Also, please refer to the extra folder options described by
+    * `TJSGameSettingsWithUI.uiControl.addSection`.
     *
-    * The other prop `options` is an object instance defined by {@link TJSSettingsCreateOptions}. This allows you to
-    * associate a {@link TJSWebStorage} instance that automatically will track open / closed state of any section
+    * The other prop `options` is an object instance defined by `TJSSettingsCreateOptions`. This allows you to
+    * associate a `TJSWebStorage` instance that automatically will track open / closed state of any section
     * folders configured along with the scrolling position of the scrollbar.
     *
-    * TJSSettingsEdit supports two additional named slots `settings-header` and `settings-footer` allowing you to
+    * `TJSSettingsEdit` supports two additional named slots `settings-header` and `settings-footer` allowing you to
     * set Svelte components as a fixed header and / or footer to the main scrollable settings content.
     *
-    * When TJSSettingsEdit is displayed the UI display data is generated from {@link TJSGameSettings.uiControl}
-    * automatically. When the TJSSettingsEdit component is destroyed any settings registered for UI display will be
-    * checked for `requiresReload` setting option. If the setting has changed while TJSSettingsEdit is displayed a
+    * When `TJSSettingsEdit` is displayed the UI display data is generated from `TJSGameSettingsWithUI.uiControl`
+    * automatically. When the `TJSSettingsEdit` component is destroyed any settings registered for UI display will be
+    * checked for `requiresReload` setting option. If the setting has changed while `TJSSettingsEdit` is displayed a
     * modal dialog is opened to inform the user that a setting changed that requires reloading.
     *
-    * If you need an easy to use slotted component that allows swapping from the main slot and TJSSettingsEdit please
+    * If you need an easy to use slotted component that allows swapping from the main slot and `TJSSettingsEdit` please
     * refer to {@link TJSSettingsSwap}.
     *
     * ### CSS Variables
