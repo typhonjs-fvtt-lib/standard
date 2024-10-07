@@ -15,10 +15,10 @@
 
    import TJSSettingsEdit from './TJSSettingsEdit.svelte';
 
-   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
+   /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
    export let settings = void 0;
 
-   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSSettingsCreateOptions} */
+   /** @type {import('#standard/store/fvtt/settings').TJSSettingsCreateOptions} */
    export let options = void 0;
 
    const showSettings = settings.uiControl.stores.showSettings;
