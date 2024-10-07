@@ -90,7 +90,7 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/store/index.js',
+         input: 'src/store/fvtt/settings/index.js',
          plugins: [
             importsExternal(),
             resolve(),
@@ -98,7 +98,7 @@ const rollupConfigs = [
          ]
       },
       output: {
-         file: '_dist/store/index.js',
+         file: '_dist/store/fvtt/settings/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          sourcemap
@@ -130,17 +130,17 @@ for (const compFile of compFiles)
    fs.writeFileSync(compFile, fileData);
 }
 
-await generateDTS({ input: '_dist/component/standard/button/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/color/picker/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/container/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/dom/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/folder/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/form/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/label/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/layer/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/media/index.js', bundlePackageExports: true })
-await generateDTS({ input: '_dist/component/standard/menu/index.js', bundlePackageExports: true })
+await generateDTS({ input: '_dist/component/standard/button/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/color/picker/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/container/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/dom/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/folder/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/form/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/label/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/layer/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/media/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/menu/index.js', bundlePackageExports: true });
 
-await generateDTS({ input: '_dist/component/fvtt/editor/index.js' })
-await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js' })
-await generateDTS({ input: '_dist/component/fvtt/settings/index.js' })
+await generateDTS({ input: '_dist/component/fvtt/editor/index.js' });
+await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js' });
+await generateDTS({ input: '_dist/component/fvtt/settings/index.js' });

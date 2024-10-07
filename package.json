@@ -94,9 +94,9 @@
       "types": "./_dist/fvtt/index.d.ts",
       "import": "./_dist/fvtt/index.js"
     },
-    "./store": {
-      "types": "./_dist/store/index.d.ts",
-      "import": "./_dist/store/index.js"
+    "./store/fvtt/settings": {
+      "types": "./_dist/store/fvtt/settings/index.d.ts",
+      "import": "./_dist/store/fvtt/settings/index.js"
     },
     "./package.json": "./package.json"
   },
