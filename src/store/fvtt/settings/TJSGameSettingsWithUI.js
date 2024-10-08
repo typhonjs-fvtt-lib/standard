@@ -1,14 +1,14 @@
 import { writable }        from '#svelte/store';
 
-import {
-   ripple,
-   rippleFocus }           from '#runtime/svelte/action/animate';
-
 import { TJSDialog }       from '#runtime/svelte/application';
 import { TJSSvelteUtil }   from '#runtime/svelte/util';
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { localize }        from '#runtime/util/i18n';
 import { isObject }        from '#runtime/util/object';
+
+import {
+   ripple,
+   rippleFocus }           from '#standard/action/animate/ripple';
 
 /**
  * Extends {@link TJSGameSettings} with UI control for working with `TJSSettingsEdit` and `TJSSettingsSwap`
