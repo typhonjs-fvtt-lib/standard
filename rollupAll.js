@@ -7,14 +7,36 @@ import { rollup }          from 'rollup';
 
 const sourcemap = true; // Defines whether source maps are generated.
 
+// Bundle all top level external package exports.
+const dtsPluginOptions = {
+   bundlePackageExports: true,
+   dtsReplace: { '/\\/\\/ <reference.*\\/>': '' } // Svelte v4 types currently add triple slash references.
+};
+
 const rollupConfigs = [
+   {
+      input: {
+         input: 'src/action/animate/ripple/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin(dtsPluginOptions)
+         ]
+      },
+      output: {
+         file: '_dist/action/animate/ripple/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
    {
       input: {
          input: 'src/application/dialog/document/index.js',
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -30,7 +52,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -46,7 +68,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin({ bundlePackageExports: true })
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -62,7 +84,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -78,7 +100,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -94,7 +116,7 @@ const rollupConfigs = [
          plugins: [
             importsExternal(),
             resolve(),
-            generateDTS.plugin()
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
       output: {
@@ -130,17 +152,17 @@ for (const compFile of compFiles)
    fs.writeFileSync(compFile, fileData);
 }
 
-await generateDTS({ input: '_dist/component/standard/button/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/color/picker/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/container/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/dom/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/folder/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/form/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/label/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/layer/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/media/index.js', bundlePackageExports: true });
-await generateDTS({ input: '_dist/component/standard/menu/index.js', bundlePackageExports: true });
+await generateDTS({ input: '_dist/component/standard/button/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/color/picker/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/container/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/dom/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/folder/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/form/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/label/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/layer/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/media/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/standard/menu/index.js', ...dtsPluginOptions });
 
-await generateDTS({ input: '_dist/component/fvtt/editor/index.js' });
-await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js' });
-await generateDTS({ input: '_dist/component/fvtt/settings/index.js' });
+await generateDTS({ input: '_dist/component/fvtt/editor/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js', ...dtsPluginOptions });
+await generateDTS({ input: '_dist/component/fvtt/settings/index.js', ...dtsPluginOptions });

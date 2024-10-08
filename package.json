@@ -19,6 +19,10 @@
     "#internal/configure": "./src/component/internal/FVTTConfigure.js"
   },
   "exports": {
+    "./action/animate/ripple": {
+      "types": "./_dist/action/animate/ripple/index.d.ts",
+      "import": "./_dist/action/animate/ripple/index.js"
+    },
     "./application/dialog/document": {
       "types": "./_dist/application/dialog/document/index.d.ts",
       "import": "./_dist/application/dialog/document/index.js"
