@@ -29,7 +29,7 @@ import {
  *
  * Several ready-made Svelte components are available that are designed around FVTTFilePickerControl.
  *
- * Please see the following Svelte components that can be imported from `#standard/component/fvtt`:
+ * Please see the following Svelte components that can be imported from `#standard/component/fvtt/filepicker/button`:
  * @see TJSFileButton - A standard form button element.
  * @see TJSFileIconButton - Uses TJSIconButton for display.
  * @see TJSFileSlotButton - Provides a slotted button where you can provide any containing content.
