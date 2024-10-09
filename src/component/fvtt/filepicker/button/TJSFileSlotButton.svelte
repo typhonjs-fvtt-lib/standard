@@ -15,15 +15,14 @@
 
    import {
       createEventDispatcher,
-      setContext }                  from '#svelte';
-   import { writable }              from '#svelte/store';
+      setContext }                     from '#svelte';
+   import { writable }                 from '#svelte/store';
 
-   import { isObject }              from '#runtime/util/object';
-   import { isWritableStore }       from '#runtime/util/store';
+   import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+   import { isObject }                 from '#runtime/util/object';
 
-   import { FVTTFilePickerControl } from '#standard/application/filepicker';
-
-   import { TJSSlotButton }         from '#standard/component/button';
+   import { FVTTFilePickerControl }    from '#standard/application/filepicker';
+   import { TJSSlotButton }            from '#standard/component/button';
 
    export let urlString = '';
 
@@ -50,7 +49,7 @@
       // Set context store.
       $storeURLString = urlString;
 
-      if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(urlString); }
+      if (isMinimalWritableStore(pickerOptions?.store)) { pickerOptions.store.set(urlString); }
 
       if (typeof pickerOptions?.onURLString === 'function') { pickerOptions.onURLString({ urlString });}
 

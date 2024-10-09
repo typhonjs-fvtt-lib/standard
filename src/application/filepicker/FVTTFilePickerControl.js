@@ -546,7 +546,8 @@ class TJSFilePicker extends FilePicker
  * @property {({ urlString: string }) => Promise<boolean>} [onValidateURLString] Optional validation function of
  * selected URL string.
  *
- * @property {import('svelte/store').Writable<string>} [store] A writable Svelte store that is set with result.
+ * @property {import('#runtime/svelte/store/util').MinimalWritable<string>} [store] A minimal writable store that is
+ * set with result.
  *
  * @property {number} [zIndex]             Provides an explicit `z-index` for the file picker app.
  */

@@ -11,14 +11,13 @@
     * @componentDocumentation
     */
 
-   import { createEventDispatcher } from '#svelte';
+   import { createEventDispatcher }    from '#svelte';
 
-   import { isObject }              from '#runtime/util/object';
-   import { isWritableStore }       from '#runtime/util/store';
+   import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+   import { isObject }                 from '#runtime/util/object';
 
-   import { FVTTFilePickerControl } from '#standard/application/filepicker';
-
-   import { TJSButton }             from '#standard/component/form';
+   import { FVTTFilePickerControl }    from '#standard/application/filepicker';
+   import { TJSButton }                from '#standard/component/form';
 
    export let urlString = '';
 
@@ -39,7 +38,7 @@
    // callback.
    $: if (urlString?.length)
    {
-      if (isWritableStore(pickerOptions?.store)) { pickerOptions.store.set(urlString); }
+      if (isMinimalWritableStore(pickerOptions?.store)) { pickerOptions.store.set(urlString); }
 
       if (typeof pickerOptions?.onURLString === 'function') { pickerOptions.onURLString({ urlString });}
 
