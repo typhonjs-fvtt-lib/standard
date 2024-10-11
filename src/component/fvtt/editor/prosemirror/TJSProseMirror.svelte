@@ -546,14 +546,6 @@
          {
             let data = ProseMirror.dom.serializeString(editor.view.state.doc);
 
-            // Perform client side sanitization if DOMPurify is available in options.
-            // ProseMirror does essential `<script>` based sanitization, so this is just an extra option to provide
-            // specific sanitization.
-            if (options?.DOMPurify && typeof options?.DOMPurify?.sanitizeWithVideo === 'function')
-            {
-               data = options.DOMPurify.sanitizeWithVideo(data);
-            }
-
             // Save to document if available
             if ($doc && typeof options?.fieldName === 'string')
             {

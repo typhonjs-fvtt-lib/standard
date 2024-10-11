@@ -59,7 +59,7 @@ export class TinyMCEHelper
          valid_children: '+body[style]',
 
          // Note we can include all internal tags as we prefilter the URL to make sure it is for YouTube then use the
-         // oembed API to get the embed URL. Additionally, DOMPurify is configured to only accept iframes from YouTube.
+         // oembed API to get the embed URL.
          extended_valid_elements: 'iframe[allow|allowfullscreen|frameborder|scrolling|class|style|src|width|height]',
       };
 
@@ -135,7 +135,7 @@ export class TinyMCEHelper
          valid_children: '+body[style]',
 
          // Note we can include all internal tags as we prefilter the URL to make sure it is for YouTube then use the
-         // oembed API to get the embed URL. Additionally, DOMPurify is configured to only accept iframes from YouTube.
+         // oembed API to get the embed URL.
          extended_valid_elements: 'iframe[allow|allowfullscreen|frameborder|scrolling|class|style|src|width|height]',
       };
 
@@ -228,7 +228,7 @@ export class TinyMCEHelper
          valid_children: '+body[style]',
 
          // Note we can include all internal tags as we prefilter the URL to make sure it is for YouTube then use the
-         // oembed API to get the embed URL. Additionally, DOMPurify is configured to only accept iframes from YouTube.
+         // oembed API to get the embed URL.
          extended_valid_elements: 'iframe[allow|allowfullscreen|frameborder|scrolling|class|style|src|width|height]',
       };
 

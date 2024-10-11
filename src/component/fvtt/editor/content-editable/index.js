@@ -15,10 +15,6 @@ export { default as TJSContentEdit } from './TJSContentEdit.svelte';
  * @property {foundry.abstract.Document}   [document] Set to a Foundry document to load and save content from it.
  * Requires `fieldName` to be set.
  *
- * @property {{ sanitizeWithVideo: function }}   [DOMPurify] The DOMPurify export from
- * `#runtime/security/client/dompurify`. Sanitizes content client side. Note: TinyMCE already does essential
- * `<script>` sanitization, so this is just an extra option that is available as an extra precaution.
- *
  * @property {boolean}   [editable] Prevents editing and hides button. When set to false any active editor
  * is cancelled. Default: user is GM or when a document is assigned the user has ownership.
  *
