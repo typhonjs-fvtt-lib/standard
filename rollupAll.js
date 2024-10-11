@@ -16,7 +16,7 @@ const dtsPluginOptions = {
 const rollupConfigs = [
    {
       input: {
-         input: 'src/action/animate/ripple/index.js',
+         input: 'src/action/animate/composable/index.js',
          plugins: [
             importsExternal(),
             resolve(),
@@ -24,7 +24,23 @@ const rollupConfigs = [
          ]
       },
       output: {
-         file: '_dist/action/animate/ripple/index.js',
+         file: '_dist/action/animate/composable/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/action/animate/composable/ripple/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin(dtsPluginOptions)
+         ]
+      },
+      output: {
+         file: '_dist/action/animate/composable/ripple/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          sourcemap

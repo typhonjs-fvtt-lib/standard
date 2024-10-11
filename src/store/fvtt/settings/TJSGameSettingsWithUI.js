@@ -8,7 +8,7 @@ import { isObject }        from '#runtime/util/object';
 
 import {
    ripple,
-   rippleFocus }           from '#standard/action/animate/ripple';
+   rippleFocus }           from '#standard/action/animate/composable/ripple';
 
 /**
  * Extends {@link TJSGameSettings} with UI control for working with `TJSSettingsEdit` and `TJSSettingsSwap`
