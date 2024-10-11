@@ -43,9 +43,9 @@
       "types": "./_dist/component/standard/button/index.d.ts",
       "import": "./_dist/component/standard/button/index.js"
     },
-    "./component/color/picker": {
-      "types": "./_dist/component/standard/color/picker/index.d.ts",
-      "import": "./_dist/component/standard/color/picker/index.js"
+    "./component/color/picker-colord": {
+      "types": "./_dist/component/standard/color/picker-colord/index.d.ts",
+      "import": "./_dist/component/standard/color/picker-colord/index.js"
     },
     "./component/container": {
       "types": "./_dist/component/standard/container/index.d.ts",

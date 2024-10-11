@@ -143,25 +143,32 @@ for (const config of rollupConfigs)
 fs.emptyDirSync('./_dist/component');
 fs.copySync('./src/component', './_dist/component');
 
+// Copy all `standard-base` components to local path `./_dist/component/standard`.
+fs.copySync('./node_modules/@typhonjs-svelte/standard-base/_dist/component', './_dist/component/standard');
+
 const compFiles = await getFileList({ dir: './_dist/component', resolve: true, walk: true });
 
+// Replace all `#imports` references.
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
+   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
+   fileData = fileData.replaceAll('#standard/', '@typhonjs-fvtt/standard/');
    fileData = fileData.replaceAll('#svelte', 'svelte');
    fs.writeFileSync(compFile, fileData);
 }
 
-await generateDTS({ input: '_dist/component/standard/button/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/color/picker/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/container/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/dom/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/folder/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/form/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/label/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/layer/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/media/index.js', ...dtsPluginOptions });
-await generateDTS({ input: '_dist/component/standard/menu/index.js', ...dtsPluginOptions });
+// Add required Foundry / CSS variable import to all index files from `standard-base` that export components.
+const indexFiles = await getFileList({ dir: './_dist/component/standard', resolve: true, walk: true, includeFile: /index\.js$/ });
+for (const indexFile of indexFiles)
+{
+   const fileData = fs.readFileSync(indexFile, 'utf-8').toString();
+
+   // Exclude index files that don't export Svelte components.
+   if (!fileData.includes('export { default as')) { continue; }
+
+   fs.writeFileSync(indexFile, `import '#internal/configure';\n\n${fileData}`);
+}
 
 await generateDTS({ input: '_dist/component/fvtt/editor/index.js', ...dtsPluginOptions });
 await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js', ...dtsPluginOptions });
