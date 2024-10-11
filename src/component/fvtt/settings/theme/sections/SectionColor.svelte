@@ -1,7 +1,7 @@
 <script>
    import { localize }          from '#runtime/util/i18n';
 
-   import { TJSColordPicker }   from '#standard/component/color/picker';
+   import { TJSColordPicker }   from '#standard/component/color/picker-colord';
 
    export let options = void 0;
 
