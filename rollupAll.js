@@ -46,6 +46,39 @@ const rollupConfigs = [
          sourcemap
       }
    },
+
+   {
+      input: {
+         input: 'src/application/control/filepicker/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin(dtsPluginOptions)
+         ]
+      },
+      output: {
+         file: '_dist/application/control/filepicker/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
+   {
+      input: {
+         input: 'src/application/control/sidebar/index.js',
+         plugins: [
+            importsExternal(),
+            resolve(),
+            generateDTS.plugin(dtsPluginOptions)
+         ]
+      },
+      output: {
+         file: '_dist/application/control/sidebar/index.js',
+         format: 'es',
+         generatedCode: { constBindings: true },
+         sourcemap
+      }
+   },
    {
       input: {
          input: 'src/application/dialog/document/index.js',
@@ -57,22 +90,6 @@ const rollupConfigs = [
       },
       output: {
          file: '_dist/application/dialog/document/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
-   {
-      input: {
-         input: 'src/application/filepicker/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin(dtsPluginOptions)
-         ]
-      },
-      output: {
-         file: '_dist/application/filepicker/index.js',
          format: 'es',
          generatedCode: { constBindings: true },
          sourcemap
@@ -94,22 +111,7 @@ const rollupConfigs = [
          sourcemap
       }
    },
-   {
-      input: {
-         input: 'src/application/sidebar/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin(dtsPluginOptions)
-         ]
-      },
-      output: {
-         file: '_dist/application/sidebar/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
+
    {
       input: {
          input: 'src/fvtt/index.js',
@@ -126,6 +128,7 @@ const rollupConfigs = [
          sourcemap
       }
    },
+
    {
       input: {
          input: 'src/store/fvtt/settings/index.js',

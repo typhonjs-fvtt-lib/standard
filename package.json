@@ -27,21 +27,21 @@
       "types": "./_dist/action/animate/composable/ripple/index.d.ts",
       "import": "./_dist/action/animate/composable/ripple/index.js"
     },
+    "./application/control/filepicker": {
+      "types": "./_dist/application/control/filepicker/index.d.ts",
+      "import": "./_dist/application/control/filepicker/index.js"
+    },
+    "./application/control/sidebar": {
+      "types": "./_dist/application/control/sidebar/index.d.ts",
+      "import": "./_dist/application/control/sidebar/index.js"
+    },
     "./application/dialog/document": {
       "types": "./_dist/application/dialog/document/index.d.ts",
       "import": "./_dist/application/dialog/document/index.js"
     },
-    "./application/filepicker": {
-      "types": "./_dist/application/filepicker/index.d.ts",
-      "import": "./_dist/application/filepicker/index.js"
-    },
     "./application/menu": {
       "types": "./_dist/application/menu/index.d.ts",
       "import": "./_dist/application/menu/index.js"
-    },
-    "./application/sidebar": {
-      "types": "./_dist/application/sidebar/index.d.ts",
-      "import": "./_dist/application/sidebar/index.js"
     },
     "./component/button": {
       "types": "./_dist/component/standard/button/index.d.ts",
