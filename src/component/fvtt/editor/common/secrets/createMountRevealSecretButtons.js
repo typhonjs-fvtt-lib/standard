@@ -1,7 +1,7 @@
 import RevealSecretButton     from './RevealSecretButton.svelte';
 
 import { nextAnimationFrame } from '#runtime/util/animate';
-import { processHTML }        from '#runtime/util/browser';
+import { processHTML }        from '#runtime/util/html';
 import { safeAccess }         from '#runtime/util/object';
 
 /**

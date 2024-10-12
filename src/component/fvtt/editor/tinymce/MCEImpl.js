@@ -1,7 +1,6 @@
-import {
-   processHTML,
-   striptags }       from '#runtime/util/browser';
-import { isObject }  from '#runtime/util/object';
+import { processHTML }  from '#runtime/util/html';
+import { striptags }    from '#runtime/util/html/striptags';
+import { isObject }     from '#runtime/util/object';
 
 import {
    FontManager,

@@ -1,4 +1,4 @@
-import { striptags }    from '#runtime/util/browser';
+import { striptags }    from '#runtime/util/html/striptags';
 
 import { FVTTVersion }  from '#standard/fvtt';
 
