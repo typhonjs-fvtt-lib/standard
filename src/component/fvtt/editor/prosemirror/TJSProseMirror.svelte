@@ -305,9 +305,6 @@
       {
          destroyEditor();
       }
-
-      // TODO: Temporary Hook handling to close any active editors when another opened.
-      Hooks.off('trl:tjsprosemirror:editor:opened', closeActiveEditor);
    });
 
    /**
@@ -317,18 +314,7 @@
    onMount(() =>
    {
       if (editable && !editorButton && !clickToEdit) { initEditor(); }
-
-      // TODO: Temporary Hook handling to close any active editors when another opened.
-      Hooks.on('trl:tjsprosemirror:editor:opened', closeActiveEditor);
    });
-
-   /**
-    * TODO: Temporary Hook handling to close any active editors when another opened.
-    */
-   function closeActiveEditor()
-   {
-      if (editorActive) { saveEditor(); }
-   }
 
    /**
     * Destroys any active editor.
@@ -391,9 +377,6 @@
             ...(isObject(options?.plugins) ? options.plugins : {})
          }
       };
-
-      // TODO: Temporary Hook handling to close any active editors when another opened.
-      Hooks.callAll('trl:tjsprosemirror:editor:opened');
 
       editorActive = true;
 
