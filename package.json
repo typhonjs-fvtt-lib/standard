@@ -55,9 +55,9 @@
       "types": "./_dist/component/standard/container/index.d.ts",
       "import": "./_dist/component/standard/container/index.js"
     },
-    "./component/dom": {
-      "types": "./_dist/component/standard/dom/index.d.ts",
-      "import": "./_dist/component/standard/dom/index.js"
+    "./component/dom/focus": {
+      "types": "./_dist/component/standard/dom/focus/index.d.ts",
+      "import": "./_dist/component/standard/dom/focus/index.js"
     },
     "./component/folder": {
       "types": "./_dist/component/standard/folder/index.d.ts",
@@ -71,9 +71,13 @@
       "types": "./_dist/component/standard/label/index.d.ts",
       "import": "./_dist/component/standard/label/index.js"
     },
-    "./component/layer": {
-      "types": "./_dist/component/standard/layer/index.d.ts",
-      "import": "./_dist/component/standard/layer/index.js"
+    "./component/layer/position": {
+      "types": "./_dist/component/standard/layer/position/index.d.ts",
+      "import": "./_dist/component/standard/layer/position/index.js"
+    },
+    "./component/layer/side-slide": {
+      "types": "./_dist/component/standard/layer/side-slide/index.d.ts",
+      "import": "./_dist/component/standard/layer/side-slide/index.js"
     },
     "./component/media": {
       "types": "./_dist/component/standard/media/index.d.ts",
