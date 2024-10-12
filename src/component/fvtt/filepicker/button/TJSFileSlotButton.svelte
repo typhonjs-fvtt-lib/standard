@@ -21,7 +21,7 @@
    import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
    import { isObject }                 from '#runtime/util/object';
 
-   import { FVTTFilePickerControl }    from '#standard/application/filepicker';
+   import { FVTTFilePickerControl }    from '#standard/application/control/filepicker';
    import { TJSSlotButton }            from '#standard/component/button';
 
    export let urlString = '';
@@ -29,7 +29,7 @@
    /** @type {object} */
    export let button = void 0;
 
-   /** @type {import('#standard/application/filepicker').FVTTFilePickerBrowseOptions} */
+   /** @type {import('#standard/application/control/filepicker').FVTTFilePickerBrowseOptions} */
    export let pickerOptions = void 0;
 
    const dispatch = createEventDispatcher();
