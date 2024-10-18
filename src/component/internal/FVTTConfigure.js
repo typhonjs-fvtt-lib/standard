@@ -15,7 +15,7 @@ class FVTTConfigure
    {
       if (this.#initialized) { return; }
 
-      const cssVariables = new TJSStyleManager({ docKey: '#__tjs-root-styles', version: 1 });
+      const cssVariables = new TJSStyleManager({ docKey: '#__tjs-root-styles', version: 1.1 });
 
       this.#initialized = true;
 
@@ -70,6 +70,45 @@ class FVTTConfigure
 
                // Set directly / no lookup:
                '--tjs-input-border-color': 'var(--color-border-light-tertiary)',
+            }, false);
+         }
+      }
+
+      {
+         /**
+          * Input range specific variables for track and thumb,
+          */
+         const propsTrack = FoundryStyles.getProperties('input[type="range"]::-webkit-slider-runnable-track');
+         const propsTrackFocus = FoundryStyles.getProperties('input[type="range"]:focus::-webkit-slider-runnable-track');
+
+         const propsThumb = FoundryStyles.getProperties('input[type="range"]::-webkit-slider-thumb');
+         const propsThumbFocus = FoundryStyles.getProperties('input[type="range"]:focus::-webkit-slider-thumb');
+
+         if (isObject(propsTrack))
+         {
+            cssVariables.setProperties({
+               '--tjs-input-range-slider-track-box-shadow': 'box-shadow' in propsTrack ? propsTrack['box-shadow'] : '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
+            }, false);
+         }
+
+         if (isObject(propsTrackFocus))
+         {
+            cssVariables.setProperties({
+               '--tjs-input-range-slider-track-box-shadow-focus': 'box-shadow' in propsTrackFocus ? propsTrackFocus['box-shadow'] : '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
+            }, false);
+         }
+
+         if (isObject(propsThumb))
+         {
+            cssVariables.setProperties({
+               '--tjs-input-range-slider-thumb-box-shadow': 'box-shadow' in propsThumb ? propsThumb['box-shadow'] : '0 0 5px var(--color-shadow-primary)'
+            }, false);
+         }
+
+         if (isObject(propsThumbFocus))
+         {
+            cssVariables.setProperties({
+               '--tjs-input-range-slider-thumb-box-shadow-focus': 'box-shadow' in propsThumbFocus ? propsThumbFocus['box-shadow'] : '0 0 5px var(--color-shadow-primary)'
             }, false);
          }
       }
