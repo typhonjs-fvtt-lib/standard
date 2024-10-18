@@ -24,9 +24,12 @@
 
 <svelte:options accessors={true} />
 
-<!-- svelte-ignore a11y-missing-attribute -->
+<!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
 <a bind:this={anchorEl}
    class=item
+   on:click={(event) => globalThis?.ui?.sidebar?._onLeftClickTab?.(event)}
+   role=tab
+   tabindex=0
    data-tab={sidebarData.id}
    data-tooltip={sidebarData.tooltip}
    alt={sidebarData.tooltip}>
