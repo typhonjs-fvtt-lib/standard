@@ -10,6 +10,8 @@ export class FVTTVersion
    /**
     * Returns true when Foundry is at least the specific major version number provided.
     *
+    * Note: `game` must be initialized for correct comparison; use after Foundry `init` hook.
+    *
     * @param {number}   version - Major version to check against.
     *
     * @returns {boolean} Foundry version is at least the major version specified.
@@ -21,8 +23,7 @@ export class FVTTVersion
          throw new TypeError(`'version' is not a positive integer greater than or equals '9'.`);
       }
 
-      return !globalThis.foundry.utils.isNewerVersion(version, globalThis.game.version ??
-       globalThis.game?.data?.version);
+      return !globalThis.foundry.utils.isNewerVersion(version, globalThis.game.version);
    }
 
    /**
@@ -53,7 +54,7 @@ export class FVTTVersion
          throw new TypeError(`FVTTVersion.isBetween error: 'min' is greater than 'max'.`);
       }
 
-      const match = this.#regexMajorVersion.exec(globalThis.game.version ?? globalThis.game?.data?.version);
+      const match = this.#regexMajorVersion.exec(globalThis.game.version);
       if (!match)
       {
          throw new Error(`FVTTVersion.isBetween error: Could not parse 'globalThis.game.version'.`);
