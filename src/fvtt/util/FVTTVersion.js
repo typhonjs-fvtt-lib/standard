@@ -18,6 +18,11 @@ export class FVTTVersion
     */
    static isAtLeast(version)
    {
+      if (globalThis.game?.version === void 0)
+      {
+         throw new Error(`FVTTVersion.isAtLeast error: Foundry VTT global 'game' object is not initialized.`);
+      }
+
       if (!Number.isInteger(version) && version < 9)
       {
          throw new TypeError(`'version' is not a positive integer greater than or equals '9'.`);
@@ -27,7 +32,7 @@ export class FVTTVersion
    }
 
    /**
-    * Returns true when Foundry is between the min / max major version numbers provided.
+    * Returns true when Foundry is inclusively between the min / max major version numbers provided.
     *
     * @param {number}   min - Major minimum version to check against.
     *
@@ -37,6 +42,11 @@ export class FVTTVersion
     */
    static isBetween(min, max)
    {
+      if (globalThis.game?.version === void 0)
+      {
+         throw new Error(`FVTTVersion.isBetween error: Foundry VTT global 'game' object is not initialized.`);
+      }
+
       if (!Number.isInteger(min) && min < 9)
       {
          throw new TypeError(
