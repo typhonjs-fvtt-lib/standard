@@ -102,7 +102,7 @@ export type TJSSettingsCustomSectionFolder = {
    /**
     * Inline styles for the `TJSSvgFolder`; useful for setting CSS variables.
     */
-   styles?: Record<string, string>;
+   styles?: { [key: string]: string | null };
 };
 
 export type TJSSettingsUIData = {

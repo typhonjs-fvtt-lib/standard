@@ -30,12 +30,13 @@ export { default as TJSProseMirror }   from './TJSProseMirror.svelte';
  *
  * @property {string}    [keyCode='Enter'] Defines the key event code to activate the editor when focused.
  *
- * @property {Record<string, globalThis.ProseMirror.Plugin>}    [plugins] Additional ProseMirror plugins to load.
+ * @property {{ [key: string]: globalThis.ProseMirror.Plugin }}   [plugins] Additional ProseMirror plugins to load.
  *
  * @property {boolean}   [menuCompact] Initializes the ProseMirror editor with a compact menu.
  *
- * @property {Record<string, string>}   [styles] Additional CSS property names and values to set as inline styles.
- * This is useful for dynamically overriding any built in styles and in particular setting CSS variables supported.
+ * @property {{ [key: string]: string | null }} [styles] Additional CSS property names and values to set as inline
+ * styles. This is useful for dynamically overriding any built in styles and in particular setting CSS variables
+ * supported.
  */
 
 /**

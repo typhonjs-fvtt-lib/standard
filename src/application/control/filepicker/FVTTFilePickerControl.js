@@ -536,9 +536,9 @@ class TJSFilePicker extends FilePicker
  * @property {({
  *    background: string,
  *    closeOnInput: boolean,
- *    styles: Record<string, string>,
+ *    styles: { [key: string]: string | null },
  *    transition: import('#runtime/svelte/transition').TransitionFunction,
- *    transitionOptions: Record<string, any>
+ *    transitionOptions: { [key: string]: any }
  * })} [modalOptions]                      Options for the modal glasspane / TJSGlasspane component.
  *
  * @property {({ urlString: string }) => void} [onURLString] Optional function invoked when URL string changes.
