@@ -565,7 +565,7 @@
         <a class=editor-edit on:click={() => initEditor()} role=button tabindex=-1><i class="fas fa-edit"></i></a>
     {/if}
     {#if editorActive}
-        <div bind:this={editorContentEl} class=editor-content />
+        <div bind:this={editorContentEl} class=editor-content></div>
     {:else}
         <div class=editor-enriched>
             {@html enrichedContent}
