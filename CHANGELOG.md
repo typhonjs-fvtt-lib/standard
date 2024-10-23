@@ -1,4 +1,8 @@
 # Changelog
+## Release 0.2.0 (major)
+- Various sub-path refactoring.
+- Overall refinement / streamlining.
+
 ## Release 0.1.0 (major)
 - Many resources are now located at various other import paths. Several moved back to TRL / main runtime.
 - Please check the Discord release notes as they will be updated with info on package import details.
