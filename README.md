@@ -12,8 +12,8 @@ In your `package.json` `imports` and `dependencies` include:
     "#standard/*": "@typhonjs-fvtt/standard/*"
   },
   "dependencies": {
-    "@typhonjs-fvtt/runtime": "^0.1.0",
-    "@typhonjs-fvtt/standard": "^0.1.0",
+    "@typhonjs-fvtt/runtime": "^0.2.0",
+    "@typhonjs-fvtt/standard": "^0.2.0",
     "svelte": "^4.0.0"
   }
 }
