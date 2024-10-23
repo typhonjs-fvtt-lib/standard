@@ -1,7 +1,7 @@
 {
   "name": "@typhonjs-fvtt/standard",
-  "version": "0.1.0",
-  "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library.",
+  "version": "0.2.0-next.1",
+  "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library and Foundry VTT.",
   "type": "module",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
   "contributors": [
@@ -16,7 +16,7 @@
     "#standard/*": "@typhonjs-fvtt/standard/*",
     "#svelte/*": "svelte/*",
     "#svelte": "svelte",
-    "#internal/configure": "./src/component/internal/FVTTConfigure.js"
+    "#internal/configure": "./_dist/component/internal/FVTTConfigure.js"
   },
   "exports": {
     "./action/animate/composable": {
@@ -113,11 +113,8 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@typhonjs-fvtt/runtime": ">=0.1.0",
+    "@typhonjs-fvtt/runtime": ">=0.2.0-next.1",
     "svelte": ">=4.x.x <5"
-  },
-  "dependencies": {
-    "@typhonjs-svelte/standard-base": "github:typhonjs-svelte/standard-base"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.3.0",
@@ -126,6 +123,7 @@
     "@typhonjs-build-test/rollup-plugin-pkg-imports": "^0.5.0",
     "@typhonjs-config/eslint-config": "^0.6.3",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
+    "@typhonjs-svelte/standard-base": "github:typhonjs-svelte/standard-base#0.2.0-next.1",
     "@typhonjs-utils/file-util": "^0.1.0",
     "eslint": "^8.57.0",
     "fs-extra": "^11.2.0",
@@ -134,11 +132,12 @@
   "engines": {
     "node": ">=18"
   },
-  "homepage": "https://github.com/typhonjs-fvtt-lib/svelte-standard#readme",
+  "homepage": "https://github.com/typhonjs-fvtt-lib/standard#readme",
   "keywords": [
     "foundry vtt",
     "fvtt",
-    "svelte"
+    "svelte",
+    "typhonjs"
   ],
   "scripts": {
     "build": "node rollupAll.js",
@@ -149,6 +148,6 @@
   ],
   "directories": {},
   "license": "MPL-2.0",
-  "repository": "github:typhonjs-fvtt-lib/svelte-standard",
-  "bugs": "https://github.com/typhonjs-fvtt-lib/svelte-standard/issues"
+  "repository": "github:typhonjs-fvtt-lib/standard",
+  "bugs": "https://github.com/typhonjs-fvtt-lib/standard/issues"
 }
