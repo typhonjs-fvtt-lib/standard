@@ -13,44 +13,28 @@
     *
     * TODO: replace range input support below w/ TJSInputRange when available.
     */
+   import { FVTTFilePickerControl } from '#standard/application/control/filepicker';
 
-   import { TJSIconButton }   from '#standard/component/button';
+   import { TJSIconButton }         from '#standard/component/button';
 
    import {
       TJSInput,
-      TJSSelect }             from '#standard/component/form';
+      TJSSelect }                   from '#standard/component/form';
 
    /** @type {object} */
    export let setting = void 0;
 
    const store = setting.store;
 
-   let filePickerApp;
-
-   function onFilePicker()
+   async function onFilePicker()
    {
-      // Bring any existing file picker to the top.
-      if (filePickerApp)
-      {
-         filePickerApp.bringToTop();
-         return;
-      }
-
-      filePickerApp = new FilePicker({
+      const result = await FVTTFilePickerControl.browse({
+         modal: true,
          type: setting.filePicker,
-         current: setting.value,
-         callback: (result) => $store = result
+         current: setting.value
       });
 
-      // A little hack here to remove the existing reference to `filePickerApp` when closed.
-      const originalClose = filePickerApp.close;
-      filePickerApp.close = async function (options)
-      {
-         await originalClose.call(filePickerApp, options);
-         filePickerApp = void 0;
-      }
-
-      filePickerApp.render(true, { focus: true });
+      if (result) { $store = result; }
    }
 </script>
 
