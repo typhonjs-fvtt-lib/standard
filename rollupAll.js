@@ -30,22 +30,6 @@ const rollupConfigs = [
          sourcemap
       }
    },
-   {
-      input: {
-         input: 'src/action/animate/composable/ripple/index.js',
-         plugins: [
-            importsExternal(),
-            resolve(),
-            generateDTS.plugin(dtsPluginOptions)
-         ]
-      },
-      output: {
-         file: '_dist/action/animate/composable/ripple/index.js',
-         format: 'es',
-         generatedCode: { constBindings: true },
-         sourcemap
-      }
-   },
 
    {
       input: {
