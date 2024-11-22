@@ -128,6 +128,9 @@
    import { MCEImpl }       from './MCEImpl.js';
 
    import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
+   import {
+      CrossWindowCheck
+   } from "../../../../../../../../../../../win10-64/programs/games/FoundryVTT/v12/data/Data/modules/typhonjs/_dist/util/browser/index.js";
 
    /** @type {string} */
    export let content = '';
@@ -378,7 +381,7 @@
 
                setTimeout(() =>
                {
-                  if (editorEl instanceof HTMLElement && editorEl?.isConnected) { editorEl.focus(); }
+                  if (CrossWindowCheck.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
                }, 100);
             }
 
