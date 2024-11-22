@@ -125,12 +125,12 @@ export function selectOptions(choices, options)
    const { localize = false, blank = null, sort = false, nameAttr, labelAttr, inverted } = options;
    let { selected = null } = options;
 
-   selected = selected instanceof Array ? selected.map(String) : [String(selected)];
+   selected = Array.isArray(selected) ? selected.map(String) : [String(selected)];
 
    // Prepare the choices as an array of objects
    const selectChoices = [];
 
-   if (choices instanceof Array)
+   if (Array.isArray(choices))
    {
       for (const choice of choices)
       {
