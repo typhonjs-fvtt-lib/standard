@@ -114,23 +114,21 @@
       onDestroy,
       onMount,
       tick
-   }                        from '#svelte';
+   }                          from '#svelte';
 
-   import { writable }      from '#svelte/store';
+   import { writable }        from '#svelte/store';
 
-   import { applyStyles }   from '#runtime/svelte/action/dom/style';
-   import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
-   import { isObject }      from '#runtime/util/object';
+   import { applyStyles }     from '#runtime/svelte/action/dom/style';
+   import { TJSDocument }     from '#runtime/svelte/store/fvtt/document';
+   import { CrossWindow }     from '#runtime/util/browser';
+   import { isObject }        from '#runtime/util/object';
 
-   import { FontManager }   from '#standard/fvtt';
+   import { FontManager }     from '#standard/fvtt';
 
-   import { TinyMCEHelper } from './TinyMCEHelper.js';
-   import { MCEImpl }       from './MCEImpl.js';
+   import { TinyMCEHelper }   from './TinyMCEHelper.js';
+   import { MCEImpl }         from './MCEImpl.js';
 
    import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
-   import {
-      CrossWindowCheck
-   } from "../../../../../../../../../../../win10-64/programs/games/FoundryVTT/v12/data/Data/modules/typhonjs/_dist/util/browser/index.js";
 
    /** @type {string} */
    export let content = '';
@@ -381,7 +379,7 @@
 
                setTimeout(() =>
                {
-                  if (CrossWindowCheck.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
+                  if (CrossWindow.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
                }, 100);
             }
 

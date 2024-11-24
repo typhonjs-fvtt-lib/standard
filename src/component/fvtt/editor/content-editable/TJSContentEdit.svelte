@@ -84,14 +84,14 @@
    import {
       createEventDispatcher,
       onDestroy,
-      tick }                     from '#svelte';
+      tick }               from '#svelte';
 
-   import { applyStyles }        from '#runtime/svelte/action/dom/style';
-   import { TJSDocument }        from '#runtime/svelte/store/fvtt/document';
-   import { CrossWindowCheck }   from '#runtime/util/browser';
-   import { isObject }           from '#runtime/util/object';
+   import { applyStyles }  from '#runtime/svelte/action/dom/style';
+   import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { CrossWindow }  from '#runtime/util/browser';
+   import { isObject }     from '#runtime/util/object';
 
-   import { CEImpl }             from './CEImpl.js';
+   import { CEImpl }       from './CEImpl.js';
 
    import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
 
@@ -272,7 +272,7 @@
 
             setTimeout(() =>
             {
-               if (CrossWindowCheck.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
+               if (CrossWindow.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
             }, 100);
          }
 

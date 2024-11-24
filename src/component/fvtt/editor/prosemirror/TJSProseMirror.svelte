@@ -134,15 +134,13 @@
 
    import { applyStyles }  from '#runtime/svelte/action/dom/style';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { CrossWindow }  from '#runtime/util/browser';
    import { isObject }     from '#runtime/util/object';
 
    import { PMImpl }       from './PMImpl.js';
    import * as Plugins  	from './plugins';
 
    import { createMountRevealSecretButtons } from '../common/secrets/createMountRevealSecretButtons.js';
-   import {
-      CrossWindowCheck
-   } from "../../../../../../../../../../../win10-64/programs/games/FoundryVTT/v12/data/Data/modules/typhonjs/_dist/util/browser/index.js";
 
    /** @type {string} */
    export let content = '';
@@ -340,7 +338,7 @@
 
             setTimeout(() =>
             {
-               if (CrossWindowCheck.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
+               if (CrossWindow.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
             }, 100);
          }
 
