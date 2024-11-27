@@ -4,6 +4,7 @@ import { TJSDialog }          from '#runtime/svelte/application';
 import { TJSGlassPane }       from '#runtime/svelte/component/application';
 import { TJSSvelteUtil }      from '#runtime/svelte/util';
 import { nextAnimationFrame } from '#runtime/util/animate';
+import { CrossWindow }        from '#runtime/util/browser';
 import { A11yHelper }         from '#runtime/util/a11y';
 import { ManagedPromise }     from '#runtime/util/async';
 import {
@@ -36,14 +37,6 @@ import {
  */
 export class FVTTFilePickerControl
 {
-   /**
-    * Provides the event constructor names to duck type against. This is necessary for when HTML nodes / elements are
-    * moved to another browser window as `instanceof` checks will fail.
-    *
-    * @type {Set<string>}
-    */
-   static #eventTypesAll = new Set(['KeyboardEvent', 'MouseEvent', 'PointerEvent']);
-
    static #managedPromise = new ManagedPromise();
 
    /** @type {TJSFilePicker} */
@@ -177,16 +170,17 @@ export class FVTTFilePickerControl
          throw new TypeError(`FVTTFilePickerControl.browse error: 'zIndex' is not a positive integer.`);
       }
 
-      if (event !== void 0 && !this.#eventTypesAll.has(event?.constructor?.name))
+      if (event !== void 0 && !CrossWindow.isInputEvent(event))
       {
-         throw new TypeError(`FVTTFilePickerControl.browse error: 'event' is not a KeyboardEvent or MouseEvent.`);
+         throw new TypeError(
+          `FVTTFilePickerControl.browse error: 'event' is not a KeyboardEvent, MouseEvent, or PointerEvent.`);
       }
 
       // Store the explicit zIndex / glasspaneId. This may be modified if the file picker is to be modal.
       let glasspaneId = options?.glasspaneId;
 
       // If there is an existing glasspaneId to promote to then force the z-index to above everything else.
-      let zIndex = glasspaneId ? Number.MAX_SAFE_INTEGER : options?.zIndex;
+      const zIndex = glasspaneId ? Number.MAX_SAFE_INTEGER : options?.zIndex;
 
       // Handle the case when an existing file picker app is visible.
       if (this.#filepickerApp)
