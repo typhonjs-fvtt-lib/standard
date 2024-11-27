@@ -170,7 +170,7 @@ export class FVTTFilePickerControl
          throw new TypeError(`FVTTFilePickerControl.browse error: 'zIndex' is not a positive integer.`);
       }
 
-      if (event !== void 0 && !CrossWindow.isInputEvent(event))
+      if (event !== void 0 && !CrossWindow.isUserInputEvent(event))
       {
          throw new TypeError(
           `FVTTFilePickerControl.browse error: 'event' is not a KeyboardEvent, MouseEvent, or PointerEvent.`);
