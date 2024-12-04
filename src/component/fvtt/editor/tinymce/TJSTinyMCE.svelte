@@ -267,11 +267,12 @@
    /**
     * Updates maxCharacterLength; this does not reactively alter content or the active editor content.
     *
+    * @privateRemarks
     * TODO: It would be nice to provide reactive updates to content when maxCharacterLength changes, but that is
     * problematic w/ mixed text & HTML content without a lot of potential work.
     */
    $: maxCharacterLength = Number.isInteger(options?.maxCharacterLength) && options?.maxCharacterLength >= 0 ?
-       options.maxCharacterLength : void 0;
+    options.maxCharacterLength : void 0;
 
    /**
     * Loads any additional fonts specified. Note that FontManager.loadFonts verifies that a font is already loaded,

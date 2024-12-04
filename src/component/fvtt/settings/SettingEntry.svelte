@@ -11,6 +11,7 @@
     * --tjs-settings-entry-hint-line-height - var(--line-height-16) / Foundry variable
     * --tjs-settings-entry-hint-margin - 0.5em 0
     *
+    * @privateRemarks
     * TODO: replace range input support below w/ TJSInputRange when available.
     */
    import { FVTTFilePickerControl } from '#standard/application/control/filepicker';
