@@ -155,9 +155,15 @@ const compFiles = await getFileList({ dir: './_dist/component', resolve: true, w
 for (const compFile of compFiles)
 {
    let fileData = fs.readFileSync(compFile, 'utf-8').toString();
-   fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
-   fileData = fileData.replaceAll('#standard/', '@typhonjs-fvtt/standard/');
+
+   // Ignore any `{@link #runtime...}` enclosed references.
+   fileData = fileData.replaceAll(/(?<!\{@link\s*)#runtime\//g, '@typhonjs-fvtt/runtime/');
+
+   // Ignore any `{@link #standard...}` enclosed references.
+   fileData = fileData.replaceAll(/(?<!\{@link\s*)#standard\//g, '@typhonjs-fvtt/standard/');
+
    fileData = fileData.replaceAll('#svelte', 'svelte');
+
    fs.writeFileSync(compFile, fileData);
 }
 
