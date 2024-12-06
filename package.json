@@ -96,6 +96,7 @@
       "import": "./_dist/component/fvtt/settings/index.js"
     },
     "./component/fvtt-internal": {
+      "types": "./_dist/component/fvtt-internal/index.d.ts",
       "import": "./_dist/component/fvtt-internal/index.js"
     },
     "./fvtt": {

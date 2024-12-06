@@ -4,5 +4,5 @@
     "module": "ES2022",
     "moduleResolution" : "bundler"
   },
-  "exclude": ["node_modules", "_dist"]
+  "exclude": ["node_modules"]
 }
