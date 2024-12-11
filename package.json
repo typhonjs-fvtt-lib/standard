@@ -13,7 +13,10 @@
       "types": "./_dist/component/*/index.d.ts",
       "default": "@typhonjs-fvtt/standard/component/*"
     },
-    "#standard/*": "@typhonjs-fvtt/standard/*",
+    "#standard/*": {
+      "types": "./_dist/*/index.d.ts",
+      "default": "@typhonjs-fvtt/standard/*"
+    },
     "#svelte/*": "svelte/*",
     "#svelte": "svelte",
     "#internal/configure": "./_dist/component/internal/FVTTConfigure.js"
