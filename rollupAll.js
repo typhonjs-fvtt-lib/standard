@@ -134,8 +134,6 @@ const rollupConfigs = [
 
 for (const config of rollupConfigs)
 {
-   console.log(`Generating bundle: ${config.input.input}`);
-
    const bundle = await rollup(config.input);
    await bundle.write(config.output);
    await bundle.close();
