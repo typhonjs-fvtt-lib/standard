@@ -31,6 +31,7 @@ import {
  * Several ready-made Svelte components are available that are designed around FVTTFilePickerControl.
  *
  * Please see the following Svelte components that can be imported from `#standard/component/fvtt/filepicker/button`:
+ *
  * @see TJSFileButton - A standard form button element.
  * @see TJSFileIconButton - Uses TJSIconButton for display.
  * @see TJSFileSlotButton - Provides a slotted button where you can provide any containing content.
@@ -155,7 +156,7 @@ export class FVTTFilePickerControl
     *
     * @param {KeyboardEvent | MouseEvent} [event] - An event to inspect for focus management when a modal file picker
     *        is launched.
-
+    *
     * @returns {Promise<string | null>} The file picker / browse result.
     */
    static async #browseImpl(options, event)
