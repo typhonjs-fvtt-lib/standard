@@ -21,6 +21,6 @@
 
 <svelte:options accessors={true} />
 
-<section class={`tab sidebar-tab ${sidebarData.id}-sidebar`} id={sidebarData.id} data-tab={sidebarData.id}>
+<section class={`tab sidebar-tab ${sidebarData.id}-sidebar directory flexcol`} id={sidebarData.id} data-tab={sidebarData.id}>
    <svelte:component bind:this={component} this={sidebarClass} {...sidebarProps} />
 </section>
