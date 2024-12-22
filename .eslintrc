@@ -24,6 +24,7 @@
       "builtinGlobals": true,
       "hoist": "all",
       "allow": [
+        "context",
         "debounce",
         "document",
         "event",
