@@ -15,10 +15,12 @@ export class TJSDocumentOwnership extends TJSDialog
    /**
     * @param {foundry.abstract.Document} document - Document instance to modify.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Rest of options to pass to
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Rest of options to pass to
     *        TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    *
+    * @private
     */
    constructor(document, options = {}, dialogData = {})
    {
@@ -66,10 +68,10 @@ export class TJSDocumentOwnership extends TJSDialog
     *
     * @param {foundry.abstract.Document} document - Document instance to modify.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Rest of options to pass to
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Rest of options to pass to
     *        TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|null>} The modified document or 'null' if the user closed the dialog
     *          via `<Esc>` or the close header button.

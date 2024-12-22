@@ -25,10 +25,12 @@ export class TJSDocumentCreate extends TJSDialog
     *
     * @param {boolean} [context.renderSheet] - Render the sheet for the new document.
     *
-    * @param {Partial<import('#svelte-fvtt/application').SvelteApplicationOptions>} [context.options] - Rest of options
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [context.options] - Rest of options
     * to pass to TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    *
+    * @private
     */
    constructor(documentCls, data = {}, { parent = null, pack = null, renderSheet = true, ...options } = {},
     dialogData = {})
@@ -79,10 +81,10 @@ export class TJSDocumentCreate extends TJSDialog
     *
     * @param {boolean} [context.renderSheet] - Render the sheet for the new document.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [context.options] - Rest of options
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [context.options] - Rest of options
     *        to pass to TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|null>} The newly created document or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.

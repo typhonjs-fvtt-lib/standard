@@ -19,9 +19,11 @@ export class TJSDocumentDelete extends TJSDialog
     *
     * @param {object} [opts.context] - DocumentModificationContext.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [opts.options] - Rest of options to pass to TJSDialog / Application.
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [opts.options] - Rest of options to pass to TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * 
+    * @private
     */
    constructor(document, { context = {}, ...options } = {}, dialogData = {})
    {
@@ -92,10 +94,10 @@ export class TJSDocumentDelete extends TJSDialog
     *
     * @param {object} [opts.context] - DocumentModificationContext.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [opts.options] - Rest of options to pass to
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [opts.options] - Rest of options to pass to
     *        TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|boolean|null>} The document if deleted or a falsy value; either
     *          'false' for cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.

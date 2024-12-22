@@ -15,14 +15,21 @@ import { TJSFolderRolltable }    from './TJSFolderRolltable.js';
 export class TJSDocumentDialog
 {
    /**
+    * @param {*} noop - Workaround for TS issue https://github.com/microsoft/TypeScript/issues/58653
+    *
+    * @private
+    */
+   constructor(noop) {} // eslint-disable-line no-useless-constructor,no-unused-vars
+
+   /**
     * Change ownership of a document by rendering a dialog to alter the default and all user / player ownership.
     *
     * @param {foundry.abstract.Document} document - Document instance to modify.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Rest of options to pass to
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Rest of options to pass to
     *        TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|null>} The modified document or 'null' if the user closed the
     *          dialog via `<Esc>` or the close header button.
@@ -48,10 +55,10 @@ export class TJSDocumentDialog
     *
     * @param {boolean} [context.renderSheet] - Render the sheet for the new document.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [context.options] - Rest of options to pass
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [context.options] - Rest of options to pass
     *        to TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|null>} The newly created document or a falsy value; either 'false'
     *          for cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
@@ -71,10 +78,10 @@ export class TJSDocumentDialog
     *
     * @param {object} [opts.context] - DocumentModificationContext.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [opts.options] - Rest of options to pass
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [opts.options] - Rest of options to pass
     *        to TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|boolean|null>} The document if deleted or a falsy value; either
     *          'false' for cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
@@ -89,10 +96,10 @@ export class TJSDocumentDialog
     *
     * @param {object} folderData - Initial data with which to populate the creation form.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Options to pass to TJSDialog /
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<globalThis.Folder|null>} The newly created Folder or null if the dialog is closed.
     */
@@ -106,10 +113,10 @@ export class TJSDocumentDialog
     *
     * @param {globalThis.Folder} document - Folder to delete.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Options to pass to TJSDialog /
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<globalThis.Folder|boolean|null>} The deleted Folder or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
@@ -132,10 +139,10 @@ export class TJSDocumentDialog
     *
     * @param {boolean} [opts.keepId=true] - Keep document IDs.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [opts.options] - Rest of options to pass to
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [opts.options] - Rest of options to pass to
     *        TJSDialog / Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<globalThis.CompendiumCollection|boolean|null>} The compendium collection the folder is exported
     *          to or a falsy value; either 'false' for cancelling or 'null' if the user closed the dialog via `<Esc>`
@@ -151,10 +158,10 @@ export class TJSDocumentDialog
     *
     * @param {globalThis.Folder} document - Folder to remove.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Options to pass to TJSDialog /
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<globalThis.Folder|boolean|null>} The removed Folder or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
@@ -169,10 +176,10 @@ export class TJSDocumentDialog
     *
     * @param {globalThis.Folder} document - Folder to create roll table from...
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Options to pass to TJSDialog /
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<globalThis.RollTable|boolean|null>} The newly created RollTable or a falsy value; either
     *          'false' for cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
@@ -187,10 +194,10 @@ export class TJSDocumentDialog
     *
     * @param {globalThis.Folder} document - The folder to edit.
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Options to pass to TJSDialog /
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<globalThis.Folder|null>} The modified Folder or null if the dialog is closed.
     */
@@ -204,10 +211,10 @@ export class TJSDocumentDialog
     *
     * @param {foundry.abstract.Document} document - The document to import JSON to...
     *
-    * @param {import('#svelte-fvtt/application').SvelteApplicationOptions} [options] - Options to pass to TJSDialog /
+    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#svelte-fvtt/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|boolean|null>} The document after import completes or a falsy value;
     *          either 'false' for cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header
