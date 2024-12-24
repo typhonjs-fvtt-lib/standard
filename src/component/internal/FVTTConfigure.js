@@ -1,4 +1,4 @@
-import { SvelteApplication }  from '#runtime/svelte/application';
+import { SvelteApp }  from '#runtime/svelte/application';
 import { TJSStyleManager }    from '#runtime/util/dom/style';
 import { isObject }           from '#runtime/util/object';
 
@@ -131,7 +131,7 @@ class FVTTConfigure
 
       Hooks.on('PopOut:loading', (app, popout) =>
       {
-         if (app instanceof SvelteApplication)
+         if (app instanceof SvelteApp)
          {
             // Clone and load `svelte-standard` CSS variables into new window document.
             popout.document.addEventListener('DOMContentLoaded', () => cssVariables.clone(popout.document));

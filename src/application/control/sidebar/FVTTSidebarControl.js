@@ -1,4 +1,4 @@
-import { SvelteApplication }     from '#runtime/svelte/application';
+import { SvelteApp }     from '#runtime/svelte/application';
 
 import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
 import { ManagedPromise }        from '#runtime/util/async';
@@ -18,7 +18,7 @@ import {
  *
  * The nice aspect about FVTTSidebarControl is that all you have to provide is the sidebar component and the rest is
  * handled for you including automatically widening the width of the sidebar to fit the new sidebar tab. Also by default
- * an adhoc SvelteApplication is configured to display the sidebar when popped out automatically without the need to
+ * an adhoc SvelteApp is configured to display the sidebar when popped out automatically without the need to
  * associate an app instance.
  *
  * -------------------------------------------------------------------------------------------------------------------
@@ -38,10 +38,10 @@ import {
  * using a FontAwesome icon. This allows you to dynamically show state similar to the chat log sidebar when activity
  * occurs or for other purposes.
  *
- * - You can provide `popoutOptions` overriding the default options passed to the default adhoc SvelteApplication
+ * - You can provide `popoutOptions` overriding the default options passed to the default adhoc SvelteApp
  * rendered for the popout.
  *
- * - You can provide a class that extends from SvelteApplication as `popoutApplication` to provide a fully customized
+ * - You can provide a class that extends from SvelteApp as `popoutApplication` to provide a fully customized
  * popout sidebar that you fully control.
  *
  * -------------------------------------------------------------------------------------------------------------------
@@ -143,10 +143,10 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.mergeAppImpl' is not an object.`);
          }
 
-         if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
+         if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApp))
          {
             throw new TypeError(
-             `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
+             `FVTTSidebarControl.add error: 'sidebarData.popoutApplication' is not a SvelteApp.`);
          }
 
          if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
@@ -207,7 +207,7 @@ export class FVTTSidebarControl
 
          // Defines the default options to use when `popoutApplication` is not defined.
          sidebar.popoutOptions = {
-            // Default SvelteApplication options.
+            // Default SvelteApp options.
             id: `${sidebarData.id}-popout`,
             title: sidebarData.title ?? sidebarData.tooltip,
             classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
@@ -221,7 +221,7 @@ export class FVTTSidebarControl
                }
             },
 
-            // Allow overriding of SvelteApplication options.
+            // Allow overriding of SvelteApp options.
             ...(sidebarData.popoutOptions ?? {})
          };
 
@@ -410,10 +410,10 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.mergeAppImpl' is not an object.`);
          }
 
-         if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApplication))
+         if (sidebarData.popoutApplication !== void 0 && !hasPrototype(sidebarData.popoutApplication, SvelteApp))
          {
             throw new TypeError(
-             `FVTTSidebarControl.replace error: 'sidebarData.popoutApplication' is not a SvelteApplication.`);
+             `FVTTSidebarControl.replace error: 'sidebarData.popoutApplication' is not a SvelteApp.`);
          }
 
          if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
@@ -482,7 +482,7 @@ export class FVTTSidebarControl
 
          // Defines the default options to use when `popoutApplication` is not defined.
          sidebar.popoutOptions = {
-            // Default SvelteApplication options.
+            // Default SvelteApp options.
             id: `${sidebarData.id}-popout`,
             title: sidebarData.title ?? sidebarData.tooltip,
             classes: ['tab', 'sidebar-tab', 'sidebar-popout'],
@@ -496,7 +496,7 @@ export class FVTTSidebarControl
                }
             },
 
-            // Allow overriding of SvelteApplication options.
+            // Allow overriding of SvelteApp options.
             ...(sidebarData.popoutOptions ?? {})
          };
 
@@ -583,7 +583,7 @@ export class FVTTSidebarControl
       const sidebarEntry = {
          data: sidebarData,
          popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
-          new SvelteApplication(sidebarData.popoutOptions),
+          new SvelteApp(sidebarData.popoutOptions),
          tab: sidebarTab,
          wrapper: sidebarWrapper
       };
@@ -595,7 +595,7 @@ export class FVTTSidebarControl
          /**
           * Provides an accessor to retrieve the popout application as a sanity case.
           *
-          * @returns {SvelteApplication} The popout application.
+          * @returns {SvelteApp} The popout application.
           * @protected
           */
          get _popout()
@@ -606,7 +606,7 @@ export class FVTTSidebarControl
          /**
           * Renders the popout application and is invoked by {@link Sidebar} when the sidebar tab is right-clicked.
           *
-          * @returns {SvelteApplication} Popout application.
+          * @returns {SvelteApp} Popout application.
           */
          renderPopout: () => sidebarEntry?.popout?.render?.(true, { focus: true }),
 
@@ -728,7 +728,7 @@ export class FVTTSidebarControl
       const sidebarEntry = {
          data: sidebarData,
          popout: sidebarData.popoutApplication !== void 0 ? new sidebarData.popoutApplication() :
-          new SvelteApplication(sidebarData.popoutOptions),
+          new SvelteApp(sidebarData.popoutOptions),
          tab: sidebarTab,
          wrapper: sidebarWrapper
       };
@@ -740,7 +740,7 @@ export class FVTTSidebarControl
          /**
           * Provides an accessor to retrieve the popout application as a sanity case.
           *
-          * @returns {SvelteApplication} The popout application.
+          * @returns {SvelteApp} The popout application.
           * @protected
           */
          get _popout()
@@ -751,7 +751,7 @@ export class FVTTSidebarControl
          /**
           * Renders the popout application and is invoked by {@link Sidebar} when the sidebar tab is right-clicked.
           *
-          * @returns {SvelteApplication} Popout application.
+          * @returns {SvelteApp} Popout application.
           */
          renderPopout: () => sidebarEntry?.popout?.render?.(true, { focus: true }),
 
@@ -800,10 +800,10 @@ export class FVTTSidebarControl
  * @property {object}   [mergeAppImpl] Provides a custom base implementation for the object instance
  * for this sidebar app stored in `globalThis.ui.<SIDEBAR ID>`.
  *
- * @property {import('#runtime/svelte/application').SvelteApplication}   [popoutApplication] Provides a custom
- * SvelteApplication class to instantiate for the popout sidebar.
+ * @property {import('#runtime/svelte/application').SvelteApp}   [popoutApplication] Provides a custom
+ * SvelteApp class to instantiate for the popout sidebar.
  *
- * @property {object}   [popoutOptions] Provides SvelteApplication options overrides for the default popout sidebar.
+ * @property {object}   [popoutOptions] Provides SvelteApp options overrides for the default popout sidebar.
  *
  * @property {string}   [title] The popout application title text or i18n lang key.
  *
@@ -835,10 +835,10 @@ export class FVTTSidebarControl
  * @property {object}   [mergeAppImpl] Provides a custom base implementation for the object instance for this sidebar
  * app stored in `globalThis.ui.<SIDEBAR ID>`.
  *
- * @property {import('#runtime/svelte/application').SvelteApplication}   [popoutApplication] Provides a custom
- * SvelteApplication class to instantiate for the popout sidebar.
+ * @property {import('#runtime/svelte/application').SvelteApp}   [popoutApplication] Provides a custom
+ * SvelteApp class to instantiate for the popout sidebar.
  *
- * @property {object}   [popoutOptions] Provides SvelteApplication options overrides for the default popout sidebar.
+ * @property {object}   [popoutOptions] Provides SvelteApp options overrides for the default popout sidebar.
  *
  * @property {string}   [title] The popout application title text or i18n lang key.
  *
@@ -851,7 +851,7 @@ export class FVTTSidebarControl
  * @property {FVTTSidebarAddData | FVTTSidebarRemoveData | FVTTSidebarReplaceData} data The sidebar data that
  * configures a Svelte sidebar.
  *
- * @property {import('#runtime/svelte/application').SvelteApplication}  popout The sidebar popout application.
+ * @property {import('#runtime/svelte/application').SvelteApp}  popout The sidebar popout application.
  *
  * @property {import('svelte').SvelteComponent} tab The tab wrapper component.
  *

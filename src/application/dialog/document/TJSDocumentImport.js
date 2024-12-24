@@ -57,7 +57,7 @@ export class TJSDocumentImport extends TJSDialog
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
        *                             Document.
        *
-       * @memberof import('#runtime/svelte/application').SvelteApplication.reactive
+       * @memberof import('#runtime/svelte/application').SvelteApp.reactive
        */
       Object.defineProperty(this.reactive, 'document', {
          get: () => this.svelte?.dialogComponent?.document,
