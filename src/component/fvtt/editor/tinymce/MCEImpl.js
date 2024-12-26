@@ -102,7 +102,7 @@ export class MCEImpl
             break;
 
          // Close the editor on 'esc' key pressed; reset content; invoke the registered Foundry save callback with
-         // a deferral via setTimeout.
+         // a deferral to the next macrotask.
          case 'Escape':
             editor.resetContent(content);
             setTimeout(() => saveEditor(), 0);

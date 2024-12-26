@@ -369,7 +369,7 @@
 
             editor = void 0;
 
-            // Post on next micro-task to allow any event propagation for `Escape` key to trigger first.
+            // Post on next macrotask to allow any event propagation for `Escape` key to trigger first.
             setTimeout(() => editorActive = false, 0);
 
             // If the editor was initialized by keyboard action then focus it after a short delay to allow the template
