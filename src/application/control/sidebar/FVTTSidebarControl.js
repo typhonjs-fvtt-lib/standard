@@ -1,17 +1,17 @@
-import { SvelteApp }     from '#runtime/svelte/application';
+import { SvelteApp }       from '#runtime/svelte/application';
 
-import { TJSSvelteConfigUtil }   from '#runtime/svelte/util';
-import { ManagedPromise }        from '#runtime/util/async';
-import { StyleParse }            from '#runtime/util/dom/style';
+import { TJSSvelte }       from '#runtime/svelte/util';
+import { ManagedPromise }  from '#runtime/util/async';
+import { StyleParse }      from '#runtime/util/dom/style';
 
 import {
    hasPrototype,
-   isObject }                    from '#runtime/util/object';
+   isObject }              from '#runtime/util/object';
 
 import {
    FVTTSidebarPopout,
    FVTTSidebarTab,
-   FVTTSidebarWrapper }          from '#standard/component/fvtt-internal';
+   FVTTSidebarWrapper }    from '#standard/component/fvtt-internal';
 
 /**
  * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
@@ -168,7 +168,7 @@ export class FVTTSidebarControl
 
          try
          {
-            svelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.svelte);
+            svelteConfig = TJSSvelte.config.parseConfig(sidebarData.svelte);
          }
          catch (err)
          {
@@ -183,7 +183,7 @@ export class FVTTSidebarControl
          {
             try
             {
-               iconSvelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.icon);
+               iconSvelteConfig = TJSSvelte.config.parseConfig(sidebarData.icon);
             }
             catch (err)
             {
@@ -443,7 +443,7 @@ export class FVTTSidebarControl
 
          try
          {
-            svelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.svelte);
+            svelteConfig = TJSSvelte.config.parseConfig(sidebarData.svelte);
          }
          catch (err)
          {
@@ -458,7 +458,7 @@ export class FVTTSidebarControl
          {
             try
             {
-               iconSvelteConfig = TJSSvelteConfigUtil.parseConfig(sidebarData.icon);
+               iconSvelteConfig = TJSSvelte.config.parseConfig(sidebarData.icon);
             }
             catch (err)
             {
@@ -785,10 +785,10 @@ export class FVTTSidebarControl
  *
  * @property {string}   id The unique Sidebar ID / name. Used for CSS ID and retrieving the sidebar.
  *
- * @property {string|import('#runtime/svelte/util').TJSSvelteConfig}  icon The FontAwesome icon css classes
+ * @property {string|import('#runtime/svelte/util').TJSSvelte.Config.Embed}  icon The FontAwesome icon css classes
  * _or_ a Svelte configuration object to load a custom Svelte component to use as the "icon".
  *
- * @property {import('#runtime/svelte/util').TJSSvelteConfig}   svelte A Svelte configuration object.
+ * @property {import('#runtime/svelte/util').TJSSvelte.Config.Embed}   svelte A Svelte configuration object.
  *
  * @property {string}   [beforeId] The ID for the tab to place the new sidebar before. This must be an
  * existing sidebar tab ID. THe stock Foundry sidebar tab IDs from left to right are:
@@ -822,12 +822,12 @@ export class FVTTSidebarControl
 /**
  * @typedef {object} FVTTSidebarReplaceData The configuration object to replace a core sidebar with a Svelte sidebar.
  *
- * @property {string|import('#runtime/svelte/util').TJSSvelteConfig}  icon The FontAwesome icon css classes _or_ a
- * Svelte configuration object to load a custom Svelte component to use as the "icon".
+ * @property {string|import('#runtime/svelte/util').TJSSvelte.Config.Embed}  icon The FontAwesome icon css classes _or_
+ * a Svelte configuration object to load a custom Svelte component to use as the "icon".
  *
  * @property {string}   id The ID for the sidebar to replace. This must be an existing sidebar tab ID.
  *
- * @property {import('#runtime/svelte/util').TJSSvelteConfig}   svelte A Svelte configuration object.
+ * @property {import('#runtime/svelte/util').TJSSvelte.Config.Embed}   svelte A Svelte configuration object.
  *
  * @property {boolean | (() => boolean)}   [condition] A boolean value or function to invoke that returns a boolean
  * value to control sidebar replacement. This is executed in the `renderSidebar` callback internally.

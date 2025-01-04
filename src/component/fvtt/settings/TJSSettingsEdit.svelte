@@ -51,7 +51,7 @@
    import { applyScrolltop }  from '#runtime/svelte/action/dom/properties';
    import { applyStyles }     from '#runtime/svelte/action/dom/style';
 
-   import { TJSSvelteUtil }   from '#runtime/svelte/util';
+   import { TJSSvelte }       from '#runtime/svelte/util';
    import { isObject }        from '#runtime/util/object';
 
    import { TJSSvgFolder }    from '#standard/component/folder';
@@ -102,7 +102,7 @@
                   <svelte:component this={section.class} {...(isObject(section.props) ? section.props : {})}/>
 
                   <svelte:fragment slot=summary-end>
-                     {#if TJSSvelteUtil.isComponent(section?.folder?.summaryEnd?.class)}
+                     {#if TJSSvelte.util.isComponent(section?.folder?.summaryEnd?.class)}
                         <svelte:component this={section.folder.summaryEnd.class} {...(isObject(section?.folder?.summaryEnd?.props) ? section.folder.summaryEnd.props : {})}/>
                      {/if}
                   </svelte:fragment>

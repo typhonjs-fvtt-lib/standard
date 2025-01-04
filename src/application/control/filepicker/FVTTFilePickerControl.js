@@ -2,7 +2,7 @@ import { fade }               from 'svelte/transition';
 
 import { TJSDialog }          from '#runtime/svelte/application';
 import { TJSGlassPane }       from '#runtime/svelte/component/application';
-import { TJSSvelteUtil }      from '#runtime/svelte/util';
+import { TJSSvelte }          from '#runtime/svelte/util';
 import { nextAnimationFrame } from '#runtime/util/animate';
 import { CrossWindow }        from '#runtime/util/browser';
 import { A11yHelper }         from '#runtime/util/a11y';
@@ -263,7 +263,7 @@ export class FVTTFilePickerControl
          gp.$on('glasspane:keydown:escape', () => this.#filepickerApp?.close?.());
 
          // Destroy the glasspane component when the Promise is resolved.
-         promise.finally(() => TJSSvelteUtil.outroAndDestroy(gp));
+         promise.finally(() => TJSSvelte.util.outroAndDestroy(gp));
       }
 
       // If an event is defined determine a potential focus source. When the file picker app is closed this element

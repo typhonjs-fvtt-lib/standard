@@ -1,7 +1,7 @@
 import { writable }        from '#svelte/store';
 
 import { TJSDialog }       from '#runtime/svelte/application';
-import { TJSSvelteUtil }   from '#runtime/svelte/util';
+import { TJSSvelte }       from '#runtime/svelte/util';
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { localize }        from '#runtime/util/i18n';
 import { isObject }        from '#runtime/util/object';
@@ -116,7 +116,7 @@ class UIControl
    {
       if (!isObject(options)) { throw new TypeError(`'options' is not an object.`); }
 
-      if (!TJSSvelteUtil.isComponent(options.class))
+      if (!TJSSvelte.util.isComponent(options.class))
       {
          throw new TypeError(`'options.class' is not a Svelte component.`);
       }
@@ -147,7 +147,7 @@ class UIControl
                   throw new TypeError(`'options.folder.summaryEnd' is not an object.`);
                }
 
-               if (!TJSSvelteUtil.isComponent(folder.summaryEnd.class))
+               if (!TJSSvelte.util.isComponent(folder.summaryEnd.class))
                {
                   throw new TypeError(`'options.folder.summaryEnd.class' is not a Svelte component.`);
                }

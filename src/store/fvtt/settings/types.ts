@@ -97,7 +97,7 @@ export type TJSSettingsCustomSectionFolder = {
    /**
     * A Svelte component config object defining TJSSvgFolder summary end component.
     */
-   summaryEnd?: import('#runtime/svelte/util').TJSSvelteConfig;
+   summaryEnd?: import('#runtime/svelte/util').TJSSvelte.Config.Embed;
 
    /**
     * Inline styles for the `TJSSvgFolder`; useful for setting CSS variables.
