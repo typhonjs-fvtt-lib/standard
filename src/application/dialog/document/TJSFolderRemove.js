@@ -18,7 +18,7 @@ export class TJSFolderRemove extends TJSDialog
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
     *
     * @private
     */
@@ -74,7 +74,7 @@ export class TJSFolderRemove extends TJSDialog
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<fvtt.Folder | boolean | null>} The removed Folder or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.

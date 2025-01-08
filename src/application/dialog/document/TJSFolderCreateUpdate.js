@@ -19,7 +19,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
     *
     * @param {object} [options] - Options to pass to TJSDialog / Application.
     *
-    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
     *
     * @private
     */
@@ -103,7 +103,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
     *
     * @param {object} [options] - Options to pass to TJSDialog / Application.
     *
-    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<fvtt.Folder | null>} The modified Folder or null if the dialog is closed.
     */

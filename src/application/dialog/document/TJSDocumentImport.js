@@ -20,7 +20,7 @@ export class TJSDocumentImport extends TJSDialog
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
     *
     * @private
     */
@@ -77,7 +77,7 @@ export class TJSDocumentImport extends TJSDialog
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
-    * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
+    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
     *
     * @returns {Promise<foundry.abstract.Document|boolean|null>} The document after import completes or a falsy value;
     *          either 'false' for cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header
