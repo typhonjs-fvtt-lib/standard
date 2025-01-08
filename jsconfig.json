@@ -1,8 +1,0 @@
-{
-  "compilerOptions" : {
-    "lib": ["ES2022", "DOM"],
-    "module": "ES2022",
-    "moduleResolution" : "bundler"
-  },
-  "exclude": ["node_modules"]
-}
