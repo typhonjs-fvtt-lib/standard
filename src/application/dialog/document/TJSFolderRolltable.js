@@ -13,7 +13,7 @@ import { TJSFolderRolltable
 export class TJSFolderRolltable extends TJSDialog
 {
    /**
-    * @param {globalThis.Folder} document - Folder to create roll table from...
+    * @param {fvtt.Folder} document - Folder to create roll table from...
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
@@ -69,7 +69,7 @@ export class TJSFolderRolltable extends TJSDialog
    /**
     * Create a RollTable from the contents of the Folder.
     *
-    * @param {globalThis.Folder} document - Folder to create roll table from...
+    * @param {fvtt.Folder} document - Folder to create roll table from...
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.

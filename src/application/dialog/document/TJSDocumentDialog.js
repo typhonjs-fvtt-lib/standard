@@ -101,7 +101,7 @@ export class TJSDocumentDialog
     *
     * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|null>} The newly created Folder or null if the dialog is closed.
+    * @returns {Promise<fvtt.Folder | null>} The newly created Folder or null if the dialog is closed.
     */
    static async folderCreate(folderData, options = {}, dialogData = {})
    {
@@ -111,14 +111,14 @@ export class TJSDocumentDialog
    /**
     * Deletes a folder and does delete subfolders / documents.
     *
-    * @param {globalThis.Folder} document - Folder to delete.
+    * @param {fvtt.Folder} document - Folder to delete.
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
     * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|boolean|null>} The deleted Folder or a falsy value; either 'false' for
+    * @returns {Promise<fvtt.Folder | boolean | null>} The deleted Folder or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
     */
    static async folderDelete(document, options = {}, dialogData = {})
@@ -129,7 +129,7 @@ export class TJSDocumentDialog
    /**
     * Shows a modal / non-draggable dialog to export a folder to an eligible compendium pack.
     *
-    * @param {globalThis.Folder} document - Folder to export.
+    * @param {fvtt.Folder} document - Folder to export.
     *
     * @param {object} [opts] - Additional options.
     *
@@ -156,14 +156,14 @@ export class TJSDocumentDialog
    /**
     * Removes a folder, but does not delete / remove sub-folders / documents.
     *
-    * @param {globalThis.Folder} document - Folder to remove.
+    * @param {fvtt.Folder} document - Folder to remove.
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
     * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|boolean|null>} The removed Folder or a falsy value; either 'false' for
+    * @returns {Promise<fvtt.Folder | boolean | null>} The removed Folder or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
     */
    static async folderRemove(document, options = {}, dialogData = {})
@@ -174,7 +174,7 @@ export class TJSDocumentDialog
    /**
     * Create a RollTable from the contents of the Folder.
     *
-    * @param {globalThis.Folder} document - Folder to create roll table from...
+    * @param {fvtt.Folder} document - Folder to create roll table from...
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
@@ -192,14 +192,14 @@ export class TJSDocumentDialog
    /**
     * Updates an existing Folder by rendering a dialog window with basic details.
     *
-    * @param {globalThis.Folder} document - The folder to edit.
+    * @param {fvtt.Folder} document - The folder to edit.
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
     * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|null>} The modified Folder or null if the dialog is closed.
+    * @returns {Promise<fvtt.Folder | null>} The modified Folder or null if the dialog is closed.
     */
    static async folderUpdate(document, options = {}, dialogData = {})
    {

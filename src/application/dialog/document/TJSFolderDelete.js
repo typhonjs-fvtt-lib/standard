@@ -15,7 +15,7 @@ export class TJSFolderDelete extends TJSDialog
    /**
     * Deletes a folder and does delete sub-folders / documents.
     *
-    * @param {globalThis.Folder} document - Folder to delete.
+    * @param {fvtt.Folder} document - Folder to delete.
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
@@ -71,14 +71,14 @@ export class TJSFolderDelete extends TJSDialog
    /**
     * Deletes a folder and does delete sub-folders / documents.
     *
-    * @param {globalThis.Folder} document - Folder to delete.
+    * @param {fvtt.Folder} document - Folder to delete.
     *
     * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Options to pass to TJSDialog /
     *        Application.
     *
     * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|boolean|null>} The deleted Folder or a falsy value; either 'false' for
+    * @returns {Promise<fvtt.Folder | boolean | null>} The deleted Folder or a falsy value; either 'false' for
     *          cancelling or 'null' if the user closed the dialog via `<Esc>` or the close header button.
     */
    static async show(document, options = {}, dialogData = {})

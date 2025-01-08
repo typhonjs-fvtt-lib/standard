@@ -15,7 +15,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
    /**
     * Updates an existing Folder by rendering a dialog window with basic details.
     *
-    * @param {globalThis.Folder} document - The folder to edit.
+    * @param {fvtt.Folder} document - The folder to edit.
     *
     * @param {object} [options] - Options to pass to TJSDialog / Application.
     *
@@ -49,8 +49,8 @@ export class TJSFolderCreateUpdate extends TJSDialog
       }, options);
 
       /**
-       * @member {globalThis.Folder} document - Adds accessors to SvelteReactive to get / set the document associated
-       *                             with TJSFolderDialog.
+       * @member {fvtt.Folder} document - Adds accessors to SvelteReactive to get / set the document associated
+       *         with TJSFolderDialog.
        *
        * @memberof SvelteReactive#
        */
@@ -73,7 +73,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
     *
     * @param {object} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|null>} The newly created Folder or null if the dialog is closed.
+    * @returns {Promise<fvtt.Folder | null>} The newly created Folder or null if the dialog is closed.
     */
    static async showCreate(folderData, options = {}, dialogData = {})
    {
@@ -99,13 +99,13 @@ export class TJSFolderCreateUpdate extends TJSDialog
    /**
     * Updates an existing Folder by rendering a dialog window with basic details.
     *
-    * @param {globalThis.Folder} document - The folder to edit.
+    * @param {fvtt.Folder} document - The folder to edit.
     *
     * @param {object} [options] - Options to pass to TJSDialog / Application.
     *
     * @param {import('#runtime/svelte/application').TJSDialogOptions} [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<globalThis.Folder|null>} The modified Folder or null if the dialog is closed.
+    * @returns {Promise<fvtt.Folder | null>} The modified Folder or null if the dialog is closed.
     */
    static async showUpdate(document, options = {}, dialogData = {})
    {

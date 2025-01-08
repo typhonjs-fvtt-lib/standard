@@ -12,7 +12,7 @@ export class TJSFolderExport extends TJSDialog
    /**
     * Shows a modal / non-draggable dialog to export a folder to an eligible compendium pack.
     *
-    * @param {globalThis.Folder} document - Folder to export.
+    * @param {fvtt.Folder} document - Folder to export.
     *
     * @param {object} [opts] - Additional options.
     *
@@ -81,7 +81,7 @@ export class TJSFolderExport extends TJSDialog
    /**
     * Shows a modal / non-draggable dialog to export a folder to an eligible compendium pack.
     *
-    * @param {globalThis.Folder} document - Folder to export.
+    * @param {fvtt.Folder} document - Folder to export.
     *
     * @param {object} [opts] - Additional options.
     *

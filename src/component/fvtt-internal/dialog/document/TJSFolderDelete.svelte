@@ -30,7 +30,7 @@
    /**
     * Removes a folder with deleting documents.
     *
-    * @returns {Promise<globalThis.Folder>}
+    * @returns {Promise<fvtt.Folder>}
     */
    export async function deleteFolder()
    {
