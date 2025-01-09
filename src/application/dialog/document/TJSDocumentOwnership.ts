@@ -1,9 +1,12 @@
 import { TJSDialog }                from '#runtime/svelte/application';
+import { isDocument }               from '#runtime/types/fvtt-shim/guard';
 import { localize }                 from '#runtime/util/i18n';
 import { hasSetter }                from '#runtime/util/object';
 
 import { TJSDocumentOwnership
     as TJSDocumentOwnershipImpl }   from '#standard/component/fvtt-internal';
+
+import type { SvelteApp }           from '#runtime/svelte/application';
 
 /**
  * Provides a reactive dialog for permission control that by default is modal and not draggable. An additional set of
@@ -13,16 +16,14 @@ import { TJSDocumentOwnership
 export class TJSDocumentOwnership extends TJSDialog
 {
    /**
-    * @param {foundry.abstract.Document} document - Document instance to modify.
+    * @param document - Document to delete.
     *
-    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Rest of options to pass to
-    *        TJSDialog / Application.
+    * @param [options] - TJSDialog / SvelteApp options.
     *
-    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
-    *
-    * @private
+    * @param [dialogData] - Optional data to modify dialog.
     */
-   constructor(document, options = {}, dialogData = {})
+   private constructor(document: fvtt.Document, options: SvelteApp.OptionsCore = {},
+    dialogData: TJSDialog.OptionsData = {})
    {
       super({
          modal: typeof dialogData?.modal === 'boolean' ? dialogData.modal : true,
@@ -49,15 +50,15 @@ export class TJSDocumentOwnership extends TJSDialog
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
-       *                             TJSDocumentOwnership.
+       *                             Document.
        *
        * @memberof SvelteReactive#
        */
       Object.defineProperty(this.reactive, 'document', {
-         get: () => this.svelte?.dialogComponent?.document,
-         set: (document) =>
+         get: (): fvtt.Document => this.svelte?.appShell?.dialogComponent?.document,
+         set: (document: fvtt.Document): void =>
          {
-            const dialogComponent = this.svelte.dialogComponent;
+            const dialogComponent = this.svelte?.appShell?.dialogComponent;
             if (hasSetter(dialogComponent, 'document')) { dialogComponent.document = document; }
          }
       });
@@ -66,19 +67,18 @@ export class TJSDocumentOwnership extends TJSDialog
    /**
     * Change permissions of a document by rendering a dialog to alter the default and all user / player permissions.
     *
-    * @param {foundry.abstract.Document} document - Document instance to modify.
+    * @param document - Document instance to modify.
     *
-    * @param {import('#runtime/svelte/application').SvelteApp.OptionsCore} [options] - Rest of options to pass to
-    *        TJSDialog / Application.
+    * @param [options] - Options to pass to TJSDialog / Application.
     *
-    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
+    * @param [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<foundry.abstract.Document|null>} The modified document or 'null' if the user closed the dialog
-    *          via `<Esc>` or the close header button.
+    * @returns The modified document or 'null' if the user closed the dialog via `<Esc>` or the close header button.
     */
-   static async show(document, options = {}, dialogData = {})
+   static async show<D extends fvtt.Document>(document: D, options: SvelteApp.OptionsCore = {},
+    dialogData: TJSDialog.OptionsData = {}): Promise<D | null>
    {
-      if (!(document instanceof globalThis.foundry.abstract.Document))
+      if (!isDocument(document))
       {
          console.warn(`TJSDocumentOwnership - show - warning: 'document' is not a Document.`);
          return null;

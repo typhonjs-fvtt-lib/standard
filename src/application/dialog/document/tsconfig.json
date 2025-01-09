@@ -1,0 +1,18 @@
+{
+  "compilerOptions" : {
+    "baseUrl": ".",
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution" : "Bundler",
+    "target": "ES2022",
+    "strict": true,
+    "strictNullChecks": true,
+
+    "types": [
+      "@typhonjs-fvtt/runtime/types/fvtt-shim/pf2e"
+    ]
+  },
+  "include": [
+    "./**/*"
+  ]
+}

@@ -1,9 +1,12 @@
 import { TJSDialog }                from '#runtime/svelte/application';
+import { isFolder }                 from '#runtime/types/fvtt-shim/guard';
 import { localize }                 from '#runtime/util/i18n';
 import { hasSetter }                from '#runtime/util/object';
 
 import { TJSFolderCreateUpdate
     as TJSFolderCreateUpdateImpl }  from '#standard/component/fvtt-internal';
+
+import type { SvelteApp }           from '#runtime/svelte/application';
 
 /**
  * Provides a reactive dialog for modifying folders that by default is modal and not draggable. An additional set of
@@ -13,17 +16,14 @@ import { TJSFolderCreateUpdate
 export class TJSFolderCreateUpdate extends TJSDialog
 {
    /**
-    * Updates an existing Folder by rendering a dialog window with basic details.
+    * @param document - Document to delete.
     *
-    * @param {fvtt.Folder} document - The folder to edit.
-    *
-    * @param {object} [options] - Options to pass to TJSDialog / Application.
+    * @param [options] - TJSDialog / SvelteApp options.
     *
     * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
-    *
-    * @private
     */
-   constructor(document, options = {}, dialogData = {})
+   private constructor(document: fvtt.Document, options: SvelteApp.OptionsCore = {},
+    dialogData: TJSDialog.OptionsData = {})
    {
       super({
          modal: typeof dialogData?.modal === 'boolean' ? dialogData.modal : true,
@@ -49,34 +49,36 @@ export class TJSFolderCreateUpdate extends TJSDialog
       }, options);
 
       /**
-       * @member {fvtt.Folder} document - Adds accessors to SvelteReactive to get / set the document associated
-       *         with TJSFolderDialog.
+       * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
+       *                             Document.
        *
        * @memberof SvelteReactive#
        */
       Object.defineProperty(this.reactive, 'document', {
-         get: () => this.svelte?.dialogComponent?.document,
-         set: (document) =>  // eslint-disable-line no-shadow
+         get: (): fvtt.Document => this.svelte?.appShell?.dialogComponent?.document,
+         set: (document: fvtt.Document): void =>
          {
-            const dialogComponent = this.svelte.dialogComponent;
+            const dialogComponent = this.svelte?.appShell?.dialogComponent;
             if (hasSetter(dialogComponent, 'document')) { dialogComponent.document = document; }
          }
       });
    }
 
    /**
-    * Create a new Folder by rendering a dialog window to provide basic creation details.
+    * Create a new Folder by rendering a dialog to provide basic creation details.
     *
     * @param {object} folderData - Initial data with which to populate the creation form.
     *
-    * @param {object} [options] - Options to pass to TJSDialog / Application.
+    * @param [options] - Options to pass to TJSDialog / SvelteApp.
     *
-    * @param {object} [dialogData] - Optional data to modify dialog.
+    * @param [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<fvtt.Folder | null>} The newly created Folder or null if the dialog is closed.
+    * @returns The newly created Folder or null if the dialog is closed.
     */
-   static async showCreate(folderData, options = {}, dialogData = {})
+   static async showCreate(folderData: { type: string }, options: SvelteApp.OptionsCore = {},
+    dialogData: TJSDialog.OptionsData = {}): Promise<fvtt.Folder | null>
    {
+      // @ts-ignore
       if (!(folderData?.type in globalThis.CONFIG))
       {
          console.warn(
@@ -84,13 +86,16 @@ export class TJSFolderCreateUpdate extends TJSDialog
          return null;
       }
 
-      const label = localize(Folder.metadata.label);
+      // @ts-ignore
+      const label: string = localize(Folder.metadata.label);
 
+      // @ts-ignore
       const data = globalThis.foundry.utils.mergeObject({
          name: localize('DOCUMENT.New', { type: label }),
          sorting: 'a',
       }, folderData);
 
+      // @ts-ignore
       const document = new Folder(data);
 
       return new TJSFolderCreateUpdate(document, options, dialogData).wait();
@@ -99,17 +104,18 @@ export class TJSFolderCreateUpdate extends TJSDialog
    /**
     * Updates an existing Folder by rendering a dialog window with basic details.
     *
-    * @param {fvtt.Folder} document - The folder to edit.
+    * @param document - The folder to edit.
     *
-    * @param {object} [options] - Options to pass to TJSDialog / Application.
+    * @param [options] - Options to pass to TJSDialog / SvelteApp.
     *
-    * @param {TJSDialog.OptionsData} [dialogData] - Optional data to modify dialog.
+    * @param [dialogData] - Optional data to modify dialog.
     *
-    * @returns {Promise<fvtt.Folder | null>} The modified Folder or null if the dialog is closed.
+    * @returns The modified Folder or null if the dialog is closed.
     */
-   static async showUpdate(document, options = {}, dialogData = {})
+   static async showUpdate(document: fvtt.Folder, options: SvelteApp.OptionsCore = {},
+    dialogData: TJSDialog.OptionsData = {}): Promise<fvtt.Folder | null>
    {
-      if (!(document instanceof Folder))
+      if (!isFolder(document))
       {
          console.warn(`TJSFolderCreateUpdate - show - warning: 'document' is not a Folder.`);
          return null;
