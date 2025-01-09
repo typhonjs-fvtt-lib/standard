@@ -15,11 +15,11 @@ export class FontManager
    /**
     * Collect all the font definitions and combine them.
     *
-    * @returns { {[key: string]: globalThis.FontFamilyDefinition}[] } Core font definitions.
+    * @returns { {[key: string]: fvtt.FontFamilyDefinition}[] } Core font definitions.
     */
    static getCoreDefinitions()
    {
-      /** @type { {[key: string]: globalThis.FontFamilyDefinition}[] } */
+      /** @type { {[key: string]: fvtt.FontFamilyDefinition}[] } */
       const fonts = [];
 
       if (FVTTVersion.isAtLeast(11))
@@ -49,7 +49,7 @@ export class FontManager
     *
     * @param {string}               family - The font family name (case-sensitive).
     *
-    * @param {globalThis.FontFamilyDefinition} definition - The font family definition.
+    * @param {fvtt.FontFamilyDefinition} definition - The font family definition.
     *
     * @param {Document}             document - Target Document to load font into.
     *
@@ -102,8 +102,8 @@ export class FontManager
     * @param {boolean} [opts.editor=true] - When true verifies the `editor` field of {@link FontFamilyDefinition}.
     *
     * @param {(
-    *    {[key: string]: globalThis.FontFamilyDefinition}[] |
-    *    {[key: string]: globalThis.FontFamilyDefinition}
+    *    {[key: string]: fvtt.FontFamilyDefinition}[] |
+    *    {[key: string]: fvtt.FontFamilyDefinition}
     * )} [opts.fonts] - A custom set of font family definitions to load. If not defined the core font family definitions
     *    are loaded.
     *
@@ -147,10 +147,10 @@ export class FontManager
    /**
     * Removes duplicate font definitions.
     *
-    * @param { {[key: string]: globalThis.FontFamilyDefinition}[] }  fonts - An array of FontFamilyDefinition objects
+    * @param { {[key: string]: fvtt.FontFamilyDefinition}[] }  fonts - An array of FontFamilyDefinition objects
     *        to process.
     *
-    * @returns { {[key: string]: globalThis.FontFamilyDefinition}[] } Filtered font definitions.
+    * @returns { {[key: string]: fvtt.FontFamilyDefinition}[] } Filtered font definitions.
     */
    static removeDuplicateDefinitions(fonts)
    {

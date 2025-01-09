@@ -12,7 +12,7 @@ import {
    isObject }                 from '#runtime/util/object';
 
 /**
- * Provides managed control of the Foundry {@link globalThis.FilePicker} app simplifying asynchronous use cases. While the stock
+ * Provides managed control of the Foundry {@link fvtt.FilePicker} app simplifying asynchronous use cases. While the stock
  * FilePicker provides a callback it is not easy to make it asynchronous given that a user can close the app.
  * FVTTFilePickerControl enables a fully asynchronous workflow controlling one FilePicker instance at a time. When
  * {@link FVTTFilePickerControl.browse} is invoked any previous FilePicker instance is closed and Promise resolved.
@@ -499,7 +499,7 @@ class TJSFilePicker extends FilePicker
 }
 
 /**
- * @typedef {object} FVTTFilePickerBrowseOptions - Foundry {@link globalThis.FilePicker} w/ expanded
+ * @typedef {object} FVTTFilePickerBrowseOptions - Foundry {@link fvtt.FilePicker} w/ expanded
  *          FVTTFilePickerControl options.
  *
  * @property {string} [type='any']         A type of file to target, in 'audio', 'image', 'video', 'imagevideo',
@@ -513,7 +513,7 @@ class TJSFilePicker extends FilePicker
  *
  * @property {boolean} [allowUpload=true]  A flag which permits explicitly disallowing upload, true by default.
  *
- * @property {Map<string, globalThis.FavoriteFolder>} [favorites] A map of favorite folder configuration objects.
+ * @property {Map<string, fvtt.FavoriteFolder>} [favorites] A map of favorite folder configuration objects.
  *
  * @property {string} [displayMode]        The picker display mode in FilePicker.DISPLAY_MODES.
  *

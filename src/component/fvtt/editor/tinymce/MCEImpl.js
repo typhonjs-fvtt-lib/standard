@@ -114,9 +114,9 @@ export class MCEImpl
     * Provides a mechanism to load core Foundry fonts and any additional font family definitions. The returned data
     * includes the parsed font family definitions and the configuration data TinyMCE needs for loading the font formats.
     *
-    * @param { {[key: string]: globalThis.FontFamilyDefinition} }  [extraFonts] - Extra user defined fonts to load.
+    * @param { {[key: string]: fvtt.FontFamilyDefinition} }  [extraFonts] - Extra user defined fonts to load.
     *
-    * @returns { {fonts: {[key: string]: globalThis.FontFamilyDefinition}[], fontFormats: string} } Font formats for
+    * @returns { {fonts: {[key: string]: fvtt.FontFamilyDefinition}[], fontFormats: string} } Font formats for
     *          MCE & all fonts to load.
     */
    static getFontData(extraFonts = {})
@@ -126,14 +126,14 @@ export class MCEImpl
       // TODO Sanitize / confirm extraFonts data / add `editor` field if missing.
 
       /**
-       * @type { {[key: string]: globalThis.FontFamilyDefinition}[] }
+       * @type { {[key: string]: fvtt.FontFamilyDefinition}[] }
        */
       const fonts = [
          ...FontManager.getCoreDefinitions(),
          extraFonts
       ];
 
-      // Process font font family definitions to create the font format string for TinyMCE. Remove duplicates.
+      // Process font family definitions to create the font format string for TinyMCE. Remove duplicates.
 
       /** @type {Set<string>} */
       const fontFormatSet = new Set();
