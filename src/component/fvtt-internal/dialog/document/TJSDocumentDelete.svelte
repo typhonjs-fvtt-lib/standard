@@ -3,13 +3,9 @@
 
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
    import { localize }     from '#runtime/util/i18n';
-   import { isObject }     from '#runtime/util/object';
 
    /** @type {foundry.abstract.Document} */
    export let document = void 0;
-
-   /** @type {object} DocumentModificationContext */
-   export let context = {};
 
    const application = getContext('#external')?.application;
 
@@ -20,13 +16,7 @@
 
    const doc = new TJSDocument(document, { delete: application.close.bind(application) });
 
-   let name = document?.id ? document.name : '';
    let type = localize(document.constructor.metadata.label);
-
-   $: if (!isObject(context))
-   {
-      throw new TypeError(`TJSDocumentDelete error: 'context' is not an object.`);
-   }
 
    $: if ($doc !== document)
    {
@@ -37,10 +27,10 @@
 
       doc.set(document);
 
-      name = document?.id ? document.name : '';
+      const name = document?.id ? document.name : '';
       type = localize(document.constructor.metadata.label);
 
-      application.data.set('title', `${localize('DOCUMENT.Delete', { type })}: ${document.name}`);
+      application.data.set('title', `${localize('DOCUMENT.Delete', { type })}: ${name}`);
    }
 
    /**
@@ -53,7 +43,7 @@
       // Remove the delete Document function callback as we are intentionally deleting below.
       doc.setOptions({ delete: void 0 });
 
-      return document.delete(context);
+      return document.delete();
    }
 </script>
 
