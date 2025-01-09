@@ -3,7 +3,6 @@
     "lib": ["ES2022", "DOM"],
     "module": "ES2022",
     "moduleResolution" : "bundler",
-    "types": ["@typhonjs-fvtt/runtime/types/fvtt-shim"],
 
     "allowJs": true // For VSCode
   },

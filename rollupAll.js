@@ -1,4 +1,5 @@
 import resolve             from '@rollup/plugin-node-resolve';
+import typescript          from '@rollup/plugin-typescript';
 import { generateDTS }     from '@typhonjs-build-test/esm-d-ts';
 import { importsExternal } from '@typhonjs-build-test/rollup-plugin-pkg-imports';
 import { getFileList }     from '@typhonjs-utils/file-util';
@@ -66,10 +67,11 @@ const rollupConfigs = [
    },
    {
       input: {
-         input: 'src/application/dialog/document/index.js',
+         input: 'src/application/dialog/document/index.ts',
          plugins: [
             importsExternal(),
             resolve(),
+            typescript({ tsconfig: './src/application/dialog/document/tsconfig.json' }),
             generateDTS.plugin(dtsPluginOptions)
          ]
       },
