@@ -6,8 +6,7 @@ import {
 
 import { localize }              from '#runtime/util/i18n';
 
-import { TJSDocumentCreate
-    as TJSDocumentCreateImpl }   from '#standard/component/fvtt-internal';
+import { TJSDocumentCreateComp } from '#standard/component/fvtt-internal';
 
 import type { SvelteApp }        from '#runtime/svelte/application';
 
@@ -48,7 +47,7 @@ export class TJSDocumentCreate extends TJSDialog
          minimizable: false,
          ...dialogData,
          content: {
-            class: TJSDocumentCreateImpl,
+            class: TJSDocumentCreateComp,
             props: {
                documentCls,
                data,

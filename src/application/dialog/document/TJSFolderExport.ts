@@ -1,11 +1,10 @@
-import { TJSDialog }          from '#runtime/svelte/application';
-import { isFolder }           from '#runtime/types/fvtt-shim/guard';
-import { localize }           from '#runtime/util/i18n';
+import { TJSDialog }             from '#runtime/svelte/application';
+import { isFolder }              from '#runtime/types/fvtt-shim/guard';
+import { localize }              from '#runtime/util/i18n';
 
-import { TJSFolderExport
-    as TJSFolderExportImpl }  from '#standard/component/fvtt-internal';
+import { TJSFolderExportComp }   from '#standard/component/fvtt-internal';
 
-import type { SvelteApp }     from '#runtime/svelte/application';
+import type { SvelteApp }        from '#runtime/svelte/application';
 
 /**
  * Provides a reactive dialog for exporting folders to a compendium that by default is modal and not draggable.
@@ -54,7 +53,7 @@ export class TJSFolderExport extends TJSDialog
          minimizable: false,
          ...dialogData,
          content: {
-            class: TJSFolderExportImpl,
+            class: TJSFolderExportComp,
             props: {
                document,
                packName: pack,

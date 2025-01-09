@@ -1,12 +1,11 @@
-import { TJSDialog }          from '#runtime/svelte/application';
-import { isFolder }           from '#runtime/types/fvtt-shim/guard';
-import { localize }           from '#runtime/util/i18n';
-import { hasSetter }          from '#runtime/util/object';
+import { TJSDialog }             from '#runtime/svelte/application';
+import { isFolder }              from '#runtime/types/fvtt-shim/guard';
+import { localize }              from '#runtime/util/i18n';
+import { hasSetter }             from '#runtime/util/object';
 
-import { TJSFolderDelete
-    as TJSFolderDeleteImpl }  from '#standard/component/fvtt-internal';
+import { TJSFolderDeleteComp }   from '#standard/component/fvtt-internal';
 
-import type { SvelteApp }     from '#runtime/svelte/application';
+import type { SvelteApp }        from '#runtime/svelte/application';
 
 /**
  * Provides a reactive dialog for deleting a folder that by default is modal and not draggable. An additional set of
@@ -34,7 +33,7 @@ export class TJSFolderDelete extends TJSDialog
          minimizable: false,
          ...dialogData,
          content: {
-            class: TJSFolderDeleteImpl,
+            class: TJSFolderDeleteComp,
             props: { document }
          },
          title: `${localize('FOLDER.Delete')}: ${document.name}`,

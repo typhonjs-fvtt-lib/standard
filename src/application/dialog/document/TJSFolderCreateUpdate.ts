@@ -1,12 +1,11 @@
-import { TJSDialog }                from '#runtime/svelte/application';
-import { isFolder }                 from '#runtime/types/fvtt-shim/guard';
-import { localize }                 from '#runtime/util/i18n';
-import { hasSetter }                from '#runtime/util/object';
+import { TJSDialog }                   from '#runtime/svelte/application';
+import { isFolder }                    from '#runtime/types/fvtt-shim/guard';
+import { localize }                    from '#runtime/util/i18n';
+import { hasSetter }                   from '#runtime/util/object';
 
-import { TJSFolderCreateUpdate
-    as TJSFolderCreateUpdateImpl }  from '#standard/component/fvtt-internal';
+import { TJSFolderCreateUpdateComp }   from '#standard/component/fvtt-internal';
 
-import type { SvelteApp }           from '#runtime/svelte/application';
+import type { SvelteApp }              from '#runtime/svelte/application';
 
 /**
  * Provides a reactive dialog for modifying folders that by default is modal and not draggable. An additional set of
@@ -33,7 +32,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
          minimizable: false,
          ...dialogData,
          content: {
-            class: TJSFolderCreateUpdateImpl,
+            class: TJSFolderCreateUpdateComp,
             props: { document }
          },
          title: document.id ? `${localize('FOLDER.Update')}: ${document.name}` : localize('FOLDER.Create'),

@@ -3,8 +3,7 @@ import { isDocument }               from '#runtime/types/fvtt-shim/guard';
 import { localize }                 from '#runtime/util/i18n';
 import { hasSetter }                from '#runtime/util/object';
 
-import { TJSDocumentOwnership
-    as TJSDocumentOwnershipImpl }   from '#standard/component/fvtt-internal';
+import { TJSDocumentOwnershipComp } from '#standard/component/fvtt-internal';
 
 import type { SvelteApp }           from '#runtime/svelte/application';
 
@@ -33,7 +32,7 @@ export class TJSDocumentOwnership extends TJSDialog
          minimizable: false,
          ...dialogData,
          content: {
-            class: TJSDocumentOwnershipImpl,
+            class: TJSDocumentOwnershipComp,
             props: { document }
          },
          title: `${localize('OWNERSHIP.Title')}: ${document.name}`,

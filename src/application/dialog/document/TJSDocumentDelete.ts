@@ -7,8 +7,7 @@ import {
 import { localize }              from '#runtime/util/i18n';
 import { hasSetter }             from '#runtime/util/object';
 
-import { TJSDocumentDelete
-    as TJSDocumentDeleteImpl }   from '#standard/component/fvtt-internal';
+import { TJSDocumentDeleteComp } from '#standard/component/fvtt-internal';
 
 import type { SvelteApp }        from '#runtime/svelte/application';
 
@@ -36,7 +35,7 @@ export class TJSDocumentDelete extends TJSDialog
          minimizable: false,
          ...dialogData,
          content: {
-            class: TJSDocumentDeleteImpl,
+            class: TJSDocumentDeleteComp,
             props: { document }
          },
          title: `${localize('DOCUMENT.Delete', { type: localize(document.constructor.metadata.label) })}: ${

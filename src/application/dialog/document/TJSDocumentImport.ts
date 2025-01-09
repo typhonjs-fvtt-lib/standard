@@ -7,8 +7,7 @@ import {
 import { localize }              from '#runtime/util/i18n';
 import { hasSetter }             from '#runtime/util/object';
 
-import { TJSDocumentImport
-    as TJSDocumentImportImpl }   from '#standard/component/fvtt-internal';
+import { TJSDocumentImportComp } from '#standard/component/fvtt-internal';
 
 import type { SvelteApp }        from '#runtime/svelte/application';
 
@@ -40,7 +39,7 @@ export class TJSDocumentImport extends TJSDialog
          ...dialogData,
          title: `${localize('DOCUMENT.ImportData')}: ${document.name}`,
          content: {
-            class: TJSDocumentImportImpl,
+            class: TJSDocumentImportComp,
             props: { document }
          },
          buttons: {
