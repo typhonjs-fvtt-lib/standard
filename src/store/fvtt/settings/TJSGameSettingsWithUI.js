@@ -51,7 +51,7 @@ class UIControl
    /** @type {import('./types').TJSSettingsCustomSection[]} */
    #sections = [];
 
-   /** @type {import('./').TJSGameSettings} */
+   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
    #settings;
 
    /** @type {boolean} */
@@ -264,42 +264,55 @@ class UIControl
 
       for (const setting of this.#settings.data())
       {
-         if (!setting.config || (!canConfigure && (setting.scope !== 'client'))) { continue; }
+         if (!isObject(setting.options) || !setting.options.config ||
+          (!canConfigure && (setting.options.scope !== 'client')))
+         {
+            continue;
+         }
 
          let options;
 
-         if (isObject(setting.choices))
+         if (isObject(setting.options.choices))
          {
-            options = Object.entries(setting.choices).map((entry) => ({ value: entry[0], label: localize(entry[1]) }));
+            options = Object.entries(setting.options.choices).map((entry) =>
+             ({ value: entry[0], label: localize(entry[1]) }));
          }
 
          let range;
-         if (isObject(setting.range))
+         if (isObject(setting.options.range))
          {
             range = {};
 
             // TODO Better error messages.
             // Verify range data.
-            if (typeof setting.range.min !== 'number') { throw new TypeError(`Setting 'range.min' is not a number.`); }
-            if (typeof setting.range.max !== 'number') { throw new TypeError(`Setting 'range.max' is not a number.`); }
-            if (setting.range.step !== void 0 && typeof setting.range.step !== 'number')
+            if (typeof setting.options.range.min !== 'number')
             {
-               throw new TypeError(`Setting 'range.step' is not a number.`);
+               throw new TypeError(`Setting 'options.range.min' is not a number.`);
             }
 
-            range.min = setting.range.min;
-            range.max = setting.range.max;
-            range.step = setting.range.step ? setting.range.step : 1;
+            if (typeof setting.options.range.max !== 'number')
+            {
+               throw new TypeError(`Setting 'options.range.max' is not a number.`);
+            }
+
+            if (setting.options.range.step !== void 0 && typeof setting.options.range.step !== 'number')
+            {
+               throw new TypeError(`Setting 'options.range.step' is not a number.`);
+            }
+
+            range.min = setting.options.range.min;
+            range.max = setting.options.range.max;
+            range.step = setting.options.range.step ? setting.options.range.step : 1;
          }
 
          // Default to `String` if no type is provided.
-         const type = setting.type instanceof Function ? setting.type.name : 'String';
+         const type = setting.options.type instanceof Function ? setting.options.type.name : 'String';
 
          // Only configure file picker if setting type is a string.
          let filePicker;
          if (type === 'String')
          {
-            filePicker = setting.filePicker === true ? 'any' : setting.filePicker;
+            filePicker = setting.options.filePicker === true ? 'any' : setting.options.filePicker;
          }
 
          let buttonData;
@@ -320,7 +333,7 @@ class UIControl
          /** @type {string} */
          let componentType = 'text';
 
-         if (setting.type === Boolean)
+         if (setting.options.type === Boolean)
          {
             componentType = 'checkbox';
          }
@@ -335,9 +348,9 @@ class UIControl
                options
             };
          }
-         else if (setting.type === Number)
+         else if (setting.options.type === Number)
          {
-            componentType = isObject(setting.range) ? 'range' : 'number';
+            componentType = isObject(setting.options.range) ? 'range' : 'number';
          }
 
          let inputData;
@@ -355,16 +368,17 @@ class UIControl
             namespace: setting.namespace,
             folder: setting.folder,
             key: setting.key,
-            name: localize(setting.name),
-            hint: localize(setting.hint),
+            name: localize(setting.options?.name ?? ''),
+            hint: localize(setting.options?.hint ?? ''),
             type,
             componentType,
             filePicker,
             range,
             store,
             initialValue: globalThis.game.settings.get(setting.namespace, setting.key),
-            scope: setting.scope,
-            requiresReload: typeof setting.requiresReload === 'boolean' ? setting.requiresReload : false,
+            scope: setting.options.scope,
+            requiresReload: typeof setting.options.requiresReload === 'boolean' ? setting.options.requiresReload :
+             false,
             buttonData,
             inputData,
             selectData
