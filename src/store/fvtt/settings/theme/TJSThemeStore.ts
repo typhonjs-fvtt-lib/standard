@@ -1,69 +1,71 @@
-import { writable }        from '#svelte/store';
+import { writable }        from 'svelte/store';
 
 import { getFormat }       from '#runtime/data/color/colord';
 import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 import { propertyStore }   from '#runtime/svelte/store/writable-derived';
 import { TJSStyleManager } from '#runtime/util/dom/style';
+import { validate }        from '#runtime/util/semver';
 
 import {
    isIterable,
    isObject }              from '#runtime/util/object';
 
-import {
-   DataValidator,
-   SemVer }                from './DataValidator.js';
+import { DataValidator }   from './DataValidator';
+
+import type {
+   Readable,
+   Subscriber,
+   Unsubscriber,
+   Writable }              from 'svelte/store';
 
 /**
  * Must be constructed from a TJSGameSettings instance `init` / initialize method called from the `ready` Foundry VTT
  * hook.
  */
-export class TJSThemeStore
+class TJSThemeStore
 {
-   /** @type {object[]} */
-   #components;
-
-   /** @type {{}} */
-   #data = {};
-
-   #defaultThemeData;
-
-   #initialThemeData;
-
-   #settingsStoreHandler;
+   /**
+    */
+   #components: TJSThemeStore.Component[] = [];
 
    /**
-    * @type { {[key: string]: import('svelte/store').Writable<string|null>} }
     */
-   #stores = {};
+   #data: TJSThemeStore.Data = {};
+
+   #defaultThemeData: TJSThemeStore.Data = {};
+
+   #initialThemeData: TJSThemeStore.Data = {};
+
+   #storeComponents: Readable<TJSThemeStore.Component[]> = { subscribe: writable(this.#components).subscribe };
 
    /**
-    * @type {TJSStyleManager}
+    * All property stores.
     */
-   #styleManager;
+   #storeProps: { [key: string]: Writable<string | null> } = {};
+
+   /**
+    */
+   #styleManager: TJSStyleManager;
 
    /**
     * Stores the subscribers.
-    *
-    * @type {import('svelte/store').Subscriber<{ [key: string]: object }>[]}
     */
-   #subscriptions = [];
+   #subscribers: Subscriber<TJSThemeStore.Data>[] = [];
 
    /**
     * Stores all CSS variable keys.
-    *
-    * @type {string[]}
     */
-   #vars;
+   #vars: string[] = [];
 
    /**
-    * @type {import('./DataValidator').SemVerData}
+    * Current theme version.
     */
-   #version;
+   #version: string;
 
    /**
-    * @param {TJSThemeStoreOptions} options - Options
+    * @param options - Options
     */
-   constructor(options)
+   constructor(options: TJSThemeStore.Options)
    {
       if (!isObject(options)) { throw new TypeError(`'options' is not an object.`); }
 
@@ -88,12 +90,12 @@ export class TJSThemeStore
          throw new TypeError(`'config.version' attribute is not a string`);
       }
 
-      this.#version = SemVer.parseSemVer(options.config.version);
-
-      if (!isObject(this.#version))
+      if (!validate(options.config.version))
       {
          throw new Error(`'config.version' attribute is not a valid semantic version string.`);
       }
+
+      this.#version = options.config.version;
 
       if (!isIterable(options.config.components))
       {
@@ -106,27 +108,29 @@ export class TJSThemeStore
    }
 
    /**
-    * @returns { {[key: string]: import('svelte/store').Writable<string|null>} } All stores.
+    * @returns A readable store of all components.
     */
-   get stores()
+   get components(): Readable<TJSThemeStore.Component[]> { return this.#storeComponents; }
+
+   /**
+    * @returns All property stores.
+    */
+   get properties(): { [key: string]: Writable<string | null> }
    {
-      return this.#stores;
+      return this.#storeProps;
    }
 
    /**
     * Parse `options.config` and initialize game setting for theme data.
     *
-    * @param {TJSThemeStoreOptions}   options -
+    * @param options -
     */
-   #initialize(options)
+   #initialize(options: TJSThemeStore.Options): void
    {
-      this.#components = [];
-      this.#vars = [];
-
       this.#defaultThemeData = {};
       this.#initialThemeData = Object.assign({}, this.#defaultThemeData);
 
-      let cntr = 0;
+      let cntr: number = 0;
 
       // Process component / vars data.
       for (let entry of options.config.components)
@@ -137,12 +141,13 @@ export class TJSThemeStore
          // Add var key if defined.
          if (typeof entry.var === 'string')
          {
-            const key = entry.var;
+            const key: string = entry.var;
 
             this.#vars.push(key);
-            this.#stores[key] = propertyStore(this, key);
-            this.#components.push(Object.assign({}, entry, { store: this.#stores[key] }));
-            this.#defaultThemeData[key] = entry.default;
+            this.#storeProps[key] = propertyStore(this, key);
+            this.#components.push(Object.assign({}, entry, { store: this.#storeProps[key] }));
+
+            if (typeof entry.default === 'string') { this.#defaultThemeData[key] = entry.default; }
          }
          else
          {
@@ -152,13 +157,10 @@ export class TJSThemeStore
          cntr++;
       }
 
-      // Create a store for TJSThemeEditor of all component data / definitions.
-      this.#stores.components = writable(this.#components);
-
       // Set initial data to default here just in case the game setting entry is invalid upon registration / IE null.
       this.#initialThemeData = Object.assign({}, this.#defaultThemeData);
 
-      this.#settingsStoreHandler = options.gameSettings.register({
+      options.gameSettings.register({
          namespace: options.namespace,
          key: options.key,
          store: this,
@@ -188,11 +190,11 @@ export class TJSThemeStore
    /**
     * Sets the theme store with new data.
     *
-    * @param {object}   themeData -
+    * @param themeData -
     *
-    * @returns {TJSThemeStore} This theme store instance.
+    * @returns This theme store instance.
     */
-   set(themeData)
+   set(themeData: TJSThemeStore.Data): this
    {
       if (!this.#validateThemeData(themeData))
       {
@@ -203,7 +205,7 @@ export class TJSThemeStore
       {
          if (key in themeData)
          {
-            const keyData = themeData[key];
+            const keyData: string = themeData[key];
 
             this.#data[key] = keyData;
             this.#styleManager.setProperty(key, keyData);
@@ -218,13 +220,13 @@ export class TJSThemeStore
    /**
     * Validates the given theme data object ensuring that all parameters are found and are correct HSVA values.
     *
-    * @param {object}   themeData -
+    * @param themeData -
     *
-    * @param {boolean}  warn - When true post warning message.
+    * @param [warn] - When true post warning message.
     *
-    * @returns {boolean} Validation status.
+    * @returns Validation status.
     */
-   #validateThemeData(themeData, warn = true)
+   #validateThemeData(themeData: TJSThemeStore.Data, warn: boolean = true): boolean
    {
       if (!isObject(themeData))
       {
@@ -238,7 +240,7 @@ export class TJSThemeStore
 
       for (const key of this.#vars)
       {
-         const data = themeData[key];
+         const data: string = themeData[key];
 
          if (getFormat(data) !== 'hsl')
          {
@@ -265,63 +267,108 @@ export class TJSThemeStore
       const data = Object.assign({}, this.#data);
 
       // Early out if there are no subscribers.
-      if (this.#subscriptions.length > 0)
+      if (this.#subscribers.length > 0)
       {
-         for (let cntr = 0; cntr < this.#subscriptions.length; cntr++) { this.#subscriptions[cntr](data); }
+         for (let cntr = 0; cntr < this.#subscribers.length; cntr++) { this.#subscribers[cntr](data); }
       }
    }
 
    /**
-    * @param {import('svelte/store').Subscriber<{ [key: string]: object }>} handler - Callback function that is invoked on
-    * update / changes. Receives copy of the theme data.
+    * @param handler - Callback function that is invoked on update / changes. Receives copy of the theme data.
     *
-    * @returns {import('svelte/store').Unsubscriber} Unsubscribe function.
+    * @returns Unsubscribe function.
     */
-   subscribe(handler)
+   subscribe(handler: Subscriber<TJSThemeStore.Data>): Unsubscriber
    {
-      this.#subscriptions.push(handler); // add handler to the array of subscribers
+      this.#subscribers.push(handler); // add handler to the array of subscribers
 
       handler(Object.assign({}, this.#data));                     // call handler with current value
 
       // Return unsubscribe function.
-      return () =>
+      return (): void =>
       {
-         const index = this.#subscriptions.findIndex((sub) => sub === handler);
-         if (index >= 0) { this.#subscriptions.splice(index, 1); }
+         const index = this.#subscribers.findIndex((sub) => sub === handler);
+         if (index >= 0) { this.#subscribers.splice(index, 1); }
       };
    }
 }
 
-/**
- * @typedef {object} TJSThemeStoreConfig
- *
- * @property {string} version A semantic version string.
- *
- * @property {Iterable<TJSThemeStoreComponent>} components An iterable list of theme store component data.
- */
+declare namespace TJSThemeStore {
+   export type Component = {
+      /**
+       * An optional default value for a CSS variable.
+       */
+      default?: string;
 
-/**
- * @typedef {object} TJSThemeStoreComponent
- *
- * @property {string} type Type of component / variable.
- *
- * @property {string} [default] An optional default value for a CSS variable.
- *
- * @property {string} [label] An optional label for any variable / setting related component.
- *
- * @property {string} [var] A CSS variable name.
- */
+      /**
+       * Associated color format. Set after initialization.
+       */
+      format?: string;
 
-/**
- * @typedef {object} TJSThemeStoreOptions
- *
- * @property {string} namespace The world setting namespace.
- *
- * @property {string} key The world setting key.
- *
- * @property {TJSGameSettings} gameSettings An associated TJSGameSettings instance.
- *
- * @property {TJSStyleManager} styleManager An associated TJSStyleManager instance to manipulate CSS variables.
- *
- * @property {TJSThemeStoreConfig} config Data defining CSS theme store components and variables.
- */
+      /**
+       * An optional label for any variable / setting related component.
+       */
+      label?: string;
+
+      /**
+       * The assigned store when applicable for a CSS variable. Set after initialization.
+       */
+      store?: Writable<string | null>
+
+      /**
+       * Type of component / variable.
+       */
+      type: string;
+
+      /**
+       * A CSS variable name.
+       */
+      var?: string;
+   };
+
+   /**
+    * Theme store data; CSS variable names to value.
+    */
+   export type Data = { [key: string]: string };
+
+   export type Config = {
+      /**
+       * An iterable list of theme store component data.
+       */
+      components: Iterable<Component>;
+
+      /**
+       * A semantic version string.
+       */
+      version: string;
+   };
+
+   export interface Options {
+      /**
+       * Data defining CSS theme store components and variables.
+       */
+      config: Config;
+
+      /**
+       * An associated TJSGameSettings instance.
+       */
+      gameSettings: TJSGameSettings;
+
+      /**
+       * The world game setting key.
+       */
+      key: string;
+
+      /**
+       * The world setting namespace.
+       */
+      namespace: string;
+
+      /**
+       * An associated TJSStyleManager instance to manipulate CSS variables.
+       */
+      styleManager: TJSStyleManager;
+   }
+}
+
+export { TJSThemeStore }

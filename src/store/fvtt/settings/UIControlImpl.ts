@@ -1,76 +1,59 @@
-import { writable }        from '#svelte/store';
+import { writable }              from 'svelte/store';
 
-import { TJSDialog }       from '#runtime/svelte/application';
-import { TJSSvelte }       from '#runtime/svelte/util';
-import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
-import { localize }        from '#runtime/util/i18n';
-import { isObject }        from '#runtime/util/object';
+import { TJSDialog }             from '#runtime/svelte/application';
+import { TJSSvelte }             from '#runtime/svelte/util';
+import { localize }              from '#runtime/util/i18n';
+import { isObject }              from '#runtime/util/object';
 
 import {
    ripple,
-   rippleFocus }           from '#standard/action/animate/composable';
+   rippleFocus }                 from '#standard/action/animate/composable';
 
-/**
- * Extends {@link TJSGameSettings} with UI control for working with `TJSSettingsEdit` and `TJSSettingsSwap`
- * components. Instead of extending `TJSGameSettings` simply extend `TJSGameSettingsWithUI` instead when creating
- * reactive game settings that utilize the above components.
- */
-export class TJSGameSettingsWithUI extends TJSGameSettings
-{
-   /** @type {import('./types').UIControl} */
-   #uiControl;
+import type {
+   Readable,
+   Writable }                    from 'svelte/store';
 
-   /**
-    * Creates the TJSGameSettingsWithUI instance.
-    *
-    * @param {string}   namespace - The namespace for all settings.
-    */
-   constructor(namespace)
-   {
-      super(namespace);
+import type { TJSGameSettings }  from '#runtime/svelte/store/fvtt/settings';
+import type { MinimalWritable }  from '#runtime/svelte/store/util';
 
-      this.#uiControl = new UIControl(this);
-   }
-
-   /**
-    * @returns {import('./types').UIControl} The associated UIControl.
-    */
-   get uiControl()
-   {
-      return this.#uiControl;
-   }
-}
+import type {
+   TJSGameSettingsWithUI }       from './TJSGameSettingsWithUI';
 
 /**
  * Controls preparation and processing of registered game settings w/ TJSGameSettingsUI. Game settings are parsed
  * for UI display by TJSSettingsEdit. The store `showSettings` is utilized in TJSSettingsSwap component to provide
  * an easy way to flip between settings component or any main slotted component.
  */
-class UIControl
+export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 {
-   /** @type {import('./types').TJSSettingsCustomSection[]} */
-   #sections = [];
-
-   /** @type {import('#runtime/svelte/store/fvtt/settings').TJSGameSettings} */
-   #settings;
-
-   /** @type {boolean} */
-   #showSettings = false;
-
-   /** @type {Function} */
-   #showSettingsSet;
-
-   /** @type {{showSettings: import('svelte/store').Readable<boolean>}} */
-   #stores;
+   /**
+    */
+   #sections: TJSGameSettingsWithUI.Options.CustomSection[] = [];
 
    /**
-    * @param {import('./').TJSGameSettings}   settings -
     */
-   constructor(settings)
+   #settings: TJSGameSettings;
+
+   /**
+    */
+   #showSettings: boolean = false;
+
+   /**
+    */
+   readonly #showSettingsSet: Function;
+
+   /**
+    */
+   readonly #stores: { showSettings: Readable<boolean> };
+
+   /**
+    * @param settings -
+    */
+   constructor(settings: TJSGameSettings)
    {
       this.#settings = settings;
 
-      const showSettings = writable(this.#showSettings);
+      const showSettings: Writable<boolean> = writable(this.#showSettings);
       this.#showSettingsSet = showSettings.set;
 
       this.#stores = {
@@ -81,17 +64,17 @@ class UIControl
    }
 
    /**
-    * @returns {boolean} Current `showSettings` state.
+    * @returns Current `showSettings` state.
     */
-   get showSettings()
+   get showSettings(): boolean
    {
       return this.#showSettings;
    }
 
    /**
-    * @returns {{ showSettings: import('svelte/store').Readable<boolean> }} Returns the managed stores.
+    * @returns Returns the managed stores.
     */
-   get stores()
+   get stores(): { showSettings: Readable<boolean> }
    {
       return this.#stores;
    }
@@ -99,10 +82,12 @@ class UIControl
    /**
     * Sets current `showSettings` state.
     *
-    * @param {boolean}  showSettings - New `showSettings` state.
+    * @param showSettings - New `showSettings` state.
     */
-   set showSettings(showSettings)
+   set showSettings(showSettings: boolean)
    {
+      if (typeof showSettings !== 'boolean') { throw new TypeError('showSettings must be a boolean'); }
+
       this.#showSettings = showSettings;
       this.#showSettingsSet(this.#showSettings);
    }
@@ -110,9 +95,9 @@ class UIControl
    /**
     * Adds a custom section / folder defined by the provided TJSSettingsCustomSection options object.
     *
-    * @param {import('./types').TJSSettingsCustomSection} options - The configuration object for the custom section.
+    * @param options - The configuration object for the custom section.
     */
-   addSection(options)
+   addSection(options: TJSGameSettingsWithUI.Options.CustomSection): void
    {
       if (!isObject(options)) { throw new TypeError(`'options' is not an object.`); }
 
@@ -128,7 +113,7 @@ class UIControl
 
       if (options.folder !== void 0)
       {
-         const folder = options.folder;
+         const folder: string | TJSGameSettingsWithUI.Options.CustomSectionFolder = options.folder;
 
          if (typeof folder !== 'string' && !isObject(folder))
          {
@@ -176,16 +161,17 @@ class UIControl
    }
 
    /**
-    * Creates the UISettingsData object by parsing stored settings in
+    * Creates the `TJSSettingsUI.Data` object by parsing stored settings in the associated {@link TJSGameSettings}
+    * instance.
     *
-    * @param {import('./types').TJSSettingsCreateOptions} [options] - Optional parameters.
+    * @param [options] - Create options
     *
-    * @returns {import('./types').TJSSettingsUIData} Parsed UI settings data.
+    * @returns Parsed UI settings data.
     */
-   create(options)
+   create(options?: TJSGameSettingsWithUI.Options.Create): TJSGameSettingsWithUI.Data
    {
-      const settings = this.#parseSettings(options);
-      const destroy = () => this.#destroy(settings);
+      const settings: TJSGameSettingsWithUI.Data = this.#parseSettings(options);
+      const destroy: Function = (): void => this.#destroy(settings);
 
       return {
          ...settings,
@@ -198,18 +184,18 @@ class UIControl
     * when `settings` is created and current value. If there is a difference then show a modal dialog asking the user
     * if they want to reload for those settings to take effect.
     *
-    * @param {import('./types').TJSSettingsUIData}   settings - The UI data object initiated w/ `create`.
+    * @param settings - The UI data object initiated w/ `create`.
     */
-   #destroy(settings)
+   #destroy(settings: TJSGameSettingsWithUI.Data): void
    {
-      let requiresClientReload = false;
-      let requiresWorldReload = false;
+      let requiresClientReload: boolean | undefined = false;
+      let requiresWorldReload: boolean | undefined = false;
 
       if (Array.isArray(settings.topLevel))
       {
          for (const setting of settings.topLevel)
          {
-            const current = globalThis.game.settings.get(setting.namespace, setting.key);
+            const current: unknown = globalThis.game.settings.get(setting.namespace, setting.key);
             if (current === setting.initialValue) { continue; }
 
             requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
@@ -242,13 +228,13 @@ class UIControl
    }
 
    /**
-    * @param {import('./types').TJSSettingsCreateOptions} [options] - Optional parameters.
+    * @param [options] - Optional parameters.
     *
-    * @returns {import('./types').TJSSettingsUIData} Parsed UI settings data.
+    * @returns Parsed UI settings data.
     */
-   #parseSettings({ efx = 'ripple', storage } = {})
+   #parseSettings({ efx = 'ripple', storage }: TJSGameSettingsWithUI.Options.Create = {}): TJSGameSettingsWithUI.Data
    {
-      const namespace = this.#settings.namespace;
+      const namespace: string = this.#settings.namespace;
 
       if (storage && typeof namespace !== 'string')
       {
@@ -256,11 +242,11 @@ class UIControl
           `TJSGameSettings warning: 'options.storage' defined, but 'namespace' not defined in TJSGameSettings.`);
       }
 
-      const hasStorage = storage && typeof namespace === 'string';
+      const hasStorage: boolean = storage !== void 0 && typeof namespace === 'string';
 
-      const uiSettings = [];
+      const uiSettings: TJSGameSettingsWithUI.UISetting.Data[] = [];
 
-      const canConfigure = globalThis.game.user.can('SETTINGS_MODIFY');
+      const canConfigure: boolean = globalThis.game.user.can('SETTINGS_MODIFY');
 
       for (const setting of this.#settings.data())
       {
@@ -270,20 +256,17 @@ class UIControl
             continue;
          }
 
-         let options;
+         let options: { value: string, label: string }[] | undefined;
 
          if (isObject(setting.options.choices))
          {
-            options = Object.entries(setting.options.choices).map((entry) =>
-             ({ value: entry[0], label: localize(entry[1]) }));
+            options = Object.entries(setting.options.choices).map((entry: [string, string]):
+             { value: string, label: string } => ({ value: entry[0], label: localize(entry[1]) }));
          }
 
-         let range;
+         let range: { min: number, max: number, step: number } | undefined;
          if (isObject(setting.options.range))
          {
-            range = {};
-
-            // TODO Better error messages.
             // Verify range data.
             if (typeof setting.options.range.min !== 'number')
             {
@@ -300,22 +283,33 @@ class UIControl
                throw new TypeError(`Setting 'options.range.step' is not a number.`);
             }
 
-            range.min = setting.options.range.min;
-            range.max = setting.options.range.max;
-            range.step = setting.options.range.step ? setting.options.range.step : 1;
+            range = {
+               min: setting.options.range.min,
+               max: setting.options.range.max,
+               step: setting.options.range.step ?? 1
+            };
          }
 
          // Default to `String` if no type is provided.
-         const type = setting.options.type instanceof Function ? setting.options.type.name : 'String';
+         const type: string = setting.options.type instanceof Function ? setting.options.type.name : 'String';
 
          // Only configure file picker if setting type is a string.
-         let filePicker;
+         let filePicker: string | undefined;
          if (type === 'String')
          {
-            filePicker = setting.options.filePicker === true ? 'any' : setting.options.filePicker;
+            switch (typeof setting.options.filePicker)
+            {
+               case 'boolean':
+                  filePicker = setting.options.filePicker ? 'any' : void 0;
+                  break;
+
+               case 'string':
+                  filePicker = setting.options.filePicker;
+                  break;
+            }
          }
 
-         let buttonData;
+         let buttonData: TJSGameSettingsWithUI.UISetting.ButtonData | undefined;
          if (filePicker)
          {
             buttonData = {
@@ -326,12 +320,11 @@ class UIControl
             };
          }
 
-         const store = this.#settings.getStore(setting.key);
+         const store: MinimalWritable<unknown> = this.#settings.getStore(setting.key)!;
 
-         let selectData;
+         let selectData: TJSGameSettingsWithUI.UISetting.SelectData | undefined;
 
-         /** @type {string} */
-         let componentType = 'text';
+         let componentType: string = 'text';
 
          if (setting.options.type === Boolean)
          {
@@ -353,7 +346,8 @@ class UIControl
             componentType = isObject(setting.options.range) ? 'range' : 'number';
          }
 
-         let inputData;
+         let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
+
          if (componentType === 'text' || componentType === 'number')
          {
             inputData = {
@@ -386,18 +380,19 @@ class UIControl
       }
 
       // If storage is available then create a key otherwise create a dummy store, so `applyScrolltop` works.
-      const storeScrollbar = hasStorage ? storage.getStore(`${namespace}-settings-scrollbar`) : writable(0);
+      const storeScrollbar: Writable<number> = hasStorage && storage ?
+       storage.getStore(`${namespace}-settings-scrollbar`) : writable(0);
 
-      const topLevel = [];
+      const topLevel: TJSGameSettingsWithUI.UISetting.Data[] = [];
 
-      const folderData = {};
+      const folderData: { [key: string]: TJSGameSettingsWithUI.UISetting.Data[] } = {};
 
       // Sort into folders
       for (const setting of uiSettings)
       {
          if (typeof setting.folder === 'string')
          {
-            const folderName = localize(setting.folder);
+            const folderName: string = localize(setting.folder);
 
             // Create folder array if one doesn't exist already.
             if (!Array.isArray(folderData[folderName])) { folderData[folderName] = []; }
@@ -410,21 +405,22 @@ class UIControl
       }
 
       // Convert folderData object to array.
-      const folders = Object.entries(folderData).map((entry) =>
+      const folders: TJSGameSettingsWithUI.Data.Folder[] = Object.entries(folderData).map(
+       (entry: [string, TJSGameSettingsWithUI.UISetting.Data[]]): TJSGameSettingsWithUI.Data.Folder =>
       {
          return {
             label: entry[0],
-            store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`) : void 0,
+            store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`) : void 0,
             settings: entry[1],
          };
       });
 
-      const sections = [];
+      const sections: TJSGameSettingsWithUI.Data.Section[] = [];
 
       // Parse custom component sections
       for (const section of this.#sections)
       {
-         const parsedSection = {
+         const parsedSection: TJSGameSettingsWithUI.Data.Section = {
             class: section.class,
             props: section.props,
             styles: section.styles
@@ -436,7 +432,7 @@ class UIControl
 
             parsedSection.folder = {
                label,
-               store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0
+               store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0
             };
          }
          else if (isObject(section.folder))
@@ -445,7 +441,7 @@ class UIControl
 
             parsedSection.folder = {
                label,
-               store: hasStorage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0,
+               store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0,
                summaryEnd: section.folder.summaryEnd,
                styles: section.folder.styles
             };

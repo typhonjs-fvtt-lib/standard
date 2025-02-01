@@ -1,0 +1,21 @@
+{
+  "compilerOptions" : {
+    "baseUrl": ".",
+    "lib": ["ES2022", "DOM"],
+    "module": "ES2022",
+    "moduleResolution" : "Bundler",
+    "target": "ES2022",
+
+    "strict": true,
+
+    "types": [
+      "@typhonjs-fvtt/runtime/types/fvtt-shim/pf2e"
+    ],
+
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "./**/*",
+    "../../../../node_modules/@typhonjs-fvtt/types-fvtt-shim/node_modules/foundry-pf2e/types/index.d.ts"
+  ]
+}
