@@ -13,7 +13,6 @@ import type {
    Readable,
    Writable }                    from 'svelte/store';
 
-import type { TJSGameSettings }  from '#runtime/svelte/store/fvtt/settings';
 import type { MinimalWritable }  from '#runtime/svelte/store/util';
 
 import type {
@@ -32,7 +31,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
    /**
     */
-   #settings: TJSGameSettings;
+   #settings: TJSGameSettingsWithUI;
 
    /**
     */
@@ -49,7 +48,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
    /**
     * @param settings -
     */
-   constructor(settings: TJSGameSettings)
+   constructor(settings: TJSGameSettingsWithUI)
    {
       this.#settings = settings;
 

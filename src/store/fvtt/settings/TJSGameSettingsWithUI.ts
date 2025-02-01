@@ -11,11 +11,16 @@ import type { WebStorage }       from '#runtime/svelte/store/web-storage';
 import type { TJSSvelte }        from '#runtime/svelte/util';
 
 /**
- * Extends {@link TJSGameSettings} with UI control for working with `TJSSettingsEdit` and `TJSSettingsSwap`
+ * Extends {@link TJSGameSettings} with UI control for working with
+ * {@link #standard/component/fvtt/settings!TJSSettingsEdit} and
+ * {@link #standard/component/fvtt/settings!TJSSettingsSwap}
  * components. Instead of extending `TJSGameSettings` simply extend `TJSGameSettingsWithUI` instead when creating
  * reactive game settings that utilize the above components.
+ *
+ * There are additional game settings options for separating settings into folders. Please see
+ * {@link TJSGameSettingsWithUI.Options.ExtraProps}.
  */
-class TJSGameSettingsWithUI extends TJSGameSettings
+class TJSGameSettingsWithUI extends TJSGameSettings<TJSGameSettingsWithUI.Options.ExtraProps>
 {
    /**
     */
@@ -31,6 +36,16 @@ class TJSGameSettingsWithUI extends TJSGameSettings
       super(namespace);
 
       this.#uiControl = new UIControlImpl(this);
+   }
+
+   override register(setting: TJSGameSettingsWithUI.Options.GameSetting): void
+   {
+      if (setting?.folder !== void 0 && typeof setting.folder !== 'string')
+      {
+         throw new TypeError(`TJSGameSettingsWithUI - register: 'folder' attribute is not a string.`);
+      }
+
+      super.register(setting);
    }
 
    /**
@@ -131,6 +146,21 @@ declare namespace TJSGameSettingsWithUI {
           */
          styles?: { [key: string]: string | null };
       };
+
+      /**
+       * Defines extra props that are available to set for game setting with UI options and data.
+       */
+      export interface ExtraProps {
+         /**
+          * The name of the `TJSSvgFolder` to put this setting in to group them.
+          */
+         folder?: string;
+      }
+
+      /**
+       * Defines the game setting with UI options for {@link TJSGameSettings.register}.
+       */
+      export interface GameSetting extends TJSGameSettings.Options.GameSetting<ExtraProps> {}
    }
 
    export namespace UISetting {
