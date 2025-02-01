@@ -118,10 +118,11 @@ const rollupConfigs = [
 
    {
       input: {
-         input: 'src/store/fvtt/settings/index.js',
+         input: 'src/store/fvtt/settings/index.ts',
          plugins: [
             importsExternal(),
             resolve(),
+            typescript({ tsconfig: './src/store/fvtt/settings/tsconfig.json' }),
             generateDTS.plugin(dtsPluginOptions)
          ]
       },
