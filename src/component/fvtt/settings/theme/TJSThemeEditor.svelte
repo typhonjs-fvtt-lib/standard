@@ -14,7 +14,7 @@
       color: SectionColor
    };
 
-   const components = themeStore.stores.components;
+   const components = themeStore.components;
 </script>
 
 <div>
