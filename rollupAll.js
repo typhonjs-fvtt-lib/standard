@@ -12,7 +12,10 @@ const sourcemap = true; // Defines whether source maps are generated.
 const dtsPluginOptions = {
    bundlePackageExports: true,
    dtsReplace: { '/\\/\\/ <reference.*\\/>': '' }, // Svelte v4 types currently add triple slash references.
-   importsExternal: true                           // For the direct component sub-path invocations.
+   importsExternal: true,                          // For the direct component sub-path invocations.
+
+   // Filter out `types-fvtt-shim` warnings for `fvtt` namespace.
+   tsDiagnosticFilter: ({ message }) => message.includes(`Cannot find namespace 'fvtt'`)
 };
 
 const rollupConfigs = [
