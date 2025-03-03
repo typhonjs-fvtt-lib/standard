@@ -284,8 +284,24 @@ export class FVTTFilePickerControl
 
       await this.#filepickerApp.browse();
 
-      // By awaiting for the next 3 animation frames the app has been rendered. The extra frames provide a buffer.
-      await nextAnimationFrame(3);
+      const startMs = performance.now();
+
+      // By awaiting for the next N animation frames the app has been rendered. This is typically 1-3 `rAF`, but in
+      // certain cases under heavy load this may be 4 or 5 `rAF`.
+      for (let cntr = 0; cntr < 100; cntr++)
+      {
+         await nextAnimationFrame();
+         if (this.#filepickerApp?._element?.[0]) { break; }
+      }
+
+      if (this.#filepickerApp?._element?.[0] === void 0)
+      {
+         const waitMs = performance.now() - startMs;
+         console.warn(`FVTTFilePickerControl.browse warning: Core file picker did not display in ${waitMs} ms.`);
+         this.#managedPromise.resolve(void 0);
+         this.#filepickerApp.close();
+         return promise;
+      }
 
       // Potentially move app inside glasspane.
       if (typeof glasspaneId === 'string')
