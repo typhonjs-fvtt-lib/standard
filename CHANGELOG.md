@@ -1,4 +1,8 @@
 # Changelog
+## Release 0.2.1 (minor)
+- Ensure that the modal file picker works under heavy load conditions with flexible delay to promote core file picker
+  above the modal glasspane.
+
 ## Release 0.2.0 (major)
 - Various sub-path refactoring.
 - Overall refinement / streamlining.
