@@ -64,7 +64,11 @@ export class FVTTFilePickerControl
       if (id === void 0 && this.#filepickerApp)
       {
          // Only invoke `bringToFront` if the file picker app is not contained in a glasspane.
-         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToFront?.(); }
+         if (!this.#filepickerApp?.hasGlasspane)
+         {
+            this.#filepickerApp?.bringToFront?.();
+            this.#filepickerApp?.maximize?.();
+         }
          return true;
       }
 
@@ -78,7 +82,11 @@ export class FVTTFilePickerControl
       if (this.#filepickerApp && this.#filepickerApp.id === id)
       {
          // Only invoke `bringToFront` if the file picker app is not contained in a glasspane.
-         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToFront?.(); }
+         if (!this.#filepickerApp?.hasGlasspane)
+         {
+            this.#filepickerApp?.bringToFront?.();
+            this.#filepickerApp?.maximize?.();
+         }
 
          result = true;
       }
@@ -310,9 +318,6 @@ export class FVTTFilePickerControl
          if (gpContainerEl)
          {
             gpContainerEl.appendChild(this.#filepickerApp.element);
-
-            // Focus first input.
-            this.#filepickerApp?.element?.querySelector('input')?.focus();
          }
          else
          {
@@ -363,7 +368,8 @@ class TJSFilePicker extends foundry.applications.apps.FilePicker
    {
       super({
          ...options,
-         actions: { makeDirectory: TJSFilePicker.#onMakeDirectory }
+         actions: { makeDirectory: TJSFilePicker.#onMakeDirectory },
+         window: { minimizable: typeof glasspaneId !== 'string' } // When modal prevent minimizing.
       });
 
       this.#focusSource = focusSource;
@@ -382,10 +388,10 @@ class TJSFilePicker extends foundry.applications.apps.FilePicker
     */
    bringToFront()
    {
-      super.bringToFront();
+      // Early out when modal as `super.bringToFront` will modify z-index.
+      if (typeof this.#glasspaneId === 'string') { return; }
 
-      // Always focus first input when app is brought to top.
-      this?.element?.querySelector('input')?.focus();
+      super.bringToFront();
    }
 
    /**
@@ -464,6 +470,7 @@ class TJSFilePicker extends foundry.applications.apps.FilePicker
          title: game.i18n.localize('FILES.CreateSubfolder'),
          content: form,
          focusFirst: true,
+         minimizable: false,
          buttons: {
             onYes: {
                icon: 'fas fa-check',
