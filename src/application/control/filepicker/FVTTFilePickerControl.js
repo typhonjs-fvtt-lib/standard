@@ -58,27 +58,27 @@ export class FVTTFilePickerControl
     *
     * @returns {boolean} Whether the file picker app is brought to top.
     */
-   static bringToTop(id)
+   static bringToFront(id)
    {
       // Handle the case when no `id` is defined and potentially bring any file picker app to top.
       if (id === void 0 && this.#filepickerApp)
       {
-         // Only invoke `bringToTop` if the file picker app is not contained in a glasspane.
-         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToTop?.(); }
+         // Only invoke `bringToFront` if the file picker app is not contained in a glasspane.
+         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToFront?.(); }
          return true;
       }
 
       if (typeof id !== 'string')
       {
-         throw new TypeError(`FVTTFilePickerControl.bringToTop error: 'id' is not a string.`);
+         throw new TypeError(`FVTTFilePickerControl.bringToFront error: 'id' is not a string.`);
       }
 
       let result = false;
 
       if (this.#filepickerApp && this.#filepickerApp.id === id)
       {
-         // Only invoke `bringToTop` if the file picker app is not contained in a glasspane.
-         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToTop?.(); }
+         // Only invoke `bringToFront` if the file picker app is not contained in a glasspane.
+         if (!this.#filepickerApp?.hasGlasspane) { this.#filepickerApp?.bringToFront?.(); }
 
          result = true;
       }
@@ -186,7 +186,7 @@ export class FVTTFilePickerControl
       // Handle the case when an existing file picker app is visible.
       if (this.#filepickerApp)
       {
-         const element = this.#filepickerApp?._element?.[0];
+         const element = this.#filepickerApp?.element;
          if (element instanceof HTMLElement && element.isConnected)
          {
             // Immediately hide window by setting a negative z-index.
@@ -291,10 +291,10 @@ export class FVTTFilePickerControl
       for (let cntr = 0; cntr < 100; cntr++)
       {
          await nextAnimationFrame();
-         if (this.#filepickerApp?._element?.[0]) { break; }
+         if (this.#filepickerApp?.element) { break; }
       }
 
-      if (this.#filepickerApp?._element?.[0] === void 0)
+      if (this.#filepickerApp?.element === void 0)
       {
          const waitMs = performance.now() - startMs;
          console.warn(`FVTTFilePickerControl.browse warning: Core file picker did not display in ${waitMs} ms.`);
@@ -309,10 +309,10 @@ export class FVTTFilePickerControl
          const gpContainerEl = document.querySelector(`#${glasspaneId} .tjs-glass-pane-container`);
          if (gpContainerEl)
          {
-            gpContainerEl.appendChild(this.#filepickerApp.element[0]);
+            gpContainerEl.appendChild(this.#filepickerApp.element);
 
             // Focus first input.
-            this.#filepickerApp?._element?.[0]?.querySelector('input')?.focus();
+            this.#filepickerApp?.element?.querySelector('input')?.focus();
          }
          else
          {
@@ -320,7 +320,7 @@ export class FVTTFilePickerControl
          }
 
          // For modal dialogs prevent the window header from being draggable.
-         const headerEl = this.#filepickerApp._element[0].querySelector('.window-header');
+         const headerEl = this.#filepickerApp.element.querySelector('.window-header');
          if (headerEl)
          {
             headerEl.classList.remove('draggable');
@@ -331,7 +331,7 @@ export class FVTTFilePickerControl
       // Directly modify the zIndex to be above everything else when supplied.
       if (Number.isInteger(zIndex))
       {
-         this.#filepickerApp._element[0].style.zIndex = `${zIndex}`;
+         this.#filepickerApp.element.style.zIndex = `${zIndex}`;
       }
 
       return promise;
@@ -342,7 +342,7 @@ export class FVTTFilePickerControl
  * Extends FilePicker to handle resolving the managed Promise on app close, explicitly center the app when shown above
  * a modal / glasspane, and manage any associated dialogs.
  */
-class TJSFilePicker extends FilePicker
+class TJSFilePicker extends foundry.applications.apps.FilePicker
 {
    /** @type {TJSDialog} */
    #createDirectoryApp;
@@ -361,7 +361,10 @@ class TJSFilePicker extends FilePicker
 
    constructor(options, managedPromise, { focusSource, glasspaneId, zIndex } = {})
    {
-      super(options);
+      super({
+         ...options,
+         actions: { makeDirectory: TJSFilePicker.#onMakeDirectory }
+      });
 
       this.#focusSource = focusSource;
       this.#glasspaneId = glasspaneId;
@@ -370,19 +373,19 @@ class TJSFilePicker extends FilePicker
    }
 
    /**
-    * @returns {boolean} Convenience getter for `FVTTFilePickerControl.bringToTop`.
+    * @returns {boolean} Convenience getter for `FVTTFilePickerControl.bringToFront`.
     */
    get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
 
    /**
-    * Always focus first input when `bringToTop` is invoked.
+    * Always focus first input when `bringToFront` is invoked.
     */
-   bringToTop()
+   bringToFront()
    {
-      super.bringToTop();
+      super.bringToFront();
 
       // Always focus first input when app is brought to top.
-      this?._element?.[0]?.querySelector('input')?.focus();
+      this?.element?.querySelector('input')?.focus();
    }
 
    /**
@@ -403,7 +406,7 @@ class TJSFilePicker extends FilePicker
       this.#managedPromise = void 0;
 
       // Make window content overflow hidden to avoid any scrollbars appearing in default Application close animation.
-      const content = this._element?.[0]?.querySelector('.window-content');
+      const content = this.element?.querySelector('.window-content');
       if (content) { content.style.overflow = 'hidden'; }
 
       await super.close(options);
@@ -423,15 +426,19 @@ class TJSFilePicker extends FilePicker
     *
     * @private
     */
-   async _createDirectoryDialog(source)
+   async #createDirectoryDialog(source)
    {
       // Return early if there is an existing create subfolder / directory dialog.
       if (this.#createDirectoryApp) { return; }
 
-      const form = `<form autocomplete=off><div class=form-group>
-       <label>Directory Name</label>
-       <input type=text name=dirname placeholder=directory-name required/>
-       </div></form>`;
+      const labelText = game.i18n.localize("FILES.DirectoryName.Label");
+      const placeholder = game.i18n.localize("FILES.DirectoryName.Placeholder");
+
+      const form = `<form class="dialog-form standard-form" autocomplete=off><div class="form-group">
+       <label for="create-directory-name">${labelText}</label>
+       <div class="form-fields">
+       <input id="create-directory-name" type="text" name="dirname" placeholder="${placeholder}" required autofocus>
+       </div></div></form>`;
 
       // The initial target is document.body, but if there is a glasspane container the dialog `svelte.target` is set.
       let dialogTargetEl = globalThis.document.body;
@@ -446,7 +453,7 @@ class TJSFilePicker extends FilePicker
          }
          else
          {
-            console.warn(`TJSFilePicker._createDirectoryDialog warning: Could not locate glasspane for CSS ID: ${
+            console.warn(`TJSFilePicker.#createDirectoryDialog warning: Could not locate glasspane for CSS ID: ${
              this.#glasspaneId}`);
          }
       }
@@ -460,7 +467,7 @@ class TJSFilePicker extends FilePicker
          buttons: {
             onYes: {
                icon: 'fas fa-check',
-               label: 'Yes',
+               label: 'CONTROLS.CommonCreate',
                onPress: async ({ application }) =>
                {
                   const html = application.elementContent;
@@ -480,14 +487,29 @@ class TJSFilePicker extends FilePicker
             },
             onNo: {
                icon: 'fas fa-times',
-               label: 'No'
+               label: 'Cancel'
             }
          }
-      }, { svelte: { target: dialogTargetEl }, popOutModuleDisable: true });
+      }, {
+         headerIcon: 'fa-solid fa-folder-plus',
+         popOutModuleDisable: true,
+
+         svelte: { target: dialogTargetEl }
+      });
 
       // Use wait to be able to remove the reference when any result is chosen.
       await this.#createDirectoryApp.wait();
       this.#createDirectoryApp = void 0;
+   }
+
+   /**
+    * Create a new subdirectory in the current working directory.
+    *
+    * @this {TJSFilePicker}
+    */
+   static async #onMakeDirectory()
+   {
+      await this.#createDirectoryDialog(this.source);
    }
 
    /**
@@ -505,8 +527,8 @@ class TJSFilePicker extends FilePicker
       {
          const top = (globalThis.innerHeight - currentPos.height) / 2;
 
-         this._element[0].style.top = `${top}px`;
-         this.position.top = top;
+         this.element.style.top = `${top}px`;
+         super.setPosition({ top });
          currentPos.top = top;
       }
 

@@ -55,7 +55,7 @@
    async function invokePicker(event)
    {
       // Bring any existing file picker to the top and on success return immediately as this is a successive invocation.
-      if (typeof pickerOptions?.id === 'string' && FVTTFilePickerControl.bringToTop(pickerOptions?.id)) { return; }
+      if (typeof pickerOptions?.id === 'string' && FVTTFilePickerControl.bringToFront(pickerOptions?.id)) { return; }
 
       // Locate any parent glasspane in order to promote the file picker app to the associated container.
       const glasspaneEl = event.detail?.event?.target?.closest('.tjs-glass-pane');
