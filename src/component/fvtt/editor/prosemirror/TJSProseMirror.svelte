@@ -576,6 +576,10 @@
 
 <style>
     .editor {
+        display: var(--tjs-editor-display, flex);
+        flex-direction: var(--tjs-editor-flex-direction, column);
+        min-height: var(--tjs-editor-min-height, 150px);
+
         background: var(--tjs-editor-background, none);
         border: var(--tjs-editor-border, none);
         border-radius: var(--tjs-editor-border-radius, 0);
@@ -583,11 +587,9 @@
         margin: var(--tjs-editor-margin, 0);
         outline-offset: var(--tjs-editor-outline-offset, 0.25em);
         overflow: var(--tjs-editor-overflow, auto);
+        position: relative;
         transition: var(--tjs-editor-transition);
         width: var(--tjs-editor-width, 100%);
-
-        /* For Firefox. */
-        scrollbar-width: thin;
     }
 
     /**
@@ -643,6 +645,19 @@
     .editor-edit {
         right: var(--tjs-editor-edit-button-right, 5px);
         top: var(--tjs-editor-edit-button-top, 0);
+
+        display: none;
+        font-size: 1.25em;
+        position: absolute;
+        background: var(--tjs-editor-edit-button-background, var(--menu-background));
+        border: 1px solid var(--color-border-dark-1);
+        border-radius: 4px;
+        padding: 1px 2px;
+        box-shadow: 0 0 1px var(--color-shadow-dark);
+    }
+
+    .editor:hover .editor-edit {
+       display: inline-block;
     }
 
     .editor-enriched {
@@ -674,7 +689,7 @@
 
     /* Provides global styles scoped to `.tjs-editor` for dynamic `.editor-menu` element */
     .tjs-editor :global(.editor-menu) {
-        background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
+        background: var(--tjs-editor-toolbar-background, var(--menu-background));
         border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
         box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
         margin-bottom: 0.25em;
@@ -687,5 +702,14 @@
     /* Removes the awkward 1rem padding from core */
     .tjs-editor.prosemirror.editing-source :global(textarea) {
         padding: 0;
+    }
+
+    /* Core theming support */
+    :global(.themed.theme-dark) .tjs-editor :global(.editor-menu) {
+       box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(120 110 130 / 38%), 0 8px 8px -4px rgb(120 110 130 / 22%));
+    }
+
+    :global(.themed.theme-light) .tjs-editor :global(.editor-menu) {
+       box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
     }
 </style>

@@ -604,6 +604,10 @@
 
 <style>
     .tjs-editor {
+        display: var(--tjs-editor-display, flex);
+        flex-direction: var(--tjs-editor-flex-direction, column);
+        min-height: var(--tjs-editor-min-height, 25px);
+
         background: var(--tjs-editor-background, none);
         border: var(--tjs-editor-border, none);
         border-radius: var(--tjs-editor-border-radius, 0);
@@ -611,17 +615,15 @@
         margin: var(--tjs-editor-margin, 0);
         outline-offset: var(--tjs-editor-outline-offset, 0.25em);
         overflow: var(--tjs-editor-content-overflow, var(--tjs-editor-overflow, auto));
+        position: relative;
         transition: var(--tjs-editor-transition);
         width: var(--tjs-editor-width, 100%);
 
-        color: var(--tjs-editor-content-color, #000);
-        font-family: var(--tjs-editor-content-font-family, "Signika");
+        color: var(--tjs-editor-content-color, var(--color-text-primary, #000));
+        font-family: var(--tjs-editor-content-font-family, var( --font-body)), "Signika", "Palatino Linotype", sans-serif;
         font-size: var(--tjs-editor-content-font-size, 10.5pt);
         line-height: var(--tjs-editor-content-line-height, 1.2);
         padding: var(--tjs-editor-content-padding, 3px 0 0 0);
-
-        /* For Firefox. */
-        scrollbar-width: thin;
     }
 
     /**
@@ -667,8 +669,21 @@
     }
 
     .editor-edit {
-        right: var(--tjs-editor-edit-button-right, 5px);
-        top: var(--tjs-editor-edit-button-top, 0);
+       right: var(--tjs-editor-edit-button-right, 5px);
+       top: var(--tjs-editor-edit-button-top, 0);
+
+       display: none;
+       font-size: 1.25em;
+       position: absolute;
+       background: var(--tjs-editor-edit-button-background, var(--menu-background));
+       border: 1px solid var(--color-border-dark-1);
+       border-radius: 4px;
+       padding: 1px 2px;
+       box-shadow: 0 0 1px var(--color-shadow-dark);
+    }
+
+    .editor:hover .editor-edit {
+       display: inline-block;
     }
 
     /* Don't add an initial margin top to first paragraph element. */
