@@ -101,7 +101,7 @@
     * --tjs-editor-toolbar-chevron-active-color - var(--color-text-dark-primary, #191813))
     * --tjs-editor-toolbar-chevron-inactive-color - var(--color-text-light-7, #888))
     * --tjs-editor-toolbar-padding - 0 2px
-    * --tjs-editor-toolbar-separator-border - 1px solid var(--color-text-light-3, #ccc)
+    * --tjs-editor-toolbar-separator-border - none
     * --tjs-editor-toolbar-select-background - var(--color-control-bg, #d9d8c8)
     * --tjs-editor-toolbar-width - 100%
     * ```
@@ -119,6 +119,7 @@
    import { writable }        from '#svelte/store';
 
    import { applyStyles }     from '#runtime/svelte/action/dom/style';
+   import { ThemeObserver }   from '#runtime/svelte/application';
    import { TJSDocument }     from '#runtime/svelte/store/fvtt/document';
    import { CrossWindow }     from '#runtime/util/browser';
    import { isObject }        from '#runtime/util/object';
@@ -142,6 +143,8 @@
     * @type {import('./index').TJSTinyMCEOptions}
     */
    export let options = {};
+
+   const storeTheme = ThemeObserver.stores.theme;
 
    const application = getContext('#external')?.application;
 
@@ -190,6 +193,24 @@
    let maxCharacterLength;
 
    /**
+    * When the core theme changes update `editorContentEl` styles to the editor IFrame content.
+    *
+    * Also update any MCE separated aux elements with new theme classes.
+    */
+   $: if ($storeTheme && editor && editor.iframeElement && editorContentEl)
+   {
+      const styleEl = editor.iframeElement?.contentDocument?.getElementsByTagName('style')?.[0];
+      if (styleEl) { styleEl.innerHTML = MCEImpl.setMCEConfigContentStyle(editorContentEl); }
+
+      const auxMCEList = document.querySelectorAll('.tox.tox-tinymce-aux.tjs-editor.themed');
+      for (const auxMCEEl of auxMCEList)
+      {
+         auxMCEEl.classList.remove('theme-light', 'theme-dark');
+         auxMCEEl.classList.add($storeTheme);
+      }
+   }
+
+   /**
     * When the active window changes the editor needs to be saved due to the MCE IFrame.
     */
    $: if (activeWindow !== $applicationActiveWindow)
@@ -206,8 +227,7 @@
    $: if (editorActive && editorEl && $applicationPosition)
    {
       // Auxiliary aria selector is different for TinyMCE v5 & v6.
-      const ariaSelector = MCEImpl.isV6 ? `.tox-tbtn[aria-controls^='aria-controls_']` :
-       `.tox-tbtn[aria-owns^='aria-owns_']`;
+      const ariaSelector = `.tox-tbtn[aria-controls^='aria-controls_']`;
 
       // Perform a click on the active toolbar button to close it; this keeps MCE internal state correct.
       const mceActiveAuxButtonEl = editorEl.querySelector(ariaSelector);
@@ -405,7 +425,7 @@
       const mceConfig = {
          ...(options?.mceConfig ?? TinyMCEHelper.configStandard()),
          engine: 'tinymce',
-         [`${MCEImpl.isV6 ? 'font_family_formats' : 'font_formats'}`]: fontFormats,
+         'font_family_formats': fontFormats,
          target: editorContentEl,
          save_onsavecallback: () => saveEditor(),
          height: '100%',
@@ -463,6 +483,10 @@
       // When the editor IFrame is clicked bring any associated application to top. Only perform in main Foundry window.
       // TODO: Direct Foundry API usage.
       if (activeWindow === globalThis) { editor.on('click', () => application?.bringToTop?.()); }
+
+      // Find the aux div added for MCE menus and add `tjs-editor` class to it for styling.
+      const lastDiv = document.body.querySelector('div.tox.tox-tinymce-aux:last-of-type');
+      if (lastDiv) { lastDiv.classList.add('tjs-editor', 'themed', $storeTheme); }
 
       dispatch('editor:start');
    }
@@ -631,8 +655,9 @@
    }
 </script>
 
+<!-- Nasty hack adding `.prosemirror` class to access CSS vars scoped to this class -->
 <div bind:this={editorEl}
-     class="editor tinymce tjs-editor {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
+     class="editor tinymce tjs-editor prosemirror {Array.isArray(options?.classes) ? options.classes.join(' ') : ''}"
      class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
      use:applyStyles={options?.styles}
@@ -657,22 +682,24 @@
 
 <style>
     .tjs-editor {
+        display: var(--tjs-editor-display, flex);
+        flex-direction: var(--tjs-editor-flex-direction, column);
+        min-height: var(--tjs-editor-min-height, 150px);
+
         background: var(--tjs-editor-background, none);
         border: var(--tjs-editor-border, none);
         border-radius: var(--tjs-editor-border-radius, 0);
         height: var(--tjs-editor-height, 100%);
         outline-offset: var(--tjs-editor-outline-offset, 0.25em);
+        position: relative;
         margin: var(--tjs-editor-margin, 0);
         transition: var(--tjs-editor-transition);
         width: var(--tjs-editor-width, 100%);
-
-        /* For Firefox. */
-        scrollbar-width: thin;
     }
 
     .editor-content {
-        color: var(--tjs-editor-content-color, #000);
-        font-family: var(--tjs-editor-content-font-family, "Signika");
+        color: var(--tjs-editor-content-color, var(--color-text-primary, #000));
+        font-family: var(--tjs-editor-content-font-family, var( --font-body)), "Signika", "Palatino Linotype", sans-serif;
         font-size: var(--tjs-editor-content-font-size, 10.5pt);
         line-height: var(--tjs-editor-content-line-height, 1.2);
         padding: var(--tjs-editor-content-padding, 3px 0 0 0);
@@ -686,6 +713,24 @@
         box-shadow: var(--tjs-editor-active-box-shadow);
         outline: var(--tjs-editor-active-outline);
         overflow: var(--tjs-editor-active-overflow, hidden);
+    }
+
+    .editor-edit {
+       right: var(--tjs-editor-edit-button-right, 5px);
+       top: var(--tjs-editor-edit-button-top, 0);
+
+       display: none;
+       font-size: 1.25em;
+       position: absolute;
+       background: var(--tjs-editor-edit-button-background, var(--menu-background));
+       border: 1px solid var(--color-border-dark-1);
+       border-radius: 4px;
+       padding: 1px 2px;
+       box-shadow: 0 0 1px var(--color-shadow-dark);
+    }
+
+    .editor:hover .editor-edit {
+       display: inline-block;
     }
 
     /**
@@ -720,11 +765,6 @@
         cursor: var(--tjs-editor-inactive-cursor-hover, text);
     }
 
-    .editor-edit {
-        right: var(--tjs-editor-edit-button-right, 5px);
-        top: var(--tjs-editor-edit-button-top, 0);
-    }
-
     /* Controls whether the editor content text is selectable when the editor is inactive. */
     .tjs-editor:not(.editor-active) .editor-content {
         user-select: var(--tjs-editor-inactive-user-select-hover, text);
@@ -741,9 +781,14 @@
     }
 
     .tjs-editor :global(div.tox-tinymce) {
+        border: none;
         border-radius: 0;
         font-size: 10.5pt;
         padding: var(--tjs-editor-content-padding, 0);
+    }
+
+    .tjs-editor :global(.tox.tox-tinymce .tox-edit-area__iframe) {
+       background: transparent;
     }
 
     .tjs-editor :global(.tox:not(.tox-tinymce-inline) .tox-editor-header) {
@@ -774,12 +819,12 @@
     }
 
     .tjs-editor :global(.tox.tox-tinymce:not([dir=rtl]) .tox-toolbar__group:not(:last-of-type)) {
-        border-right: var(--tjs-editor-toolbar-separator-border, 1px solid var(--color-text-light-3, #ccc));
+        border-right: var(--tjs-editor-toolbar-separator-border, none);
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn) {
         background: var(--tjs-editor-toolbar-button-background, none);
-        color: var(--tjs-editor-toolbar-button-color, var(--color-text-dark-primary, #191813));
+        color: var(--tjs-editor-toolbar-button-color, var(--button-text-color, #191813));
         padding: 0;
         margin: 2px 0;
         min-width: 34px;
@@ -787,7 +832,7 @@
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn svg) {
-        fill: var(--tjs-editor-toolbar-button-color, var(--color-text-dark-primary, #191813));
+        fill: var(--tjs-editor-toolbar-button-color, var(--button-text-color, #191813));
         margin-right: auto;
     }
 
@@ -800,11 +845,22 @@
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-toolbar-button-background-hover, var(--color-hover-bg, #f0f0e0));
+        background: var(--tjs-editor-toolbar-button-background-hover, var(--color-control-hover, #f0f0e0));
+        color: var(--tjs-editor-toolbar-button-color-hover, var(--color-form-label-hover, #f0f0e0));
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-toolbar-button-background-hover, var(--color-hover-bg, #f0f0e0));
+        background: var(--tjs-editor-toolbar-button-background-hover, var(--color-control-hover, #f0f0e0));
+        color: var(--tjs-editor-toolbar-button-color-hover, var(--color-form-label-hover, #f0f0e0));
+    }
+
+    .tjs-editor :global(.tox .tox-tbtn.tox-tbtn--enabled:focus:not(:hover)), :global(.tox .tox-tbtn:focus:not(:hover):not(.tox-tbtn--disabled)) {
+       box-shadow: 0 0 4px var(--button-focus-outline-color);
+    }
+
+    /* Remove MCE after box-shadow */
+    .tjs-editor :global(.tox .tox-tbtn:focus::after) {
+       box-shadow: none;
     }
 
     /* Max width for all select buttons */
@@ -824,17 +880,18 @@
 
     /* Handles TMCE select button non-active background */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select) {
-        background: var(--tjs-editor-toolbar-select-background, var(--color-control-bg, #d9d8c8));
+        background: var(--tjs-editor-toolbar-select-background, none);
     }
 
     /* Handles TMCE select button hovered background */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select:hover:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-toolbar-select-background-hover, var(--color-hover-bg, #f0f0e0));
+        background: var(--tjs-editor-toolbar-select-background-hover, var(--color-control-hover, #f0f0e0));
+        color: var(--tjs-editor-toolbar-select-color-hover, var(--color-form-label-hover, #f0f0e0));
     }
 
-    /* Handles TMCE select button active background */
-    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select.tox-tbtn--active:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-toolbar-select-background-hover, var(--color-hover-bg, #f0f0e0));
+    /* Handles TMCE select button active background not hovered */
+    .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--select.tox-tbtn--active:not(.tox-tbtn--disabled):not(:hover)) {
+       box-shadow: 0 0 4px var(--button-focus-outline-color);
     }
 
     /* Handles the TMCE select svg container giving a width that works with margin-right: auto for consistent space */
@@ -851,12 +908,12 @@
 
     /* Handles the select chevron active hover color */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:not(.tox-tbtn--disabled):hover .tox-tbtn__select-chevron svg) {
-        fill: var(--tjs-editor-toolbar-chevron-active-color, var(--color-text-dark-primary, #191813));
+        fill: var(--tjs-editor-toolbar-chevron-active-color, var(--button-text-color, #191813));
     }
 
     /* Handles the select chevron menu active color */
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn--active:not(.tox-tbtn--disabled) .tox-tbtn__select-chevron svg) {
-        fill: var(--tjs-editor-toolbar-chevron-active-color, var(--color-text-dark-primary, #191813));
+        fill: var(--tjs-editor-toolbar-chevron-active-color, var(--button-text-color, #191813));
     }
 
     /* Handles this components toolbar select button width */
@@ -866,31 +923,93 @@
         width: 7em;
     }
 
+    /* Core theming support ----------------------------------------------------------------------------------------*/
+
+    :global(.themed.theme-dark) .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
+       background: var(--tjs-editor-toolbar-background, var(--color-cool-4));
+       box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(120 110 130 / 38%), 0 8px 8px -4px rgb(120 110 130 / 22%));
+    }
+
+    :global(.themed.theme-light) .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
+       background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
+       box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
+    }
+
     /* The following styles affect the global / all modules TinyMCE auxiliary menus --------------------------------*/
 
-    /**
-     * Handles the "global" TinyMCE auxiliary toolbar select button width; this is displayed separately in the DOM
-     * and this CSS will affect all TinyMCE auxiliary toolbar select buttons, but it is better.
-     */
-    :global(.tox.tox-tinymce-aux .tox-tbtn--bespoke .tox-tbtn__select-label) {
-        max-width: 7em;
-        width: fit-content;
+    :global(.tox.tox-tinymce-aux.tjs-editor.themed.theme-dark) {
+       --tjs-editor-menu-background-default: red;
+       --tjs-editor-dialog-background-default: var(--color-cool-5-90);
     }
 
-    :global(.tox.tox-tinymce-aux .tox-collection--list .tox-collection__item--active) {
-        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
+    :global(.tox.tox-tinymce-aux.tjs-editor.themed.theme-light) {
+       --tjs-editor-menu-background-default: blue;
+       --tjs-editor-dialog-background-default: green;
     }
 
-    /* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button */
-    :global(.tox.tox-tinymce-aux .tox-tbtn:focus) {
-        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-menu) {
+       background: var(--tjs-editor-menu-background, var(--tjs-editor-menu-background-default));
     }
 
-    :global(.tox.tox-tinymce-aux .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-toolbar__overflow) {
+       background: var(--tjs-editor-menu-background, var(--tjs-editor-menu-background-default));
     }
 
-    :global(.tox.tox-tinymce-aux .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {
-        background: var(--tjs-editor-menu-item-active-background, #dee0e2);
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-insert-table-picker) {
+       background: var(--tjs-editor-menu-background, var(--tjs-editor-menu-background-default));
     }
+
+    /* MCE dialog ------------------------------------------------------------------------------------------------- */
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-dialog-wrap__backdrop) {
+       background: var(--tjs-editor-dialog-backdrop-background, #50505080);
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-dialog__header) {
+       background: var(--tjs-editor-dialog-background, var(--tjs-editor-dialog-background-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-dialog__body-content) {
+       background: var(--tjs-editor-dialog-background, var(--tjs-editor-dialog-background-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-dialog__footer) {
+       background: var(--tjs-editor-dialog-background, var(--tjs-editor-dialog-background-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-dialog) {
+       color: var(--tjs-editor-dialog-color, var(--color-cool-5-90));
+    }
+
+
+    /*!***/
+    /* * Handles the "global" TinyMCE auxiliary toolbar select button width; this is displayed separately in the DOM*/
+    /* * and this CSS will affect all TinyMCE auxiliary toolbar select buttons, but it is better.*/
+    /* *!*/
+    /*:global(.tox.tox-tinymce-aux .tox-tbtn--bespoke .tox-tbtn__select-label) {*/
+    /*    max-width: 7em;*/
+    /*    width: fit-content;*/
+    /*}*/
+
+    /*:global(.tox.tox-tinymce-aux .tox-collection--list .tox-collection__item--active) {*/
+    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
+    /*}*/
+
+    /*!* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button *!*/
+    /*:global(.tox.tox-tinymce-aux .tox-tbtn:focus) {*/
+    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
+    /*}*/
+
+    /*:global(.tox.tox-tinymce-aux .tox-tbtn:hover:not(.tox-tbtn--disabled)) {*/
+    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
+    /*}*/
+
+    /*:global(.tox.tox-tinymce-aux .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {*/
+    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
+    /*}*/
+
+    /*:global(.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled)) {*/
+    /*   color: black;*/
+    /*}*/
+
 </style>

@@ -1,5 +1,3 @@
-import { MCEImpl }   from './MCEImpl.js';
-
 /**
  * Provides custom options for TinyMCE.
  *
@@ -41,17 +39,16 @@ export class TinyMCEHelper
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${MCEImpl.isV6 ? 'styles |' : 'styleselect |'}` : ''} ${
-       fontFormat ? `${MCEImpl.isV6 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
-        fontSize ? `${MCEImpl.isV6 ? 'fontsize |' : 'fontsizeselect |'}` : ''} removeformat | save${
-         help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? 'styles |' : ''} ${fontFormat ? 'fontfamily |' : ''} ${
+       fontSize ? 'fontsize |' : ''} removeformat | save${help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? globalThis.CONFIG.TinyMCE.content_css.concat(contentCSS) :
           globalThis.CONFIG.TinyMCE.content_css,
          content_style: contentStyle,
-         [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
-         plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} save ${help ? 'help' : ''} wordcount`,
+         font_size_formats: this.#s_DEFAULT_FONT_SIZE,
+         highlight_on_focus: false,
+         plugins: `save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false,
 
@@ -95,8 +92,6 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
-    * @param {boolean}  [opts.tjsOembed=false] - Includes custom oEmbed plugin to include video from YouTube / Vimeo.
-    *
     * @param {boolean}  [opts.tjsStyles=false] - Includes extensive TJS styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
@@ -104,32 +99,25 @@ export class TinyMCEHelper
     * @returns {object} TinyMCE options
     */
    static configStandard({ basicFormats = false, code = true, contentCSS, contentStyle = '', fontFormat = true,
-    fontSize = false, help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = false, tjsStyles = false,
+    fontSize = false, help = false, stripStyleFormat = true, styleFormat = true, tjsStyles = false,
      toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${MCEImpl.isV6 ? 'styles |' : 'styleselect |'}` : ''} ${
-       fontFormat ? `${MCEImpl.isV6 ? 'fontfamily |' : 'fontselect |'}` : ''} ${
-        fontSize ? `${MCEImpl.isV6 ? 'fontsize |' : 'fontsizeselect |'}` : ''} table | bullist | numlist | image ${
-         tjsOembed ? '| typhonjs-oembed' : ''} | hr | link | removeformat | save${code ? ' | code' : ''}${
-          help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? 'styles |' : ''} ${fontFormat ? 'fontfamily |' : ''} ${
+        fontSize ? 'fontsize |' : ''} table | bullist | numlist | image | hr | link | removeformat | save${
+         code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
          content_css: Array.isArray(contentCSS) ? globalThis.CONFIG.TinyMCE.content_css.concat(contentCSS) :
           globalThis.CONFIG.TinyMCE.content_css,
          content_style: contentStyle,
-         [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
-         plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} emoticons image link lists charmap table ${tjsOembed ? 'typhonjs-oembed' : ''} ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
+         font_size_formats: this.#s_DEFAULT_FONT_SIZE,
+         highlight_on_focus: false,
+         plugins: `emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          style_formats,
          style_formats_merge: false,
-
-         // For typhonjs-oembed plugin when loaded.
-         oembed_live_embeds: false,
-         oembed_default_width: 424,
-         oembed_default_height: 238,
-         oembed_disable_file_source: true,
 
          // This allows the manual addition of a style tag in the code editor.
          valid_children: '+body[style]',
@@ -168,8 +156,6 @@ export class TinyMCEHelper
     *
     * @param {boolean}  [opts.styleFormat=true] - Includes style format select box.
     *
-    * @param {boolean}  [opts.tjsOembed=true] - Includes custom oEmbed plugin to include video from YouTube / Vimeo.
-    *
     * @param {boolean}  [opts.tjsStyles=true] - Includes extensive TJS styling options.
     *
     * @param {boolean}  [opts.toolbar=true] - Includes the editor toolbar.
@@ -177,16 +163,16 @@ export class TinyMCEHelper
     * @returns {object} TinyMCE options
     */
    static configTJS({ basicFormats = false, code = true, contentCSS, contentStyle = '', fontFormat = true,
-    fontSize = true, help = false, stripStyleFormat = true, styleFormat = true, tjsOembed = true, tjsStyles = true,
-     toolbar = true } = {})
+    fontSize = true, help = false, stripStyleFormat = true, styleFormat = true, tjsStyles = true, toolbar = true } = {})
    {
       const style_formats = this.#getStyleFormats(basicFormats, stripStyleFormat,
        tjsStyles ? this.#s_TJS_STYLE_FORMATS : []);
 
-      const toolbarData = `${styleFormat ? `${MCEImpl.isV6 ? 'styles |' : 'styleselect |'}` : ''} table | ${fontFormat ? 'formatgroup |' : ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
+      const toolbarData = `${styleFormat ? 'styles |' : ''} table | ${fontFormat ? 'formatgroup |' :
+       ''} removeformat | insertgroup | bulletgroup | save${code ? ' | code' : ''}${help ? ' | help' : ''}`;
 
       const config = {
-         plugins: `${MCEImpl.isV6 ? '' : 'hr paste'} emoticons image link lists ${tjsOembed ? 'typhonjs-oembed' : ''} charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
+         plugins: `emoticons image link lists charmap table ${code ? 'code' : ''} save ${help ? 'help' : ''} wordcount`,
          toolbar_groups: {
             bulletgroup: {
                icon: 'unordered-list',
@@ -196,12 +182,12 @@ export class TinyMCEHelper
             formatgroup: {
                icon: 'format',
                tooltip: 'Fonts',
-               items: `${MCEImpl.isV6 ? 'fontfamily |' : 'fontselect |'} ${fontSize ? `${MCEImpl.isV6 ? 'fontsize |' : 'fontsizeselect |'}` : ''} lineheight | forecolor backcolor`
+               items: `'fontfamily |' ${fontSize ? 'fontsize |' : ''} lineheight | forecolor backcolor`
             },
             insertgroup: {
                icon: 'plus',
                tooltip: 'Insert',
-               items: `link image ${tjsOembed ? 'typhonjs-oembed' : ''} emoticons charmap hr`
+               items: `link image emoticons charmap hr`
             }
          },
 
@@ -209,17 +195,11 @@ export class TinyMCEHelper
           globalThis.CONFIG.TinyMCE.content_css,
          content_style: contentStyle,
          contextmenu: false,  // Prefer default browser context menu
-         [`${MCEImpl.isV6 ? 'font_size_formats' : 'fontsize_formats'}`]: this.#s_DEFAULT_FONT_SIZE,
+         font_size_formats: this.#s_DEFAULT_FONT_SIZE,
          file_picker_types: 'image media',
+         highlight_on_focus: false,
          image_advtab: true,
-         [`${MCEImpl.isV6 ? 'line_height_formats' : 'lineheight_formats'}`]: this.#s_DEFAULT_LINE_HEIGHT,
-
-         // For typhonjs-oembed plugin when loaded.
-         oembed_live_embeds: false,
-         oembed_default_width: 424,
-         oembed_default_height: 238,
-         oembed_disable_file_source: true,
-
+         line_height_formats: this.#s_DEFAULT_LINE_HEIGHT,
          style_formats,
          style_formats_merge: false,
          table_class_list: this.#s_DEFAULT_TABLE_CLASS_LIST,

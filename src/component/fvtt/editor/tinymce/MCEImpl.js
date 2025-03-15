@@ -14,12 +14,23 @@ export class MCEImpl
     *
     * @type {object[]}
     */
-   static #s_CSS_VARS_EDITOR = [
+   static #s_CSS_VARS_EDITOR_BODY = [
       { variable: '--tjs-editor-content-color', property: 'color', default: '#000' },
       { variable: '--tjs-editor-content-font-family', property: 'font-family', default: 'Signika' },
       { variable: '--tjs-editor-content-font-size', property: 'font-size', default: '10.5pt' },
       { variable: '--tjs-editor-content-line-height', property: 'line-height', default: '1.2' },
       { variable: '--tjs-editor-content-padding', property: 'padding', default: '3px 0 0 0' }
+   ];
+
+   /**
+    * Stores the CSS variable data that is inspected on the `.editor-content` div before the editor is active and
+    * copies these values if set or the default values to the body element of the TinyMCE IFrame.
+    *
+    * @type {object[]}
+    */
+   static #s_CSS_VARS_EDITOR_HTML = [
+      { variable: '', property: 'scrollbar-width', default: 'none' },
+      { variable: '', property: 'scrollbar-color', default: 'red' }
    ];
 
    /**
@@ -79,9 +90,6 @@ export class MCEImpl
       return (typeof options.preventEnterKey === 'boolean' && options.preventEnterKey) ||
        (typeof options.saveOnEnterKey === 'boolean' && options.saveOnEnterKey);
    }
-
-   static get isV5() { return globalThis.tinymce?.majorVersion === '5'; }
-   static get isV6() { return globalThis.tinymce?.majorVersion === '6'; }
 
    static keydownHandler(editor, event, options, saveEditor, content)
    {
@@ -291,17 +299,43 @@ export class MCEImpl
    static setMCEConfigContentStyle(editorContentEl)
    {
       const cssBodyInlineStyles = {};
+      const cssHTMLInlineStyles = {};
 
       // Get current CSS variables for editor content and set it to inline styles for the MCE editor iFrame.
       const styles = globalThis.getComputedStyle(editorContentEl);
 
-      for (const entry of this.#s_CSS_VARS_EDITOR)
+      for (const entry of this.#s_CSS_VARS_EDITOR_BODY)
       {
-         const currentPropertyValue = styles.getPropertyValue(entry.variable);
-         cssBodyInlineStyles[entry.property] = currentPropertyValue !== '' ? currentPropertyValue : entry.default;
+         const currentVariableValue = styles.getPropertyValue(entry.variable);
+         const currentPropertyValue = styles.getPropertyValue(entry.property);
+
+         if (currentVariableValue !== '')
+         {
+            cssBodyInlineStyles[entry.property] = currentVariableValue;
+         }
+         else
+         {
+            cssBodyInlineStyles[entry.property] = currentPropertyValue !== '' ? currentPropertyValue : entry.default;
+         }
       }
 
-      return `body { ${Object.entries(cssBodyInlineStyles).map((array) => `${array[0]}: ${array[1]};`).join(';')
-       } } p:first-of-type { margin-top: 0; } section.secret p:first-of-type { margin-top: 0.5em; }`;
+      for (const entry of this.#s_CSS_VARS_EDITOR_HTML)
+      {
+         const currentVariableValue = styles.getPropertyValue(entry.variable);
+         const currentPropertyValue = styles.getPropertyValue(entry.property);
+
+         if (currentVariableValue !== '')
+         {
+            cssHTMLInlineStyles[entry.property] = currentVariableValue;
+         }
+         else
+         {
+            cssHTMLInlineStyles[entry.property] = currentPropertyValue !== '' ? currentPropertyValue : entry.default;
+         }
+      }
+
+      return `html { ${Object.entries(cssHTMLInlineStyles).map((array) => `${array[0]}: ${array[1]}`).join(';')
+       } } body { ${Object.entries(cssBodyInlineStyles).map((array) => `${array[0]}: ${array[1]}`).join(';')
+        } } p:first-of-type { margin-top: 0; } section.secret p:first-of-type { margin-top: 0.5em; }`;
    }
 }
