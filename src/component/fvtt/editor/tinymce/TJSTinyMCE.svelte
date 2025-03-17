@@ -837,11 +837,11 @@
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--disabled) {
-        color: var(--tjs-editor-toolbar-button-disabled-color, rgba(34, 47, 62, .5));
+        color: var(--tjs-editor-toolbar-button-disabled-color, var(--tjs-editor-toolbar-button-disabled-color-default));
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn.tox-tbtn--disabled svg) {
-        fill: var(--tjs-editor-toolbar-button-disabled-color, rgba(34, 47, 62, .5));
+        fill: var(--tjs-editor-toolbar-button-disabled-color, var(--tjs-editor-toolbar-button-disabled-color-default));
     }
 
     .tjs-editor :global(.tox.tox-tinymce .tox-tbtn:hover:not(.tox-tbtn--disabled)) {
@@ -923,28 +923,47 @@
         width: 7em;
     }
 
-    /* Core theming support ----------------------------------------------------------------------------------------*/
-
-    :global(.themed.theme-dark) .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
-       background: var(--tjs-editor-toolbar-background, var(--color-cool-4));
-       box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(120 110 130 / 38%), 0 8px 8px -4px rgb(120 110 130 / 22%));
+    .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
+       background: var(--tjs-editor-toolbar-background, var(--tjs-editor-toolbar-background-default));
+       box-shadow: var(--tjs-editor-toolbar-box-shadow, var(--tjs-editor-toolbar-box-shadow-default));
     }
 
-    :global(.themed.theme-light) .tjs-editor :global(.tox.tox-tinymce .tox-toolbar__primary) {
-       background: var(--tjs-editor-toolbar-background, rgba(0, 0, 0, 0.1));
-       box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
+    /* Core theming support ----------------------------------------------------------------------------------------*/
+
+    :global(.themed.theme-dark) .tjs-editor {
+       --tjs-editor-toolbar-button-disabled-color-default: var(--color-light-5);
+       --tjs-editor-toolbar-background-default: var(--color-cool-4);
+       --tjs-editor-toolbar-box-shadow-default: 0 2px 2px -2px rgb(120 110 130 / 38%), 0 8px 8px -4px rgb(120 110 130 / 22%);
+    }
+
+    :global(.themed.theme-light) .tjs-editor {
+       --tjs-editor-toolbar-button-disabled-color-default: rgba(34, 47, 62, .5);
+       --tjs-editor-toolbar-background-default: rgba(0, 0, 0, 0.1);
+       --tjs-editor-toolbar-box-shadow-default: 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%);
     }
 
     /* The following styles affect the global / all modules TinyMCE auxiliary menus --------------------------------*/
 
     :global(.tox.tox-tinymce-aux.tjs-editor.themed.theme-dark) {
-       --tjs-editor-menu-background-default: red;
        --tjs-editor-dialog-background-default: var(--color-cool-5-90);
+       --tjs-editor-menu-background-default: #252830;
+       --tjs-editor-menu-item-active-background-default: rgba(255, 255, 255, 0.1);
+       --tjs-editor-menu-item-enabled-background-default: rgba(255, 255, 255, 0.2);
+       --tjs-editor-menu-item-background-hover-default: #434857;
+       --tjs-editor-menu-item-color-default: #999;
+       --tjs-editor-menu-item-color-disabled-default: #444;
+       --tjs-editor-menu-item-color-hover-default: #efe6d8;
     }
 
     :global(.tox.tox-tinymce-aux.tjs-editor.themed.theme-light) {
-       --tjs-editor-menu-background-default: blue;
        --tjs-editor-dialog-background-default: green;
+       --tjs-editor-menu-background-default: #f8f4f1;
+       --tjs-editor-menu-item-active-background-default: #dee0e2;
+       --tjs-editor-menu-item-enabled-background-default: #c9cbcd;
+       --tjs-editor-menu-item-background-hover-default: #f1ebe8;
+       --tjs-editor-menu-item-color-default: var(--color-text-primary);
+       --tjs-editor-menu-item-color-disabled-default: rgba(34, 47, 62, .5);
+       --tjs-editor-menu-item-color-hover-default: #111;
     }
 
     :global(.tox.tox-tinymce-aux.tjs-editor .tox-menu) {
@@ -981,32 +1000,61 @@
        color: var(--tjs-editor-dialog-color, var(--color-cool-5-90));
     }
 
+    /* Menu label colors ---- */
 
-    /*!***/
-    /* * Handles the "global" TinyMCE auxiliary toolbar select button width; this is displayed separately in the DOM*/
-    /* * and this CSS will affect all TinyMCE auxiliary toolbar select buttons, but it is better.*/
-    /* *!*/
-    /*:global(.tox.tox-tinymce-aux .tox-tbtn--bespoke .tox-tbtn__select-label) {*/
-    /*    max-width: 7em;*/
-    /*    width: fit-content;*/
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection__item:is(.tox-collection__item--state-disabled)) {
+       color: var(--tjs-editor-menu-item-color-disabled, var(--tjs-editor-menu-item-color-disabled-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection__item:is(.tox-collection__item--state-disabled) .tox-collection__item-label) {
+       color: var(--tjs-editor-menu-item-color-disabled, var(--tjs-editor-menu-item-color-disabled-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection__item:not(.tox-collection__item--state-disabled)) {
+       color: var(--tjs-editor-menu-item-color, var(--tjs-editor-menu-item-color-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection__item:not(.tox-collection__item--state-disabled) .tox-collection__item-label) {
+       color: var(--tjs-editor-menu-item-color, var(--tjs-editor-menu-item-color-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-insert-table-picker__label) {
+       color: var(--tjs-editor-menu-item-color, var(--tjs-editor-menu-item-color-default));
+    }
+
+    /* Menu background ---- */
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--active) {
+       background: var(--tjs-editor-menu-item-active-background, var(--tjs-editor-menu-item-active-background-default));
+    }
+
+    /* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button */
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-tbtn:focus) {
+       background: var(--tjs-editor-menu-item-active-background, var(--tjs-editor-menu-item-active-background-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--enabled:not(.tox-collection__item--state-disabled)) {
+       background: var(--tjs-editor-menu-item-enabled-background, var(--tjs-editor-menu-item-enabled-background-default));
+    }
+
+    /*:global(.tox.tox-tinymce-aux.tjs-editor .tox-tbtn:hover:not(.tox-tbtn--disabled)) {*/
+    /*   background: var(--tjs-editor-menu-item-active-background, var(--tjs-editor-menu-item-active-background-default));*/
     /*}*/
 
-    /*:global(.tox.tox-tinymce-aux .tox-collection--list .tox-collection__item--active) {*/
-    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
+    /*:global(.tox.tox-tinymce-aux.tjs-editor .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {*/
+    /*   background: var(--tjs-editor-menu-item-active-background, var(--tjs-editor-menu-item-active-background-default));*/
     /*}*/
 
-    /*!* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button *!*/
-    /*:global(.tox.tox-tinymce-aux .tox-tbtn:focus) {*/
-    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
-    /*}*/
 
-    /*:global(.tox.tox-tinymce-aux .tox-tbtn:hover:not(.tox-tbtn--disabled)) {*/
-    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
-    /*}*/
+    /**
+     * Handles the "global" TinyMCE auxiliary toolbar select button width; this is displayed separately in the DOM
+     * and this CSS will affect all TinyMCE auxiliary toolbar select buttons, but it is better.
+     */
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-tbtn--bespoke .tox-tbtn__select-label) {
+        max-width: 7em;
+        width: fit-content;
+    }
 
-    /*:global(.tox.tox-tinymce-aux .tox-tbtn.tox-tbtn--enabled:not(.tox-tbtn--disabled)) {*/
-    /*    background: var(--tjs-editor-menu-item-active-background, #dee0e2);*/
-    /*}*/
 
     /*:global(.tox .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled)) {*/
     /*   color: black;*/
