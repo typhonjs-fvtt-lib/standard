@@ -334,8 +334,20 @@ export class MCEImpl
          }
       }
 
+
+      /**
+       * Note background is `var(--color-secret-bg)` and border color is `var(--color-secret-border)`.
+       *
+       * TODO: Consider dynamic lookup of current styles in the future. Presently they don't change.
+       *
+       * @type {string}
+       */
+      const secretCSS =
+       'section.secret { padding: 0 6px; background: rgba(53, 0, 121, 0.05); border: solid #666; ' +
+        'border-width: 1px 0; } section.secret p:first-of-type { margin-top: 0.5rem; }';
+
       return `html { ${Object.entries(cssHTMLInlineStyles).map((array) => `${array[0]}: ${array[1]}`).join(';')
        } } body { ${Object.entries(cssBodyInlineStyles).map((array) => `${array[0]}: ${array[1]}`).join(';')
-        } } p:first-of-type { margin-top: 0; } section.secret p:first-of-type { margin-top: 0.5em; }`;
+        } } p { margin: 0.5rem 0; } p:first-of-type { margin-top: 0; } ${secretCSS}`;
    }
 }

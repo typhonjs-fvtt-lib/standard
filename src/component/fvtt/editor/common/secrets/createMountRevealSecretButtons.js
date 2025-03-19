@@ -1,5 +1,3 @@
-import RevealSecretButton     from './RevealSecretButton.svelte';
-
 import { nextAnimationFrame } from '#runtime/util/animate';
 import { processHTML }        from '#runtime/util/html';
 import { safeAccess }         from '#runtime/util/object';
@@ -53,41 +51,39 @@ export function createMountRevealSecretButtons(doc, options)
     */
    return (node) =>
    {
-      const components = [];
-
       /**
-       * Destroy any created components.
+       * Hookup any secret reveal buttons from text enrichment.
        */
-      function destroyComponents()
-      {
-         for (const component of components) { component.$destroy(); }
-         components.length = 0;
-      }
-
-      /**
-       * Mounts new secret reveal buttons.
-       */
-      function mountComponents()
+      function buttonEvents()
       {
          // Must wait until next animation frame so that the node / element is populated with content.
          nextAnimationFrame().then(() =>
          {
-            destroyComponents();
+            /** @type {foundry.abstract.Document} */
+            const foundryDoc = doc.get();
 
             // Collect all secret sections that have a CSS ID.
             const secretSections = node.querySelectorAll('section.secret[id]');
 
-            // Mount secret reveal buttons with the section element and the `onUpdateRevealButtons` callback.
+            // Hookup secret reveal buttons with the section element and the `onUpdateRevealButtons` callback.
             for (const sectionEl of secretSections)
             {
-               components.push(new RevealSecretButton({
-                  target: sectionEl,
-                  anchor: sectionEl.firstChild,
-                  props: {
-                     onUpdateRevealButtons,
-                     sectionEl
+               const button = sectionEl.querySelector('button.reveal');
+
+               if (button)
+               {
+                  // Only hook up button if there is a valid Foundry doc associated.
+                  if (foundryDoc && typeof options?.fieldName === 'string')
+                  {
+                     const revealed = sectionEl.classList.contains('revealed');
+                     const id = sectionEl.id;
+                     button.addEventListener('click', () => onUpdateRevealButtons(!revealed, id), { once: true });
                   }
-               }));
+                  else // Otherwise hide the reveal button.
+                  {
+                     button.style.display = 'none';
+                  }
+               }
             }
          });
       }
@@ -102,14 +98,10 @@ export function createMountRevealSecretButtons(doc, options)
           *
           * @param mountRevealButtons
           */
-         update({ mountRevealButtons }) {
-            if (mountRevealButtons && doc.get() && typeof options?.fieldName === 'string') { mountComponents(); }
-            else { destroyComponents(); }
-         },
-
-         destroy() {
-            destroyComponents();
+         update({ mountRevealButtons })
+         {
+            if (mountRevealButtons) { buttonEvents(); }
          }
       };
-   }
+   };
 }

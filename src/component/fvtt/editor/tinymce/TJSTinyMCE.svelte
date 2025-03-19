@@ -530,13 +530,15 @@
             // Use any current associated document as the relative location for UUID generation.
             const relativeTo = $doc ?? void 0;
 
+            const secrets = (globalThis.game.user.isGM || isOwner);
+
             // Combine any external EnrichmentOptions, but always set `async: true`.
             const enrichOptions = isObject(options?.enrichOptions) ? {
-               secrets: globalThis.game.user.isGM || isOwner,
+               secrets,
                relativeTo,
                ...options.enrichOptions,
                async: true
-            } : { async: true, relativeTo, secrets: globalThis.game.user.isGM || isOwner};
+            } : { async: true, relativeTo, secrets };
 
             enrichedContent = await TextEditor.enrichHTML(content, enrichOptions);
          }
