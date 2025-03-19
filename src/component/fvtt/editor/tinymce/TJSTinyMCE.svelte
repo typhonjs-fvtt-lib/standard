@@ -951,6 +951,7 @@
        --tjs-editor-menu-item-active-background-default: rgba(255, 255, 255, 0.1);
        --tjs-editor-menu-item-enabled-background-default: rgba(255, 255, 255, 0.2);
        --tjs-editor-menu-item-background-hover-default: #434857;
+       --tjs-editor-menu-item-chevron-active-default: var(--color-light-3);
        --tjs-editor-menu-item-color-default: #999;
        --tjs-editor-menu-item-color-disabled-default: #444;
        --tjs-editor-menu-item-color-hover-default: #efe6d8;
@@ -962,6 +963,7 @@
        --tjs-editor-menu-item-active-background-default: #dee0e2;
        --tjs-editor-menu-item-enabled-background-default: #c9cbcd;
        --tjs-editor-menu-item-background-hover-default: #f1ebe8;
+       --tjs-editor-menu-item-chevron-active-default: var(--color-dark-1);
        --tjs-editor-menu-item-color-default: var(--color-text-primary);
        --tjs-editor-menu-item-color-disabled-default: rgba(34, 47, 62, .5);
        --tjs-editor-menu-item-color-hover-default: #111;
@@ -1025,8 +1027,12 @@
 
     /* Menu background ---- */
 
-    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--active) {
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--active:not(.tox-collection__item--state-disabled)) {
        background: var(--tjs-editor-menu-item-active-background, var(--tjs-editor-menu-item-active-background-default));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--state-disabled) {
+       background: none;
     }
 
     /* Removes TMCE highlight for focused button in overflow menu. IE avoid automatic focus of first button */
@@ -1036,6 +1042,16 @@
 
     :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--enabled:not(.tox-collection__item--state-disabled)) {
        background: var(--tjs-editor-menu-item-enabled-background, var(--tjs-editor-menu-item-enabled-background-default));
+    }
+
+    /* Menu chevron ---- */
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item--active .tox-collection__item-caret svg) {
+       fill: var(--tjs-editor-menu-item-chevron-active-color, var(--tjs-editor-menu-item-chevron-active-default, #444));
+    }
+
+    :global(.tox.tox-tinymce-aux.tjs-editor .tox-collection--list .tox-collection__item-caret svg) {
+       fill: var(--tjs-editor-menu-item-chevron-inactive-color, var(--color-text-light-7, #888));
     }
 
     /*:global(.tox.tox-tinymce-aux.tjs-editor .tox-tbtn:hover:not(.tox-tbtn--disabled)) {*/
