@@ -789,6 +789,7 @@
 
     .tjs-editor :global(.tox.tox-tinymce .tox-edit-area__iframe) {
        background: transparent;
+       color-scheme: none;
     }
 
     .tjs-editor :global(.tox:not(.tox-tinymce-inline) .tox-editor-header) {
