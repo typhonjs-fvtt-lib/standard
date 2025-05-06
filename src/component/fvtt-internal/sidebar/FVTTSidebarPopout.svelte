@@ -32,6 +32,6 @@
 
 <svelte:options accessors={true} />
 
-<ApplicationShell bind:elementRoot>
+<ApplicationShell bind:elementRoot stylesContent={{ padding: 0 }}>
    <svelte:component bind:this={component} this={sidebarClass} {...sidebarProps} />
 </ApplicationShell>

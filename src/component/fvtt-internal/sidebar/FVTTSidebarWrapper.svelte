@@ -5,7 +5,7 @@
     */
 
    /**
-    * Bound mounted sidebar component making it accessible from {@link TJSSidebarEntry}.
+    * Bound mounted sidebar component making it accessible from {@link FVTTSidebarEntry}.
     */
    export let component = void 0;
 
@@ -21,6 +21,15 @@
 
 <svelte:options accessors={true} />
 
-<section class={`tab sidebar-tab ${sidebarData.id}-sidebar directory flexcol`} id={sidebarData.id} data-tab={sidebarData.id}>
+<section id={sidebarData.id}
+         class={`tab sidebar-tab ${sidebarData.id}-sidebar directory flexcol`}
+         data-tab={sidebarData.id}
+         data-group=primary>
    <svelte:component bind:this={component} this={sidebarClass} {...sidebarProps} />
 </section>
+
+<style>
+   section:global(.active) {
+      display: flex;
+   }
+</style>
