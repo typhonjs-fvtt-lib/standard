@@ -12,7 +12,7 @@
    export let anchorEl;
 
    /**
-    * Bound sidebar tab component making it accessible from {@link TJSSidebarEntry}.
+    * Bound sidebar tab component making it accessible from {@link FVTTSidebarEntry}.
     */
    export let component = void 0;
 
@@ -24,27 +24,33 @@
 
 <svelte:options accessors={true} />
 
-<!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
-<a bind:this={anchorEl}
-   class=item
-   on:click={(event) => globalThis?.ui?.sidebar?._onLeftClickTab?.(event)}
-   role=tab
-   tabindex=0
-   data-tab={sidebarData.id}
-   data-tooltip={sidebarData.tooltip}
-   alt={sidebarData.tooltip}>
-   {#if sidebarData.iconSvelteConfig !== void 0}
-      <svelte:component bind:this={component}
-                        this={sidebarData.iconSvelteConfig.class}
-                        {...(sidebarData.iconSvelteConfig.props ?? {})} />
-   {:else}
-      <i class={sidebarData.icon}></i>
-   {/if}
-</a>
+<li>
+   <!-- svelte-ignore a11y-role-supports-aria-props -->
+   <button bind:this={anchorEl}
+           type=button
+           class={`ui-control plain icon ${typeof sidebarData?.icon === 'string' ? sidebarData.icon : ''}`}
+           class:svelte-icon={sidebarData.iconSvelteConfig !== void 0}
+           data-action=tab
+           data-tab={sidebarData.id}
+           data-tooltip=""
+           data-group=primary
+           role=tab
+           aria-pressed=false
+           aria-label={sidebarData.tooltip}
+           aria-controls={sidebarData.id}
+           >
+      {#if sidebarData.iconSvelteConfig !== void 0}
+         <svelte:component bind:this={component}
+                           this={sidebarData.iconSvelteConfig.class}
+                           {...(sidebarData.iconSvelteConfig.props ?? {})} />
+      {/if}
+   </button>
+   <div class="notification-pip"></div>
+</li>
 
 <style>
-   a {
-      user-select: none;
-      -webkit-tap-highlight-color: var(--tjs-default-webkit-tap-highlight-color, transparent);
+   button.svelte-icon {
+      padding: 0;
+      margin: 0;
    }
 </style>
