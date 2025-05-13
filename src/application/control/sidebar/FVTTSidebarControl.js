@@ -216,7 +216,10 @@ export class FVTTSidebarControl
                class: FVTTSidebarPopout,
                target: document.body,
                props: {
-                  sidebarData: { svelteConfig }
+                  sidebarData: {
+                     iconSvelteConfig,
+                     svelteConfig
+                  }
                }
             },
 
@@ -484,7 +487,10 @@ export class FVTTSidebarControl
                class: FVTTSidebarPopout,
                target: document.body,
                props: {
-                  sidebarData: sidebar
+                  sidebarData: {
+                     iconSvelteConfig,
+                     svelteConfig
+                  }
                }
             },
 
@@ -617,18 +623,19 @@ export class FVTTSidebarControl
     */
    static #sidebarRemove(data, sidebarData)
    {
-      // Remove specific sidebar app from Foundry core Sidebar class. This prevents rendering of that sidebar and
-      // must be removed here after the `condition` check in #initialize.
-      delete globalThis.ui?.sidebar?.tabs[sidebarData.id];
+      let liButtonEl;
 
       // Attempt to find the `id` tab to set as the before anchor when mounting new sidebar button.
-      const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.id}]`);
-
-      if (!(anchorButtonEl instanceof HTMLElement))
+      if (sidebarData.id)
       {
-         throw new TypeError(
-          `FVTTSidebarControl.#sidebarRemove error - Could not locate sidebar tab for 'sidebarData.id': ${
-           sidebarData.id}.`);
+         liButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.id}]`)?.parentElement;
+
+         if (!(liButtonEl instanceof HTMLElement))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.#sidebarRemove error - Could not locate sidebar tab for 'sidebarData.id': ${
+              sidebarData.id}.`);
+         }
       }
 
       // -------------------
@@ -645,7 +652,7 @@ export class FVTTSidebarControl
       }
 
       // Remove old sidebar tab / panel.
-      anchorButtonEl.remove();
+      liButtonEl.remove();
       anchorSectionEl.remove();
    }
 
@@ -658,23 +665,24 @@ export class FVTTSidebarControl
     */
    static #sidebarReplace(data, sidebarData)
    {
-      // Remove specific sidebar app from Foundry core Sidebar class. This prevents rendering of that sidebar and
-      // must be removed here after the `condition` check in #initialize.
-      delete globalThis.ui?.sidebar?.tabs[sidebarData.id];
+      let liButtonEl;
 
-      // Attempt to find the `id` tab to set as the before anchor when mounting new sidebar button.
-      const anchorButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.id}]`);
-
-      if (!(anchorButtonEl instanceof HTMLElement))
+      // Attempt to find the `id` tab to set as the appended anchor when mounting the new sidebar button.
+      if (sidebarData.id)
       {
-         throw new TypeError(
-          `FVTTSidebarControl.#sidebarReplace error - Could not locate sidebar tab for 'sidebarData.id': ${
-           sidebarData.id}.`);
+         liButtonEl = data.tabsEl.querySelector(`[data-tab=${sidebarData.id}]`)?.parentElement;
+
+         if (!(liButtonEl instanceof HTMLElement))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.#sidebarReplace error - Could not locate sidebar tab for 'sidebarData.id': ${
+              sidebarData.id}.`);
+         }
       }
 
       const sidebarTab = new FVTTSidebarTab({
          target: data.tabsEl,
-         anchor: anchorButtonEl,
+         anchor: liButtonEl,
          props: {
             sidebarData
          }
@@ -742,7 +750,7 @@ export class FVTTSidebarControl
       });
 
       // Remove old sidebar tab / panel.
-      anchorButtonEl.remove();
+      liButtonEl.remove();
       anchorSectionEl.remove();
 
       this.#sidebars.set(sidebarData.id, sidebarEntry);
