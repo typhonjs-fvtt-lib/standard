@@ -1,4 +1,5 @@
-import { isObject } from '#runtime/util/object';
+import { isObject }        from '#runtime/util/object';
+import { getRoutePrefix }  from '#runtime/util/path';
 
 /**
  * Parses the core Foundry style sheet creating an indexed object of properties by individual selector parts that are
@@ -177,7 +178,7 @@ export class FoundryStyles
 
       const styleSheets = Array.from(document.styleSheets).filter((entry) => entry.href !== null);
 
-      const foundryStyleSheet = globalThis.foundry.utils.getRoute('/css/foundry2.css');
+      const foundryStyleSheet = getRoutePrefix('/css/foundry2.css');
 
       // Find the core Foundry stylesheet.
       for (const styleSheet of styleSheets)
