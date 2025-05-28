@@ -1,8 +1,9 @@
-import { SvelteApp }  from '#runtime/svelte/application';
+import {
+   FoundryStyles,
+   SvelteApp }                from '#runtime/svelte/application';
+
 import { TJSStyleManager }    from '#runtime/util/dom/style';
 import { isObject }           from '#runtime/util/object';
-
-import { FoundryStyles }      from '#standard/fvtt';
 
 /**
  * Provides global CSS variable configuration based on Foundry styles loaded.
@@ -15,7 +16,25 @@ class FVTTConfigure
    {
       if (this.#initialized) { return; }
 
-      const cssVariables = new TJSStyleManager({ docKey: '#__tjs-root-styles', version: 1.1 });
+      // Remove `0.2.x` and below root styles. -- REMOVE AT `0.5.0`
+      document?.['#__tjs-root-styles']?.remove?.();
+
+      const manager = new TJSStyleManager({ id: '__tjs-standard-vars', version: 1, layerName: 'variables.tjs-vars', rules:
+         {
+            themeDark: ':root, .themed.theme-dark',
+            themeLight: '.themed.theme-light'
+         }
+      });
+
+      // Early out if the style manager version is outdated.
+      if (!manager.isConnected()) { return; }
+
+      const cssVariables = manager.get('themeDark');
+      const themeLight = manager.get('themeLight');
+
+      themeLight.setProperties({
+         '--tjs-input-background': 'red',
+      }, false);
 
       this.#initialized = true;
 
@@ -52,37 +71,35 @@ class FVTTConfigure
          /**
           * All input related components including: TJSSelect,
           */
-         const props = FoundryStyles.getProperties('input[type="text"], input[type="number"]');
+         const propsBody = FoundryStyles.get('body');
+         const props = FoundryStyles.get('input[type="text"]');
 
-         if (isObject(props))
-         {
-            cssVariables.setProperties({
-               '--tjs-input-background': 'background' in props ? props.background : 'rgba(0, 0, 0, 0.05)',
-               '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--color-border-light-tertiary)',
-               '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '3px',
-               '--tjs-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
-               '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
-               '--tjs-input-padding': 'padding' in props ? props['padding'] : '1px 3px',
-               '--tjs-input-width': 'width' in props ? props.width : 'calc(100% - 2px)',
+         cssVariables.setProperties({
+            '--tjs-input-background': 'background' in props ? propsBody['--color-cool-4'] : 'var(--color-cool-4)',
+            '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--input-border-color)',
+            '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '4px',
+            '--tjs-input-height': '--input-height' in propsBody ? propsBody['--input-height'] : '2rem',
+//               '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
+            '--tjs-input-padding': 'padding' in props ? props['padding'] : '0px 0.5rem',
+            '--tjs-input-width': 'width' in props ? props.width : '100%',
 
-               // Set default values that are only to be referenced and not set.
-               '--_tjs-default-input-height': 'height' in props ? props.height : 'var(--form-field-height)',
+            // Set default values that are only to be referenced and not set.
+            '--_tjs-default-input-height': '--input-height' in propsBody ? propsBody['--input-height'] : 'var(--input-height)',
 
-               // Set directly / no lookup:
-               '--tjs-input-border-color': 'var(--color-border-light-tertiary)',
-            }, false);
-         }
+            // Set directly / no lookup:
+            '--tjs-input-border-color': 'var(--input-border-color)',
+         }, false);
       }
 
       {
          /**
           * Input range specific variables for track and thumb,
           */
-         const propsTrack = FoundryStyles.getProperties('input[type="range"]::-webkit-slider-runnable-track');
-         const propsTrackFocus = FoundryStyles.getProperties('input[type="range"]:focus::-webkit-slider-runnable-track');
+         const propsTrack = FoundryStyles.get('input[type="range"]::-webkit-slider-runnable-track');
+         const propsTrackFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-runnable-track');
 
-         const propsThumb = FoundryStyles.getProperties('input[type="range"]::-webkit-slider-thumb');
-         const propsThumbFocus = FoundryStyles.getProperties('input[type="range"]:focus::-webkit-slider-thumb');
+         const propsThumb = FoundryStyles.get('input[type="range"]::-webkit-slider-thumb');
+         const propsThumbFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-thumb');
 
          if (isObject(propsTrack))
          {
