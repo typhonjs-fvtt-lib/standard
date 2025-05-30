@@ -100,7 +100,7 @@
     */
 
    /**
-    * The following options that both {@link TJSTinyMCE} and {@link TJSContentEdit} support likely won't be implemented
+    * The following options that {@link TJSContentEdit} supports likely won't be implemented
     * for the ProseMirror component as they involve significant effort in modifying ProseMirror which is not trivial at
     * all without potentially weeks of work or entirely replacing the built-in Foundry ProseMirror toolbar / support.
     *
@@ -134,8 +134,12 @@
 
    import { applyStyles }  from '#runtime/svelte/action/dom/style';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isDocument }   from '#runtime/types/fvtt-shim/guard';
    import { CrossWindow }  from '#runtime/util/browser';
-   import { isObject }     from '#runtime/util/object';
+
+   import {
+      isObject,
+      safeAccess }         from '#runtime/util/object';
 
    import { PMImpl }       from './PMImpl.js';
    import * as Plugins  	from './plugins';
@@ -179,7 +183,7 @@
    /** @type {HTMLDivElement} */
    let editorContentEl;
 
-   /** @type {ProseMirrorEditor} */
+   /** @type {foundry.applications.ux.ProseMirrorEditor} */
    let editor;
 
    /** @type {boolean} */
@@ -249,7 +253,7 @@
     */
    $: if (options?.document !== void 0)
    {
-      if (!(options.document instanceof globalThis.foundry.abstract.Document))
+      if (!isDocument(options.document))
       {
          throw new TypeError(`TJSProseMirror error: 'options.document' is not a Foundry document.`);
       }
@@ -287,9 +291,8 @@
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 && typeof options?.fieldName === 'string' ?
-       globalThis.foundry.utils.getProperty($doc, options.fieldName) :
-        typeof content === 'string' ? content : '';
+      content = $doc !== void 0 && typeof options?.fieldName === 'string' ? safeAccess($doc, options.fieldName) :
+       typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
       onContentChanged(content, typeof options?.enrichContent === 'boolean' ? options.enrichContent : true);
@@ -384,7 +387,7 @@
       // Editor is now active; wait until the template updates w/ new bound `editorContentEl`.
       await tick();
 
-      editor = await ProseMirrorEditor.create(editorContentEl, content, editorOptions);
+      editor = await foundry.applications.ux.ProseMirrorEditor.create(editorContentEl, content, editorOptions);
 
       // `.editor-container` div is added automatically; add inline style to set margin to 0.
       const containerEl = editorEl.querySelector('.editor-container');
@@ -438,7 +441,7 @@
                async: true
             } : { async: true, relativeTo, secrets };
 
-            enrichedContent = await TextEditor.enrichHTML(content, enrichOptions);
+            enrichedContent = await foundry.applications.ux.TextEditor.enrichHTML(content, enrichOptions);
          }
          else
          {
@@ -456,7 +459,7 @@
    /**
     * Handles cleaning up the editor state after any associated document has been deleted.
     *
-    * @param {foundry.abstract.Document} document - The deleted document.
+    * @param {fvtt.ClientDocument} document - The deleted document.
     */
    function onDocumentDeleted(document)
    {

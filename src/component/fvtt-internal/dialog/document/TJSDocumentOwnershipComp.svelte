@@ -2,6 +2,11 @@
    import { getContext }      from '#svelte';
 
    import { TJSDocument }     from '#runtime/svelte/store/fvtt/document';
+
+   import {
+      isDocument,
+      isFolder }              from '#runtime/types/fvtt-shim/guard';
+
    import { localize }        from '#runtime/util/i18n';
 
    import { selectOptions }   from './util.js';
@@ -12,7 +17,7 @@
 
    const managedPromise = getContext('#managedPromise');
 
-   if (!(document instanceof globalThis.foundry.abstract.Document))
+   if (!isDocument(document))
    {
       throw new TypeError(`TJSOwnershipControl error: 'document' is not an instance of Document.`);
    }
@@ -21,18 +26,18 @@
 
    let form, instructions;
    let currentDefault, defaultLevels, playerLevels, users;
-   let isFolder = document instanceof Folder;
+   let isFolderInst = isFolder(document);
    let isEmbedded = document.isEmbedded;
    let ownership = document.ownership;
 
-   if (!ownership && !isFolder)
+   if (!ownership && !isFolderInst)
    {
       throw new Error(`The ${document.documentName} document does not contain ownership data`);
    }
 
    $: if ($doc !== document)
    {
-      if (!(document instanceof globalThis.foundry.abstract.Document))
+      if (!isDocument(document))
       {
          throw new TypeError(`TJSOwnershipControl error: 'document' is not an instance of Document.`);
       }
@@ -46,11 +51,11 @@
 
    $: {
       ({ currentDefault, defaultLevels, playerLevels, users } = getData());
-      isFolder = $doc instanceof Folder;
+      isFolderInst = isFolder($doc);
       isEmbedded = $doc.isEmbedded;
-      instructions = localize(isFolder ? 'OWNERSHIP.HintFolder' : 'OWNERSHIP.HintDocument');
+      instructions = localize(isFolderInst ? 'OWNERSHIP.HintFolder' : 'OWNERSHIP.HintDocument');
 
-      if (!ownership && !isFolder)
+      if (!ownership && !isFolderInst)
       {
          throw new Error(`The ${document.documentName} document does not contain ownership data`);
       }
@@ -67,7 +72,7 @@
          return { level, label: localize(`OWNERSHIP.${name}`) };
       });
 
-      if (!isFolder) { playerLevels.pop(); }
+      if (!isFolderInst) { playerLevels.pop(); }
 
       for (const [name, level] of Object.entries(globalThis.CONST.DOCUMENT_OWNERSHIP_LEVELS))
       {
@@ -84,7 +89,7 @@
       const users = globalThis.game.users.map(user => {
          return {
             user,
-            level: isFolder ? globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS.NOCHANGE : ownership[user.id],
+            level: isFolderInst ? globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS.NOCHANGE : ownership[user.id],
             isAuthor: $doc.author === user
          };
       });
@@ -110,13 +115,13 @@
     */
    async function saveData(event)
    {
-      if (!($doc instanceof globalThis.foundry.abstract.Document)) { return; }
+      if (!isDocument($doc)) { return; }
 
-      const formData = new FormDataExtended(event.target).object;
+      const formData = new foundry.applications.ux.FormDataExtended(event.target).object;
 
       // Collect new ownership levels from the form data
       const metaLevels = globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS;
-      const omit = isFolder ? metaLevels.NOCHANGE : metaLevels.DEFAULT;
+      const omit = isFolderInst ? metaLevels.NOCHANGE : metaLevels.DEFAULT;
       const ownershipLevels = {};
       for (const [user, level] of Object.entries(formData))
       {
@@ -129,7 +134,7 @@
       }
 
       // Update all documents in a Folder
-      if ($doc instanceof Folder)
+      if (isFolder($doc))
       {
          const cls = globalThis.getDocumentClass($doc.type);
          const updates = $doc.contents.map((d) =>

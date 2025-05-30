@@ -2,6 +2,7 @@
    import { getContext }   from '#svelte';
 
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isFolder }     from '#runtime/types/fvtt-shim/guard';
    import { localize }     from '#runtime/util/i18n';
 
    import { radioBoxes }   from './util.js';
@@ -14,13 +15,13 @@
 
    const managedPromise = getContext('#managedPromise');
 
-   if (!(document instanceof Folder))
+   if (!isFolder(document))
    {
       throw new TypeError(`TJSFolderCreateUpdate error: 'document' is not an instance of Folder.`);
    }
 
    const doc = new TJSDocument(document, { delete: application.close.bind(application) });
-   const newName = localize('DOCUMENT.New', { type: localize(Folder.metadata.label) });
+   const newName = localize('DOCUMENT.New', { type: localize(foundry.documents.Folder.metadata.label) });
    const sortingModes = { a: 'FOLDER.SortAlphabetical', m: 'FOLDER.SortManual' };
 
    let form;
@@ -32,7 +33,7 @@
 
    $: if ($doc !== document)
    {
-      if (!(document instanceof Folder))
+      if (!isFolder(document))
       {
          throw new TypeError(`TJSFolderCreateUpdate error: 'document' is not an instance of Folder.`);
       }
@@ -76,9 +77,9 @@
     */
    async function saveData(event)
    {
-      const formData = new FormDataExtended(event.target).object;
+      const formData = new foundry.applications.ux.FormDataExtended(event.target).object;
 
-      if (!formData.name?.trim()) { formData.name = Folder.implementation.defaultName(); }
+      if (!formData.name?.trim()) { formData.name = foundry.documents.Folder.implementation.defaultName(); }
       if (!formData.parent) { formData.parent = null; }
 
       let modifiedDoc = document;
@@ -90,7 +91,7 @@
       else
       {
          document.updateSource(formData);
-         modifiedDoc = await Folder.create(document);
+         modifiedDoc = await foundry.documents.Folder.create(document);
       }
 
       managedPromise.resolve(modifiedDoc);

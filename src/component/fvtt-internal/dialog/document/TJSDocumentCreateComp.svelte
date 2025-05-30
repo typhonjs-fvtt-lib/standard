@@ -1,6 +1,7 @@
 <script>
    import { getContext }      from '#svelte';
 
+   import { isDocumentClass } from '#runtime/types/fvtt-shim/guard';
    import { localize }        from '#runtime/util/i18n';
 
    import { selectOptions }   from './util.js';
@@ -18,7 +19,7 @@
    let form;
    let name, folderSelect, folders, hasTypes, type, types;
 
-   if (!Object.prototype.isPrototypeOf.call(foundry.abstract.Document, documentCls))
+   if (!isDocumentClass(documentCls))
    {
       throw new TypeError(`TJSCreateDocument error: 'documentCls' is not a Document.`);
    }
@@ -55,7 +56,7 @@
     */
    async function saveData(event)
    {
-      const fd = new FormDataExtended(event.target);
+      const fd = new foundry.applications.ux.FormDataExtended(event.target);
 
       globalThis.foundry.utils.mergeObject(data, fd.object, { inplace: true });
 

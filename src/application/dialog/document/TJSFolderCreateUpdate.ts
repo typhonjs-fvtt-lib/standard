@@ -86,7 +86,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
       }
 
       // @ts-ignore
-      const label: string = localize(Folder.metadata.label);
+      const label: string = localize(foundry.documents.Folder.metadata.label);
 
       // @ts-ignore
       const data = globalThis.foundry.utils.mergeObject({
@@ -95,7 +95,7 @@ export class TJSFolderCreateUpdate extends TJSDialog
       }, folderData);
 
       // @ts-ignore
-      const document = new Folder(data);
+      const document = new foundry.documents.Folder(data);
 
       return new TJSFolderCreateUpdate(document, options, dialogData).wait();
    }

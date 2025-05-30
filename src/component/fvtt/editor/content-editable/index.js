@@ -12,7 +12,7 @@ export { default as TJSContentEdit } from './TJSContentEdit.svelte';
  * @property {boolean}   [clickToEdit=false] When true the edit button is not shown and a click on the editor
  * content initializes the editor.
  *
- * @property {foundry.abstract.Document}   [document] Set to a Foundry document to load and save content from it.
+ * @property {fvtt.ClientDocument}   [document] Set to a Foundry document to load and save content from it.
  * Requires `fieldName` to be set.
  *
  * @property {boolean}   [editable] Prevents editing and hides button. When set to false any active editor

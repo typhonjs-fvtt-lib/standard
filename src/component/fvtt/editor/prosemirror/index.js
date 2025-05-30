@@ -14,7 +14,7 @@ export { default as TJSProseMirror }   from './TJSProseMirror.svelte';
  *
  * @property {boolean}   [collaborate=false] Enables ProseMirror collaboration; requires a document to be set.
  *
- * @property {foundry.abstract.Document}   [document] Set to a Foundry document to load and save content from it.
+ * @property {fvtt.ClientDocument}   [document] Set to a Foundry document to load and save content from it.
  * Requires `fieldName` to be set.
  *
  * @property {boolean}   [editable] Prevents editing and hides button. When set to false any active editor

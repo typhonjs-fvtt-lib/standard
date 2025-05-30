@@ -25,7 +25,6 @@ export function createMountRevealSecretButtons(doc, options)
     */
    function onUpdateRevealButtons(revealed, id)
    {
-      /** @type {foundry.abstract.Document} */
       const foundryDoc = doc.get();
 
       if (foundryDoc && typeof options?.fieldName === 'string')
@@ -59,7 +58,6 @@ export function createMountRevealSecretButtons(doc, options)
          // Must wait until next animation frame so that the node / element is populated with content.
          nextAnimationFrame().then(() =>
          {
-            /** @type {foundry.abstract.Document} */
             const foundryDoc = doc.get();
 
             // Collect all secret sections that have a CSS ID.

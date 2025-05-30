@@ -88,8 +88,12 @@
 
    import { applyStyles }  from '#runtime/svelte/action/dom/style';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isDocument }   from '#runtime/types/fvtt-shim/guard';
    import { CrossWindow }  from '#runtime/util/browser';
-   import { isObject }     from '#runtime/util/object';
+
+   import {
+      isObject,
+      safeAccess }         from '#runtime/util/object';
 
    import { CEImpl }       from './CEImpl.js';
 
@@ -193,7 +197,7 @@
     */
    $: if (options?.document !== void 0)
    {
-      if (!(options.document instanceof globalThis.foundry.abstract.Document))
+      if (!isDocument(options.document))
       {
          throw new TypeError(`TJSContentEdit error: 'options.document' is not a Foundry document.`);
       }
@@ -231,9 +235,8 @@
    // If there is a valid document then retrieve content from `fieldName` otherwise use `content` string.
    $:
    {
-      content = $doc !== void 0 && typeof options?.fieldName === 'string' ?
-       globalThis.foundry.utils.getProperty($doc, options.fieldName) :
-        typeof content === 'string' ? content : '';
+      content = $doc !== void 0 && typeof options?.fieldName === 'string' ? safeAccess($doc, options.fieldName) :
+       typeof content === 'string' ? content : '';
 
       // Avoid double trigger of reactive statement as enriching content is async.
       onContentChanged(content, typeof options?.enrichContent === 'boolean' ? options.enrichContent : true);
@@ -360,7 +363,7 @@
                async: true
             } : { async: true, relativeTo, secrets };
 
-            enrichedContent = await TextEditor.enrichHTML(content, enrichOptions);
+            enrichedContent = await foundry.applications.ux.TextEditor.enrichHTML(content, enrichOptions);
          }
          else
          {
@@ -378,7 +381,7 @@
    /**
     * Handles cleaning up the editor state after any associated document has been deleted.
     *
-    * @param {foundry.abstract.Document} document - The deleted document.
+    * @param {fvtt.ClientDocument} document - The deleted document.
     */
    function onDocumentDeleted(document)
    {
@@ -401,11 +404,10 @@
    {
       try
       {
-         const linkOptions = options?.document instanceof globalThis.foundry.abstract.Document ?
-          { relativeTo: options.document } : {};
+         const linkOptions = isDocument(options?.document) ? { relativeTo: options.document } : {};
 
-         const link = await TextEditor.getContentLink(JSON.parse(event.dataTransfer.getData('text/plain')),
-          linkOptions);
+         const link = await foundry.applications.ux.TextEditor.getContentLink(
+          JSON.parse(event.dataTransfer.getData('text/plain')), linkOptions);
 
          if (typeof link === 'string') { CEImpl.insertTextAtCursor(link); }
       }

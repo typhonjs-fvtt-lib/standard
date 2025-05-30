@@ -2,16 +2,17 @@
    import { getContext }   from '#svelte';
 
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isDocument }   from '#runtime/types/fvtt-shim/guard';
    import { localize }     from '#runtime/util/i18n';
 
-   /** @type {foundry.abstract.Document} */
+   /** @type {fvtt.ClientDocument} */
    export let document = void 0;
 
    const application = getContext('#external')?.application;
 
    const managedPromise = getContext('#managedPromise');
 
-   if (!(document instanceof globalThis.foundry.abstract.Document))
+   if (!isDocument(document))
    {
       throw new TypeError(`TJSDocumentImport error: 'document' is not an instance of Document.`);
    }
@@ -25,7 +26,7 @@
 
    $: if ($doc !== document)
    {
-      if (!(document instanceof globalThis.foundry.abstract.Document))
+      if (!isDocument(document))
       {
          throw new TypeError(`TJSDocumentImport error: 'document' is not an instance of Document.`);
       }

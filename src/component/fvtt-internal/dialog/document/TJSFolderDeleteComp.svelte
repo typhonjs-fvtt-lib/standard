@@ -1,14 +1,15 @@
 <script>
-   import { getContext }    from '#svelte';
+   import { getContext }   from '#svelte';
 
-   import { TJSDocument }   from '#runtime/svelte/store/fvtt/document';
-   import { localize }      from '#runtime/util/i18n';
+   import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
+   import { isFolder }     from '#runtime/types/fvtt-shim/guard';
+   import { localize }     from '#runtime/util/i18n';
 
    export let document = void 0;
 
    const application = getContext('#external')?.application;
 
-   if (!(document instanceof Folder))
+   if (!isFolder(document))
    {
       throw new TypeError(`TJSFolderDelete error: 'document' is not an instance of Folder.`);
    }
@@ -17,7 +18,7 @@
 
    $: if ($doc !== document)
    {
-      if (!(document instanceof Folder))
+      if (!isFolder(document))
       {
          throw new TypeError(`TJSFolderDelete error: 'document' is not an instance of Folder.`);
       }
