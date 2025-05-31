@@ -17,7 +17,7 @@
    const managedPromise = getContext('#managedPromise');
 
    let form;
-   let name, folderSelect, folders, hasTypes, type, types;
+   let defaultName, name, folderSelect, folders, hasTypes, type, types;
 
    if (!isDocumentClass(documentCls))
    {
@@ -34,7 +34,8 @@
 
    hasTypes = allTypes.length > 1;
 
-   name = data.name || localize('DOCUMENT.New', { type: label });
+   defaultName = documentCls.defaultName({ type, parent, pack });
+   name = data.name || '';
    type = data.type || allTypes[0];
 
    types = allTypes.reduce((obj, t) =>
@@ -72,12 +73,15 @@
 
 <svelte:options accessors={true}/>
 
-<form bind:this={form} on:submit|preventDefault={saveData} autocomplete="off">
+<form bind:this={form}
+      class="dialog-form standard-form"
+      on:submit|preventDefault={saveData}
+      autocomplete="off">
    <div class="form-group">
       <!-- svelte-ignore a11y-label-has-associated-control -->
       <label>{localize('Name')}</label>
       <div class="form-fields">
-         <input type="text" name="name" placeholder={name} required/>
+         <input type="text" name="name" placeholder={defaultName} value={name} required/>
       </div>
    </div>
 
