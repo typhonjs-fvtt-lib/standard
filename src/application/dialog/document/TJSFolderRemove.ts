@@ -36,19 +36,19 @@ export class TJSFolderRemove extends TJSDialog
          },
          title: `${localize('FOLDER.Remove')}: ${document.name}`,
          buttons: {
-            remove: {
-               icon: 'fas fa-trash',
-               label: 'FOLDER.Remove',
+            yes: {
+               icon: 'fas fa-check',
+               label: 'Yes',
                onPress: 'removeFolder'
             },
-            cancel: {
-               icon: 'fas fa-times',
-               label: 'Cancel',
-               onPress: () => false
+            no: {
+               icon: 'fas fa-xmark',
+               label: 'No',
+               onPress: (): boolean => false
             }
          },
-         default: 'cancel'
-      }, options);
+         default: 'no'
+      }, { headerIcon: 'fa-solid fa-trash', ...options });
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
