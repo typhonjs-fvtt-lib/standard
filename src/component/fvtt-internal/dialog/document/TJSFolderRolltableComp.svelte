@@ -41,4 +41,4 @@
 
 <svelte:options accessors={true}/>
 
-{localize('FOLDER.CreateTableConfirm')}
+{localize('FOLDER.CreateTableConfirm.Question')}

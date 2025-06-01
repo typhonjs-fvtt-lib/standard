@@ -36,20 +36,20 @@ export class TJSFolderRolltable extends TJSDialog
          },
          title: `${localize('FOLDER.CreateTable')}: ${document.name}`,
          buttons: {
-            create: {
-               // @ts-ignore
-               icon: `${CONFIG.RollTable.sidebarIcon}`,
-               label: 'FOLDER.CreateTable',
+            yes: {
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'createTable'
             },
-            cancel: {
-               icon: 'fas fa-times',
-               label: 'Cancel',
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
                onPress: (): boolean => false
             }
          },
-         default: 'cancel'
-      }, options);
+         default: 'no'
+         // @ts-expect-error
+      }, { headerIcon: `${CONFIG.RollTable.sidebarIcon}`, ...options });
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
