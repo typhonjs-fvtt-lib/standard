@@ -47,10 +47,10 @@
       application.data.merge({
          buttons: {
             submit: {
-               label: localize(document?._id ? 'FOLDER.Update' : 'FOLDER.Create')
+               label: localize(document?._id ? 'FOLDER.Update' : 'SIDEBAR.ACTIONS.CREATE.Folder')
             }
          },
-         title: document?.id ? `${localize('FOLDER.Update')}: ${document.name}` : localize('FOLDER.Create')
+         title: document?.id ? `${localize('FOLDER.Update')}: ${document.name}` : localize('SIDEBAR.ACTIONS.CREATE.Folder')
       });
    }
 
@@ -61,7 +61,7 @@
    }
    else
    {
-      colorText = null;
+      colorText = '#000000';
       color = '#000000'
    }
 
@@ -101,14 +101,17 @@
 
 <svelte:options accessors={true}/>
 
-<form bind:this={form} on:submit|preventDefault={saveData} id=folder-create autocomplete=off>
+<form bind:this={form}
+      class=standard-form
+      on:submit|preventDefault={saveData}
+      autocomplete=off>
    <input type=hidden name=type value={document.type} />
    <input type=hidden name=parent value={document.parent} />
    <input type=hidden name=color bind:value={colorText} />
 
    <div class=form-group>
       <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>{localize('FOLDER.Name')}</label>
+      <label>{localize('FOLDER.FIELDS.name.label')}</label>
       <div class=form-fields>
          <input type=text name=name placeholder={newName} value={name} required/>
       </div>
@@ -116,7 +119,7 @@
 
    <div class=form-group>
       <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>{localize('FOLDER.Color')}</label>
+      <label>{localize('FOLDER.FIELDS.color.label')}</label>
       <div class=form-fields>
          <input type=text name=colorText bind:value={colorText} readonly />
          <input type=color bind:value={color} data-edit=color />
@@ -126,9 +129,20 @@
 
    <div class=form-group>
       <!-- svelte-ignore a11y-label-has-associated-control -->
-      <label>{localize('FOLDER.SortMode')}</label>
+      <label>{localize('FOLDER.FIELDS.sorting.label')}</label>
       <div class=form-fields>
          {@html radioBoxes('sorting', sortingModes, { checked: document.sorting, localize: true })}
       </div>
    </div>
 </form>
+
+<style>
+   input[type=color] {
+      flex: 0 0 40px;
+      height: 40px;
+      margin: -4px;
+      background: transparent;
+      border: none;
+      cursor: var(--cursor-pointer);
+   }
+</style>
