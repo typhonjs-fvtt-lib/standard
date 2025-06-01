@@ -43,20 +43,20 @@ export class TJSDocumentImport extends TJSDialog
             props: { document }
          },
          buttons: {
-            import: {
+            yes: {
                autoClose: false, // Don't automatically close on button onclick.
-               icon: 'fas fa-file-import',
-               label: 'Import',
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'requestSubmit'
             },
-            cancel: {
-               icon: 'fas fa-times',
-               label: 'Cancel',
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
                onPress: (): boolean => false
             }
          },
-         default: 'cancel'
-      }, { width: 400, ...options });
+         default: 'no'
+      }, { headerIcon: 'fa-solid fa-file-import', width: 400, ...options });
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with

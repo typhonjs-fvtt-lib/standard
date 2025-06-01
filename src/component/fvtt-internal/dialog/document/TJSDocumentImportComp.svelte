@@ -59,11 +59,19 @@
 
 <svelte:options accessors={true}/>
 
-<form bind:this={form} on:submit|preventDefault={handleImport} autocomplete=off>
-    <p class=notes>{hint1}</p>
-    <p class=notes>{hint2}</p>
-    <div class=form-group>
-        <label for=data>{localize('DOCUMENT.ImportSource')}</label>
-        <input type=file id=data required />
-    </div>
+<form bind:this={form}
+      class="dialog-form standard-form"
+      on:submit|preventDefault={handleImport}
+      autocomplete=off>
+
+   <div class="dialog-content standard-form">
+      <p class=hint>{hint1}</p>
+      <p class=hint>{hint2}</p>
+      <div class=form-group>
+         <label for=data>{localize('DOCUMENT.ImportSource')}</label>
+         <div class=form-fields>
+            <input type=file name=data required>
+         </div>
+      </div>
+   </div>
 </form>
