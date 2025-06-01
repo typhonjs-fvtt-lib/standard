@@ -41,19 +41,19 @@ export class TJSDocumentDelete extends TJSDialog
          title: `${localize('DOCUMENT.Delete', { type: localize(document.constructor.metadata.label) })}: ${
           document.name}`,
          buttons: {
-            delete: {
-               icon: 'fas fa-trash',
-               label: localize('DOCUMENT.Delete', { type: localize(document.constructor.metadata.label) }),
+            yes: {
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'deleteDocument'
             },
-            cancel: {
-               icon: 'fas fa-times',
-               label: 'Cancel',
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
                onPress: (): boolean => false
             }
          },
-         default: 'cancel'
-      }, options);
+         default: 'no'
+      }, { headerIcon: 'fa-solid fa-trash', ...options });
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
