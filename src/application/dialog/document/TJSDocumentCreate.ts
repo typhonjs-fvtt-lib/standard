@@ -67,6 +67,14 @@ export class TJSDocumentCreate extends TJSDialog
          },
          default: 'create'
       }, { width: 320, ...options });
+
+      // Dynamically set a header icon based on `CONFIG` data if available.
+      const docName = documentCls?.metadata?.name;
+      if (typeof docName === 'string')
+      {
+         // @ts-expect-error
+         this.options.headerIcon = CONFIG?.[docName]?.sidebarIcon ?? void 0;
+      }
    }
 
    /**
