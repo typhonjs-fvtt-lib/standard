@@ -32,7 +32,7 @@ export class TJSFolderExport extends TJSDialog
     { pack?: string, merge?: boolean, keepId?: boolean } & Partial<SvelteApp.OptionsCore> = {},
      dialogData: TJSDialog.OptionsData = {})
    {
-      super({}, options);
+      super({}, { headerIcon: 'fa-solid fa-atlas', ...options });
 
       // Get eligible pack destinations
       // @ts-ignore
@@ -61,21 +61,21 @@ export class TJSFolderExport extends TJSDialog
                keepId
             }
          },
-         title: `${localize('FOLDER.ExportTitle')}: ${document.name}`,
+         title: `${localize('FOLDER.Export')}: ${document.name}`,
          buttons: {
-            export: {
+            yes: {
                autoClose: false,
-               icon: 'fas fa-atlas',
-               label: 'FOLDER.ExportTitle',
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'exportData'
             },
-            cancel: {
-               icon: 'fas fa-times',
-               label: 'Cancel',
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
                onPress: (): boolean => false
             }
          },
-         default: 'cancel'
+         default: 'no'
       });
    }
 
