@@ -30,6 +30,8 @@
    let isEmbedded = document.isEmbedded;
    let ownership = document.ownership;
 
+   let showGM = false;
+
    if (!ownership && !isFolderInst)
    {
       throw new Error(`The ${document.documentName} document does not contain ownership data`);
@@ -44,21 +46,22 @@
 
       doc.set(document);
 
-      const title = localize('OWNERSHIP.Title');
-
-      application.data.set('title', `${title}: ${document.name}`);
+      application.data.set('title', localize('OWNERSHIP.Title', { object: document.name }));
    }
 
    $: {
-      ({ currentDefault, defaultLevels, playerLevels, users } = getData());
       isFolderInst = isFolder($doc);
       isEmbedded = $doc.isEmbedded;
-      instructions = localize(isFolderInst ? 'OWNERSHIP.HintFolder' : 'OWNERSHIP.HintDocument');
+      ownership = $doc.ownership;
 
       if (!ownership && !isFolderInst)
       {
-         throw new Error(`The ${document.documentName} document does not contain ownership data`);
+         throw new Error(`The ${$doc?.documentName} document does not contain ownership data`);
       }
+
+      instructions = localize(isFolderInst ? 'OWNERSHIP.HintFolder' : 'OWNERSHIP.HintDocument');
+
+      ({ currentDefault, defaultLevels, playerLevels, users } = getData());
    }
 
    /**
@@ -85,18 +88,21 @@
       const defaultLevels = globalThis.foundry.utils.deepClone(playerLevels);
       defaultLevels.shift();
 
+      const docAuthor = $doc?.author;
+
       // Player users
-      const users = globalThis.game.users.map(user => {
-         return {
-            user,
-            level: isFolderInst ? globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS.NOCHANGE : ownership[user.id],
-            isAuthor: $doc.author === user
-         };
-      });
+      const users = game.users.map((user) =>
+      ({
+         user,
+         level: isFolderInst ? globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS.NOCHANGE : ownership[user.id],
+         isAuthor: docAuthor === user,
+         isGM: user.isGM,
+         cssClass: user.isGM ? 'gm' : ''
+      })).sort((a, b) => a.user.name.localeCompare(b.user.name, game.i18n.lang));
 
       // Construct and return the data object
       return {
-         currentDefault: $doc?.ownership?.default ?? playerLevels[0],
+         currentDefault: $doc?.ownership?.default ?? globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS.DEFAULT,
          defaultLevels,
          playerLevels,
          users
@@ -117,7 +123,7 @@
    {
       if (!isDocument($doc)) { return; }
 
-      const formData = new foundry.applications.ux.FormDataExtended(event.target).object;
+      const formData = new globalThis.foundry.applications.ux.FormDataExtended(event.target).object;
 
       // Collect new ownership levels from the form data
       const metaLevels = globalThis.CONST.DOCUMENT_META_OWNERSHIP_LEVELS;
@@ -167,8 +173,19 @@
 
 <svelte:options accessors={true}/>
 
-<form bind:this={form} on:submit|preventDefault={saveData}>
-   <p class=notes>{instructions}</p>
+<form bind:this={form}
+      class="document-ownership standard-form"
+      on:submit|preventDefault={saveData}>
+   <p class=instructions>{instructions}</p>
+
+   <div class=form-group>
+      <div class=form-fields>
+         <label class=checkbox>
+            {localize('OWNERSHIP.ShowGM')}
+            <input type=checkbox bind:checked={showGM}>
+         </label>
+      </div>
+   </div>
 
    <div class=form-group>
       <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -177,15 +194,42 @@
          {@html selectOptions(defaultLevels, { selected: currentDefault, nameAttr: 'level', labelAttr: 'label' })}
       </select>
    </div>
-   <hr/>
 
-   {#each users as data (data.user.id)}
-      <div class=form-group class:hidden={data.user.isGM}>
-         <!-- svelte-ignore a11y-label-has-associated-control -->
-         <label>{data.user.name}</label>
-            <select name={data.user.id} data-dtype=Number>
-               {@html selectOptions(playerLevels, { selected: data.level, nameAttr: 'level', labelAttr: 'label' })}
-            </select>
-        </div>
-    {/each}
+   <hr>
+
+   <main>
+      {#each users as data (data.user.id)}
+         <div class=form-group class:hidden={!showGM && data.isGM}>
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label>
+               {data.user.name}
+               {#if data.isGM}
+                  <i class="role-icon fa-solid fa-crown fa-fw" data-tooltip="USER.RoleGamemaster"></i>
+               {/if}
+            </label>
+            {#if data.isAuthor}
+               <div class=author>{localize('Author')}</div>
+            {:else}
+               <select name={data.user.id} data-dtype=Number>
+                  {@html selectOptions(playerLevels, { selected: data.level, nameAttr: 'level', labelAttr: 'label' })}
+               </select>
+            {/if}
+         </div>
+      {/each}
+   </main>
 </form>
+
+<style>
+   hr {
+      margin: 0;
+   }
+
+   main {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      max-height: 360px;
+      overflow-y: auto;
+   }
+</style>

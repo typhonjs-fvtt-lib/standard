@@ -35,17 +35,17 @@ export class TJSDocumentOwnership extends TJSDialog
             class: TJSDocumentOwnershipComp,
             props: { document }
          },
-         title: `${localize('OWNERSHIP.Title')}: ${document.name}`,
+         title: `${localize('OWNERSHIP.Title', { object: document.name })}`,
          buttons: {
             save: {
                autoClose: false,
-               icon: 'far fa-save',
+               icon: 'fa-solid fa-floppy-disk',
                label: 'Save Changes',
                onPress: 'requestSubmit'
             }
          },
          default: 'save'
-      }, options);
+      }, { headerIcon: 'fa-fw fa-solid fa-file-lock', ...options });
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with
