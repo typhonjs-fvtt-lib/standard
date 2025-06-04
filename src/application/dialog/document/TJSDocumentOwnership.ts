@@ -37,14 +37,19 @@ export class TJSDocumentOwnership extends TJSDialog
          },
          title: `${localize('OWNERSHIP.Title', { object: document.name })}`,
          buttons: {
-            save: {
+            yes: {
                autoClose: false,
-               icon: 'fa-solid fa-floppy-disk',
-               label: 'Save Changes',
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'requestSubmit'
+            },
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
+               onPress: (): boolean => false
             }
          },
-         default: 'save'
+         default: 'no'
       }, { headerIcon: 'fa-fw fa-solid fa-file-lock', ...options });
 
       /**

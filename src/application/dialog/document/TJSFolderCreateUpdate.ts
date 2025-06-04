@@ -38,15 +38,20 @@ export class TJSFolderCreateUpdate extends TJSDialog
          title: document.id ? `${localize('FOLDER.Update')}: ${document.name}` :
           localize('SIDEBAR.ACTIONS.CREATE.Folder'),
          buttons: {
-            submit: {
+            yes: {
                autoClose: false,
-               icon: 'fas fa-floppy-disk',
-               label: localize(document?.id ? 'FOLDER.Update' : 'SIDEBAR.ACTIONS.CREATE.Folder'),
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'requestSubmit'
+            },
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
+               onPress: (): boolean => false
             }
          },
-         default: 'submit'
-      }, { headerIcon: 'fa-fw fa-solid fa-folder', ... options });
+         default: 'no'
+      }, { headerIcon: `fa-fw fa-solid ${document.id ? 'fas fa-edit' : 'fa-folder' }`, ...options });
 
       /**
        * @member {object} document - Adds accessors to SvelteReactive to get / set the document associated with

@@ -58,14 +58,19 @@ export class TJSDocumentCreate extends TJSDialog
          },
          title: localize('DOCUMENT.Create', { type: localize(documentCls?.metadata?.label) }),
          buttons: {
-            create: {
+            yes: {
                autoClose: false,
-               icon: 'fas fa-check',
-               label: localize('DOCUMENT.Create', { type: localize(documentCls?.metadata?.label) }),
+               icon: 'fa-solid fa-check',
+               label: 'Yes',
                onPress: 'requestSubmit'
+            },
+            no: {
+               icon: 'fa-solid fa-xmark',
+               label: 'No',
+               onPress: (): boolean => false
             }
          },
-         default: 'create'
+         default: 'no'
       }, { width: 320, ...options });
 
       // Dynamically set a header icon based on `CONFIG` data if available.
