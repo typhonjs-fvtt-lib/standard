@@ -15,6 +15,13 @@
 
    const application = getContext('#external')?.application;
 
+   /**
+    * Session storage backed Svelte store for `showGM` users.
+    *
+    * @type {import('svelte/store').Writable<boolean>}
+    */
+   const showGM = application.reactive.sessionStorage.getStore('_trl-fvtt-doc-ownership-showGM', false);
+
    const managedPromise = getContext('#managedPromise');
 
    if (!isDocument(document))
@@ -29,8 +36,6 @@
    let isFolderInst = isFolder(document);
    let isEmbedded = document.isEmbedded;
    let ownership = document.ownership;
-
-   let showGM = false;
 
    if (!ownership && !isFolderInst)
    {
@@ -182,7 +187,7 @@
       <div class=form-fields>
          <label class=checkbox>
             {localize('OWNERSHIP.ShowGM')}
-            <input type=checkbox bind:checked={showGM}>
+            <input type=checkbox bind:checked={$showGM}>
          </label>
       </div>
    </div>
@@ -199,7 +204,7 @@
 
    <main>
       {#each users as data (data.user.id)}
-         <div class=form-group class:hidden={!showGM && data.isGM}>
+         <div class=form-group class:hidden={!$showGM && data.isGM}>
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label>
                {data.user.name}
@@ -228,8 +233,9 @@
       display: flex;
       flex-direction: column;
       gap: 1rem;
-
-      max-height: 360px;
       overflow-y: auto;
+
+      /* This provides a maximum height for the user list fitting ~8 entries */
+      max-height: 360px;
    }
 </style>
