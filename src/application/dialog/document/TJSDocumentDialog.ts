@@ -89,7 +89,7 @@ export class TJSDocumentDialog
    /**
     * Create a new Folder by rendering a dialog to provide basic creation details.
     *
-    * @param {object} folderData - Initial data with which to populate the creation form.
+    * @param folderData - Initial data with which to populate the creation form.
     *
     * @param [options] - Options to pass to TJSDialog / SvelteApp.
     *
@@ -97,7 +97,7 @@ export class TJSDocumentDialog
     *
     * @returns The newly created Folder or null if the dialog is closed.
     */
-   static async folderCreate(folderData: { type: string }, options: SvelteApp.OptionsCore = {},
+   static async folderCreate(folderData: { folder?: string, type: string }, options: SvelteApp.OptionsCore = {},
     dialogData: TJSDialog.OptionsData = {}): Promise<fvtt.Folder | null>
    {
       return TJSFolderCreateUpdate.showCreate(folderData, options, dialogData);

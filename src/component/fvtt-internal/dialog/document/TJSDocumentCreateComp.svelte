@@ -29,8 +29,15 @@
    const label = localize(documentCls.metadata.label);
    const allTypes = game.documentTypes[documentName].filter((t) => t !== globalThis.CONST?.BASE_DOCUMENT_TYPE);
 
+   let collection;
+   if (!parent)
+   {
+      collection = pack ? globalThis.game.packs.get(pack) : globalThis.game.collections.get(documentName);
+   }
+
    folderSelect = data.folder || '';
-   folders = parent ? [] : globalThis.game.folders.filter((f) => (f.type === documentName) && f.displayed);
+
+   folders ??= collection?._formatFolderSelectOptions() ?? [];
 
    hasTypes = allTypes.length > 1;
 
