@@ -153,6 +153,12 @@ export class FVTTSidebarControl
             throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.popoutOptions' is not an object.`);
          }
 
+         if (sidebarData.popoutPostInitialize !== void 0 && typeof sidebarData.popoutPostInitialize !== 'function')
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.add error: 'sidebarData.popoutPostInitialize' is not a function.`);
+         }
+
          if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
          {
             throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.title' is not a string.`);
@@ -411,6 +417,12 @@ export class FVTTSidebarControl
              `FVTTSidebarControl.replace error: 'sidebarData.popoutApplication' is not a SvelteApp.`);
          }
 
+         if (sidebarData.popoutPostInitialize !== void 0 && typeof sidebarData.popoutPostInitialize !== 'function')
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.replace error: 'sidebarData.popoutPostInitialize' is not a function.`);
+         }
+
          if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
          {
             throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.popoutOptions' is not an object.`);
@@ -565,13 +577,17 @@ export class FVTTSidebarControl
          }
       }
 
+      const popoutPostInitialize = sidebarData.popoutPostInitialize;
+      delete sidebarData.popoutPostInitialize;
+
       // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
       const sidebarWrapper = new FVTTSidebarWrapper({
          target: data.sidebarEl,
          anchor: anchorSectionEl,
          props: {
             sidebarData
-         }
+         },
+         context: sidebarData?.svelteConfig?.context ? sidebarData.svelteConfig.context : void 0
       });
 
       /** @type {FVTTSidebarEntry} */
@@ -582,6 +598,9 @@ export class FVTTSidebarControl
          tab: sidebarTab,
          wrapper: sidebarWrapper
       };
+
+      // Run any post popout initialize function.
+      if (typeof popoutPostInitialize === 'function') { popoutPostInitialize(sidebarEntry.popout); }
 
       Object.freeze(sidebarEntry);
 
@@ -703,13 +722,17 @@ export class FVTTSidebarControl
            sidebarData.id}.`);
       }
 
+      const popoutPostInitialize = sidebarData.popoutPostInitialize;
+      delete sidebarData.popoutPostInitialize;
+
       // Note: The new sidebar tab section is added at the end of the `section` elements and this is fine.
       const sidebarWrapper = new FVTTSidebarWrapper({
          target: data.sidebarEl,
          anchor: anchorSectionEl,
          props: {
             sidebarData
-         }
+         },
+         context: sidebarData?.svelteConfig?.context ? sidebarData.svelteConfig.context : void 0
       });
 
       /** @type {FVTTSidebarEntry} */
@@ -720,6 +743,9 @@ export class FVTTSidebarControl
          tab: sidebarTab,
          wrapper: sidebarWrapper
       };
+
+      // Run any post popout initialize function.
+      if (typeof popoutPostInitialize === 'function') { popoutPostInitialize(sidebarEntry.popout); }
 
       Object.freeze(sidebarEntry);
 
@@ -793,6 +819,9 @@ export class FVTTSidebarControl
  *
  * @property {object}   [popoutOptions] Provides SvelteApp options overrides for the default popout sidebar.
  *
+ * @property {(app: import('#runtime/svelte/application').SvelteApp) => void} [popoutPostInitialize] An optional
+ * function invoked after the popout app has been created.
+ *
  * @property {string}   [title] The popout application title text or i18n lang key.
  *
  * @property {string}   [tooltip] The sidebar tab tooltip text or i18n lang key.
@@ -827,6 +856,9 @@ export class FVTTSidebarControl
  * SvelteApp class to instantiate for the popout sidebar.
  *
  * @property {object}   [popoutOptions] Provides SvelteApp options overrides for the default popout sidebar.
+ *
+ * @property {(app: import('#runtime/svelte/application').SvelteApp) => void} [popoutPostInitialize] An optional
+ * function invoked after the popout app has been created.
  *
  * @property {string}   [title] The popout application title text or i18n lang key.
  *

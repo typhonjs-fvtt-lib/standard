@@ -1,4 +1,6 @@
 <script>
+   import { setContext } from 'svelte';
+
    /**
     * INTERNAL USE ONLY: Provides the wrapper component for mounting a custom Svelte sidebar; used by
     * `FVTTSidebarControl`.
@@ -13,7 +15,6 @@
     * Sidebar configuration data.
     */
    export let sidebarData = void 0;
-
 
    $: sidebarClass = sidebarData?.svelteConfig?.class;
    $: sidebarProps = sidebarData?.svelteConfig?.props ?? {};
