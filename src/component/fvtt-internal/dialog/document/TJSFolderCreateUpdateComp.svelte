@@ -29,6 +29,9 @@
    let name = document?._id ? document.name : '';
    let color = document?.color;
 
+   // Track original color.
+   let origColor = color;
+
    let colorText = '';
 
    $: if ($doc !== document)
@@ -42,6 +45,7 @@
 
       name = document?.id ? document.name : '';
       color = document?.color;
+      origColor = color;
 
       // Update the dialog button label and title.
       application.data.merge({
@@ -123,7 +127,7 @@
       <div class=form-fields>
          <input type=text name=colorText bind:value={colorText} readonly />
          <input type=color bind:value={color} data-edit=color />
-         <button type=button on:click={() => color = null}><i class="fas fa-trash-restore"></i></button>
+         <button type=button on:click={() => color = origColor}><i class="fas fa-trash-restore"></i></button>
       </div>
    </div>
 
