@@ -1,6 +1,4 @@
 <script>
-   import { setContext } from 'svelte';
-
    /**
     * INTERNAL USE ONLY: Provides the wrapper component for mounting a custom Svelte sidebar; used by
     * `FVTTSidebarControl`.
@@ -16,6 +14,7 @@
     */
    export let sidebarData = void 0;
 
+   $: sidebarClasses = sidebarData?.sidebarClasses ? Array.from(sidebarData.sidebarClasses) : [];
    $: sidebarClass = sidebarData?.svelteConfig?.class;
    $: sidebarProps = sidebarData?.svelteConfig?.props ?? {};
 </script>
@@ -23,7 +22,7 @@
 <svelte:options accessors={true} />
 
 <section id={sidebarData.id}
-         class={`tab sidebar-tab ${sidebarData.id}-sidebar directory flexcol`}
+         class={`tab sidebar-tab ${sidebarData.id}-sidebar directory flexcol ${sidebarClasses.join(' ')}`}
          data-tab={sidebarData.id}
          data-group=primary>
    <svelte:component bind:this={component} this={sidebarClass} {...sidebarProps} />

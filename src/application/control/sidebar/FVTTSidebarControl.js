@@ -5,6 +5,7 @@ import { ManagedPromise }  from '#runtime/util/async';
 
 import {
    hasPrototype,
+   isIterable,
    isObject }              from '#runtime/util/object';
 
 import {
@@ -13,11 +14,11 @@ import {
    FVTTSidebarWrapper }    from '#standard/component/fvtt-internal';
 
 /**
- * Provides the ability to mount and control Svelte component based sidebar panels & tabs in the Foundry sidebar.
+ * Provides the ability to mount and control Svelte component sidebar panels & tabs in the Foundry sidebar.
  *
- * The nice aspect about FVTTSidebarControl is that all you have to provide is the sidebar component and the rest is
- * handled for you including automatically widening the width of the sidebar to fit the new sidebar tab. Also by default
- * an adhoc SvelteApp is configured to display the sidebar when popped out automatically without the need to
+ * The nice aspect about FVTTSidebarControl is that all you have to provide is the sidebar component, and the rest is
+ * handled for you, including automatically widening the width of the sidebar to fit the new sidebar tab. Also by
+ * default, an adhoc SvelteApp is configured to display the sidebar when popped out automatically without the need to
  * associate an app instance.
  *
  * -------------------------------------------------------------------------------------------------------------------
@@ -26,7 +27,7 @@ import {
  * must add all sidebars in the `setup` hook before the main Foundry sidebar renders. Please review all the expanded
  * options available in the configuration object passed to the `add` method. At minimum, you need to provide a unique
  * `id`, `icon`, and `svelte` configuration object. You almost always will want to provide `beforeId` referencing
- * another existing sidebar tab ID to place the tab button before. If undefined the tab is inserted at the end of
+ * another existing sidebar tab ID to place the tab button before. If undefined, the tab is inserted at the end of
  * the sidebar tabs. The default Foundry sidebar tab IDs from left to right are: 'chat', 'combat', 'scenes', 'actors',
  * 'items', 'journal', 'tables', 'cards', 'playlists', 'compendium', and 'settings'.
  *
@@ -157,6 +158,11 @@ export class FVTTSidebarControl
          {
             throw new TypeError(
              `FVTTSidebarControl.add error: 'sidebarData.popoutPostInitialize' is not a function.`);
+         }
+
+         if (sidebarData.sidebarClasses !== void 0 && !isIterable(sidebarData.sidebarClasses))
+         {
+            throw new TypeError(`FVTTSidebarControl.add error: 'sidebarData.sidebarClasses' is not an iterable list.`);
          }
 
          if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
@@ -426,6 +432,12 @@ export class FVTTSidebarControl
          if (sidebarData.popoutOptions !== void 0 && !isObject(sidebarData.popoutOptions))
          {
             throw new TypeError(`FVTTSidebarControl.replace error: 'sidebarData.popoutOptions' is not an object.`);
+         }
+
+         if (sidebarData.sidebarClasses !== void 0 && !isIterable(sidebarData.sidebarClasses))
+         {
+            throw new TypeError(
+             `FVTTSidebarControl.replace error: 'sidebarData.sidebarClasses' is not an iterable list.`);
          }
 
          if (sidebarData.title !== void 0 && typeof sidebarData.title !== 'string')
@@ -822,6 +834,8 @@ export class FVTTSidebarControl
  * @property {(app: import('#runtime/svelte/application').SvelteApp) => void} [popoutPostInitialize] An optional
  * function invoked after the popout app has been created.
  *
+ * @property {Iterable<string>} [sidebarClasses] Additional CSS classes to add to the outer sidebar wrapper.
+ *
  * @property {string}   [title] The popout application title text or i18n lang key.
  *
  * @property {string}   [tooltip] The sidebar tab tooltip text or i18n lang key.
@@ -859,6 +873,8 @@ export class FVTTSidebarControl
  *
  * @property {(app: import('#runtime/svelte/application').SvelteApp) => void} [popoutPostInitialize] An optional
  * function invoked after the popout app has been created.
+ *
+ * @property {Iterable<string>} [sidebarClasses] Additional CSS classes to add to the outer sidebar wrapper.
  *
  * @property {string}   [title] The popout application title text or i18n lang key.
  *
