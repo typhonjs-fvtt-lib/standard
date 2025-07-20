@@ -1,6 +1,9 @@
-import { FoundryStyles }   from '#runtime/svelte/application';
+// import { FoundryStyles }   from '#runtime/svelte/application';
 import { TJSStyleManager } from '#runtime/util/dom/style';
 import { isObject }        from '#runtime/util/object';
+
+// TODO: SWAP BACK TO TRL VERSION
+import { FoundryStyles } from './FoundryStyles.js';
 
 /**
  * Provides global CSS variable configuration based on Foundry styles loaded.
@@ -21,7 +24,9 @@ class FVTTConfigure
          version: 1,
          layerName: 'variables.tjs-standard-vars',
          rules: {
-            themeDark: ':root, .themed.theme-dark',
+            // Ideally `:root` would be used, but Foundry defines dark them CSS vars in `body`. For scoping reasons
+            // `body` must be used to make these core vars accessible to TRL CSS vars.
+            themeDark: 'body, .themed.theme-dark',
             themeLight: '.themed.theme-light'
          }
       });
@@ -102,32 +107,28 @@ class FVTTConfigure
          /**
           * All input related components including: TJSSelect,
           */
-         const propsBody = FoundryStyles.get('body');
-         const props = FoundryStyles.get('input[type="text"]');
-         const propsFocus = FoundryStyles.get('input[type="text"]:focus');
+         const props = FoundryStyles.get('input[type="text"]', { resolve: '.themed.theme-dark input' });
+
+         const propsFocus = FoundryStyles.get(['input[type="text"]', 'input[type="text"]:focus'], {
+            resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
+         });
 
          console.log(`!!! FVTTConfigure - initialize - props: \n${JSON.stringify(props, null, 2)}`);
          console.log(`!!! FVTTConfigure - initialize - propsFocus: \n${JSON.stringify(propsFocus, null, 2)}`);
 
          themeDarkRoot.setProperties({
             // TODO: VERIFY
-            '--tjs-input-background': 'background' in props ? propsBody['--color-cool-4'] : 'var(--color-cool-4)',
-            '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '4px',
-            '--tjs-input-height': '--input-height' in propsBody ? propsBody['--input-height'] : '2rem',
+            '--tjs-input-height': 'height' in props ? props['height'] : 'var(--input-height)',
             '--tjs-input-padding': 'padding' in props ? props['padding'] : '0px 0.5rem',
             '--tjs-input-width': 'width' in props ? props.width : '100%',
-
-            // TODO: Hook up to Foundry Styles.
-            '--tjs-input-outline': 'outline' in props ? props['outline'] : 'red solid 1px',
+            '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '4px',
             '--tjs-input-transition': 'transition' in props ? props['transition'] : 'outline-color 2.5s', // 'outline-color 0.5s'
 
-            // TODO: Must substitute core color var.
-            '--tjs-input-outline-focus': 'outline' in propsFocus ? propsFocus['outline'] : 'red solid 2px',
-
+            // Color / theme related.
+            '--tjs-input-background': 'background' in props ? props['background'] : 'var(--color-cool-4)',
+            '--tjs-input-outline': 'outline' in props ? props['outline'] : 'red solid 1px',
+            '--tjs-input-outline-focus': 'outline' in propsFocus ? propsFocus['outline'] : 'red solid 2px', // '2px solid var(--color-cool-3)'
             '--tjs-input-outline-offset-focus': 'outline-offset' in propsFocus ? propsFocus['outline-offset'] : '-5px', // '-2px'
-
-            // '--tjs-input-outline-offset': '-1px',
-            // '--tjs-input-outline-focus-visible': 'none',
 
             // TODO: VERIFY or REMOVE
             // '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--input-border-color)',
@@ -135,7 +136,7 @@ class FVTTConfigure
             //   '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
 
             // Set default values that are only to be referenced and not set.
-            '--_tjs-default-input-height': '--input-height' in propsBody ? propsBody['--input-height'] : 'var(--input-height)',
+            '--_tjs-default-input-height': 'height' in props ? props['height'] : 'var(--input-height)',
 
             // Set directly / no lookup:
          }, false);
