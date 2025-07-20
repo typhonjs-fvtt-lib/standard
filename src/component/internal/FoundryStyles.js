@@ -71,24 +71,94 @@ export class FoundryStyles
     *
     * @param {string}   selector - Selector to find.
     *
+    * @param {object}   [opts] - Options.
+    *
+    * @param {string | string[]} [opts.resolve] -
+    *
     * @returns { {[key: string]: string} } Properties object.
     */
-   static get(selector)
+   static get(selector, { resolve } = {})
    {
       if (!this.#initialized) { this.#initialize(); }
+
+      let result;
 
       // If there is a direct selector match then return a value immediately.
       if (this.#sheetMap.has(selector))
       {
-         return this.#sheetMap.get(selector);
+         result = this.#sheetMap.get(selector);
       }
 
-      for (const key of this.#sheetMap.keys())
+      // TODO: THIS LIKELY CAN BE REMOVED SINCE PARSING NOW SEPARATES ALL SELECTORS.
+      // if (!result)
+      // {
+      //    for (const key of this.#sheetMap.keys())
+      //    {
+      //       if (key.includes(selector))
+      //       {
+      //          result = this.#sheetMap.get(key);
+      //          break;
+      //       }
+      //    }
+      // }
+
+      if (typeof resolve === 'string' || Array.isArray(resolve))
       {
-         if (key.includes(selector)) { return this.#sheetMap.get(key); }
+         this.#resolve(result, resolve);
       }
 
-      return void 0;
+      return result;
+   }
+
+   /**
+    *
+    * @param {{ [key: string]: string }} result -
+    *
+    * @param {string | string[]} resolve -
+    */
+   static #resolve(result, resolve)
+   {
+      console.log(`!!! FoundryStyles - #resolve - 0 - result: \n${JSON.stringify(result, null, 2)}`);
+      console.log(`!!! FoundryStyles - #resolve - 1 - resolve: ${JSON.stringify(resolve)}`);
+
+      // Holds result entries that reference a CSS variable.
+      const fields = new ResolveFields(result);
+
+      if (fields.unresolvedCount)
+      {
+         console.log(`!!! FoundryStyles - #resolve - 2 - orig fields: \n${fields}`);
+
+         const order = typeof resolve === 'string' ? [resolve] : resolve;
+
+         for (const entry of order)
+         {
+            const parent = this.get(entry);
+
+            if (!isObject(parent))
+            {
+               // TODO: GATE LOGGING
+               console.warn(`!!! FoundryStyles - #resolve - Could not locate parent selector: '${entry}'`);
+               continue;
+            }
+
+            console.log(`!!! FoundryStyles - #resolve - A0 - parent: \n${JSON.stringify(parent, null, 2)}`);
+
+            for (const cssVar of fields.keysUnresolved())
+            {
+               if (cssVar in parent) { fields.set(cssVar, parent[cssVar]); }
+            }
+
+            console.log(`!!! FoundryStyles - #resolve - A1 - partial resolved fields: \n${fields}`);
+         }
+      }
+
+      console.log(`!!! FoundryStyles - #resolve - 4 - final fields: \n${fields}`);
+
+      console.log(`!!! FoundryStyles - #resolve - 4 - final resolved fields: \n${JSON.stringify(fields.resolved, null, 2)}`);
+
+      result = Object.assign(result, fields.resolved);
+
+      console.log(`!!! FoundryStyles - #resolve - B - resolve result: \n${JSON.stringify(result, null, 2)}`);
    }
 
    /**
@@ -113,14 +183,15 @@ export class FoundryStyles
          return isObject(data) && property in data ? data[property] : void 0;
       }
 
-      for (const key of this.#sheetMap.keys())
-      {
-         if (key.includes(selector))
-         {
-            const data = this.#sheetMap.get(key);
-            if (isObject(data) && property in data) { return data[property]; }
-         }
-      }
+      // TODO: THIS LIKELY CAN BE REMOVED SINCE PARSING NOW SEPARATES ALL SELECTORS.
+      // for (const key of this.#sheetMap.keys())
+      // {
+      //    if (key.includes(selector))
+      //    {
+      //       const data = this.#sheetMap.get(key);
+      //       if (isObject(data) && property in data) { return data[property]; }
+      //    }
+      // }
 
       return void 0;
    }
@@ -283,3 +354,108 @@ export class FoundryStyles
       }
    }
 }
+
+class ResolveFields
+{
+   /** @type {Map<string, ResolveEntry>} */
+   #entries = new Map();
+
+   static isCSSVar(key)
+   {
+      return (/^--[\w-]+$/).test(key);
+   }
+
+   /**
+    * @param {{ [key: string]: string }} initial - Initial style entry to resolve.
+    */
+   constructor(initial)
+   {
+      for (const entry in initial)
+      {
+         const match = initial[entry].match(/^var\((--[\w-]+)\)$/);
+         if (match)
+         {
+            this.#entries.set(match[1], { origKey: entry, cssVar: match[1], resolved: null });
+         }
+      }
+   }
+
+   /**
+    * @returns {{ [key: string]: string }} All fields that have been resolved.
+    */
+   get resolved()
+   {
+      const result = {};
+
+      for (const entry of this.#entries.values())
+      {
+         if (typeof entry.resolved === 'string') { result[entry.origKey] = entry.resolved; }
+      }
+
+      return result;
+   }
+
+   /**
+    * @returns {number} Unresolved field count.
+    */
+   get unresolvedCount()
+   {
+      let count = 0;
+
+      for (const entry of this.#entries.values())
+      {
+         if (entry.resolved === null) { count++; }
+      }
+
+      return count;
+   }
+
+   /**
+    * @param {string}   key - Potential CSS var to check if tracked.
+    *
+    * @returns {boolean} Key is tracked.
+    */
+   has(key)
+   {
+      return this.#entries.has(key);
+   }
+
+   /**
+    * @returns {IterableIterator<string>} Unresolved entry iterator.
+    *
+    * @yields
+    */
+   *keysUnresolved()
+   {
+      for (const entry of this.#entries.values())
+      {
+         if (entry.resolved === null) { yield entry.cssVar; }
+      }
+   }
+
+   set(key, value)
+   {
+      if (typeof value !== 'string' || value.length === 0)
+      {
+         return;
+      }
+
+      const entry = this.#entries.get(key);
+      if (entry) { entry.resolved = value; }
+   }
+
+   toString()
+   {
+      return `[\n${[...this.#entries.values()].map((entry) => `  ${JSON.stringify(entry)}`).join(',\n')}\n]`;
+   }
+}
+
+/**
+ * @typedef {object} ResolveEntry
+ *
+ * @property {string} origKey - Original style key.
+ *
+ * @property {string} cssVar - CSS variable to substitute.
+ *
+ * @property {string | null} resolved - Resolved value or null.
+ */
