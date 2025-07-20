@@ -66,10 +66,10 @@ export class FoundryStyles
    }
 
    /**
-    * Gets all properties associated with the selector. Try and use a direct match otherwise all keys
-    * are iterated to find a selector string that includes the `selector`.
+    * Gets all properties associated with the given selector(s). You may combine multiple selectors for a
+    * combined result.
     *
-    * @param {string}   selector - Selector to find.
+    * @param {string | string[]}   selector - A selector or array of selectors to find.
     *
     * @param {object}   [opts] - Options.
     *
@@ -81,84 +81,39 @@ export class FoundryStyles
    {
       if (!this.#initialized) { this.#initialize(); }
 
-      let result;
-
-      // If there is a direct selector match then return a value immediately.
-      if (this.#sheetMap.has(selector))
+      if (typeof selector !== 'string' && !Array.isArray(selector))
       {
-         result = this.#sheetMap.get(selector);
+         throw new TypeError(`'selector' must be a string or an array.`);
       }
 
-      // TODO: THIS LIKELY CAN BE REMOVED SINCE PARSING NOW SEPARATES ALL SELECTORS.
-      // if (!result)
-      // {
-      //    for (const key of this.#sheetMap.keys())
-      //    {
-      //       if (key.includes(selector))
-      //       {
-      //          result = this.#sheetMap.get(key);
-      //          break;
-      //       }
-      //    }
-      // }
+      let result = void 0;
 
-      if (typeof resolve === 'string' || Array.isArray(resolve))
+      if (Array.isArray(selector))
+      {
+         for (const entry of selector)
+         {
+            // If there is a direct selector match then return a value immediately.
+            if (this.#sheetMap.has(entry))
+            {
+               result = Object.assign(result ?? {}, this.#sheetMap.get(entry));
+            }
+         }
+      }
+      else
+      {
+         // If there is a direct selector match then return a value immediately.
+         if (this.#sheetMap.has(selector))
+         {
+            result = Object.assign(result ?? {}, this.#sheetMap.get(selector));
+         }
+      }
+
+      if (result && typeof resolve === 'string' || Array.isArray(resolve))
       {
          this.#resolve(result, resolve);
       }
 
       return result;
-   }
-
-   /**
-    *
-    * @param {{ [key: string]: string }} result -
-    *
-    * @param {string | string[]} resolve -
-    */
-   static #resolve(result, resolve)
-   {
-      console.log(`!!! FoundryStyles - #resolve - 0 - result: \n${JSON.stringify(result, null, 2)}`);
-      console.log(`!!! FoundryStyles - #resolve - 1 - resolve: ${JSON.stringify(resolve)}`);
-
-      // Holds result entries that reference a CSS variable.
-      const fields = new ResolveFields(result);
-
-      if (fields.unresolvedCount)
-      {
-         console.log(`!!! FoundryStyles - #resolve - 2 - orig fields: \n${fields}`);
-
-         const order = typeof resolve === 'string' ? [resolve] : resolve;
-
-         for (const entry of order)
-         {
-            const parent = this.get(entry);
-
-            if (!isObject(parent))
-            {
-               // TODO: GATE LOGGING
-               console.warn(`!!! FoundryStyles - #resolve - Could not locate parent selector: '${entry}'`);
-               continue;
-            }
-
-            console.log(`!!! FoundryStyles - #resolve - A0 - parent: \n${JSON.stringify(parent, null, 2)}`);
-
-            for (const cssVar of fields.keysUnresolved())
-            {
-               if (cssVar in parent) { fields.set(cssVar, parent[cssVar]); }
-            }
-
-            console.log(`!!! FoundryStyles - #resolve - A1 - partial resolved fields: \n${fields}`);
-         }
-      }
-
-      console.log(`!!! FoundryStyles - #resolve - 4 - final fields: \n${fields}`);
-
-      console.log(`!!! FoundryStyles - #resolve - 4 - final resolved fields: \n${JSON.stringify(fields.resolved, null, 2)}`);
-
-      result = Object.assign(result, fields.resolved);
-
-      console.log(`!!! FoundryStyles - #resolve - B - resolve result: \n${JSON.stringify(result, null, 2)}`);
    }
 
    /**
@@ -182,16 +137,6 @@ export class FoundryStyles
 
          return isObject(data) && property in data ? data[property] : void 0;
       }
-
-      // TODO: THIS LIKELY CAN BE REMOVED SINCE PARSING NOW SEPARATES ALL SELECTORS.
-      // for (const key of this.#sheetMap.keys())
-      // {
-      //    if (key.includes(selector))
-      //    {
-      //       const data = this.#sheetMap.get(key);
-      //       if (isObject(data) && property in data) { return data[property]; }
-      //    }
-      // }
 
       return void 0;
    }
@@ -353,29 +298,79 @@ export class FoundryStyles
          }
       }
    }
+
+   /**
+    *
+    * @param {{ [key: string]: string }} result -
+    *
+    * @param {string | string[]} resolve -
+    */
+   static #resolve(result, resolve)
+   {
+      // Holds result entries that reference a CSS variable.
+      const fields = new ResolveFields(result);
+
+      if (fields.unresolvedCount)
+      {
+         const order = typeof resolve === 'string' ? [resolve] : resolve;
+
+         for (const entry of order)
+         {
+            const parent = this.get(entry);
+
+            if (!isObject(parent))
+            {
+               // TODO: GATE LOGGING
+               console.warn(`!!! FoundryStyles - #resolve - Could not locate parent selector: '${entry}'`);
+               continue;
+            }
+
+            for (const cssVar of fields.keysUnresolved())
+            {
+               if (cssVar in parent) { fields.set(cssVar, parent[cssVar]); }
+            }
+         }
+      }
+
+      Object.assign(result, fields.resolved);
+   }
 }
 
 class ResolveFields
 {
-   /** @type {Map<string, ResolveEntry>} */
-   #entries = new Map();
+   /**
+    * @type {Map<string, string>}
+    */
+   #propMap = new Map();
 
-   static isCSSVar(key)
-   {
-      return (/^--[\w-]+$/).test(key);
-   }
+   /**
+    * @type {Map<string, Set<string>>}
+    */
+   #varToProp = new Map();
+
+   /**
+    * @type {Map<string, string>}
+    */
+   #varResolved = new Map();
 
    /**
     * @param {{ [key: string]: string }} initial - Initial style entry to resolve.
     */
    constructor(initial)
    {
-      for (const entry in initial)
+      for (const [prop, value] of Object.entries(initial))
       {
-         const match = initial[entry].match(/^var\((--[\w-]+)\)$/);
-         if (match)
+         const vars = [...value.matchAll(/var\((--[\w-]+)\)/g)].map((match) => match[1]);
+
+         if (vars.length > 0)
          {
-            this.#entries.set(match[1], { origKey: entry, cssVar: match[1], resolved: null });
+            this.#propMap.set(prop, value);
+
+            for (const entry of vars)
+            {
+               if (!this.#varToProp.has(entry)) { this.#varToProp.set(entry, new Set()); }
+               this.#varToProp.get(entry).add(prop);
+            }
          }
       }
    }
@@ -387,9 +382,26 @@ class ResolveFields
    {
       const result = {};
 
-      for (const entry of this.#entries.values())
+      for (const entry of this.#varToProp.keys())
       {
-         if (typeof entry.resolved === 'string') { result[entry.origKey] = entry.resolved; }
+         if (this.#varResolved.has(entry))
+         {
+            const props = this.#varToProp.get(entry);
+
+            for (const prop of props)
+            {
+               const value = this.#propMap.get(prop);
+               const varResolved = this.#varResolved.get(entry);
+
+               if (value && varResolved)
+               {
+                  const replacement = value.replaceAll(`var(${entry})`, varResolved);
+
+                  this.#propMap.set(prop, replacement);
+                  result[prop] = replacement;
+               }
+            }
+         }
       }
 
       return result;
@@ -402,9 +414,9 @@ class ResolveFields
    {
       let count = 0;
 
-      for (const entry of this.#entries.values())
+      for (const entry of this.#varToProp.keys())
       {
-         if (entry.resolved === null) { count++; }
+         if (!this.#varResolved.has(entry)) { count++; }
       }
 
       return count;
@@ -417,7 +429,7 @@ class ResolveFields
     */
    has(key)
    {
-      return this.#entries.has(key);
+      return this.#varToProp.has(key);
    }
 
    /**
@@ -427,9 +439,9 @@ class ResolveFields
     */
    *keysUnresolved()
    {
-      for (const entry of this.#entries.values())
+      for (const entry of this.#varToProp.keys())
       {
-         if (entry.resolved === null) { yield entry.cssVar; }
+         if (!this.#varResolved.has(entry)) { yield entry; }
       }
    }
 
@@ -440,22 +452,9 @@ class ResolveFields
          return;
       }
 
-      const entry = this.#entries.get(key);
-      if (entry) { entry.resolved = value; }
-   }
-
-   toString()
-   {
-      return `[\n${[...this.#entries.values()].map((entry) => `  ${JSON.stringify(entry)}`).join(',\n')}\n]`;
+      if (this.#varToProp.has(key) && !this.#varResolved.has(key))
+      {
+         this.#varResolved.set(key, value);
+      }
    }
 }
-
-/**
- * @typedef {object} ResolveEntry
- *
- * @property {string} origKey - Original style key.
- *
- * @property {string} cssVar - CSS variable to substitute.
- *
- * @property {string | null} resolved - Resolved value or null.
- */
