@@ -133,7 +133,7 @@ class FVTTConfigure
             // TODO: VERIFY or REMOVE
             // '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--input-border-color)',
             // '--tjs-input-border-color': 'var(--input-border-color)',
-            //   '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
+            // '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
 
             // Set default values that are only to be referenced and not set.
             '--_tjs-default-input-height': 'height' in props ? props['height'] : 'var(--input-height)',
