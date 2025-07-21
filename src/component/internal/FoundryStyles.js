@@ -109,6 +109,8 @@ export class FoundryStyles
     *
     * @param {object}   [opts] - Options.
     *
+    * @param {boolean}  [opts.camelCase=false] - When true, property keys will be in camel case.
+    *
     * @param {number}   [opts.depth] - Resolution depth for CSS variable substitution. By default, the depth is the
     * length of the provided `resolve` selectors, but you may opt to provide a specific depth even with multiple
     * resolution selectors.
@@ -117,13 +119,18 @@ export class FoundryStyles
     *
     * @returns {{ [key: string]: string } | undefined} Style properties object.
     */
-   static get(selector, { depth, resolve } = {})
+   static get(selector, { camelCase = false, depth, resolve } = {})
    {
       if (!this.#initialized) { this.#initialize(); }
 
       if (typeof selector !== 'string' && !isIterable(selector))
       {
          throw new TypeError(`'selector' must be a string or an iterable list of strings.`);
+      }
+
+      if (typeof camelCase !== 'boolean')
+      {
+         throw new TypeError(`'camelCase' must be a boolean.`);
       }
 
       if (depth !== void 0 && (!Number.isInteger(depth) || depth < 1))
@@ -168,6 +175,15 @@ export class FoundryStyles
             // Early out if no more variables need resolution.
             if (beforeResult === afterResult) { break; }
          }
+      }
+
+      if (result && camelCase)
+      {
+         const toCamelCase = (str) => str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+
+         result = Object.fromEntries(
+            Object.entries(result).map(([key, val]) => [toCamelCase(key), val])
+         );
       }
 
       return result;
