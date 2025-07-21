@@ -1,4 +1,7 @@
-import { isObject }        from '#runtime/util/object';
+import {
+   isIterable,
+   isObject }              from '#runtime/util/object';
+
 import { getRoutePrefix }  from '#runtime/util/path';
 
 /**
@@ -24,7 +27,7 @@ import { getRoutePrefix }  from '#runtime/util/path';
  * // The `props` object has styles w/ CSS variables resolved from `input[type="text"]` for the dark theme.
  * const props = FoundryStyles.get('input[type="text"]', { resolve: '.themed.theme-dark input' });
  * ```
- * 
+ *
  * @privateRemarks
  * TODO: Consider parsing all system / module stylesheets for exact overrides of selectors / styles captured in parsing
  * the core Foundry styles. This will potentially capture additional themes, but requires those theme modifications to
@@ -102,31 +105,40 @@ export class FoundryStyles
     * combined result. You may also provide additional selectors as the `resolve` option to substitute any CSS variables
     * in the target selector(s).
     *
-    * @param {string | string[]}   selector - A selector or array of selectors to retrieve.
+    * @param {string | Iterable<string>}   selector - A selector or array of selectors to retrieve.
     *
     * @param {object}   [opts] - Options.
     *
-    * @param {string | string[]} [opts.resolve] - Additional selectors as CSS variable resolution sources.
+    * @param {number}   [opts.depth] - Resolution depth for CSS variable substitution. By default, the depth is the
+    * length of the provided `resolve` selectors, but you may opt to provide a specific depth even with multiple
+    * resolution selectors.
+    *
+    * @param {string | Iterable<string>} [opts.resolve] - Additional selectors as CSS variable resolution sources.
     *
     * @returns {{ [key: string]: string } | undefined} Style properties object.
     */
-   static get(selector, { resolve } = {})
+   static get(selector, { depth, resolve } = {})
    {
       if (!this.#initialized) { this.#initialize(); }
 
-      if (typeof selector !== 'string' && !Array.isArray(selector))
+      if (typeof selector !== 'string' && !isIterable(selector))
       {
-         throw new TypeError(`'selector' must be a string or an array.`);
+         throw new TypeError(`'selector' must be a string or an iterable list of strings.`);
       }
 
-      if (resolve !== void 0 && typeof resolve !== 'string' && !Array.isArray(resolve))
+      if (depth !== void 0 && (!Number.isInteger(depth) || depth < 1))
       {
-         throw new TypeError(`'resolve' must be a string or an array.`);
+         throw new TypeError(`'depth' must be a positive integer >= 1.`);
+      }
+
+      if (resolve !== void 0 && typeof resolve !== 'string' && !isIterable(resolve))
+      {
+         throw new TypeError(`'resolve' must be a string or an iterable list of strings.`);
       }
 
       let result = void 0;
 
-      if (Array.isArray(selector))
+      if (isIterable(selector))
       {
          for (const entry of selector)
          {
@@ -140,9 +152,22 @@ export class FoundryStyles
          if (this.#sheetMap.has(selector)) { result = Object.assign(result ?? {}, this.#sheetMap.get(selector)); }
       }
 
-      if (result && typeof resolve === 'string' || Array.isArray(resolve))
+      if (result && (typeof resolve === 'string' || isIterable(resolve)))
       {
-         this.#resolve(result, resolve);
+         depth = typeof depth === 'number' ? depth : Math.max(1, Array.from(resolve).length);
+
+         // Progressively resolve CSS variables up to the requested depth.
+         for (let cntr = 0; cntr < depth; cntr++)
+         {
+            const beforeResult = JSON.stringify(result);
+
+            this.#resolve(result, resolve);
+
+            const afterResult = JSON.stringify(result);
+
+            // Early out if no more variables need resolution.
+            if (beforeResult === afterResult) { break; }
+         }
       }
 
       return result;
@@ -156,18 +181,22 @@ export class FoundryStyles
     *
     * @param {string}   property - Specific property to locate.
     *
-    * @param {object}   [opts] - Options.
+    * @param {object}   [options] - Options.
     *
-    * @param {string | string[]} [opts.resolve] - Additional selectors as CSS variable resolution sources.
+    * @param {number}   [options.depth] - Resolution depth for CSS variable substitution. By default, the depth is the
+    * length of the provided `resolve` selectors, but you may opt to provide a specific depth even with multiple
+    * resolution selectors.
+    *
+    * @param {string | string[]} [options.resolve] - Additional selectors as CSS variable resolution sources.
     *
     * @returns {string | undefined} Style property value.
     */
-   static getProperty(selector, property, { resolve } = {})
+   static getProperty(selector, property, options)
    {
       if (!this.#initialized) { this.#initialize(); }
 
       // If there is a direct selector match, then return a value immediately.
-      const data = this.get(selector, { resolve });
+      const data = this.get(selector, options);
 
       return isObject(data) && property in data ? data[property] : void 0;
    }
@@ -347,7 +376,7 @@ export class FoundryStyles
     *
     * @param {{ [key: string]: string }} result - Copy of source selector style properties to resolve.
     *
-    * @param {string | string[]} resolve -
+    * @param {string | Iterable<string>} resolve - Parent CSS variable resolution selectors.
     */
    static #resolve(result, resolve)
    {
