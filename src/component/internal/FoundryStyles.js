@@ -2,8 +2,34 @@ import { isObject }        from '#runtime/util/object';
 import { getRoutePrefix }  from '#runtime/util/path';
 
 /**
- * Parses the core Foundry style sheet creating an indexed object of properties by individual selector parts that are
- * viable to use for specific element styling.
+ * Dynamically parses and indexes the core FVTT stylesheet at runtime, exposing a selector-to-style mapping by
+ * individual selector parts that supports scoped CSS variable resolution. This enables the ability to flatten and
+ * resolve complex nested `var(--...)` chains defined across multiple selectors and layers.
+ *
+ * When retrieving specific selector styles via {@link FoundryStyles.get} and {@link FoundryStyles.getProperty} it is
+ * possible to provide additional parent selectors that may define scoped CSS variables. These parent variable
+ * definitions will be substituted in the target selector data allowing specific element scoping of CSS variables to be
+ * flattened.
+ *
+ * Core features:
+ * - Parses only relevant `@layer` blocks based on `#ALLOWED_LAYERS`.
+ * - Filters out selectors unlikely to impact element rendering.
+ * - Enables resolution of scoped CSS variables using a parent-selector fallback chain.
+ * - Provides both direct and resolved access to styles via `.get()` and `.getProperty()`.
+ *
+ * @example
+ * ```js
+ * import { FoundryStyles } from '#runtime/svelte/application';
+ *
+ * // The `props` object has styles w/ CSS variables resolved from `input[type="text"]` for the dark theme.
+ * const props = FoundryStyles.get('input[type="text"]', { resolve: '.themed.theme-dark input' });
+ * ```
+ * 
+ * @privateRemarks
+ * TODO: Consider parsing all system / module stylesheets for exact overrides of selectors / styles captured in parsing
+ * the core Foundry styles. This will potentially capture additional themes, but requires those theme modifications to
+ * use the precise selectors that Foundry core does; sadly in practice it's not expected that the 3rd party dev
+ * community will understand or properly target the core CSS selectors / variables correctly.
  */
 export class FoundryStyles
 {
@@ -50,13 +76,19 @@ export class FoundryStyles
     */
    static #sheet = void 0;
 
-   /** @type {Map<string, {[key: string]: string}>} */
+   /**
+    * Parsed selector to associated style properties.
+    *
+    * @type {Map<string, { [key: string]: string }>}
+    */
    static #sheetMap = new Map();
 
    static #initialized = false;
 
    /**
-    * @returns {MapIterator<[string, {[p: string]: string}]>} Tracked CSS selector key / value iterator.
+    * Entries iterator of selector / style properties objects.
+    *
+    * @returns {MapIterator<[string, { [p: string]: string }]>} Tracked CSS selector key / value iterator.
     */
    static entries()
    {
@@ -67,15 +99,16 @@ export class FoundryStyles
 
    /**
     * Gets all properties associated with the given selector(s). You may combine multiple selectors for a
-    * combined result.
+    * combined result. You may also provide additional selectors as the `resolve` option to substitute any CSS variables
+    * in the target selector(s).
     *
-    * @param {string | string[]}   selector - A selector or array of selectors to find.
+    * @param {string | string[]}   selector - A selector or array of selectors to retrieve.
     *
     * @param {object}   [opts] - Options.
     *
-    * @param {string | string[]} [opts.resolve] -
+    * @param {string | string[]} [opts.resolve] - Additional selectors as CSS variable resolution sources.
     *
-    * @returns { {[key: string]: string} } Properties object.
+    * @returns {{ [key: string]: string } | undefined} Style properties object.
     */
    static get(selector, { resolve } = {})
    {
@@ -86,26 +119,25 @@ export class FoundryStyles
          throw new TypeError(`'selector' must be a string or an array.`);
       }
 
+      if (resolve !== void 0 && typeof resolve !== 'string' && !Array.isArray(resolve))
+      {
+         throw new TypeError(`'resolve' must be a string or an array.`);
+      }
+
       let result = void 0;
 
       if (Array.isArray(selector))
       {
          for (const entry of selector)
          {
-            // If there is a direct selector match then return a value immediately.
-            if (this.#sheetMap.has(entry))
-            {
-               result = Object.assign(result ?? {}, this.#sheetMap.get(entry));
-            }
+            // If there is a direct selector match, then return a value immediately.
+            if (this.#sheetMap.has(entry)) { result = Object.assign(result ?? {}, this.#sheetMap.get(entry)); }
          }
       }
       else
       {
-         // If there is a direct selector match then return a value immediately.
-         if (this.#sheetMap.has(selector))
-         {
-            result = Object.assign(result ?? {}, this.#sheetMap.get(selector));
-         }
+         // If there is a direct selector match, then return a value immediately.
+         if (this.#sheetMap.has(selector)) { result = Object.assign(result ?? {}, this.#sheetMap.get(selector)); }
       }
 
       if (result && typeof resolve === 'string' || Array.isArray(resolve))
@@ -120,28 +152,29 @@ export class FoundryStyles
     * Gets a specific property value from the given `selector` and `property` key. Try and use a direct selector
     * match otherwise all keys are iterated to find a selector string that includes `selector`.
     *
-    * @param {string}   selector - Selector to find.
+    * @param {string | string[]}   selector - Selector to find.
     *
     * @param {string}   property - Specific property to locate.
     *
-    * @returns {string | undefined} Property value.
+    * @param {object}   [opts] - Options.
+    *
+    * @param {string | string[]} [opts.resolve] - Additional selectors as CSS variable resolution sources.
+    *
+    * @returns {string | undefined} Style property value.
     */
-   static getProperty(selector, property)
+   static getProperty(selector, property, { resolve } = {})
    {
       if (!this.#initialized) { this.#initialize(); }
 
-      // If there is a direct selector match then return a value immediately.
-      if (this.#sheetMap.has(selector))
-      {
-         const data = this.#sheetMap.get(selector);
+      // If there is a direct selector match, then return a value immediately.
+      const data = this.get(selector, { resolve });
 
-         return isObject(data) && property in data ? data[property] : void 0;
-      }
-
-      return void 0;
+      return isObject(data) && property in data ? data[property] : void 0;
    }
 
    /**
+    * Test if `FoundryStyles` tracks the given selector.
+    *
     * @param {string}   selector - CSS selector to check.
     *
     * @returns {boolean} FoundryStyles tracks the given selector.
@@ -229,9 +262,9 @@ export class FoundryStyles
    }
 
    /**
-    * @param {string}   cssText -
+    * @param {string}   cssText - CSS text to parse from `CSSStyleRule`.
     *
-    * @returns {{[p: string]: string}} Parsed `cssText`.
+    * @returns {{ [key: string]: string }} Parsed `cssText`.
     */
    static #parseCssText(cssText)
    {
@@ -250,6 +283,13 @@ export class FoundryStyles
       );
    }
 
+   /**
+    * Recursively parses / processes a CSSLayerBlockRule and encountered CSSStyleRule entries.
+    *
+    * @param {CSSLayerBlockRule} blockRule - The `CSSLayerBlockRule` to parse.
+    *
+    * @param {string}   parentLayerName - Name of parent CSS layer.
+    */
    static #processLayerBlockRule(blockRule, parentLayerName)
    {
       if (!(blockRule instanceof CSSLayerBlockRule)) { return; }
@@ -274,7 +314,9 @@ export class FoundryStyles
    }
 
    /**
-    * @param {CSSStyleRule} styleRule -
+    * Processes a `CSSStyleRule`.
+    *
+    * @param {CSSStyleRule} styleRule - Style rule to parse.
     */
    static #processStyleRule(styleRule)
    {
@@ -300,17 +342,19 @@ export class FoundryStyles
    }
 
    /**
+    * Resolves intermediate CSS variables defined in the `result` style properties object with data from the given
+    * `resolve` selector(s).
     *
-    * @param {{ [key: string]: string }} result -
+    * @param {{ [key: string]: string }} result - Copy of source selector style properties to resolve.
     *
     * @param {string | string[]} resolve -
     */
    static #resolve(result, resolve)
    {
       // Holds result entries that reference a CSS variable.
-      const fields = new ResolveFields(result);
+      const cssVars = new ResolveVars(result);
 
-      if (fields.unresolvedCount)
+      if (cssVars.unresolvedCount)
       {
          const order = typeof resolve === 'string' ? [resolve] : resolve;
 
@@ -320,35 +364,46 @@ export class FoundryStyles
 
             if (!isObject(parent))
             {
-               // TODO: GATE LOGGING
-               console.warn(`!!! FoundryStyles - #resolve - Could not locate parent selector: '${entry}'`);
+               console.warn(
+                `[TyphonJS Runtime] FoundryStyles - #resolve - Could not locate parent selector for resolution: '${
+                 entry}'`);
+
                continue;
             }
 
-            for (const cssVar of fields.keysUnresolved())
+            for (const cssVar of cssVars.keysUnresolved())
             {
-               if (cssVar in parent) { fields.set(cssVar, parent[cssVar]); }
+               if (cssVar in parent) { cssVars.set(cssVar, parent[cssVar]); }
             }
          }
       }
 
-      Object.assign(result, fields.resolved);
+      Object.assign(result, cssVars.resolved);
    }
 }
 
-class ResolveFields
+/**
+ * Encapsulates CSS variable resolution logic and data.
+ */
+class ResolveVars
 {
    /**
+    * Initial style properties w/ CSS variables to track.
+    *
     * @type {Map<string, string>}
     */
    #propMap = new Map();
 
    /**
+    * Reverse lookup for CSS variable name to associated property.
+    *
     * @type {Map<string, Set<string>>}
     */
    #varToProp = new Map();
 
    /**
+    * Resolved CSS variable from parent selector properties.
+    *
     * @type {Map<string, string>}
     */
    #varResolved = new Map();
@@ -445,16 +500,17 @@ class ResolveFields
       }
    }
 
-   set(key, value)
+   /**
+    * Sets the parent selector defined CSS variable for resolution.
+    *
+    * @param {string}   name - CSS variable name
+    *
+    * @param {string}   value - Value of target CSS variable.
+    */
+   set(name, value)
    {
-      if (typeof value !== 'string' || value.length === 0)
-      {
-         return;
-      }
+      if (typeof value !== 'string' || value.length === 0) { return; }
 
-      if (this.#varToProp.has(key) && !this.#varResolved.has(key))
-      {
-         this.#varResolved.set(key, value);
-      }
+      if (this.#varToProp.has(name) && !this.#varResolved.has(name)) { this.#varResolved.set(name, value); }
    }
 }
