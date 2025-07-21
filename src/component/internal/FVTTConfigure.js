@@ -107,9 +107,13 @@ class FVTTConfigure
          /**
           * All input related components including: TJSSelect,
           */
-         const props = FoundryStyles.get('input[type="text"]', { resolve: '.themed.theme-dark input' });
+         const props = FoundryStyles.get('input[type="text"]', {
+            camelCase: true,
+            resolve: '.themed.theme-dark input'
+         });
 
          const propsFocus = FoundryStyles.get(['input[type="text"]', 'input[type="text"]:focus'], {
+            camelCase: true,
             resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
          });
 
@@ -117,18 +121,17 @@ class FVTTConfigure
          console.log(`!!! FVTTConfigure - initialize - propsFocus: \n${JSON.stringify(propsFocus, null, 2)}`);
 
          themeDarkRoot.setProperties({
-            // TODO: VERIFY
-            '--tjs-input-height': 'height' in props ? props['height'] : 'var(--input-height)',
-            '--tjs-input-padding': 'padding' in props ? props['padding'] : '0px 0.5rem',
-            '--tjs-input-width': 'width' in props ? props.width : '100%',
-            '--tjs-input-border-radius': 'border-radius' in props ? props['border-radius'] : '4px',
-            '--tjs-input-transition': 'transition' in props ? props['transition'] : 'outline-color 2.5s', // 'outline-color 0.5s'
+            '--tjs-input-height': props.height ?? 'var(--input-height)',
+            '--tjs-input-padding': props.padding ?? '0px 0.5rem',
+            '--tjs-input-width': props.width ?? '100%',
+            '--tjs-input-border-radius': props.borderRadius ?? '4px',
+            '--tjs-input-transition': props.transition ?? 'outline-color 2.5s',  // 'outline-color 0.5s'
 
             // Color / theme related.
-            '--tjs-input-background': 'background' in props ? props['background'] : 'var(--color-cool-4)',
-            '--tjs-input-outline': 'outline' in props ? props['outline'] : 'red solid 1px',
-            '--tjs-input-outline-focus': 'outline' in propsFocus ? propsFocus['outline'] : 'red solid 2px', // '2px solid var(--color-cool-3)'
-            '--tjs-input-outline-offset-focus': 'outline-offset' in propsFocus ? propsFocus['outline-offset'] : '-5px', // '-2px'
+            '--tjs-input-background': props.background ?? 'var(--color-cool-4)',
+            '--tjs-input-outline': props.outline ?? 'red solid 1px',             // transparent solid 1px
+            '--tjs-input-outline-focus': propsFocus.outline ?? 'red solid 2px',  // '2px solid var(--color-cool-3)'
+            '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-5px', // '-2px'
 
             // TODO: VERIFY or REMOVE
             // '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--input-border-color)',
@@ -136,7 +139,7 @@ class FVTTConfigure
             // '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
 
             // Set default values that are only to be referenced and not set.
-            '--_tjs-default-input-height': 'height' in props ? props['height'] : 'var(--input-height)',
+            '--_tjs-default-input-height': props.height ?? 'var(--input-height)',
 
             // Set directly / no lookup:
          }, false);
@@ -146,37 +149,47 @@ class FVTTConfigure
          /**
           * Input range specific variables for track and thumb,
           */
-         const propsTrack = FoundryStyles.get('input[type="range"]::-webkit-slider-runnable-track');
-         const propsTrackFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-runnable-track');
+         const propsTrack = FoundryStyles.get('input[type="range"]::-webkit-slider-runnable-track', {
+            camelCase: true
+         });
 
-         const propsThumb = FoundryStyles.get('input[type="range"]::-webkit-slider-thumb');
-         const propsThumbFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-thumb');
+         const propsTrackFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-runnable-track', {
+            camelCase: true
+         });
+
+         const propsThumb = FoundryStyles.get('input[type="range"]::-webkit-slider-thumb', {
+            camelCase: true
+         });
+
+         const propsThumbFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-thumb', {
+            camelCase: true
+         });
 
          if (isObject(propsTrack))
          {
             themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-track-box-shadow': 'box-shadow' in propsTrack ? propsTrack['box-shadow'] : '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
+               '--tjs-input-range-slider-track-box-shadow': propsTrack.boxShadow ?? '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
             }, false);
          }
 
          if (isObject(propsTrackFocus))
          {
             themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-track-box-shadow-focus': 'box-shadow' in propsTrackFocus ? propsTrackFocus['box-shadow'] : '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
+               '--tjs-input-range-slider-track-box-shadow-focus': propsTrackFocus.boxShadow ?? '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
             }, false);
          }
 
          if (isObject(propsThumb))
          {
             themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-thumb-box-shadow': 'box-shadow' in propsThumb ? propsThumb['box-shadow'] : '0 0 5px var(--color-shadow-primary)'
+               '--tjs-input-range-slider-thumb-box-shadow': propsThumb.boxShadow ?? '0 0 5px var(--color-shadow-primary)'
             }, false);
          }
 
          if (isObject(propsThumbFocus))
          {
             themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-thumb-box-shadow-focus': 'box-shadow' in propsThumbFocus ? propsThumbFocus['box-shadow'] : '0 0 5px var(--color-shadow-primary)'
+               '--tjs-input-range-slider-thumb-box-shadow-focus': propsThumbFocus.boxShadow ?? '0 0 5px var(--color-shadow-primary)'
             }, false);
          }
       }
