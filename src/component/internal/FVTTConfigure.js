@@ -54,23 +54,6 @@ class FVTTConfigure
          '--tjs-input-checkbox-appearance': 'none',
       }, false);
 
-      // TODO: Consider input component focus / focus-visible support
-      // themeDarkRoot.setProperties({
-      //    // For checkbox Foundry core styles override.
-      //    '--tjs-input-outline': '1px solid transparent',
-      //    // '--tjs-input-outline-focus': '2px solid var(--input-focus-outline-color)',
-      //    '--tjs-input-outline-focus': '2px solid red',
-      //    '--tjs-input-outline-offset': '-1px',
-      //    '--tjs-input-outline-offset-focus': '-2px',
-      //    '--tjs-input-transition': 'outline-color 0.5s',
-      //    // '--tjs-input-transition-focus': 'outline-color 0.5s',
-      //    // '--tjs-input-transition-focus-visible': 'outline-color 0.5s',
-      // }, false);
-
-      /*
-      outline: 2px solid var(--input-focus-outline-color);
-    outline-offset: -2px;
-       */
       /**
        * Assign all TyphonJS thematic CSS variables.
        */
@@ -107,18 +90,34 @@ class FVTTConfigure
          /**
           * All input related components including: TJSSelect,
           */
-         const props = FoundryStyles.get('input[type="text"]', {
+         const props = FoundryStyles.core.get('input[type="text"]', {
             camelCase: true,
             resolve: '.themed.theme-dark input'
          });
 
-         const propsFocus = FoundryStyles.get(['input[type="text"]', 'input[type="text"]:focus'], {
+         const propsFocus = FoundryStyles.core.get(['input[type="text"]', 'input[type="text"]:focus'], {
             camelCase: true,
             resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
          });
 
+         const extProps = FoundryStyles.ext.get('input[type="text"]', {
+            camelCase: true,
+            resolve: '.themed.theme-dark input'
+         });
+
+         const extPropsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
+            camelCase: true,
+            resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
+         });
+
+         console.log(`!!! FVTTConfigure - initialize - FoundryStyles.core.size: ${FoundryStyles.core.size}`);
+         console.log(`!!! FVTTConfigure - initialize - FoundryStyles.ext.size: ${FoundryStyles.ext.size}`);
+
          console.log(`!!! FVTTConfigure - initialize - props: \n${JSON.stringify(props, null, 2)}`);
          console.log(`!!! FVTTConfigure - initialize - propsFocus: \n${JSON.stringify(propsFocus, null, 2)}`);
+
+         console.log(`!!! FVTTConfigure - initialize - extProps: \n${JSON.stringify(extProps, null, 2)}`);
+         console.log(`!!! FVTTConfigure - initialize - extPropsFocus: \n${JSON.stringify(extPropsFocus, null, 2)}`);
 
          themeDarkRoot.setProperties({
             '--tjs-input-height': props.height ?? 'var(--input-height)',
@@ -149,19 +148,19 @@ class FVTTConfigure
          /**
           * Input range specific variables for track and thumb,
           */
-         const propsTrack = FoundryStyles.get('input[type="range"]::-webkit-slider-runnable-track', {
+         const propsTrack = FoundryStyles.core.get('input[type="range"]::-webkit-slider-runnable-track', {
             camelCase: true
          });
 
-         const propsTrackFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-runnable-track', {
+         const propsTrackFocus = FoundryStyles.core.get('input[type="range"]:focus::-webkit-slider-runnable-track', {
             camelCase: true
          });
 
-         const propsThumb = FoundryStyles.get('input[type="range"]::-webkit-slider-thumb', {
+         const propsThumb = FoundryStyles.core.get('input[type="range"]::-webkit-slider-thumb', {
             camelCase: true
          });
 
-         const propsThumbFocus = FoundryStyles.get('input[type="range"]:focus::-webkit-slider-thumb', {
+         const propsThumbFocus = FoundryStyles.core.get('input[type="range"]:focus::-webkit-slider-thumb', {
             camelCase: true
          });
 
