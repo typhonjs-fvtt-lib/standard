@@ -1,9 +1,6 @@
-// import { FoundryStyles }   from '#runtime/svelte/application';
+import { FoundryStyles }   from '#runtime/svelte/application';
 import { TJSStyleManager } from '#runtime/util/dom/style';
 import { isObject }        from '#runtime/util/object';
-
-// TODO: SWAP BACK TO TRL VERSION
-import { FoundryStyles } from './FoundryStyles.js';
 
 /**
  * Provides global CSS variable configuration based on Foundry styles loaded.
@@ -36,11 +33,6 @@ class FVTTConfigure
 
       const themeDarkRoot = manager.get('themeDark');
       const themeLight = manager.get('themeLight');
-
-      // TODO THIS IS A TEST / REMOVE
-      themeLight.setProperties({
-         '--tjs-input-background': 'red',
-      }, false);
 
       this.#initialized = true;
 
@@ -90,77 +82,57 @@ class FVTTConfigure
          /**
           * All input related components including: TJSSelect,
           */
-         const props = FoundryStyles.core.get('input[type="text"]', {
+         const props = FoundryStyles.ext.get('input[type="text"]', {
             camelCase: true,
             resolve: '.themed.theme-dark input'
          });
 
-         const propsFocus = FoundryStyles.core.get(['input[type="text"]', 'input[type="text"]:focus'], {
+         const propsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
             camelCase: true,
             resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
          });
-
-         const extProps = FoundryStyles.ext.get('input[type="text"]', {
-            camelCase: true,
-            resolve: '.themed.theme-dark input'
-         });
-
-         const extPropsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
-            camelCase: true,
-            resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
-         });
-
-         console.log(`!!! FVTTConfigure - initialize - FoundryStyles.core.size: ${FoundryStyles.core.size}`);
-         console.log(`!!! FVTTConfigure - initialize - FoundryStyles.ext.size: ${FoundryStyles.ext.size}`);
-
-         console.log(`!!! FVTTConfigure - initialize - props: \n${JSON.stringify(props, null, 2)}`);
-         console.log(`!!! FVTTConfigure - initialize - propsFocus: \n${JSON.stringify(propsFocus, null, 2)}`);
-
-         console.log(`!!! FVTTConfigure - initialize - extProps: \n${JSON.stringify(extProps, null, 2)}`);
-         console.log(`!!! FVTTConfigure - initialize - extPropsFocus: \n${JSON.stringify(extPropsFocus, null, 2)}`);
 
          themeDarkRoot.setProperties({
             '--tjs-input-height': props.height ?? 'var(--input-height)',
             '--tjs-input-padding': props.padding ?? '0px 0.5rem',
             '--tjs-input-width': props.width ?? '100%',
             '--tjs-input-border-radius': props.borderRadius ?? '4px',
-            '--tjs-input-transition': props.transition ?? 'outline-color 2.5s',  // 'outline-color 0.5s'
+            '--tjs-input-transition': props.transition ?? 'outline-color 0.5s',
 
             // Color / theme related.
             '--tjs-input-background': props.background ?? 'var(--color-cool-4)',
-            '--tjs-input-outline': props.outline ?? 'red solid 1px',             // transparent solid 1px
-            '--tjs-input-outline-focus': propsFocus.outline ?? 'red solid 2px',  // '2px solid var(--color-cool-3)'
-            '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-5px', // '-2px'
-
-            // TODO: VERIFY or REMOVE
-            // '--tjs-input-border': 'border' in props ? props.border : '1px solid var(--input-border-color)',
-            // '--tjs-input-border-color': 'var(--input-border-color)',
-            // '--tjs-input-min-width': 'min-width' in props ? props['min-width'] : '20px',
+            '--tjs-input-outline': props.outline ?? 'transparent solid 1px',
+            '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-cool-3)',
+            '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
 
             // Set default values that are only to be referenced and not set.
             '--_tjs-default-input-height': props.height ?? 'var(--input-height)',
 
             // Set directly / no lookup:
+            '--tjs-input-checkbox-border': 'none',
+            '--tjs-input-range-border': 'none',
          }, false);
       }
+
+      // -------------------------------------------------------------------------------------------------------------
 
       {
          /**
           * Input range specific variables for track and thumb,
           */
-         const propsTrack = FoundryStyles.core.get('input[type="range"]::-webkit-slider-runnable-track', {
+         const propsTrack = FoundryStyles.ext.get('input[type="range"]::-webkit-slider-runnable-track', {
             camelCase: true
          });
 
-         const propsTrackFocus = FoundryStyles.core.get('input[type="range"]:focus::-webkit-slider-runnable-track', {
+         const propsTrackFocus = FoundryStyles.ext.get('input[type="range"]:focus::-webkit-slider-runnable-track', {
             camelCase: true
          });
 
-         const propsThumb = FoundryStyles.core.get('input[type="range"]::-webkit-slider-thumb', {
+         const propsThumb = FoundryStyles.ext.get('input[type="range"]::-webkit-slider-thumb', {
             camelCase: true
          });
 
-         const propsThumbFocus = FoundryStyles.core.get('input[type="range"]:focus::-webkit-slider-thumb', {
+         const propsThumbFocus = FoundryStyles.ext.get('input[type="range"]:focus::-webkit-slider-thumb', {
             camelCase: true
          });
 
@@ -206,6 +178,32 @@ class FVTTConfigure
          '--tjs-default-popover-border': '1px solid var(--color-border-dark, #000)',
          '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
       }, false);
+
+      // Light Theme overrides ---------------------------------------------------------------------------------------
+
+      {
+         /**
+          * All input related components including: TJSSelect,
+          */
+         const props = FoundryStyles.ext.get('input[type="text"]', {
+            camelCase: true,
+            resolve: '.themed.theme-light input'
+         });
+
+         const propsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
+            camelCase: true,
+            resolve: ['.themed.theme-light input:focus', '.themed.theme-light input']
+         });
+
+         themeLight.setProperties({
+            // Color / theme related.
+            '--tjs-input-background': props.background ?? 'rgba(0, 0, 0, 0.1)',
+            '--tjs-input-border': props.border ?? '1px solid red',
+            '--tjs-input-outline': props.outline ?? 'var(--color-warm-2)',
+            '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-warm-2)',
+            '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
+         }, false);
+      }
 
       // Handle `PopOut!` module hooks to allow applications to pop out to their own browser window ------------------
 
