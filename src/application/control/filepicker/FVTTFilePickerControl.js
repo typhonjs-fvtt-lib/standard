@@ -91,7 +91,7 @@ export class FVTTFilePickerControl
 
       let result = false;
 
-      if (this.#filepickerApp && this.#filepickerApp.id === id)
+      if (this.#filepickerApp && this.#filepickerApp.trlId === id)
       {
          // Only invoke `bringToFront` if the file picker app is not contained in a glasspane.
          if (!this.#filepickerApp?.hasGlasspane)
@@ -145,7 +145,7 @@ export class FVTTFilePickerControl
 
       if (id !== void 0)
       {
-         if (typeof id === 'string' && this.#filepickerApp?.id === id)
+         if (typeof id === 'string' && this.#filepickerApp.trlId === id)
          {
             close = true;
          }
@@ -153,7 +153,7 @@ export class FVTTFilePickerControl
          {
             for (const appId of id)
             {
-               if (typeof appId === 'string' && this.#filepickerApp?.id === appId)
+               if (typeof appId === 'string' && this.#filepickerApp.trlId === appId)
                {
                   close = true;
                }
@@ -258,7 +258,7 @@ export class FVTTFilePickerControl
          }
       }
 
-      // Otherwise if there isn't an existing glasspane specified and `modal` is true then create a new TJSGlassPane
+      // Otherwise, if there isn't an existing glasspane specified and `modal` is true then create a new TJSGlassPane
       // component.
       else if (typeof options?.modal === 'boolean' && options.modal)
       {
@@ -294,15 +294,23 @@ export class FVTTFilePickerControl
 
       const TJSFilePickerClass = this.#TJSFilePickerClass ? this.#TJSFilePickerClass : this.#createFilePickerClass();
 
+      // The core Foundry file picker sadly has styles based on `#file-picker`, so providing a unique external CSS ID is
+      // not advised. TJSFilePicker tracks IDs via `trlId` getter instead.
+      const trlId = options.id ? options.id : void 0;
+
+      // Remove any `id` from options to preserve default `#file-picker` ID from Foundry core file picker.
+      delete options.id;
+
       this.#filepickerApp = new TJSFilePickerClass({
          popOutModuleDisable: true,
          minimizable: false,
          ...options,
+
          callback: (result) =>
          {
             this.#managedPromise.resolve(result);
          }
-      }, this.#managedPromise, { focusSource, glasspaneId, zIndex });
+      }, this.#managedPromise, { focusSource, glasspaneId, trlId, zIndex });
 
       await this.#filepickerApp.browse();
 
@@ -376,10 +384,12 @@ export class FVTTFilePickerControl
          /** @type {ManagedPromise} */
          #managedPromise;
 
+         #trlId = void 0;
+
          /** @type {number} */
          #zIndex;
 
-         constructor(options, managedPromise, { focusSource, glasspaneId, zIndex } = {})
+         constructor(options, managedPromise, { focusSource, glasspaneId, trlId, zIndex } = {})
          {
             super({
                ...options,
@@ -390,6 +400,7 @@ export class FVTTFilePickerControl
             this.#focusSource = focusSource;
             this.#glasspaneId = glasspaneId;
             this.#managedPromise = managedPromise;
+            this.#trlId = trlId;
             this.#zIndex = zIndex;
          }
 
@@ -397,6 +408,13 @@ export class FVTTFilePickerControl
           * @returns {boolean} Convenience getter for `FVTTFilePickerControl.bringToFront`.
           */
          get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
+
+         /**
+          * Any `id` field set in initial options to track and close this file picker instance.
+          *
+          * @returns {string | undefined}
+          */
+         get trlId() { return this.#trlId; }
 
          /**
           * Always focus first input when `bringToFront` is invoked.
