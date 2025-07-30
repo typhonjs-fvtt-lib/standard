@@ -38,10 +38,22 @@ import {
  */
 export class FVTTFilePickerControl
 {
-   static #managedPromise = new ManagedPromise();
+   /**
+    * The deferred definition of the TRL file picker class. The class is deferred in creation until initial usage
+    * as some external platforms like `The Forge` replace the core Foundry file picker class instance.
+    *
+    * @type {null}
+    */
+   static #TJSFilePickerClass = null;
 
-   /** @type {TJSFilePicker} */
+   /**
+    * The single file picker instance allowing only one open file picker app at a time.
+    *
+    * @type {TJSFilePicker}
+    */
    static #filepickerApp;
+
+   static #managedPromise = new ManagedPromise();
 
    /**
     * @returns {boolean} Test if the current user can browse files.
@@ -280,7 +292,9 @@ export class FVTTFilePickerControl
 
       // -------------------------------------------------------------------------------------------------------------
 
-      this.#filepickerApp = new TJSFilePicker({
+      const TJSFilePickerClass = this.#TJSFilePickerClass ? this.#TJSFilePickerClass : this.#createFilePickerClass();
+
+      this.#filepickerApp = new TJSFilePickerClass({
          popOutModuleDisable: true,
          minimizable: false,
          ...options,
@@ -341,205 +355,210 @@ export class FVTTFilePickerControl
 
       return promise;
    }
-}
 
-/**
- * Extends FilePicker to handle resolving the managed Promise on app close, explicitly center the app when shown above
- * a modal / glasspane, and manage any associated dialogs.
- */
-class TJSFilePicker extends foundry.applications.apps.FilePicker
-{
-   /** @type {TJSDialog} */
-   #createDirectoryApp;
-
-   /** @type {import('#runtime/util/browser').A11yFocusSource} */
-   #focusSource;
-
-   /** @type {string} */
-   #glasspaneId;
-
-   /** @type {ManagedPromise} */
-   #managedPromise;
-
-   /** @type {number} */
-   #zIndex;
-
-   constructor(options, managedPromise, { focusSource, glasspaneId, zIndex } = {})
+   static #createFilePickerClass()
    {
-      super({
-         ...options,
-         actions: { makeDirectory: TJSFilePicker.#onMakeDirectory },
-         window: { minimizable: typeof glasspaneId !== 'string' } // When modal prevent minimizing.
-      });
-
-      this.#focusSource = focusSource;
-      this.#glasspaneId = glasspaneId;
-      this.#managedPromise = managedPromise;
-      this.#zIndex = zIndex;
-   }
-
-   /**
-    * @returns {boolean} Convenience getter for `FVTTFilePickerControl.bringToFront`.
-    */
-   get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
-
-   /**
-    * Always focus first input when `bringToFront` is invoked.
-    */
-   bringToFront()
-   {
-      // Early out when modal as `super.bringToFront` will modify z-index.
-      if (typeof this.#glasspaneId === 'string') { return; }
-
-      super.bringToFront();
-   }
-
-   /**
-    * Overridden close method that resolves the managed Promise w/ null and closes any associated create directory
-    * dialog.
-    *
-    * @param {object}   options - Application close options.
-    *
-    * @returns {Promise<void>}
-    */
-   async close(options)
-   {
-      // Close any associated create directory dialog.
-      this.#createDirectoryApp?.close?.();
-      this.#createDirectoryApp = void 0;
-
-      this.#managedPromise?.resolve?.(null);
-      this.#managedPromise = void 0;
-
-      // Make window content overflow hidden to avoid any scrollbars appearing in default Application close animation.
-      const content = this.element?.querySelector('.window-content');
-      if (content) { content.style.overflow = 'hidden'; }
-
-      await super.close(options);
-
-      // Apply any stored focus options and then remove them from options.
-      if (this.#focusSource)
+      /**
+       * Extends FilePicker to handle resolving the managed Promise on app close, explicitly center the app when shown above
+       * a modal / glasspane, and manage any associated dialogs.
+       */
+      this.#TJSFilePickerClass = class TJSFilePicker extends foundry.applications.apps.FilePicker
       {
-         A11yHelper.applyFocusSource(this.#focusSource);
-         this.#focusSource = void 0;
-      }
-   }
+         /** @type {TJSDialog} */
+         #createDirectoryApp;
 
-   /**
-    * Present the user with a dialog to create a subdirectory within their currently browsed file storage location.
-    *
-    * @param {object} source     The data source being browsed
-    *
-    * @private
-    */
-   async #createDirectoryDialog(source)
-   {
-      // Return early if there is an existing create subfolder / directory dialog.
-      if (this.#createDirectoryApp) { return; }
+         /** @type {import('#runtime/util/browser').A11yFocusSource} */
+         #focusSource;
 
-      const labelText = game.i18n.localize("FILES.DirectoryName.Label");
-      const placeholder = game.i18n.localize("FILES.DirectoryName.Placeholder");
+         /** @type {string} */
+         #glasspaneId;
 
-      const form = `<form class="dialog-form standard-form" autocomplete=off><div class="form-group">
-       <label for="create-directory-name">${labelText}</label>
-       <div class="form-fields">
-       <input id="create-directory-name" type="text" name="dirname" placeholder="${placeholder}" required autofocus>
-       </div></div></form>`;
+         /** @type {ManagedPromise} */
+         #managedPromise;
 
-      // The initial target is document.body, but if there is a glasspane container the dialog `svelte.target` is set.
-      let dialogTargetEl = globalThis.document.body;
+         /** @type {number} */
+         #zIndex;
 
-      // Potentially find any associated glasspane container element and make that dialog Svelte component mount target.
-      if (typeof this.#glasspaneId === 'string')
-      {
-         const gpContainerEl = document.querySelector(`#${this.#glasspaneId} .tjs-glass-pane-container`);
-         if (gpContainerEl)
+         constructor(options, managedPromise, { focusSource, glasspaneId, zIndex } = {})
          {
-            dialogTargetEl = gpContainerEl;
+            super({
+               ...options,
+               actions: { makeDirectory: TJSFilePicker.#onMakeDirectory },
+               window: { minimizable: typeof glasspaneId !== 'string' } // When modal prevent minimizing.
+            });
+
+            this.#focusSource = focusSource;
+            this.#glasspaneId = glasspaneId;
+            this.#managedPromise = managedPromise;
+            this.#zIndex = zIndex;
          }
-         else
+
+         /**
+          * @returns {boolean} Convenience getter for `FVTTFilePickerControl.bringToFront`.
+          */
+         get hasGlasspane() { return typeof this.#glasspaneId === 'string'; }
+
+         /**
+          * Always focus first input when `bringToFront` is invoked.
+          */
+         bringToFront()
          {
-            console.warn(`TJSFilePicker.#createDirectoryDialog warning: Could not locate glasspane for CSS ID: ${
-             this.#glasspaneId}`);
+            // Early out when modal as `super.bringToFront` will modify z-index.
+            if (typeof this.#glasspaneId === 'string') { return; }
+
+            super.bringToFront();
          }
-      }
 
-      this.#createDirectoryApp = new TJSDialog({
-         draggable: false,
-         zIndex: Number.MAX_SAFE_INTEGER,
-         title: game.i18n.localize('FILES.CreateSubfolder'),
-         content: form,
-         focusFirst: true,
-         minimizable: false,
-         buttons: {
-            onYes: {
-               icon: 'fas fa-check',
-               label: 'CONTROLS.CommonCreate',
-               onPress: async ({ application }) =>
-               {
-                  const html = application.elementContent;
+         /**
+          * Overridden close method that resolves the managed Promise w/ null and closes any associated create directory
+          * dialog.
+          *
+          * @param {object}   options - Application close options.
+          *
+          * @returns {Promise<void>}
+          */
+         async close(options)
+         {
+            // Close any associated create directory dialog.
+            this.#createDirectoryApp?.close?.();
+            this.#createDirectoryApp = void 0;
 
-                  const dirname = html.querySelector('input').value;
-                  const path = [source.target, dirname].filterJoin('/');
-                  try
-                  {
-                     await this.constructor.createDirectory(this.activeSource, path, { bucket: source.bucket });
-                  }
-                  catch (err)
-                  {
-                     ui.notifications.error(err.message);
-                  }
-                  return this.browse(this.target);
-               }
-            },
-            onNo: {
-               icon: 'fas fa-times',
-               label: 'Cancel'
+            this.#managedPromise?.resolve?.(null);
+            this.#managedPromise = void 0;
+
+            // Make window content overflow hidden to avoid any scrollbars appearing in default Application close animation.
+            const content = this.element?.querySelector('.window-content');
+            if (content) { content.style.overflow = 'hidden'; }
+
+            await super.close(options);
+
+            // Apply any stored focus options and then remove them from options.
+            if (this.#focusSource)
+            {
+               A11yHelper.applyFocusSource(this.#focusSource);
+               this.#focusSource = void 0;
             }
          }
-      }, {
-         headerIcon: 'fa-solid fa-folder-plus',
-         popOutModuleDisable: true,
 
-         svelte: { target: dialogTargetEl }
-      });
+         /**
+          * Present the user with a dialog to create a subdirectory within their currently browsed file storage location.
+          *
+          * @param {object} source     The data source being browsed
+          *
+          * @private
+          */
+         async #createDirectoryDialog(source)
+         {
+            // Return early if there is an existing create subfolder / directory dialog.
+            if (this.#createDirectoryApp) { return; }
 
-      // Use wait to be able to remove the reference when any result is chosen.
-      await this.#createDirectoryApp.wait();
-      this.#createDirectoryApp = void 0;
-   }
+            const labelText = game.i18n.localize("FILES.DirectoryName.Label");
+            const placeholder = game.i18n.localize("FILES.DirectoryName.Placeholder");
 
-   /**
-    * Create a new subdirectory in the current working directory.
-    *
-    * @this {TJSFilePicker}
-    */
-   static async #onMakeDirectory()
-   {
-      await this.#createDirectoryDialog(this.source);
-   }
+            const form = `<form class="dialog-form standard-form" autocomplete=off><div class="form-group">
+               <label for="create-directory-name">${labelText}</label>
+               <div class="form-fields">
+               <input id="create-directory-name" type="text" name="dirname" placeholder="${placeholder}" required autofocus>
+               </div></div></form>`;
 
-   /**
-    * Overridden to explicitly center the file picker app when displayed above a modal / glasspane.
-    *
-    * @param {object}   pos - Position object.
-    *
-    * @returns {{left: number, top: number, width: number, height: number, scale: number}} Position object.
-    */
-   setPosition(pos = {})
-   {
-      const currentPos = super.setPosition(pos);
+            // The initial target is document.body, but if there is a glasspane container the dialog `svelte.target` is set.
+            let dialogTargetEl = globalThis.document.body;
 
-      if (this.#glasspaneId)
-      {
-         const top = (globalThis.innerHeight - currentPos.height) / 2;
+            // Potentially find any associated glasspane container element and make that dialog Svelte component mount target.
+            if (typeof this.#glasspaneId === 'string')
+            {
+               const gpContainerEl = document.querySelector(`#${this.#glasspaneId} .tjs-glass-pane-container`);
+               if (gpContainerEl)
+               {
+                  dialogTargetEl = gpContainerEl;
+               }
+               else
+               {
+                  console.warn(`TJSFilePicker.#createDirectoryDialog warning: Could not locate glasspane for CSS ID: ${
+                     this.#glasspaneId}`);
+               }
+            }
 
-         this.element.style.top = `${top}px`;
-         super.setPosition({ top });
-         currentPos.top = top;
-      }
+            this.#createDirectoryApp = new TJSDialog({
+               draggable: false,
+               zIndex: Number.MAX_SAFE_INTEGER,
+               title: game.i18n.localize('FILES.CreateSubfolder'),
+               content: form,
+               focusFirst: true,
+               minimizable: false,
+               buttons: {
+                  onYes: {
+                     icon: 'fas fa-check',
+                     label: 'CONTROLS.CommonCreate',
+                     onPress: async ({ application }) =>
+                     {
+                        const html = application.elementContent;
 
-      return currentPos;
+                        const dirname = html.querySelector('input').value;
+                        const path = [source.target, dirname].filterJoin('/');
+                        try
+                        {
+                           await this.constructor.createDirectory(this.activeSource, path, { bucket: source.bucket });
+                        }
+                        catch (err)
+                        {
+                           ui.notifications.error(err.message);
+                        }
+                        return this.browse(this.target);
+                     }
+                  },
+                  onNo: {
+                     icon: 'fas fa-times',
+                     label: 'Cancel'
+                  }
+               }
+            }, {
+               headerIcon: 'fa-solid fa-folder-plus',
+               popOutModuleDisable: true,
+
+               svelte: { target: dialogTargetEl }
+            });
+
+            // Use wait to be able to remove the reference when any result is chosen.
+            await this.#createDirectoryApp.wait();
+            this.#createDirectoryApp = void 0;
+         }
+
+         /**
+          * Create a new subdirectory in the current working directory.
+          *
+          * @this {TJSFilePicker}
+          */
+         static async #onMakeDirectory()
+         {
+            await this.#createDirectoryDialog(this.source);
+         }
+
+         /**
+          * Overridden to explicitly center the file picker app when displayed above a modal / glasspane.
+          *
+          * @param {object}   pos - Position object.
+          *
+          * @returns {{left: number, top: number, width: number, height: number, scale: number}} Position object.
+          */
+         setPosition(pos = {})
+         {
+            const currentPos = super.setPosition(pos);
+
+            if (this.#glasspaneId)
+            {
+               const top = (globalThis.innerHeight - currentPos.height) / 2;
+
+               this.element.style.top = `${top}px`;
+               super.setPosition({ top });
+               currentPos.top = top;
+            }
+
+            return currentPos;
+         }
+      };
+
+      return this.#TJSFilePickerClass;
    }
 }
 
