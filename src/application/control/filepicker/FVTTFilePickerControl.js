@@ -370,7 +370,7 @@ export class FVTTFilePickerControl
        * Extends FilePicker to handle resolving the managed Promise on app close, explicitly center the app when shown above
        * a modal / glasspane, and manage any associated dialogs.
        */
-      this.#TJSFilePickerClass = class TJSFilePicker extends foundry.applications.apps.FilePicker
+      this.#TJSFilePickerClass = class TJSFilePicker extends foundry.applications.apps.FilePicker.implementation
       {
          /** @type {TJSDialog} */
          #createDirectoryApp;
