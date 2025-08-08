@@ -1,2 +1,4 @@
 export * from './TJSGameSettingsWithUI';
-export * from './theme/TJSThemeStore';
+
+// TODO: Refactor TJSThemeStore in the future.
+// export * from './theme/TJSThemeStore';
