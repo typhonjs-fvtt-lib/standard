@@ -13,12 +13,12 @@ class FVTTConfigure
    {
       if (this.#initialized) { return; }
 
-      // Remove `0.2.x` and below root styles. -- REMOVE AT `0.5.0`
+      // Remove `0.2.x` and below root styles. -- TODO: REMOVE AT `0.5.0`
       document?.['#__tjs-root-styles']?.remove?.();
 
-      const manager = new TJSStyleManager({
+      const manager = TJSStyleManager.create({
          id: '__tjs-standard-vars',
-         version: 1,
+         version: '0.1.0',
          layerName: 'variables.tjs-standard-vars',
          rules: {
             // Ideally `:root` would be used, but Foundry defines dark them CSS vars in `body`. For scoping reasons
@@ -29,7 +29,7 @@ class FVTTConfigure
       });
 
       // Early out if the style manager version is outdated.
-      if (!manager.isConnected) { return; }
+      if (!manager?.isConnected) { return; }
 
       const themeDarkRoot = manager.get('themeDark');
       const themeLight = manager.get('themeLight');
@@ -211,7 +211,7 @@ class FVTTConfigure
       {
          // Clone and load the `standard` library CSS variables into the new window document regardless of the app type.
          popout.document.addEventListener('DOMContentLoaded',
-         () => manager.clone({ document: popout.document, force: true }));
+          () => manager.clone({ document: popout.document, force: true }));
       });
    }
 }
