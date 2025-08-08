@@ -44,7 +44,7 @@ class FVTTConfigure
       themeDarkRoot.setProperties({
          // For checkbox Foundry core styles override.
          '--tjs-input-checkbox-appearance': 'none',
-      }, false);
+      });
 
       /**
        * Assign all TyphonJS thematic CSS variables.
@@ -54,7 +54,7 @@ class FVTTConfigure
          // For components w/ transparent background checkered pattern.
          '--tjs-checkerboard-background-dark': 'rgb(205, 205, 205)',
          '--tjs-checkerboard-background-10': `url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205))`
-      }, false);
+      });
 
       // -------------------------------------------------------------------------------------------------------------
 
@@ -67,14 +67,14 @@ class FVTTConfigure
 
          '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.05)',
          '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.1)',
-      }, false);
+      });
 
       themeLight.setProperties({
          '--tjs-action-ripple-background': 'rgba(0, 0, 0, 0.35)',
 
          '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
          '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
-      }, false);
+      });
 
       // -------------------------------------------------------------------------------------------------------------
 
@@ -111,7 +111,7 @@ class FVTTConfigure
             // Set directly / no lookup:
             '--tjs-input-checkbox-border': 'none',
             '--tjs-input-range-border': 'none',
-         }, false);
+         });
       }
 
       // -------------------------------------------------------------------------------------------------------------
@@ -140,28 +140,28 @@ class FVTTConfigure
          {
             themeDarkRoot.setProperties({
                '--tjs-input-range-slider-track-box-shadow': propsTrack.boxShadow ?? '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
-            }, false);
+            });
          }
 
          if (isObject(propsTrackFocus))
          {
             themeDarkRoot.setProperties({
                '--tjs-input-range-slider-track-box-shadow-focus': propsTrackFocus.boxShadow ?? '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
-            }, false);
+            });
          }
 
          if (isObject(propsThumb))
          {
             themeDarkRoot.setProperties({
                '--tjs-input-range-slider-thumb-box-shadow': propsThumb.boxShadow ?? '0 0 5px var(--color-shadow-primary)'
-            }, false);
+            });
          }
 
          if (isObject(propsThumbFocus))
          {
             themeDarkRoot.setProperties({
                '--tjs-input-range-slider-thumb-box-shadow-focus': propsThumbFocus.boxShadow ?? '0 0 5px var(--color-shadow-primary)'
-            }, false);
+            });
          }
       }
 
@@ -177,7 +177,7 @@ class FVTTConfigure
          // `popover` is for components that are elevated and independent; see: TJSContextMenu
          '--tjs-default-popover-border': '1px solid var(--color-border-dark, #000)',
          '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
-      }, false);
+      });
 
       // Light Theme overrides ---------------------------------------------------------------------------------------
 
@@ -202,7 +202,7 @@ class FVTTConfigure
             '--tjs-input-outline': props.outline ?? 'var(--color-warm-2)',
             '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-warm-2)',
             '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
-         }, false);
+         });
       }
 
       // Handle `PopOut!` module hooks to allow applications to pop out to their own browser window ------------------
