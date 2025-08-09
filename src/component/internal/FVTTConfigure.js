@@ -1,5 +1,5 @@
 import { FoundryStyles }   from '#runtime/svelte/application';
-import { TJSStyleManager } from '#runtime/util/dom/style';
+import { StyleManager }    from '#runtime/util/dom/style';
 import { isObject }        from '#runtime/util/object';
 
 /**
@@ -16,7 +16,7 @@ class FVTTConfigure
       // Remove `0.2.x` and below root styles. -- TODO: REMOVE AT `0.5.0`
       document?.['#__tjs-root-styles']?.remove?.();
 
-      const manager = TJSStyleManager.create({
+      const manager = StyleManager.create({
          id: '__tjs-standard-vars',
          version: '0.1.0',
          layerName: 'variables.tjs-standard-vars',
