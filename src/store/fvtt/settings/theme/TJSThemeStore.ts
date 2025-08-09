@@ -4,7 +4,7 @@
 // import { getFormat }       from '#runtime/data/color/colord';
 // import { TJSGameSettings } from '#runtime/svelte/store/fvtt/settings';
 // import { propertyStore }   from '#runtime/svelte/store/writable-derived';
-// import { TJSStyleManager } from '#runtime/util/dom/style';
+// import { StyleManager } from '#runtime/util/dom/style';
 // import { validate }        from '#runtime/util/semver';
 //
 // import {
@@ -46,7 +46,7 @@
 //
 //    /**
 //     */
-//    #styleManager: TJSStyleManager;
+//    #styleManager: StyleManager;
 //
 //    /**
 //     * Stores the subscribers.
@@ -79,9 +79,9 @@
 //          throw new TypeError(`'gameSettings' attribute is not an instance of TJSGameSettings.`);
 //       }
 //
-//       if (!(options.styleManager instanceof TJSStyleManager))
+//       if (!(options.styleManager instanceof StyleManager))
 //       {
-//          throw new TypeError(`'styleManager' attribute is not an instance of TJSStyleManager.`);
+//          throw new TypeError(`'styleManager' attribute is not an instance of StyleManager.`);
 //       }
 //
 //       if (!isObject(options.config)) { throw new TypeError(`'config' attribute is not an object. `); }
@@ -366,9 +366,9 @@
 //       namespace: string;
 //
 //       /**
-//        * An associated TJSStyleManager instance to manipulate CSS variables.
+//        * An associated StyleManager instance to manipulate CSS variables.
 //        */
-//       styleManager: TJSStyleManager;
+//       styleManager: StyleManager;
 //    }
 // }
 //
