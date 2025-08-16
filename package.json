@@ -1,6 +1,6 @@
 {
   "name": "@typhonjs-fvtt/standard",
-  "version": "0.2.1",
+  "version": "0.3.0-next.3",
   "description": "Provides a standard Svelte component library for the TyphonJS Runtime Library and Foundry VTT.",
   "type": "module",
   "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
@@ -113,11 +113,11 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@typhonjs-fvtt/runtime": ">=0.2.0 <0.3.0",
+    "@typhonjs-fvtt/runtime": ">=0.3.0-0 <0.4.0",
     "svelte": ">=4.x.x <5"
   },
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@rollup/plugin-typescript": "^12.1.2",
     "@typhonjs-build-test/esm-d-ts": "^0.3.0-next.11",
     "@typhonjs-build-test/esm-d-ts-plugin-svelte": "^0.1.0-next.1",
@@ -125,13 +125,13 @@
     "@typhonjs-config/eslint-config": "^0.6.3",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "@typhonjs-fvtt/types-fvtt-shim": "github:typhonjs-fvtt-lib/types-fvtt-shim",
-    "@typhonjs-svelte/standard-base": "github:typhonjs-svelte/standard-base#0.2.0",
+    "@typhonjs-svelte/standard-base": "github:typhonjs-svelte/standard-base#0.3.0",
     "@typhonjs-utils/file-util": "^0.1.0",
     "eslint": "^8.57.0",
     "fs-extra": "^11.3.0",
-    "rollup": "^4.34.7",
+    "rollup": "^4.40.2",
     "tslib": "^2.8.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=18"
