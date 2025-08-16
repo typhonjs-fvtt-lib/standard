@@ -1,6 +1,5 @@
 import { FoundryStyles }   from '#runtime/svelte/application';
 import { StyleManager }    from '#runtime/util/dom/style';
-import { isObject }        from '#runtime/util/object';
 
 /**
  * Provides global CSS variable configuration based on Foundry styles loaded.
@@ -18,7 +17,7 @@ class FVTTConfigure
 
       const manager = StyleManager.create({
          id: '__tjs-standard-vars',
-         version: '0.1.0',
+         version: '0.0.1',
          layerName: 'variables.tjs-standard-vars',
          rules: {
             // Ideally `:root` would be used, but Foundry defines dark them CSS vars in `body`. For scoping reasons
@@ -29,12 +28,16 @@ class FVTTConfigure
       });
 
       // Early out if the style manager version is outdated.
-      if (!manager?.isConnected) { return; }
+      if (!manager?.isConnected)
+      {
+         this.#initialized = true;
+         return;
+      }
+
+      this.#initialized = true;
 
       const themeDarkRoot = manager.get('themeDark');
       const themeLight = manager.get('themeLight');
-
-      this.#initialized = true;
 
       // -------------------------------------------------------------------------------------------------------------
 
@@ -115,55 +118,6 @@ class FVTTConfigure
       }
 
       // -------------------------------------------------------------------------------------------------------------
-
-      {
-         /**
-          * Input range specific variables for track and thumb,
-          */
-         const propsTrack = FoundryStyles.ext.get('input[type="range"]::-webkit-slider-runnable-track', {
-            camelCase: true
-         });
-
-         const propsTrackFocus = FoundryStyles.ext.get('input[type="range"]:focus::-webkit-slider-runnable-track', {
-            camelCase: true
-         });
-
-         const propsThumb = FoundryStyles.ext.get('input[type="range"]::-webkit-slider-thumb', {
-            camelCase: true
-         });
-
-         const propsThumbFocus = FoundryStyles.ext.get('input[type="range"]:focus::-webkit-slider-thumb', {
-            camelCase: true
-         });
-
-         if (isObject(propsTrack))
-         {
-            themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-track-box-shadow': propsTrack.boxShadow ?? '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
-            });
-         }
-
-         if (isObject(propsTrackFocus))
-         {
-            themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-track-box-shadow-focus': propsTrackFocus.boxShadow ?? '1px 1px 1px #000000, 0px 0px 1px #0d0d0d'
-            });
-         }
-
-         if (isObject(propsThumb))
-         {
-            themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-thumb-box-shadow': propsThumb.boxShadow ?? '0 0 5px var(--color-shadow-primary)'
-            });
-         }
-
-         if (isObject(propsThumbFocus))
-         {
-            themeDarkRoot.setProperties({
-               '--tjs-input-range-slider-thumb-box-shadow-focus': propsThumbFocus.boxShadow ?? '0 0 5px var(--color-shadow-primary)'
-            });
-         }
-      }
 
       themeDarkRoot.setProperties({
          // `popup` is for components that are slightly elevated, but connected to an application;
