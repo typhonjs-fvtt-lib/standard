@@ -39,28 +39,38 @@ class FVTTConfigure
       const themeDarkRoot = manager.get('themeDark');
       const themeLight = manager.get('themeLight');
 
-      // -------------------------------------------------------------------------------------------------------------
+      const themeDarkCM = manager.get('themeDarkCM');
+      const themeLightCM = manager.get('themeLightCM');
 
-      /**
-       * Assign all TyphonJS thematic CSS reversals for core Foundry styles.
-       */
-      themeDarkRoot.setProperties({
-         // For checkbox Foundry core styles override.
-         '--tjs-input-checkbox-appearance': 'none',
+      // Initialize constants for any theme.
+      this.#rootConstants(themeDarkRoot);
+
+      // Initialize TRL action variables.
+      this.#actions(themeDarkRoot, themeLight);
+
+      // TRL form / input components.
+      this.#form(themeDarkRoot, themeLight);
+
+      // All popup / menu components.
+      this.#popup(themeDarkRoot, themeLight, themeDarkCM, themeLightCM);
+
+      // Handle `PopOut!` module hooks to allow applications to pop out to their own browser window ------------------
+
+      Hooks.on('PopOut:loading', (app, popout) =>
+      {
+         // Clone and load the `standard` library CSS variables into the new window document regardless of the app type.
+         popout.document.addEventListener('DOMContentLoaded',
+          () => manager.clone({ document: popout.document, force: true }));
       });
+   }
 
-      /**
-       * Assign all TyphonJS thematic CSS variables.
-       */
-
-      themeDarkRoot.setProperties({
-         // For components w/ transparent background checkered pattern.
-         '--tjs-checkerboard-background-dark': 'rgb(205, 205, 205)',
-         '--tjs-checkerboard-background-10': `url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205))`
-      });
-
-      // -------------------------------------------------------------------------------------------------------------
-
+   /**
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeDarkRoot -
+    *
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeLight -
+    */
+   static #actions(themeDarkRoot, themeLight)
+   {
       /**
        * Assign all TyphonJS CSS variables to Foundry defaults.
        */
@@ -78,9 +88,16 @@ class FVTTConfigure
          '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
          '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
       });
+   }
 
-      // -------------------------------------------------------------------------------------------------------------
-
+   /**
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeDarkRoot -
+    *
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeLight -
+    */
+   static #form(themeDarkRoot, themeLight)
+   {
+      // Root / dark theme.
       {
          /**
           * All input related components including: TJSSelect,
@@ -117,23 +134,7 @@ class FVTTConfigure
          });
       }
 
-      // -------------------------------------------------------------------------------------------------------------
-
-      themeDarkRoot.setProperties({
-         // `popup` is for components that are slightly elevated, but connected to an application;
-         // see: TJSMenu / TJSContextMenu / TJSColordPicker
-         '--tjs-default-popup-background': 'var(--color-text-dark-header, #23221d)',
-         '--tjs-default-popup-border': '1px solid var(--color-border-dark, #000)',
-         '--tjs-default-popup-box-shadow': '0 0 2px var(--color-shadow-dark, #000)',
-         '--tjs-default-popup-primary-color': 'var(--color-text-light-primary, #b5b3a4)',
-         '--tjs-default-popup-highlight-color': 'var(--color-text-light-highlight, #f0f0e0)',
-
-         // `popover` is for components that are elevated and independent; see: TJSContextMenu
-         '--tjs-default-popover-border': '1px solid var(--color-border-dark, #000)',
-         '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
-      });
-
-      // Light Theme overrides ---------------------------------------------------------------------------------------
+      // Light theme overrides.
 
       {
          /**
@@ -158,14 +159,89 @@ class FVTTConfigure
             '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
          });
       }
+   }
 
-      // Handle `PopOut!` module hooks to allow applications to pop out to their own browser window ------------------
+   /**
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeDarkRoot -
+    *
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeLight -
+    */
+   static #popup(themeDarkRoot, themeLight)
+   {
+      const propsMenuDark = FoundryStyles.ext.get('#context-menu', {
+         camelCase: true,
+         resolve: ['.themed.theme-dark #context-menu']
+      });
 
-      Hooks.on('PopOut:loading', (app, popout) =>
-      {
-         // Clone and load the `standard` library CSS variables into the new window document regardless of the app type.
-         popout.document.addEventListener('DOMContentLoaded',
-          () => manager.clone({ document: popout.document, force: true }));
+      const propsMenuLight = FoundryStyles.ext.get('#context-menu', {
+         camelCase: true,
+         resolve: ['.themed.theme-light #context-menu']
+      });
+
+      themeDarkRoot.setProperties({
+         // Direct mapping for TJSContextMenu overrides.
+         '--tjs-context-menu-background': 'var(--tjs-menu-background)',
+         '--tjs-context-menu-border': 'var(--tjs-menu-border)',
+         '--tjs-context-menu-border-radius': 'var(--tjs-menu-border-radius)',
+         '--tjs-context-menu-box-shadow': 'var(--tjs-menu-box-shadow)',
+         '--tjs-context-menu-color': 'var(--tjs-menu-color)',
+
+         '--tjs-menu-background': propsMenuDark.background ?? 'var(--color-cool-5)',
+         '--tjs-menu-border': propsMenuDark.border ?? '1px solid var(--color-cool-3)',
+         '--tjs-menu-border-radius': propsMenuDark.borderRadius ?? '5px',
+         '--tjs-menu-box-shadow': propsMenuDark.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-menu-color': propsMenuDark.color ?? 'var(--color-text-secondary)',
+
+         // `popup` is for components that are slightly elevated, but connected to an application;
+         // see: TJSMenu / TJSContextMenu / TJSColordPicker
+         '--tjs-default-popup-background': propsMenuDark.background ?? 'var(--color-cool-5)',
+         '--tjs-default-popup-border': propsMenuDark.border ?? '1px solid var(--color-cool-3)',
+         '--tjs-default-popup-box-shadow': propsMenuDark.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-default-popup-primary-color': 'var(--color-text-light-primary, #b5b3a4)',
+         '--tjs-default-popup-highlight-color': 'var(--color-text-light-highlight, #f0f0e0)',
+
+         // `popover` is for components that are elevated and independent; see: TJSContextMenu
+         '--tjs-default-popover-border': propsMenuDark.border ?? '1px solid var(--color-border-dark, #000)',
+         '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
+      });
+
+      themeLight.setProperties({
+         // Direct mapping for TJSContextMenu overrides.
+         '--tjs-context-menu-background': 'var(--tjs-menu-background)',
+         '--tjs-context-menu-border': 'var(--tjs-menu-border)',
+         '--tjs-context-menu-border-radius': 'var(--tjs-menu-border-radius)',
+         '--tjs-context-menu-box-shadow': 'var(--tjs-menu-box-shadow)',
+         '--tjs-context-menu-color': 'var(--tjs-menu-color)',
+
+         '--tjs-menu-background': propsMenuLight.background ?? '#d9d8c8',
+         '--tjs-menu-border': propsMenuLight.border ?? '1px solid #999',
+         '--tjs-menu-border-radius': propsMenuLight.borderRadius ?? '5px',
+         '--tjs-menu-box-shadow': propsMenuLight.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-menu-color': propsMenuLight.color ?? 'var(--color-text-secondary)',
+      });
+   }
+
+   /**
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeDarkRoot -
+    */
+   static #rootConstants(themeDarkRoot)
+   {
+      /**
+       * Assign all TyphonJS thematic CSS reversals for core Foundry styles.
+       */
+      themeDarkRoot.setProperties({
+         // For checkbox Foundry core styles override.
+         '--tjs-input-checkbox-appearance': 'none',
+      });
+
+      /**
+       * Assign all TyphonJS thematic CSS variables.
+       */
+
+      themeDarkRoot.setProperties({
+         // For components w/ transparent background checkered pattern.
+         '--tjs-checkerboard-background-dark': 'rgb(205, 205, 205)',
+         '--tjs-checkerboard-background-10': `url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205))`
       });
    }
 }
