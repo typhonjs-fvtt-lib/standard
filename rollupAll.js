@@ -5,6 +5,7 @@ import { importsExternal } from '@typhonjs-build-test/rollup-plugin-pkg-imports'
 import { getFileList }     from '@typhonjs-utils/file-util';
 import fs                  from 'fs-extra';
 import { rollup }          from 'rollup';
+import upath               from 'upath';
 
 const sourcemap = true; // Defines whether source maps are generated.
 
@@ -90,10 +91,11 @@ const rollupConfigs = [
          input: 'src/application/menu/index.js',
          plugins: [
             importsExternal(),
-            resolve(),
-            generateDTS.plugin(dtsPluginOptions)
+            resolve()
          ]
       },
+      // Copy DTS as local extensions do not change shape of the package.
+      copyDTS: './node_modules/@typhonjs-svelte/standard-base/_dist/application/menu/index.d.ts',
       output: {
          file: '_dist/application/menu/index.js',
          format: 'es',
@@ -140,9 +142,33 @@ const rollupConfigs = [
 
 for (const config of rollupConfigs)
 {
+   console.log(`Generating bundle: ${config.input.input}`);
+
    const bundle = await rollup(config.input);
+
    await bundle.write(config.output);
+
+   // closes the bundle
    await bundle.close();
+
+   const copyDTS = config.copyDTS;
+   const outFile = config.output.file ?? config.file;
+
+   const outFileDTS = upath.changeExt(outFile, '.d.ts');
+
+   if (copyDTS)
+   {
+      console.log(`Copying TS Declaration: ${copyDTS}`);
+
+      let fileData = fs.readFileSync(copyDTS, 'utf-8');
+
+      fileData = fileData.replaceAll('#runtime/', '@typhonjs-fvtt/runtime/');
+
+      // Ignore any `{@link #runtime...}` enclosed references.
+      fileData = fileData.replaceAll(/(?<!\{@link\s*)#runtime\//g, '@typhonjs-fvtt/runtime/');
+
+      fs.writeFileSync(outFileDTS, fileData, 'utf-8');
+   }
 }
 
 // Svelte standard components ----------------------------------------------------------------------------------------
