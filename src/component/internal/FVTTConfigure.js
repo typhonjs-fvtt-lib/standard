@@ -39,20 +39,20 @@ class FVTTConfigure
       const themeDarkRoot = manager.get('themeDark');
       const themeLight = manager.get('themeLight');
 
-      const themeDarkCM = manager.get('themeDarkCM');
-      const themeLightCM = manager.get('themeLightCM');
-
       // Initialize constants for any theme.
       this.#rootConstants(themeDarkRoot);
 
       // Initialize TRL action variables.
       this.#actions(themeDarkRoot, themeLight);
 
+      // Initialize TRL button variables.
+      this.#buttons(themeDarkRoot, themeLight);
+
       // TRL form / input components.
       this.#form(themeDarkRoot, themeLight);
 
       // All popup / menu components.
-      this.#popup(themeDarkRoot, themeLight, themeDarkCM, themeLightCM);
+      this.#popup(themeDarkRoot, themeLight);
 
       // Handle `PopOut!` module hooks to allow applications to pop out to their own browser window ------------------
 
@@ -77,16 +77,39 @@ class FVTTConfigure
 
       themeDarkRoot.setProperties({
          '--tjs-action-ripple-background': 'linear-gradient(64.5deg, rgba(245, 116, 185, 1) 40%, rgba(89, 97, 223, 1) 60%)',
-
-         '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.05)',
-         '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.1)',
       });
 
       themeLight.setProperties({
          '--tjs-action-ripple-background': 'rgba(0, 0, 0, 0.35)',
+      });
+   }
 
+   /**
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeDarkRoot -
+    *
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeLight -
+    */
+   static #buttons(themeDarkRoot, themeLight)
+   {
+      const props = FoundryStyles.ext.get('.themed.theme-dark button');
+      const propsLight = FoundryStyles.ext.get('.themed.theme-light button');
+
+      themeDarkRoot.setProperties({
+         // Unique TRL properties.
+         '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.05)',
+         '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.1)',
+
+         '--tjs-icon-button-color': props['--button-text-color'] ?? 'var(--color-light-3)',
+         '--tjs-icon-button-color-hover': props['--button-hover-text-color'] ?? 'var(--color-light-1)'
+      });
+
+      themeLight.setProperties({
+         // Unique TRL properties.
          '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
          '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
+
+         '--tjs-icon-button-color': propsLight['--button-text-color'] ?? 'var(--color-dark-1)',
+         '--tjs-icon-button-color-hover': 'var(--tjs-icon-button-color)'   // Core light theme doesn't have an appropriate highlight.
       });
    }
 
