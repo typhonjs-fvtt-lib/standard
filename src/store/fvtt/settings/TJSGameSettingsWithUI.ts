@@ -188,7 +188,7 @@ declare namespace TJSGameSettingsWithUI {
          efx?: Function;
          icon: string;
          styles?: { [key: string]: string | null }
-         title: string;
+         tooltip: string;
       };
 
       export type InputData = {

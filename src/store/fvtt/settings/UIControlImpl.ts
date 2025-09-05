@@ -314,7 +314,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             buttonData = {
                icon: 'fas fa-file-import fa-fw',
                efx: efx === 'ripple' ? ripple() : void 0,
-               title: 'FILES.BrowseTooltip',
+               tooltip: 'FILES.BrowseTooltip',
                styles: { 'margin-left': '0.25em' }
             };
          }
