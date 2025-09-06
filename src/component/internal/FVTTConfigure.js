@@ -96,8 +96,8 @@ class FVTTConfigure
 
       themeDarkRoot.setProperties({
          // Unique TRL properties.
-         '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.05)',
-         '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.1)',
+         '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.15)',
+         '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.25)',
 
          '--tjs-icon-button-color': props['--button-text-color'] ?? 'var(--color-light-3)',
          '--tjs-icon-button-color-hover': props['--button-hover-text-color'] ?? 'var(--color-light-1)'
@@ -105,8 +105,8 @@ class FVTTConfigure
 
       themeLight.setProperties({
          // Unique TRL properties.
-         '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.10)',
-         '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.20)',
+         '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.15)',
+         '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.25)',
 
          '--tjs-icon-button-color': propsLight['--button-text-color'] ?? 'var(--color-dark-1)',
          '--tjs-icon-button-color-hover': 'var(--tjs-icon-button-color)'   // Core light theme doesn't have an appropriate highlight.
