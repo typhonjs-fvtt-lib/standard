@@ -4,6 +4,8 @@
     * `FVTTSidebarControl`.
     */
 
+   import { popoverTooltip } from '#runtime/svelte/action/dom/tooltip';
+
    /**
     * Export the main anchor element so that FVTTSidebarControl can adjust the sidebar width.
     *
@@ -30,15 +32,13 @@
            type=button
            class={`ui-control plain icon ${typeof sidebarData?.icon === 'string' ? sidebarData.icon : ''}`}
            class:svelte-icon={sidebarData.iconSvelteConfig !== void 0}
+           use:popoverTooltip={{ ariaLabel: true, tooltip: sidebarData.tooltip }}
            data-action=tab
            data-tab={sidebarData.id}
-           data-tooltip=""
            data-group=primary
            role=tab
            aria-pressed=false
-           aria-label={sidebarData.tooltip}
-           aria-controls={sidebarData.id}
-           >
+           aria-controls={sidebarData.id}>
       {#if sidebarData.iconSvelteConfig !== void 0}
          <svelte:component bind:this={component}
                            this={sidebarData.iconSvelteConfig.class}
