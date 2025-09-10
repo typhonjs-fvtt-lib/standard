@@ -94,10 +94,14 @@ class FVTTConfigure
       const props = FoundryStyles.ext.get('.themed.theme-dark button');
       const propsLight = FoundryStyles.ext.get('.themed.theme-light button');
 
+      const propsButton = FoundryStyles.ext.get('.themed.theme-light button');
+
       themeDarkRoot.setProperties({
          // Unique TRL properties.
          '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.15)',
          '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.25)',
+
+         '--tjs-form-button-transition': propsButton.transition ?? '0.5s',
 
          '--tjs-icon-button-color': props['--button-text-color'] ?? 'var(--color-light-3)',
          '--tjs-icon-button-color-hover': props['--button-hover-text-color'] ?? 'var(--color-light-1)'
