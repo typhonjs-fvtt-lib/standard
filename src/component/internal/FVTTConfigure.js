@@ -136,21 +136,31 @@ class FVTTConfigure
 
          const propsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
             camelCase: true,
-            resolve: ['.themed.theme-dark input:focus', '.themed.theme-dark input']
+            resolve: ['.themed.theme-dark input', '.themed.theme-dark input:focus']
+         });
+
+         const propsPlaceholder = FoundryStyles.ext.get('::placeholder', {
+            camelCase: true,
+            resolve: '.themed.theme-dark input'
          });
 
          themeDarkRoot.setProperties({
+            // Constants across dark / light theme:
             '--tjs-input-height': props.height ?? 'var(--input-height)',
+            '--tjs-input-line-height': props.lineHeight ?? 'var(--input-height)',
             '--tjs-input-padding': props.padding ?? '0px 0.5rem',
             '--tjs-input-width': props.width ?? '100%',
             '--tjs-input-border-radius': props.borderRadius ?? '4px',
-            '--tjs-input-transition': props.transition ?? 'outline-color 0.5s',
 
             // Color / theme related.
             '--tjs-input-background': props.background ?? 'var(--color-cool-4)',
+            '--tjs-input-color': props.color ?? 'var(--color-light-3)',
+            '--tjs-input-color-focus': propsFocus.color ?? 'var(--color-light-1)',
             '--tjs-input-outline': props.outline ?? 'transparent solid 1px',
             '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-cool-3)',
             '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
+            '--tjs-input-placeholder-color': propsPlaceholder.color ?? 'var(--color-light-5)',
+            '--tjs-input-transition': props.transition ?? 'outline-color 0.5s',
 
             // Set default values that are only to be referenced and not set.
             '--_tjs-default-input-height': props.height ?? 'var(--input-height)',
@@ -174,16 +184,24 @@ class FVTTConfigure
 
          const propsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
             camelCase: true,
-            resolve: ['.themed.theme-light input:focus', '.themed.theme-light input']
+            resolve: ['.themed.theme-light input', '.themed.theme-light input:focus']
+         });
+
+         const propsPlaceholder = FoundryStyles.ext.get('::placeholder', {
+            camelCase: true,
+            resolve: '.themed.theme-light input'
          });
 
          themeLight.setProperties({
             // Color / theme related.
             '--tjs-input-background': props.background ?? 'rgba(0, 0, 0, 0.1)',
-            '--tjs-input-border': props.border ?? '1px solid red',
+            '--tjs-input-border': props.border ?? '1px solid var(--color-dark-6)',
+            '--tjs-input-color': props.color ?? 'var(--color-dark-2)',
+            '--tjs-input-color-focus': propsFocus.color ?? 'var(--color-dark-1)',
             '--tjs-input-outline': props.outline ?? 'var(--color-warm-2)',
             '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-warm-2)',
             '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
+            '--tjs-input-placeholder-color': propsPlaceholder.color ?? 'var(--color-dark-4)',
          });
       }
    }
