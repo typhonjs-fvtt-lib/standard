@@ -101,10 +101,10 @@ class FVTTConfigure
          '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.15)',
          '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.25)',
 
-         '--tjs-form-button-transition': propsButton.transition ?? '0.5s',
+         '--tjs-form-button-transition': propsButton?.transition ?? '0.5s',
 
-         '--tjs-icon-button-color': props['--button-text-color'] ?? 'var(--color-light-3)',
-         '--tjs-icon-button-color-hover': props['--button-hover-text-color'] ?? 'var(--color-light-1)'
+         '--tjs-icon-button-color': props?.['--button-text-color'] ?? 'var(--color-light-3)',
+         '--tjs-icon-button-color-hover': props?.['--button-hover-text-color'] ?? 'var(--color-light-1)'
       });
 
       themeLight.setProperties({
@@ -112,7 +112,7 @@ class FVTTConfigure
          '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.15)',
          '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.25)',
 
-         '--tjs-icon-button-color': propsLight['--button-text-color'] ?? 'var(--color-dark-1)',
+         '--tjs-icon-button-color': propsLight?.['--button-text-color'] ?? 'var(--color-dark-1)',
          '--tjs-icon-button-color-hover': 'var(--tjs-icon-button-color)'   // Core light theme doesn't have an appropriate highlight.
       });
    }
@@ -146,24 +146,24 @@ class FVTTConfigure
 
          themeDarkRoot.setProperties({
             // Constants across dark / light theme:
-            '--tjs-input-height': props.height ?? 'var(--input-height)',
-            '--tjs-input-line-height': props.lineHeight ?? 'var(--input-height)',
-            '--tjs-input-padding': props.padding ?? '0px 0.5rem',
-            '--tjs-input-width': props.width ?? '100%',
-            '--tjs-input-border-radius': props.borderRadius ?? '4px',
+            '--tjs-input-height': props?.height ?? 'var(--input-height)',
+            '--tjs-input-line-height': props?.lineHeight ?? 'var(--input-height)',
+            '--tjs-input-padding': props?.padding ?? '0px 0.5rem',
+            '--tjs-input-width': props?.width ?? '100%',
+            '--tjs-input-border-radius': props?.borderRadius ?? '4px',
 
             // Color / theme related.
-            '--tjs-input-background': props.background ?? 'var(--color-cool-4)',
-            '--tjs-input-color': props.color ?? 'var(--color-light-3)',
-            '--tjs-input-color-focus': propsFocus.color ?? 'var(--color-light-1)',
-            '--tjs-input-outline': props.outline ?? 'transparent solid 1px',
-            '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-cool-3)',
-            '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
-            '--tjs-input-placeholder-color': propsPlaceholder.color ?? 'var(--color-light-5)',
-            '--tjs-input-transition': props.transition ?? 'outline-color 0.5s',
+            '--tjs-input-background': props?.background ?? 'var(--color-cool-4)',
+            '--tjs-input-color': props?.color ?? 'var(--color-light-3)',
+            '--tjs-input-color-focus': propsFocus?.color ?? 'var(--color-light-1)',
+            '--tjs-input-outline': props?.outline ?? 'transparent solid 1px',
+            '--tjs-input-outline-focus': propsFocus?.outline ?? '2px solid var(--color-cool-3)',
+            '--tjs-input-outline-offset-focus': propsFocus?.outlineOffset ?? '-2px',
+            '--tjs-input-placeholder-color': propsPlaceholder?.color ?? 'var(--color-light-5)',
+            '--tjs-input-transition': props?.transition ?? 'outline-color 0.5s',
 
             // Set default values that are only to be referenced and not set.
-            '--_tjs-default-input-height': props.height ?? 'var(--input-height)',
+            '--_tjs-default-input-height': props?.height ?? 'var(--input-height)',
 
             // Set directly / no lookup:
             '--tjs-input-checkbox-border': 'none',
@@ -194,14 +194,14 @@ class FVTTConfigure
 
          themeLight.setProperties({
             // Color / theme related.
-            '--tjs-input-background': props.background ?? 'rgba(0, 0, 0, 0.1)',
-            '--tjs-input-border': props.border ?? '1px solid var(--color-dark-6)',
-            '--tjs-input-color': props.color ?? 'var(--color-dark-2)',
-            '--tjs-input-color-focus': propsFocus.color ?? 'var(--color-dark-1)',
-            '--tjs-input-outline': props.outline ?? 'var(--color-warm-2)',
-            '--tjs-input-outline-focus': propsFocus.outline ?? '2px solid var(--color-warm-2)',
-            '--tjs-input-outline-offset-focus': propsFocus.outlineOffset ?? '-2px',
-            '--tjs-input-placeholder-color': propsPlaceholder.color ?? 'var(--color-dark-4)',
+            '--tjs-input-background': props?.background ?? 'rgba(0, 0, 0, 0.1)',
+            '--tjs-input-border': props?.border ?? '1px solid var(--color-dark-6)',
+            '--tjs-input-color': props?.color ?? 'var(--color-dark-2)',
+            '--tjs-input-color-focus': propsFocus?.color ?? 'var(--color-dark-1)',
+            '--tjs-input-outline': props?.outline ?? 'var(--color-warm-2)',
+            '--tjs-input-outline-focus': propsFocus?.outline ?? '2px solid var(--color-warm-2)',
+            '--tjs-input-outline-offset-focus': propsFocus?.outlineOffset ?? '-2px',
+            '--tjs-input-placeholder-color': propsPlaceholder?.color ?? 'var(--color-dark-4)',
          });
       }
    }
@@ -249,9 +249,9 @@ class FVTTConfigure
          '--tjs-context-menu-item-color-highlight': 'var(--tjs-menu-item-color-highlight)',
 
          // Constant applied across dark / light
-         '--tjs-menu-item-border': propsMenuItem.border ?? '1px solid transparent',
-         '--tjs-menu-item-line-height': propsMenuItem.lineHeight ?? '15px',
-         '--tjs-menu-item-padding': propsMenuItem.padding ?? '8px',
+         '--tjs-menu-item-border': propsMenuItem?.border ?? '1px solid transparent',
+         '--tjs-menu-item-line-height': propsMenuItem?.lineHeight ?? '15px',
+         '--tjs-menu-item-padding': propsMenuItem?.padding ?? '8px',
 
          '--tjs-context-menu-item-border': 'var(--tjs-menu-item-border)',
          '--tjs-context-menu-item-line-height': 'var(--tjs-menu-item-line-height)',
@@ -259,27 +259,27 @@ class FVTTConfigure
 
          // Dark theme
 
-         '--tjs-menu-background': propsMenuDark.background ?? 'var(--color-cool-5)',
-         '--tjs-menu-border': propsMenuDark.border ?? '1px solid var(--color-cool-3)',
-         '--tjs-menu-border-radius': propsMenuDark.borderRadius ?? '5px',
-         '--tjs-menu-box-shadow': propsMenuDark.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
-         '--tjs-menu-color': propsMenuDark.color ?? 'var(--color-text-secondary)',
-         '--tjs-menu-font-size': propsMenuItem.fontSize ?? 'var(--font-size-12)',
+         '--tjs-menu-background': propsMenuDark?.background ?? 'var(--color-cool-5)',
+         '--tjs-menu-border': propsMenuDark?.border ?? '1px solid var(--color-cool-3)',
+         '--tjs-menu-border-radius': propsMenuDark?.borderRadius ?? '5px',
+         '--tjs-menu-box-shadow': propsMenuDark?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-menu-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
+         '--tjs-menu-font-size': propsMenuItem?.fontSize ?? 'var(--font-size-12)',
 
-         '--tjs-menu-item-background-highlight': propsMenuItemDark.background ?? 'var(--color-dark-1)',
-         '--tjs-menu-item-border-highlight': propsMenuItemDark.border ?? '1px solid var(--color-cool-4)',
-         '--tjs-menu-item-color-highlight': propsMenuItemDark.color ?? 'var(--color-text-emphatic)',
+         '--tjs-menu-item-background-highlight': propsMenuItemDark?.background ?? 'var(--color-dark-1)',
+         '--tjs-menu-item-border-highlight': propsMenuItemDark?.border ?? '1px solid var(--color-cool-4)',
+         '--tjs-menu-item-color-highlight': propsMenuItemDark?.color ?? 'var(--color-text-emphatic)',
 
          // `popup` is for components that are slightly elevated, but connected to an application;
          // see: TJSMenu / TJSContextMenu / TJSColordPicker
-         '--tjs-default-popup-background': propsMenuDark.background ?? 'var(--color-cool-5)',
-         '--tjs-default-popup-border': propsMenuDark.border ?? '1px solid var(--color-cool-3)',
-         '--tjs-default-popup-box-shadow': propsMenuDark.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-default-popup-background': propsMenuDark?.background ?? 'var(--color-cool-5)',
+         '--tjs-default-popup-border': propsMenuDark?.border ?? '1px solid var(--color-cool-3)',
+         '--tjs-default-popup-box-shadow': propsMenuDark?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
          '--tjs-default-popup-primary-color': 'var(--color-text-light-primary, #b5b3a4)',
          '--tjs-default-popup-highlight-color': 'var(--color-text-light-highlight, #f0f0e0)',
 
          // `popover` is for components that are elevated and independent; see: TJSContextMenu
-         '--tjs-default-popover-border': propsMenuDark.border ?? '1px solid var(--color-border-dark, #000)',
+         '--tjs-default-popover-border': propsMenuDark?.border ?? '1px solid var(--color-border-dark, #000)',
          '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
       });
 
@@ -297,15 +297,15 @@ class FVTTConfigure
          '--tjs-context-menu-item-border-highlight': 'var(--tjs-menu-item-border-highlight)',
          '--tjs-context-menu-item-color-highlight': 'var(--tjs-menu-item-color-highlight)',
 
-         '--tjs-menu-background': propsMenuLight.background ?? '#d9d8c8',
-         '--tjs-menu-border': propsMenuLight.border ?? '1px solid #999',
-         '--tjs-menu-border-radius': propsMenuLight.borderRadius ?? '5px',
-         '--tjs-menu-box-shadow': propsMenuLight.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
-         '--tjs-menu-color': propsMenuLight.color ?? 'var(--color-text-secondary)',
+         '--tjs-menu-background': propsMenuLight?.background ?? '#d9d8c8',
+         '--tjs-menu-border': propsMenuLight?.border ?? '1px solid #999',
+         '--tjs-menu-border-radius': propsMenuLight?.borderRadius ?? '5px',
+         '--tjs-menu-box-shadow': propsMenuLight?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-menu-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
 
-         '--tjs-menu-item-background-highlight': propsMenuItemLight.background ?? '#f0f0e0',
-         '--tjs-menu-item-border-highlight': propsMenuItemLight.border ?? '1px solid #999',
-         '--tjs-menu-item-color-highlight': propsMenuItemLight.color ?? 'var(--color-text-emphatic)',
+         '--tjs-menu-item-background-highlight': propsMenuItemLight?.background ?? '#f0f0e0',
+         '--tjs-menu-item-border-highlight': propsMenuItemLight?.border ?? '1px solid #999',
+         '--tjs-menu-item-color-highlight': propsMenuItemLight?.color ?? 'var(--color-text-emphatic)',
       });
    }
 
