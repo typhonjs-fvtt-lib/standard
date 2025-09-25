@@ -17,7 +17,7 @@ class FVTTConfigure
 
       const manager = StyleManager.create({
          id: '__tjs-standard-vars',
-         version: '0.0.1',
+         version: '0.0.2',
          layerName: 'variables.tjs-standard-vars',
          rules: {
             // Ideally `:root` would be used, but Foundry defines dark them CSS vars in `body`. For scoping reasons
