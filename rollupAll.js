@@ -91,11 +91,10 @@ const rollupConfigs = [
          input: 'src/application/menu/index.js',
          plugins: [
             importsExternal(),
-            resolve()
+            resolve(),
+            generateDTS.plugin(dtsPluginOptions)
          ]
       },
-      // Copy DTS as local extensions do not change shape of the package.
-      copyDTS: './node_modules/@typhonjs-svelte/standard-base/_dist/application/menu/index.d.ts',
       output: {
          file: '_dist/application/menu/index.js',
          format: 'es',
