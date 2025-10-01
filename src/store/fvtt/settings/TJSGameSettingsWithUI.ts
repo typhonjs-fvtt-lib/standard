@@ -95,7 +95,7 @@ declare namespace TJSGameSettingsWithUI {
       sections: Data.Section[];
 
       /**
-       * The store for `applyScrolltop`.
+       * The store for `applyScroll`.
        */
       storeScrollbar: Writable<number>;
 

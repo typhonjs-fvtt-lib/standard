@@ -48,7 +48,7 @@
 
    import { onDestroy }       from '#svelte';
 
-   import { applyScrolltop }  from '#runtime/svelte/action/dom/properties';
+   import { applyScroll }     from '#runtime/svelte/action/dom/properties';
    import { applyStyles }     from '#runtime/svelte/action/dom/style';
 
    import { TJSSvelte }       from '#runtime/svelte/util';
@@ -78,7 +78,7 @@
 
 <main class=tjs-settings use:applyStyles={styles}>
    <slot name=settings-header {settings} {options} {uiSettings} />
-   <div class=scrollable use:applyScrolltop={uiSettings.storeScrollbar}>
+   <div class=scrollable use:applyScroll={{ scrollTop: uiSettings.storeScrollbar }}>
       {#if uiSettings.topLevel.length}
          <section class=tjs-settings-section>
             {#each uiSettings.topLevel as setting (setting.key)}

@@ -378,7 +378,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          });
       }
 
-      // If storage is available then create a key otherwise create a dummy store, so `applyScrolltop` works.
+      // If storage is available then create a key otherwise create a dummy store, so `applyScroll` works.
       const storeScrollbar: Writable<number> = hasStorage && storage ?
        storage.getStore(`${namespace}-settings-scrollbar`) : writable(0);
 
