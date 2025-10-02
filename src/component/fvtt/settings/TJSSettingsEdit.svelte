@@ -46,17 +46,17 @@
     * @componentDocumentation
     */
 
-   import { onDestroy }       from '#svelte';
+   import { onDestroy }          from '#svelte';
 
-   import { applyScroll }     from '#runtime/svelte/action/dom/properties';
-   import { applyStyles }     from '#runtime/svelte/action/dom/style';
+   import { applyStyles }        from '#runtime/svelte/action/dom/style';
 
-   import { TJSSvelte }       from '#runtime/svelte/util';
-   import { isObject }        from '#runtime/util/object';
+   import { TJSSvelte }          from '#runtime/svelte/util';
+   import { isObject }           from '#runtime/util/object';
 
-   import { TJSSvgFolder }    from '#standard/component/folder';
+   import { TJSScrollContainer } from '#standard/component/container';
+   import { TJSSvgFolder }       from '#standard/component/folder';
 
-   import SettingEntry        from './SettingEntry.svelte';
+   import SettingEntry           from './SettingEntry.svelte';
 
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
    export let settings = void 0;
@@ -78,7 +78,7 @@
 
 <main class=tjs-settings use:applyStyles={styles}>
    <slot name=settings-header {settings} {options} {uiSettings} />
-   <div class=scrollable use:applyScroll={{ scrollTop: uiSettings.storeScrollbar }}>
+   <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
       {#if uiSettings.topLevel.length}
          <section class=tjs-settings-section>
             {#each uiSettings.topLevel as setting (setting.key)}
@@ -87,13 +87,13 @@
          </section>
       {/if}
       {#each uiSettings.folders as folder}
-      <section class=tjs-settings-section>
-         <TJSSvgFolder label={folder.label} store={folder.store}>
-            {#each folder.settings as setting (setting.key)}
-               <SettingEntry {setting} />
-            {/each}
-         </TJSSvgFolder>
-      </section>
+         <section class=tjs-settings-section>
+            <TJSSvgFolder label={folder.label} store={folder.store}>
+               {#each folder.settings as setting (setting.key)}
+                  <SettingEntry {setting} />
+               {/each}
+            </TJSSvgFolder>
+         </section>
       {/each}
       {#each uiSettings.sections as section}
          <section class=tjs-settings-section use:applyStyles={section.styles}>
@@ -112,28 +112,18 @@
             {/if}
          </section>
       {/each}
-   </div>
+   </TJSScrollContainer>
    <slot name=settings-footer {settings} {options} {uiSettings} />
 </main>
 
 <style>
    main {
+      --tjs-scroll-container-padding: var(--tjs-settings-padding, 0);
+
       display: flex;
       flex-direction: column;
       height: 100%;
       background: var(--tjs-settings-background, none);
-   }
-
-   .scrollable {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      min-height: 0;
-      overflow: hidden auto;
-      padding: var(--tjs-settings-padding, 0);
-
-      scrollbar-width: thin;  /* For Firefox */
    }
 
    section {
