@@ -48,6 +48,9 @@ class FVTTConfigure
       // Initialize TRL button variables.
       this.#buttons(themeDarkRoot, themeLight);
 
+      // Initialize generic component variables.
+      this.#component(themeDarkRoot, themeLight);
+
       // TRL form / input components.
       this.#form(themeDarkRoot, themeLight);
 
@@ -91,20 +94,26 @@ class FVTTConfigure
     */
    static #buttons(themeDarkRoot, themeLight)
    {
-      const props = FoundryStyles.ext.get('.themed.theme-dark button');
-      const propsLight = FoundryStyles.ext.get('.themed.theme-light button');
+      const opts = { camelCase: true };
 
-      const propsButton = FoundryStyles.ext.get('.themed.theme-light button');
+      const propsDark = FoundryStyles.ext.get('.themed.theme-dark button', opts);
+      const propsLight = FoundryStyles.ext.get('.themed.theme-light button', opts);
+
+      const propsButton = FoundryStyles.ext.get('button', opts);
 
       themeDarkRoot.setProperties({
+         // Constant properties
+         '--tjs-form-button-font-family': propsButton?.fontFamily ?? 'var(--font-sans)',
+         '--tjs-form-button-font-size': propsButton?.fontSize ?? 'var(--font-size-14)',
+         '--tjs-form-button-transition': propsButton?.transition ?? '0.5s',
+
          // Unique TRL properties.
          '--tjs-icon-button-background-hover': 'rgba(255, 255, 255, 0.15)',
          '--tjs-icon-button-background-selected': 'rgba(255, 255, 255, 0.25)',
 
-         '--tjs-form-button-transition': propsButton?.transition ?? '0.5s',
-
-         '--tjs-icon-button-color': props?.['--button-text-color'] ?? 'var(--color-light-3)',
-         '--tjs-icon-button-color-hover': props?.['--button-hover-text-color'] ?? 'var(--color-light-1)'
+         // Themed properties
+         '--tjs-icon-button-color': propsDark?.['--button-text-color'] ?? 'var(--color-light-3)',
+         '--tjs-icon-button-color-hover': propsDark?.['--button-hover-text-color'] ?? 'var(--color-light-1)'
       });
 
       themeLight.setProperties({
@@ -112,9 +121,73 @@ class FVTTConfigure
          '--tjs-icon-button-background-hover': 'rgba(0, 0, 0, 0.15)',
          '--tjs-icon-button-background-selected': 'rgba(0, 0, 0, 0.25)',
 
+         // Themed properties
          '--tjs-icon-button-color': propsLight?.['--button-text-color'] ?? 'var(--color-dark-1)',
          '--tjs-icon-button-color-hover': 'var(--tjs-icon-button-color)'   // Core light theme doesn't have an appropriate highlight.
       });
+   }
+
+   /**
+    * Generic reusable component variables.
+    *
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeDarkRoot -
+    *
+    * @param {import('#runtime/util/dom/style').StyleManager.RuleManager}  themeLight -
+    */
+   static #component(themeDarkRoot, themeLight)
+   {
+      // Root / dark theme.
+      {
+         /**
+          * All input related components including: TJSSelect,
+          */
+         const props = FoundryStyles.ext.get('input[type="text"]', {
+            camelCase: true,
+            resolve: '.themed.theme-dark input'
+         });
+
+         themeDarkRoot.setProperties({
+            // Constants across dark / light theme:
+            '--tjs-component-border-radius': props?.borderRadius ?? '4px',
+
+            '--tjs-side-slide-layer-item-border-color-hover': 'var(--color-warm-2)',
+            '--tjs-side-slide-layer-item-color': 'var(--color-text-secondary)',
+            '--tjs-side-slide-layer-item-color-hover': 'var(--color-text-primary)',
+            '--tjs-side-slide-layer-item-host-color': 'var(--color-text-primary)',
+
+            // Color / theme related.
+            '--tjs-component-border': '1px solid var(--color-cool-3)',   // Core dark theme does not have input borders.
+            '--tjs-component-overlay-background': 'rgba(208, 184, 163, 0.1)',
+
+            '--tjs-side-slide-layer-item-background': 'rgba(180, 180, 180, 0.3)',
+            '--tjs-side-slide-layer-item-border': 'solid 2px rgba(60, 60, 60, 0.9)',
+            '--tjs-side-slide-layer-item-host-background': 'linear-gradient(135deg, rgba(90, 90, 90, 0.95) 10%, rgba(52, 51, 52, 0.95) 90%)',
+            '--tjs-side-slide-layer-item-host-border': 'solid 2px rgba(80, 80, 80, 0.9)'
+         });
+      }
+
+      // Light theme overrides.
+
+      {
+         /**
+          * All input related components including: TJSSelect,
+          */
+         const props = FoundryStyles.ext.get('input[type="text"]', {
+            camelCase: true,
+            resolve: '.themed.theme-light input'
+         });
+
+         themeLight.setProperties({
+            // Color / theme related.
+            '--tjs-component-border': props?.border ?? '1px solid var(--color-dark-6)',
+            '--tjs-component-overlay-background': 'rgba(0, 0, 0, 0.1)',
+
+            '--tjs-side-slide-layer-item-background': 'rgba(180, 180, 180, 0.7)',
+            '--tjs-side-slide-layer-item-border': 'solid 2px rgba(100, 100, 100, 0.9)',
+            '--tjs-side-slide-layer-item-host-background': 'linear-gradient(135deg, rgba(180, 180, 180, 0.9) 10%, rgba(217, 216, 200, 0.9) 90%)',
+            '--tjs-side-slide-layer-item-host-border': 'solid 2px rgba(120, 120, 120, 0.9)',
+         });
+      }
    }
 
    /**
@@ -275,8 +348,8 @@ class FVTTConfigure
          '--tjs-default-popup-background': propsMenuDark?.background ?? 'var(--color-cool-5)',
          '--tjs-default-popup-border': propsMenuDark?.border ?? '1px solid var(--color-cool-3)',
          '--tjs-default-popup-box-shadow': propsMenuDark?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
-         '--tjs-default-popup-primary-color': 'var(--color-text-light-primary, #b5b3a4)',
-         '--tjs-default-popup-highlight-color': 'var(--color-text-light-highlight, #f0f0e0)',
+         '--tjs-default-popup-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
+         '--tjs-default-popup-highlight-color': propsMenuItemDark?.color ?? 'var(--color-text-emphatic)',
 
          // `popover` is for components that are elevated and independent; see: TJSContextMenu
          '--tjs-default-popover-border': propsMenuDark?.border ?? '1px solid var(--color-border-dark, #000)',
@@ -306,6 +379,12 @@ class FVTTConfigure
          '--tjs-menu-item-background-highlight': propsMenuItemLight?.background ?? '#f0f0e0',
          '--tjs-menu-item-border-highlight': propsMenuItemLight?.border ?? '1px solid #999',
          '--tjs-menu-item-color-highlight': propsMenuItemLight?.color ?? 'var(--color-text-emphatic)',
+
+         '--tjs-default-popup-background': propsMenuLight?.background ?? '#d9d8c8',
+         '--tjs-default-popup-border': propsMenuLight?.border ?? '1px solid #999',
+         '--tjs-default-popup-box-shadow': propsMenuLight?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
+         '--tjs-default-popup-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
+         '--tjs-default-popup-highlight-color': propsMenuItemLight?.color ?? 'var(--color-text-emphatic)',
       });
    }
 
