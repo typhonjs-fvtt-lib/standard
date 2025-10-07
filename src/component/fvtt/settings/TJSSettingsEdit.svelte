@@ -102,7 +102,7 @@
                   <svelte:component this={section.class} {...(isObject(section.props) ? section.props : {})}/>
 
                   <svelte:fragment slot=summary-end>
-                     {#if TJSSvelte.util.isComponent(section?.folder?.summaryEnd?.class)}
+                     {#if TJSSvelte.config.isConfigEmbed(section?.folder?.summaryEnd)}
                         <svelte:component this={section.folder.summaryEnd.class} {...(isObject(section?.folder?.summaryEnd?.props) ? section.folder.summaryEnd.props : {})}/>
                      {/if}
                   </svelte:fragment>
