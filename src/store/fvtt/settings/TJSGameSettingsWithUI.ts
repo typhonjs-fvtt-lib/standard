@@ -177,7 +177,7 @@ declare namespace TJSGameSettingsWithUI {
          range?: { min: number, max: number, step: number };
          store: MinimalWritable<unknown>;
          initialValue: any;
-         scope: 'client' | 'world';
+         scope: 'client' | 'user' | 'world';
          requiresReload?: boolean;
          buttonData?: ButtonData;
          inputData?: InputData;
