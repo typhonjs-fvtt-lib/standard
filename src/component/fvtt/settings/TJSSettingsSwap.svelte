@@ -18,7 +18,7 @@
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
    export let settings = void 0;
 
-   /** @type {import('#standard/store/fvtt/settings').TJSSettingsCreateOptions} */
+   /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI.Options.Create} */
    export let options = void 0;
 
    const showSettings = settings.uiControl.stores.showSettings;

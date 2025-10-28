@@ -30,10 +30,12 @@ class TJSGameSettingsWithUI extends TJSGameSettings<TJSGameSettingsWithUI.Option
     * Creates the TJSGameSettingsWithUI instance.
     *
     * @param namespace - The namespace for all settings.
+    *
+    * @param [options] - TJSGameSetting options.
     */
-   constructor(namespace: string)
+   constructor(namespace: string, options?: TJSGameSettings.Options.Ctor)
    {
-      super(namespace);
+      super(namespace, options);
 
       this.#uiControl = new UIControlImpl(this);
    }
