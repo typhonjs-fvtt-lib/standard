@@ -3,8 +3,8 @@ import { fade }               from 'svelte/transition';
 import { TJSDialog }          from '#runtime/svelte/application';
 import { TJSGlassPane }       from '#runtime/svelte/component/application';
 import { TJSSvelte }          from '#runtime/svelte/util';
+import { CrossRealm }         from '#runtime/util';
 import { nextAnimationFrame } from '#runtime/util/animate';
-import { CrossRealm }         from '#runtime/util/browser';
 import { A11yHelper }         from '#runtime/util/a11y';
 import { ManagedPromise }     from '#runtime/util/async';
 import {
