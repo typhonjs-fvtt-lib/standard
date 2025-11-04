@@ -135,7 +135,7 @@
    import { applyStyles }  from '#runtime/svelte/action/dom/style';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
    import { isDocument }   from '#runtime/types/fvtt-shim/guard';
-   import { CrossWindow }  from '#runtime/util/browser';
+   import { CrossRealm }   from '#runtime/util/browser';
 
    import {
       isObject,
@@ -341,7 +341,7 @@
 
             setTimeout(() =>
             {
-               if (CrossWindow.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
+               if (CrossRealm.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
             }, 100);
          }
 

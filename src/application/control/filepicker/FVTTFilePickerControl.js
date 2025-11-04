@@ -4,7 +4,7 @@ import { TJSDialog }          from '#runtime/svelte/application';
 import { TJSGlassPane }       from '#runtime/svelte/component/application';
 import { TJSSvelte }          from '#runtime/svelte/util';
 import { nextAnimationFrame } from '#runtime/util/animate';
-import { CrossWindow }        from '#runtime/util/browser';
+import { CrossRealm }         from '#runtime/util/browser';
 import { A11yHelper }         from '#runtime/util/a11y';
 import { ManagedPromise }     from '#runtime/util/async';
 import {
@@ -191,7 +191,7 @@ export class FVTTFilePickerControl
          throw new TypeError(`FVTTFilePickerControl.browse error: 'zIndex' is not a positive integer.`);
       }
 
-      if (event !== void 0 && !CrossWindow.isUserInputEvent(event))
+      if (event !== void 0 && !CrossRealm.isUserInputEvent(event))
       {
          throw new TypeError(
           `FVTTFilePickerControl.browse error: 'event' is not a KeyboardEvent, MouseEvent, or PointerEvent.`);
