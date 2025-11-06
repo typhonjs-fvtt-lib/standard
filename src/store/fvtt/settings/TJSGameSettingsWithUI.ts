@@ -42,6 +42,11 @@ class TJSGameSettingsWithUI extends TJSGameSettings<TJSGameSettingsWithUI.Option
 
    override register(setting: TJSGameSettingsWithUI.Options.GameSetting): void
    {
+      if (setting?.configApp !== void 0 && typeof setting.configApp !== 'boolean')
+      {
+         throw new TypeError(`TJSGameSettingsWithUI - register: 'configApp' attribute is not a boolean.`);
+      }
+
       if (setting?.folder !== void 0 && typeof setting.folder !== 'string')
       {
          throw new TypeError(`TJSGameSettingsWithUI - register: 'folder' attribute is not a string.`);
@@ -153,6 +158,13 @@ declare namespace TJSGameSettingsWithUI {
        * Defines extra props that are available to set for game setting with UI options and data.
        */
       export interface ExtraProps {
+         /**
+          * Overrides core `config` game setting option allowing the setting to be available to edit via
+          * {@link #standard/component/fvtt/settings!TJSSettingsEdit}. This will hide the setting from the standard
+          * Foundry settings configuration panel, but show it in the TRL settings edit panel.
+          */
+         configApp?: boolean;
+
          /**
           * The name of the `TJSSvgFolder` to put this setting in to group them.
           */

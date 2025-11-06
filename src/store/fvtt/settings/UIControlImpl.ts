@@ -249,8 +249,12 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
       for (const setting of this.#settings.data())
       {
-         if (!isObject(setting.options) || !setting.options.config ||
-          (!canConfigure && (setting.options.scope !== 'client')))
+         if (!isObject(setting.options)) { continue; }
+
+         // If `configApp` is not defined defer to core options `config` value.
+         const includeSetting = typeof setting.configApp === 'boolean' ? setting.configApp : setting.options.config;
+
+         if (!includeSetting || (!canConfigure && setting.options.scope === 'world'))
          {
             continue;
          }
