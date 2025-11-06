@@ -89,11 +89,10 @@
    import { applyStyles }  from '#runtime/svelte/action/dom/style';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
    import { isDocument }   from '#runtime/types/fvtt-shim/guard';
-   import { CrossRealm }   from '#runtime/util';
-
    import {
       isObject,
       safeAccess }         from '#runtime/util/object';
+   import { CrossRealm }   from '#runtime/util/realm';
 
    import { CEImpl }       from './CEImpl.js';
 
@@ -276,7 +275,7 @@
 
             setTimeout(() =>
             {
-               if (CrossRealm.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
+               if (CrossRealm.browser.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
             }, 100);
          }
 

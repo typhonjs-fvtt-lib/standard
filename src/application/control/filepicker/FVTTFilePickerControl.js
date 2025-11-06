@@ -3,13 +3,13 @@ import { fade }               from 'svelte/transition';
 import { TJSDialog }          from '#runtime/svelte/application';
 import { TJSGlassPane }       from '#runtime/svelte/component/application';
 import { TJSSvelte }          from '#runtime/svelte/util';
-import { CrossRealm }         from '#runtime/util';
-import { nextAnimationFrame } from '#runtime/util/animate';
 import { A11yHelper }         from '#runtime/util/a11y';
+import { nextAnimationFrame } from '#runtime/util/animate';
 import { ManagedPromise }     from '#runtime/util/async';
 import {
    isIterable,
    isObject }                 from '#runtime/util/object';
+import { CrossRealm }         from '#runtime/util/realm';
 
 /**
  * Provides managed control of the Foundry {@link fvtt.FilePicker} app simplifying asynchronous use cases. While the stock
@@ -191,7 +191,7 @@ export class FVTTFilePickerControl
          throw new TypeError(`FVTTFilePickerControl.browse error: 'zIndex' is not a positive integer.`);
       }
 
-      if (event !== void 0 && !CrossRealm.isUserInputEvent(event))
+      if (event !== void 0 && !CrossRealm.browser.isUserInputEvent(event))
       {
          throw new TypeError(
           `FVTTFilePickerControl.browse error: 'event' is not a KeyboardEvent, MouseEvent, or PointerEvent.`);
