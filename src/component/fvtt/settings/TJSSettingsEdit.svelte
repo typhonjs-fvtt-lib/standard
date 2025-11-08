@@ -31,17 +31,18 @@
     *
     * ```
     * Top level 'main' element:
-    * --tjs-settings-section-background - none
+    * --tjs-settings-edit-section-background - none
     *
     * Scrollable div element:
-    * --tjs-settings-padding - 0
+    * --tjs-settings-edit-gap - 0.75rem
+    * --tjs-settings-edit-padding - 0
+    * --tjs-settings-edit-scrollbar-gutter - auto
     *
     * Each section element for a grouping of settings:
-    * --tjs-settings-section-background - none
-    * --tjs-settings-section-border - none
-    * --tjs-settings-section-border-radius - 0
-    * --tjs-settings-section-margin-bottom - 0.75em
-    * --tjs-settings-section-padding - 0.5em
+    * --tjs-settings-edit-section-background - none
+    * --tjs-settings-edit-section-border - none
+    * --tjs-settings-edit-section-border-radius - 0
+    * --tjs-settings-edit-section-padding - 0.5em
     * ```
     * @componentDocumentation
     */
@@ -76,18 +77,18 @@
    onDestroy(() => uiSettings.destroy());
 </script>
 
-<main class=tjs-settings use:applyStyles={styles}>
+<main class=tjs-settings-edit use:applyStyles={styles}>
    <slot name=settings-header {settings} {options} {uiSettings} />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
       {#if uiSettings.topLevel.length}
-         <section class=tjs-settings-section>
+         <section class=tjs-settings-edit-section>
             {#each uiSettings.topLevel as setting (setting.key)}
                <SettingEntry {setting} />
             {/each}
          </section>
       {/if}
       {#each uiSettings.folders as folder}
-         <section class=tjs-settings-section>
+         <section class=tjs-settings-edit-section>
             <TJSSvgFolder label={folder.label} store={folder.store}>
                {#each folder.settings as setting (setting.key)}
                   <SettingEntry {setting} />
@@ -96,7 +97,7 @@
          </section>
       {/each}
       {#each uiSettings.sections as section}
-         <section class=tjs-settings-section use:applyStyles={section.styles}>
+         <section class=tjs-settings-edit-section use:applyStyles={section.styles}>
             {#if section.folder}
                <TJSSvgFolder folder={section.folder}>
                   <svelte:component this={section.class} {...(isObject(section.props) ? section.props : {})}/>
@@ -118,22 +119,26 @@
 
 <style>
    main {
-      --tjs-scroll-container-padding: var(--tjs-settings-padding, 0);
+      --tjs-scroll-container-padding: var(--tjs-settings-edit-padding, 1rem);
+      --tjs-scroll-container-gap: var(--tjs-settings-edit-gap, 0.75rem);
+      --tjs-scroll-container-scrollbar-gutter: var(--tjs-settings-edit-scrollbar-gutter, auto);
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
 
       display: flex;
       flex-direction: column;
       height: 100%;
-      background: var(--tjs-settings-background, none);
+      background: var(--tjs-settings-edit-background, none);
    }
 
    section {
-      background: var(--tjs-settings-section-background, none);
-      border: var(--tjs-settings-section-border, none);
-      border-radius: var(--tjs-settings-section-border-radius, 0);
-      padding: var(--tjs-settings-section-padding, 0.5em);
-   }
-
-   section:not(:last-child) {
-      margin-bottom: var(--tjs-settings-section-margin-bottom, 0.75em);
+      background: var(--tjs-settings-edit-section-background, var(--tjs-component-background));
+      border: var(--tjs-settings-edit-section-border, var(--tjs-content-border-thicker));
+      border-radius: var(--tjs-settings-edit-section-border-radius, var(--tjs-component-border-radius));
+      padding: var(--tjs-settings-edit-section-padding, 0.5rem);
    }
 </style>
