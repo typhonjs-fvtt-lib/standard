@@ -1,15 +1,15 @@
 <script>
    /**
-    * --tjs-settings-entry-margin - 0 0 1rem 0
+    * --tjs-settings-edit-entry-margin - 0 0 1rem 0
     *
-    * --tjs-settings-entry-label-color - inherit
-    * --tjs-settings-entry-label-font-size - inherit
-    * --tjs-settings-entry-label-line-height - var(--form-field-height) / Foundry variable
+    * --tjs-settings-edit-entry-label-color - inherit
+    * --tjs-settings-edit-entry-label-font-size - inherit
+    * --tjs-settings-edit-entry-label-line-height - var(--form-field-height) / Foundry variable
     *
-    * --tjs-settings-entry-hint-color - var(--color-text-dark-secondary) / Foundry variable
-    * --tjs-settings-entry-hint-font-size - var(--font-size-12) / Foundry variable
-    * --tjs-settings-entry-hint-line-height - var(--line-height-16) / Foundry variable
-    * --tjs-settings-entry-hint-margin - 0.5em 0
+    * --tjs-settings-edit-entry-hint-color - var(--color-text-dark-secondary) / Foundry variable
+    * --tjs-settings-edit-entry-hint-font-size - var(--font-size-12) / Foundry variable
+    * --tjs-settings-edit-entry-hint-line-height - var(--line-height-16) / Foundry variable
+    * --tjs-settings-edit-entry-hint-margin - 0.5em 0
     *
     * @privateRemarks
     * TODO: replace range input support below w/ TJSInputRange when available.
@@ -39,7 +39,7 @@
    }
 </script>
 
-<section class=tjs-settings-entry>
+<section class=tjs-settings-edit-entry>
     <label for={setting.id}>{setting.name}</label>
     <div class:checkbox={setting.componentType === 'checkbox'}>
         {#if setting.componentType === 'checkbox'}
@@ -78,9 +78,9 @@
     }
 
     label {
-        color: var(--tjs-settings-entry-label-color, inherit);
-        font-size: var(--tjs-settings-entry-label-font-size, inherit);
-        line-height: var(--tjs-settings-entry-label-line-height, var(--form-field-height));
+        color: var(--tjs-settings-edit-entry-label-color, inherit);
+        font-size: var(--tjs-settings-edit-entry-label-font-size, inherit);
+        line-height: var(--tjs-settings-edit-entry-label-line-height, var(--form-field-height));
         flex: 2;
     }
 
@@ -100,10 +100,10 @@
 
     p {
         flex: 0 0 100%;
-        color: var(--tjs-settings-entry-hint-color, var(--color-text-dark-secondary));
-        font-size: var(--tjs-settings-entry-hint-font-size, var(--font-size-12));
-        line-height: var(--tjs-settings-entry-hint-line-height, var(--line-height-16));
-        margin: var(--tjs-settings-entry-hint-margin, 0.5em 0);
+        color: var(--tjs-settings-edit-entry-hint-color, var(--color-text-dark-secondary));
+        font-size: var(--tjs-settings-edit-entry-hint-font-size, var(--font-size-12));
+        line-height: var(--tjs-settings-edit-entry-hint-line-height, var(--line-height-16));
+        margin: var(--tjs-settings-edit-entry-hint-margin, 0.5em 0);
         min-height: 1rem;
     }
 
@@ -116,6 +116,6 @@
     }
 
     section:not(:last-child) {
-        margin: var(--tjs-settings-entry-margin, 0 0 1rem 0);
+        margin: var(--tjs-settings-edit-entry-margin, 0 0 1rem 0);
     }
 </style>
