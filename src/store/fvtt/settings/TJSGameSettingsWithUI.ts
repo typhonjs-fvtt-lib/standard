@@ -115,7 +115,7 @@ declare namespace TJSGameSettingsWithUI {
    export namespace Options {
       export type Create = {
          /**
-          * Defines the effects added to TJS components; ripple by default.
+          * Defines the effects added to TJS components; Option: `ripple`.
           */
          efx?: string;
 
@@ -207,6 +207,8 @@ declare namespace TJSGameSettingsWithUI {
 
       export type InputData = {
          efx?: Function;
+         efxNumber?: Function;
+         readonly?: boolean;
          store: MinimalWritable<unknown>;
          type: string;
       };

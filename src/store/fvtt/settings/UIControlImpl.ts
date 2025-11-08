@@ -231,7 +231,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
     *
     * @returns Parsed UI settings data.
     */
-   #parseSettings({ efx = 'ripple', storage }: TJSGameSettingsWithUI.Options.Create = {}): TJSGameSettingsWithUI.Data
+   #parseSettings({ efx, storage }: TJSGameSettingsWithUI.Options.Create = {}): TJSGameSettingsWithUI.Data
    {
       const namespace: string = this.#settings.namespace;
 
@@ -246,6 +246,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
       const uiSettings: TJSGameSettingsWithUI.UISetting.Data[] = [];
 
       const canConfigure: boolean = globalThis.game.user.can('SETTINGS_MODIFY');
+      const isUserGM: boolean = globalThis.game.user.isGM;
 
       for (const setting of this.#settings.data())
       {
@@ -254,7 +255,8 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          // If `configApp` is not defined defer to core options `config` value.
          const includeSetting = typeof setting.configApp === 'boolean' ? setting.configApp : setting.options.config;
 
-         if (!includeSetting || (!canConfigure && setting.options.scope === 'world'))
+         if (!includeSetting || (!canConfigure && setting.options.scope === 'world') ||
+          (setting.options.restricted && !isUserGM))
          {
             continue;
          }
@@ -294,7 +296,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          }
 
          // Default to `String` if no type is provided.
-         const type: string = setting.options.type instanceof Function ? setting.options.type.name : 'String';
+         const type: string = typeof setting.options.type === 'function' ? setting.options.type.name : 'String';
 
          // Only configure file picker if setting type is a string.
          let filePicker: string | undefined;
@@ -325,6 +327,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
          const store: MinimalWritable<unknown> = this.#settings.getStore(setting.key)!;
 
+         let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
          let selectData: TJSGameSettingsWithUI.UISetting.SelectData | undefined;
 
          let componentType: string = 'text';
@@ -346,10 +349,8 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          }
          else if (setting.options.type === Number)
          {
-            componentType = isObject(setting.options.range) ? 'range' : 'number';
+            componentType = isObject(setting.options.range) ? 'range-number' : 'number';
          }
-
-         let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
 
          if (componentType === 'text' || componentType === 'number')
          {
@@ -357,6 +358,16 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
                store,
                efx: efx === 'ripple' ? rippleFocus() : void 0,
                type: componentType
+            };
+         }
+         else if (componentType === 'range-number')
+         {
+            inputData = {
+               store,
+               efxNumber: efx === 'ripple' ? rippleFocus() : void 0,
+               readonly: true,
+               type: componentType,
+               ...setting.options.range
             };
          }
 

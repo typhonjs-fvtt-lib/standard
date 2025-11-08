@@ -1,7 +1,5 @@
 <script>
    /**
-    * --tjs-settings-edit-entry-margin - 0 0 1rem 0
-    *
     * --tjs-settings-edit-entry-label-color - inherit
     * --tjs-settings-edit-entry-label-font-size - inherit
     * --tjs-settings-edit-entry-label-line-height - var(--form-field-height) / Foundry variable
@@ -10,9 +8,6 @@
     * --tjs-settings-edit-entry-hint-font-size - var(--font-size-12) / Foundry variable
     * --tjs-settings-edit-entry-hint-line-height - var(--line-height-16) / Foundry variable
     * --tjs-settings-edit-entry-hint-margin - 0.5em 0
-    *
-    * @privateRemarks
-    * TODO: replace range input support below w/ TJSInputRange when available.
     */
    import { FVTTFilePickerControl } from '#standard/application/control/filepicker';
 
@@ -20,6 +15,7 @@
 
    import {
       TJSInput,
+      TJSInputCheckbox,
       TJSSelect }                   from '#standard/component/form';
 
    /** @type {object} */
@@ -43,12 +39,11 @@
     <label for={setting.id}>{setting.name}</label>
     <div class:checkbox={setting.componentType === 'checkbox'}>
         {#if setting.componentType === 'checkbox'}
-            <input type=checkbox id={setting.id} bind:checked={$store} />
+            <TJSInputCheckbox {store} />
         {:else if setting.componentType === 'number'}
             <TJSInput input={setting.inputData} />
-        {:else if setting.componentType === 'range'}
-            <input type=range id={setting.id} min={setting.range.min} max={setting.range.max} step={setting.range.step} bind:value={$store} />
-            <span class=range-value>{$store}</span>
+        {:else if setting.componentType === 'range-number'}
+            <TJSInput input={setting.inputData} />
         {:else if setting.componentType === 'select'}
             <TJSSelect select={setting.selectData} />
         {:else if setting.componentType === 'text'}
@@ -84,20 +79,6 @@
         flex: 2;
     }
 
-    input[type=range] {
-        margin-left: 0.25em;
-    }
-
-    span.range-value {
-        display: block;
-        flex: 0 1 fit-content;
-        text-align: center;
-        border: var(--tjs-input-border, 1px solid var(--color-border-light-primary));
-        border-radius: var(--tjs-input-border-radius);
-        padding: 0.25em;
-        margin-left: 0.5em;
-    }
-
     p {
         flex: 0 0 100%;
         color: var(--tjs-settings-edit-entry-hint-color, var(--color-text-dark-secondary));
@@ -113,9 +94,5 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
-    }
-
-    section:not(:last-child) {
-        margin: var(--tjs-settings-edit-entry-margin, 0 0 1rem 0);
     }
 </style>

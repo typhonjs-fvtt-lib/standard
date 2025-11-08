@@ -81,7 +81,7 @@
    <slot name=settings-header {settings} {options} {uiSettings} />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
       {#if uiSettings.topLevel.length}
-         <section class=tjs-settings-edit-section>
+         <section class="tjs-settings-edit-section tjs-settings-edit-content">
             {#each uiSettings.topLevel as setting (setting.key)}
                <SettingEntry {setting} />
             {/each}
@@ -90,9 +90,11 @@
       {#each uiSettings.folders as folder}
          <section class=tjs-settings-edit-section>
             <TJSSvgFolder label={folder.label} store={folder.store}>
-               {#each folder.settings as setting (setting.key)}
-                  <SettingEntry {setting} />
-               {/each}
+               <section class=tjs-settings-edit-content>
+                  {#each folder.settings as setting (setting.key)}
+                     <SettingEntry {setting} />
+                  {/each}
+               </section>
             </TJSSvgFolder>
          </section>
       {/each}
@@ -119,9 +121,14 @@
 
 <style>
    main {
-      --tjs-scroll-container-padding: var(--tjs-settings-edit-padding, 1rem);
+      --tjs-scroll-container-padding: var(--tjs-settings-edit-padding, 1rem calc(1rem - var(--_tjs-default-scrollbar-width)) 1rem 1rem);
       --tjs-scroll-container-gap: var(--tjs-settings-edit-gap, 0.75rem);
-      --tjs-scroll-container-scrollbar-gutter: var(--tjs-settings-edit-scrollbar-gutter, auto);
+
+      --tjs-folder-contents-border-top-open: var(--tjs-settings-edit-folder-border-top-open, var(--tjs-content-border-thicker));
+      --tjs-folder-contents-margin: none;
+      --tjs-folder-contents-padding: none;
+      --tjs-folder-summary-width: 100%;
+      --tjs-folder-summary-margin: var(--tjs-settings-edit-folder-summary-margin, 0 0 0 0.25rem);
 
       position: absolute;
       top: 0;
@@ -135,10 +142,17 @@
       background: var(--tjs-settings-edit-background, none);
    }
 
-   section {
+   section.tjs-settings-edit-section {
       background: var(--tjs-settings-edit-section-background, var(--tjs-component-background));
       border: var(--tjs-settings-edit-section-border, var(--tjs-content-border-thicker));
       border-radius: var(--tjs-settings-edit-section-border-radius, var(--tjs-component-border-radius));
+   }
+
+   section.tjs-settings-edit-content {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
       padding: var(--tjs-settings-edit-section-padding, 0.5rem);
    }
 </style>
