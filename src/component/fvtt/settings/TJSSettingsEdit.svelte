@@ -128,7 +128,7 @@
       --tjs-folder-contents-margin: none;
       --tjs-folder-contents-padding: none;
       --tjs-folder-summary-width: 100%;
-      --tjs-folder-summary-margin: var(--tjs-settings-edit-folder-summary-margin, 0 0 0 0.25rem);
+      --tjs-folder-summary-margin: var(--tjs-settings-edit-folder-summary-margin, 0);
 
       position: absolute;
       top: 0;

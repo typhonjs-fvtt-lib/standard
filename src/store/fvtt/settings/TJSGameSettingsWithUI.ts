@@ -169,6 +169,11 @@ declare namespace TJSGameSettingsWithUI {
           * The name of the `TJSSvgFolder` to put this setting in to group them.
           */
          folder?: string;
+
+         /**
+          * Makes the input element readonly; useful for file input to prevent editing of the file path.
+          */
+         readonly?: boolean;
       }
 
       /**

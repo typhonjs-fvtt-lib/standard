@@ -359,6 +359,11 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
                efx: efx === 'ripple' ? rippleFocus() : void 0,
                type: componentType
             };
+
+            if (typeof setting.readonly === 'boolean' && setting.readonly)
+            {
+               inputData.readonly = setting.readonly;
+            }
          }
          else if (componentType === 'range-number')
          {
@@ -395,7 +400,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
       // If storage is available then create a key otherwise create a dummy store, so `applyScroll` works.
       const storeScrollbar: Writable<number> = hasStorage && storage ?
-       storage.getStore(`${namespace}-settings-scrollbar`) : writable(0);
+       storage.getStore(`${namespace}-settings-scrollbar`, 0) : writable(0);
 
       const topLevel: TJSGameSettingsWithUI.UISetting.Data[] = [];
 
@@ -424,7 +429,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
       {
          return {
             label: entry[0],
-            store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`) : void 0,
+            store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${entry[0]}`, false) : void 0,
             settings: entry[1],
          };
       });
@@ -446,7 +451,8 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
             parsedSection.folder = {
                label,
-               store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0
+               store: hasStorage && storage ?
+                storage.getStore(`${namespace}-settings-folder-${section.folder}`, false) : void 0
             };
          }
          else if (isObject(section.folder))
@@ -455,7 +461,8 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
             parsedSection.folder = {
                label,
-               store: hasStorage && storage ? storage.getStore(`${namespace}-settings-folder-${label}`) : void 0,
+               store: hasStorage && storage ?
+                storage.getStore(`${namespace}-settings-folder-${section.folder.label}`, false) : void 0,
                summaryEnd: section.folder.summaryEnd,
                styles: section.folder.styles
             };
