@@ -64,7 +64,7 @@
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
-        flex: 3;
+        flex: 2;
         justify-content: flex-end;
         align-items: center;
     }
@@ -78,7 +78,7 @@
     }
 
     .label {
-       flex: 2;
+       flex: 1;
        color: var(--tjs-settings-edit-entry-label-color, var(--color-form-label));
        cursor: var(--tjs-settings-edit-entry-cursor, var(--tjs-cursor-default));
        font-size: var(--tjs-settings-edit-entry-label-font-size, inherit);
