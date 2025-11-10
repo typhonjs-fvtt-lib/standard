@@ -184,7 +184,6 @@ declare namespace TJSGameSettingsWithUI {
 
    export namespace UISetting {
       export type Data = {
-         id: string;
          namespace: string;
          folder?: string;
          key: string;

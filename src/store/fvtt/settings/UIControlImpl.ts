@@ -377,7 +377,6 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          }
 
          uiSettings.push({
-            id: `${setting.namespace}.${setting.key}`,
             namespace: setting.namespace,
             folder: setting.folder,
             key: setting.key,

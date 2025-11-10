@@ -1,13 +1,11 @@
 <script>
    /**
-    * --tjs-settings-edit-entry-label-color - inherit
-    * --tjs-settings-edit-entry-label-font-size - inherit
-    * --tjs-settings-edit-entry-label-line-height - var(--form-field-height) / Foundry variable
+    * Handles the setting entry to modify setting value.
     *
-    * --tjs-settings-edit-entry-hint-color - var(--color-text-dark-secondary) / Foundry variable
-    * --tjs-settings-edit-entry-hint-font-size - var(--font-size-12) / Foundry variable
-    * --tjs-settings-edit-entry-hint-line-height - var(--line-height-16) / Foundry variable
-    * --tjs-settings-edit-entry-hint-margin - 0.5em 0
+    * @componentDescription
+    *
+    * @privateRemarks
+    * Since this is specifically for Foundry we directly associate w/ the form CSS vars below.
     */
    import { FVTTFilePickerControl } from '#standard/application/control/filepicker';
 
@@ -36,8 +34,10 @@
 </script>
 
 <section class=tjs-settings-edit-entry>
-    <label for={setting.id}>{setting.name}</label>
-    <div class:checkbox={setting.componentType === 'checkbox'}>
+    <!-- svelte-ignore a11y-label-has-associated-control -->
+    <label>
+       <span class=label>{setting.name}</span>
+       <span class=content class:checkbox={setting.componentType === 'checkbox'}>
         {#if setting.componentType === 'checkbox'}
             <TJSInputCheckbox {store} />
         {:else if setting.componentType === 'number'}
@@ -52,14 +52,15 @@
         {#if setting.filePicker}
             <TJSIconButton button={setting.buttonData} on:click={onFilePicker} />
         {/if}
-    </div>
+       </span>
+    </label>
     {#if setting.hint}
-        <p class=hint>{setting.hint}</p>
+        <p>{setting.hint}</p>
     {/if}
 </section>
 
 <style>
-    div {
+    .content {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
@@ -68,23 +69,29 @@
         align-items: center;
     }
 
-    div.checkbox {
+    .content.checkbox {
         flex: 0
     }
 
     label {
-        color: var(--tjs-settings-edit-entry-label-color, inherit);
-        font-size: var(--tjs-settings-edit-entry-label-font-size, inherit);
-        line-height: var(--tjs-settings-edit-entry-label-line-height, var(--form-field-height));
-        flex: 2;
+        display: contents;
+    }
+
+    .label {
+       flex: 2;
+       color: var(--tjs-settings-edit-entry-label-color, var(--color-form-label));
+       cursor: var(--tjs-settings-edit-entry-cursor, var(--tjs-cursor-default));
+       font-size: var(--tjs-settings-edit-entry-label-font-size, inherit);
+       font-weight: bold;
+       line-height: var(--tjs-settings-edit-entry-label-line-height, var(--input-height));
     }
 
     p {
         flex: 0 0 100%;
-        color: var(--tjs-settings-edit-entry-hint-color, var(--color-text-dark-secondary));
-        font-size: var(--tjs-settings-edit-entry-hint-font-size, var(--font-size-12));
-        line-height: var(--tjs-settings-edit-entry-hint-line-height, var(--line-height-16));
-        margin: var(--tjs-settings-edit-entry-hint-margin, 0.5em 0);
+        color: var(--tjs-settings-edit-entry-hint-color, var(--color-form-hint));
+        cursor: var(--tjs-settings-edit-entry-cursor, var(--tjs-cursor-default));
+        font-size: var(--tjs-settings-edit-entry-hint-font-size, var(--font-size-14));
+        margin: var(--tjs-settings-edit-entry-hint-margin, 0);
         min-height: 1rem;
     }
 
@@ -94,5 +101,14 @@
         flex-direction: row;
         flex-wrap: wrap;
         align-items: center;
+        gap: 0.5rem;
+    }
+
+    section:hover p {
+       color: var(--tjs-settings-edit-entry-hint-color-hover, var(--color-form-hint-hover));
+    }
+
+    section:hover .label {
+       color: var(--tjs-settings-edit-entry-label-color-hover, var(--color-form-label-hover));
     }
 </style>
