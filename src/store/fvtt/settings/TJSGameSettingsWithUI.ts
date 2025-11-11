@@ -184,6 +184,7 @@ declare namespace TJSGameSettingsWithUI {
 
    export namespace UISetting {
       export type Data = {
+         id: string;
          namespace: string;
          folder?: string;
          key: string;
@@ -197,6 +198,8 @@ declare namespace TJSGameSettingsWithUI {
          initialValue: any;
          scope: 'client' | 'user' | 'world';
          requiresReload?: boolean;
+         dataField?: object;
+         dataFieldEl?: HTMLElement;
          buttonData?: ButtonData;
          inputData?: InputData;
          selectData?: SelectData;

@@ -4,6 +4,7 @@ import { TJSDialog }             from '#runtime/svelte/application';
 import { TJSSvelte }             from '#runtime/svelte/util';
 import { localize }              from '#runtime/util/i18n';
 import { isObject }              from '#runtime/util/object';
+import { CrossRealm }            from '#runtime/util/realm';
 
 import {
    ripple,
@@ -261,6 +262,18 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             continue;
          }
 
+         // Skip DataModel class / instances.
+         if (foundry.utils.isSubclass(setting.options.type, foundry.abstract.DataModel) ||
+          setting.options.type instanceof foundry.abstract.DataModel)
+         {
+            console.warn(`[TRL] TJSGameSettingsWithUI warning: skipping key '${
+             setting.key}' as DataModel classes are not supported.`);
+
+            continue;
+         }
+
+         const id = `${setting.namespace}.${setting.key}`;
+
          let options: { value: string, label: string }[] | undefined;
 
          if (isObject(setting.options.choices))
@@ -296,7 +309,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          }
 
          // Default to `String` if no type is provided.
-         const type: string = typeof setting.options.type === 'function' ? setting.options.type.name : 'String';
+         let type: string = 'String';
 
          // Only configure file picker if setting type is a string.
          let filePicker: string | undefined;
@@ -327,8 +340,13 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
          const store: MinimalWritable<unknown> = this.#settings.getStore(setting.key)!;
 
+         const initialValue = globalThis.game.settings.get(setting.namespace, setting.key);
+
          let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
          let selectData: TJSGameSettingsWithUI.UISetting.SelectData | undefined;
+
+         let dataField: object | undefined;
+         let dataFieldEl: HTMLElement | undefined = void 0;
 
          let componentType: string = 'text';
 
@@ -350,6 +368,32 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          else if (setting.options.type === Number)
          {
             componentType = isObject(setting.options.range) ? 'range-number' : 'number';
+         }
+         else if (setting.options.type instanceof foundry.data.fields.DataField)
+         {
+            try
+            {
+               const groupOptions = {
+                  rootId: id,
+                  label: setting.options.name,
+                  hint: setting.options.hint,
+                  units: setting.options.units
+               }
+
+               dataFieldEl = setting.options.type.toFormGroup(groupOptions, {value: initialValue});
+               dataField = setting.options.type;
+
+               if (!CrossRealm.browser.isHTMLElement(dataFieldEl))
+               {
+                  console.error(`Unable to create form element for key: ${setting.key}`);
+                  continue;
+               }
+            }
+            catch (err: unknown)
+            {
+               console.error((err as Error).message);
+               continue;
+            }
          }
 
          if (componentType === 'text' || componentType === 'number')
@@ -377,6 +421,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          }
 
          uiSettings.push({
+            id,
             namespace: setting.namespace,
             folder: setting.folder,
             key: setting.key,
@@ -387,11 +432,13 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             filePicker,
             range,
             store,
-            initialValue: globalThis.game.settings.get(setting.namespace, setting.key),
+            initialValue,
             scope: setting.options.scope,
             requiresReload: typeof setting.options.requiresReload === 'boolean' ? setting.options.requiresReload :
              false,
             buttonData,
+            dataField,
+            dataFieldEl,
             inputData,
             selectData
          });

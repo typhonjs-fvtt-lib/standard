@@ -58,6 +58,7 @@
    import { TJSSvgFolder }       from '#standard/component/folder';
 
    import SettingEntry           from './SettingEntry.svelte';
+   import SettingEntryDataField  from './SettingEntryDataField.svelte';
 
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
    export let settings = void 0;
@@ -83,7 +84,11 @@
       {#if uiSettings.topLevel.length}
          <section class="tjs-settings-edit-section tjs-settings-edit-content">
             {#each uiSettings.topLevel as setting (setting.key)}
-               <SettingEntry {setting} />
+               {#if setting.dataFieldEl}
+                  <SettingEntryDataField {setting} />
+               {:else}
+                  <SettingEntry {setting} />
+               {/if}
             {/each}
          </section>
       {/if}
@@ -92,7 +97,11 @@
             <TJSSvgFolder label={folder.label} store={folder.store}>
                <section class=tjs-settings-edit-content>
                   {#each folder.settings as setting (setting.key)}
-                     <SettingEntry {setting} />
+                     {#if setting.dataFieldEl}
+                        <SettingEntryDataField {setting} />
+                     {:else}
+                        <SettingEntry {setting} />
+                     {/if}
                   {/each}
                </section>
             </TJSSvgFolder>
