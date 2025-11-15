@@ -10,14 +10,15 @@ class FVTTConfigure
 
    static initialize()
    {
-      if (this.#initialized) { return; }
+      if (this.#initialized)
+      { return; }
 
       // Remove `0.2.x` and below root styles. -- TODO: REMOVE AT `0.5.0`
       document?.['#__tjs-root-styles']?.remove?.();
 
       const manager = StyleManager.create({
          id: '__tjs-standard-vars',
-         version: '0.0.2',
+         version: '0.0.3',
          layerName: 'variables.tjs-standard-vars',
          rules: {
             // Ideally `:root` would be used, but Foundry defines dark them CSS vars in `body`. For scoping reasons
@@ -63,7 +64,7 @@ class FVTTConfigure
       {
          // Clone and load the `standard` library CSS variables into the new window document regardless of the app type.
          popout.document.addEventListener('DOMContentLoaded',
-          () => manager.clone({ document: popout.document, force: true }));
+            () => manager.clone({ document: popout.document, force: true }));
       });
    }
 
@@ -146,6 +147,19 @@ class FVTTConfigure
             resolve: '.themed.theme-dark input'
          });
 
+         /**
+          * The core dark theme doesn't have input borders on elements, so we target the context menu that does.
+          */
+         const propsMenuDark = FoundryStyles.ext.get('#context-menu', {
+            camelCase: true,
+            resolve: ['.themed.theme-dark #context-menu']
+         });
+
+         const defaultMenuBorder = propsMenuDark?.border ?? '1px solid var(--color-cool-3)';
+
+         // Double the border width.
+         const defaultMenuBorderThicker = this.#lengthFactor(defaultMenuBorder, 2, '2px solid var(--color-cool-3)');
+
          themeDarkRoot.setProperties({
             // Constants across dark / light theme:
             '--tjs-component-border-radius': props?.borderRadius ?? '4px',
@@ -156,8 +170,15 @@ class FVTTConfigure
             '--tjs-side-slide-layer-item-host-color': 'var(--color-text-primary)',
 
             // Color / theme related.
-            '--tjs-component-border': '1px solid var(--color-cool-3)',   // Core dark theme does not have input borders.
-            '--tjs-component-overlay-background': 'rgba(208, 184, 163, 0.1)',
+            '--tjs-component-background': `hsl(from ${props?.background ?? 'var(--color-dark-4)'} h s calc(l - 8))`,
+            '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l - 2))`,
+            '--tjs-component-border': defaultMenuBorder,
+            '--tjs-component-border-thicker': defaultMenuBorderThicker,
+            '--tjs-component-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
+            '--tjs-component-overlay-background': props?.background ?? 'var(--color-dark-4)',
+
+            '--tjs-content-border': '1px solid var(--color-light-6)',
+            '--tjs-content-border-thicker': '2px solid var(--color-light-6)',
 
             '--tjs-side-slide-layer-item-background': 'rgba(180, 180, 180, 0.3)',
             '--tjs-side-slide-layer-item-border': 'solid 2px rgba(60, 60, 60, 0.9)',
@@ -177,10 +198,26 @@ class FVTTConfigure
             resolve: '.themed.theme-light input'
          });
 
+         const propsMenuLight = FoundryStyles.ext.get('#context-menu', {
+            camelCase: true,
+            resolve: ['.themed.theme-light #context-menu']
+         });
+
+         const inputBorder = props?.border ?? '1px solid var(--color-dark-6)';
+
+         const inputBorderThicker = this.#lengthFactor(inputBorder, 2, '2px solid var(--color-dark-6)');
+
          themeLight.setProperties({
             // Color / theme related.
-            '--tjs-component-border': props?.border ?? '1px solid var(--color-dark-6)',
-            '--tjs-component-overlay-background': 'rgba(0, 0, 0, 0.1)',
+            '--tjs-component-background': `hsl(from ${propsMenuLight?.background ?? '#d9d8c8'} h s calc(l - 4))`,
+            '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l + 2))`,
+            '--tjs-component-border': inputBorder,
+            '--tjs-component-border-thicker': inputBorderThicker,
+            '--tjs-component-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
+            '--tjs-component-overlay-background': props?.background ?? 'rgba(0, 0, 0, 0.1)',
+
+            '--tjs-content-border': '1px solid var(--color-dark-4)',
+            '--tjs-content-border-thicker': '2px solid var(--color-dark-4)',
 
             '--tjs-side-slide-layer-item-background': 'rgba(180, 180, 180, 0.7)',
             '--tjs-side-slide-layer-item-border': 'solid 2px rgba(100, 100, 100, 0.9)',
@@ -333,7 +370,7 @@ class FVTTConfigure
          // Dark theme
 
          '--tjs-menu-background': propsMenuDark?.background ?? 'var(--color-cool-5)',
-         '--tjs-menu-border': propsMenuDark?.border ?? '1px solid var(--color-cool-3)',
+         '--tjs-menu-border': 'var(--tjs-component-border)',
          '--tjs-menu-border-radius': propsMenuDark?.borderRadius ?? '5px',
          '--tjs-menu-box-shadow': propsMenuDark?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
          '--tjs-menu-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
@@ -346,13 +383,13 @@ class FVTTConfigure
          // `popup` is for components that are slightly elevated, but connected to an application;
          // see: TJSMenu / TJSContextMenu / TJSColordPicker
          '--tjs-default-popup-background': propsMenuDark?.background ?? 'var(--color-cool-5)',
-         '--tjs-default-popup-border': propsMenuDark?.border ?? '1px solid var(--color-cool-3)',
+         '--tjs-default-popup-border': 'var(--tjs-component-border)',
+         '--tjs-default-popup-border-radius': propsMenuDark?.borderRadius ?? '5px',
          '--tjs-default-popup-box-shadow': propsMenuDark?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
          '--tjs-default-popup-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
          '--tjs-default-popup-highlight-color': propsMenuItemDark?.color ?? 'var(--color-text-emphatic)',
 
          // `popover` is for components that are elevated and independent; see: TJSContextMenu
-         '--tjs-default-popover-border': propsMenuDark?.border ?? '1px solid var(--color-border-dark, #000)',
          '--tjs-default-popover-box-shadow': '0 0 10px var(--color-shadow-dark, #000)',
       });
 
@@ -371,7 +408,7 @@ class FVTTConfigure
          '--tjs-context-menu-item-color-highlight': 'var(--tjs-menu-item-color-highlight)',
 
          '--tjs-menu-background': propsMenuLight?.background ?? '#d9d8c8',
-         '--tjs-menu-border': propsMenuLight?.border ?? '1px solid #999',
+         '--tjs-menu-border': 'var(--tjs-component-border)',
          '--tjs-menu-border-radius': propsMenuLight?.borderRadius ?? '5px',
          '--tjs-menu-box-shadow': propsMenuLight?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
          '--tjs-menu-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
@@ -381,7 +418,8 @@ class FVTTConfigure
          '--tjs-menu-item-color-highlight': propsMenuItemLight?.color ?? 'var(--color-text-emphatic)',
 
          '--tjs-default-popup-background': propsMenuLight?.background ?? '#d9d8c8',
-         '--tjs-default-popup-border': propsMenuLight?.border ?? '1px solid #999',
+         '--tjs-default-popup-border': 'var(--tjs-component-border)',
+         '--tjs-default-popup-border-radius': propsMenuLight?.borderRadius ?? '5px',
          '--tjs-default-popup-box-shadow': propsMenuLight?.boxShadow ?? 'rgba(0, 0, 0, 0.45) 0px 3px 6px',
          '--tjs-default-popup-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
          '--tjs-default-popup-highlight-color': propsMenuItemLight?.color ?? 'var(--color-text-emphatic)',
@@ -410,6 +448,36 @@ class FVTTConfigure
          '--tjs-checkerboard-background-dark': 'rgb(205, 205, 205)',
          '--tjs-checkerboard-background-10': `url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205))`
       });
+   }
+
+   // Internal Implementation ----------------------------------------------------------------------------------------
+
+   /**
+    * Modifies target CSS string allowing a CSS length / width parameter to be increased / decreased by a given factor.
+    *
+    * @param {string}   cssString - Target CSS string.
+    *
+    * @param {number}   factor - Factor to increase `px`, `em`, `rem` value.
+    *
+    * @param {string}   [fallbackValue] - Fallback value if error occurs.
+    *
+    * @returns {string} Modified target CSS string.
+    */
+   static #lengthFactor(cssString, factor = 1, fallbackValue)
+   {
+      let result;
+
+      try
+      {
+         result = cssString.replace(/^(\d*\.?\d+)\s*(px|em|rem)\b/i,
+          (_, num, unit) => `${Number(num) * factor}${unit}`);
+      }
+      catch
+      {
+         result = fallbackValue;
+      }
+
+      return result;
    }
 }
 
