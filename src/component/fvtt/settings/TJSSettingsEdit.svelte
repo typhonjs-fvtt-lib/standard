@@ -83,7 +83,7 @@
    onDestroy(() => uiSettings.destroy());
 </script>
 
-<main class=tjs-settings-edit
+<main class="tjs-settings-edit tjs-content-vars"
       use:padToBorder={{ parent: true }}
       use:applyStyles={styles}>
    <SettingsHeader />
