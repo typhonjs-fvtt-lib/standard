@@ -163,6 +163,7 @@ class FVTTConfigure
          themeDarkRoot.setProperties({
             // Constants across dark / light theme:
             '--tjs-component-border-radius': props?.borderRadius ?? '4px',
+            '--tjs-component-color-shadow': 'hsl(from var(--color-cool-3) h s l / 0.4)',
 
             '--tjs-side-slide-layer-item-border-color-hover': 'var(--color-warm-2)',
             '--tjs-side-slide-layer-item-color': 'var(--color-text-secondary)',
@@ -172,6 +173,7 @@ class FVTTConfigure
             // Color / theme related.
             '--tjs-component-background': `hsl(from ${props?.background ?? 'var(--color-dark-4)'} h s calc(l - 8))`,
             '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l - 2))`,
+            '--tjs-component-background-highlight': `hsl(from ${props?.background ?? 'var(--color-dark-4)'} h s calc(l + 6))`,
             '--tjs-component-border': defaultMenuBorder,
             '--tjs-component-border-thicker': defaultMenuBorderThicker,
             '--tjs-component-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
@@ -203,6 +205,11 @@ class FVTTConfigure
             resolve: ['.themed.theme-light #context-menu']
          });
 
+         const propsMenuItemLight = FoundryStyles.ext.get('#context-menu li.context-item:hover', {
+            camelCase: true,
+            resolve: ['.themed.theme-light #context-menu']
+         });
+
          const inputBorder = props?.border ?? '1px solid var(--color-dark-6)';
 
          const inputBorderThicker = this.#lengthFactor(inputBorder, 2, '2px solid var(--color-dark-6)');
@@ -211,6 +218,7 @@ class FVTTConfigure
             // Color / theme related.
             '--tjs-component-background': `hsl(from ${propsMenuLight?.background ?? '#d9d8c8'} h s calc(l - 4))`,
             '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l + 2))`,
+            '--tjs-component-background-highlight': propsMenuItemLight?.background ?? '#f0f0e0',
             '--tjs-component-border': inputBorder,
             '--tjs-component-border-thicker': inputBorderThicker,
             '--tjs-component-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
