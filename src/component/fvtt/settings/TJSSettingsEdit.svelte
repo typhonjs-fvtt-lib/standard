@@ -22,6 +22,9 @@
     * checked for `requiresReload` setting option. If the setting has changed while `TJSSettingsEdit` is displayed a
     * modal dialog is opened to inform the user that a setting changed that requires reloading.
     *
+    * Note: `TJSSettingsEdit` uses the {@link #runtime/svelte/action/dom/style!padToBorder} action and this is
+    * always enabled thus `TJSSettingsEdit is positioned within visual borders.
+    *
     * If you need an easy to use slotted component that allows swapping from the main slot and `TJSSettingsEdit` please
     * refer to {@link TJSSettingsSwap}.
     *
@@ -49,8 +52,9 @@
 
    import { onDestroy }          from '#svelte';
 
-   import { applyStyles }        from '#runtime/svelte/action/dom/style';
-
+   import {
+      applyStyles,
+      padToBorder }              from '#runtime/svelte/action/dom/style';
    import { TJSSvelte }          from '#runtime/svelte/util';
    import { isObject }           from '#runtime/util/object';
 
@@ -59,6 +63,7 @@
 
    import SettingEntry           from './SettingEntry.svelte';
    import SettingEntryDataField  from './SettingEntryDataField.svelte';
+   import SettingsHeader         from './SettingsHeader.svelte';
 
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
    export let settings = void 0;
@@ -78,8 +83,10 @@
    onDestroy(() => uiSettings.destroy());
 </script>
 
-<main class=tjs-settings-edit use:applyStyles={styles}>
-   <slot name=settings-header {settings} {options} {uiSettings} />
+<main class=tjs-settings-edit
+      use:padToBorder={{ parent: true }}
+      use:applyStyles={styles}>
+   <SettingsHeader />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
       {#if uiSettings.topLevel.length}
          <section class="tjs-settings-edit-section tjs-settings-edit-content">
@@ -130,8 +137,9 @@
 
 <style>
    main {
-      --tjs-scroll-container-padding: var(--tjs-settings-edit-padding, 1rem calc(1rem - var(--_tjs-default-scrollbar-width)) 1rem 1rem);
+      --tjs-scroll-container-padding: var(--tjs-settings-edit-padding, var(--tjs-scrollbar-gutter-stable-padding, 1rem));
       --tjs-scroll-container-gap: var(--tjs-settings-edit-gap, 0.75rem);
+      --tjs-scroll-container-scrollbar-gutter: stable;
 
       --tjs-folder-contents-border-top-open: var(--tjs-settings-edit-folder-border-top-open, var(--tjs-content-border-thicker));
       --tjs-folder-contents-margin: none;
@@ -139,15 +147,12 @@
       --tjs-folder-summary-width: 100%;
       --tjs-folder-summary-margin: var(--tjs-settings-edit-folder-summary-margin, 0);
 
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-
       display: flex;
       flex-direction: column;
+      flex: 1;
+      overflow: hidden;
       height: 100%;
+
       background: var(--tjs-settings-edit-background, none);
    }
 
