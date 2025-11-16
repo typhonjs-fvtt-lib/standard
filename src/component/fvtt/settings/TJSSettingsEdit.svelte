@@ -54,7 +54,7 @@
 
    import {
       applyStyles,
-      padToBorder }              from '#runtime/svelte/action/dom/style';
+      padToVisualEdgeInsets }    from '#runtime/svelte/action/dom/style';
    import { TJSSvelte }          from '#runtime/svelte/util';
    import { isObject }           from '#runtime/util/object';
 
@@ -84,7 +84,7 @@
 </script>
 
 <main class="tjs-settings-edit tjs-content-vars"
-      use:padToBorder={{ parent: true }}
+      use:padToVisualEdgeInsets={{ parent: true }}
       use:applyStyles={styles}>
    <SettingsHeader />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
