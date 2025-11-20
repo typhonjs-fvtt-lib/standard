@@ -8,6 +8,9 @@ class FVTTConfigure
 {
    static #initialized = false;
 
+   // Convenience for testing; when true turns on style resolution warnings.
+   static #warnResolve = false;
+
    static initialize()
    {
       if (this.#initialized)
@@ -144,7 +147,8 @@ class FVTTConfigure
           */
          const props = FoundryStyles.ext.get('input[type="text"]', {
             camelCase: true,
-            resolve: '.themed.theme-dark input'
+            resolve: '.themed.theme-dark input',
+            warnResolve: this.#warnResolve
          });
 
          /**
@@ -152,7 +156,8 @@ class FVTTConfigure
           */
          const propsMenuDark = FoundryStyles.ext.get('#context-menu', {
             camelCase: true,
-            resolve: ['.themed.theme-dark #context-menu']
+            resolve: ['.themed.theme-dark #context-menu'],
+            warnResolve: this.#warnResolve
          });
 
          const defaultMenuBorder = propsMenuDark?.border ?? '1px solid var(--color-cool-3)';
@@ -171,13 +176,13 @@ class FVTTConfigure
             '--tjs-side-slide-layer-item-host-color': 'var(--color-text-primary)',
 
             // Color / theme related.
-            '--tjs-component-background': `hsl(from ${props?.background ?? 'var(--color-dark-4)'} h s calc(l - 8))`,
+            '--tjs-component-background': `hsl(from ${props?.background ?? 'var(--color-cool-4)'} h s calc(l - 8))`,
             '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l - 2))`,
-            '--tjs-component-background-highlight': `hsl(from ${props?.background ?? 'var(--color-dark-4)'} h s calc(l + 6))`,
+            '--tjs-component-background-highlight': `hsl(from ${props?.background ?? 'var(--color-cool-4)'} h s calc(l + 6))`,
             '--tjs-component-border': defaultMenuBorder,
             '--tjs-component-border-thicker': defaultMenuBorderThicker,
             '--tjs-component-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
-            '--tjs-component-overlay-background': props?.background ?? 'var(--color-dark-4)',
+            '--tjs-component-overlay-background': props?.background ?? 'var(--color-cool-4)',
 
             '--tjs-content-border': '1px solid var(--color-light-6)',
             '--tjs-content-border-thicker': '2px solid var(--color-light-6)',
@@ -197,17 +202,20 @@ class FVTTConfigure
           */
          const props = FoundryStyles.ext.get('input[type="text"]', {
             camelCase: true,
-            resolve: '.themed.theme-light input'
+            resolve: '.themed.theme-light input',
+            warnResolve: this.#warnResolve
          });
 
          const propsMenuLight = FoundryStyles.ext.get('#context-menu', {
             camelCase: true,
-            resolve: ['.themed.theme-light #context-menu']
+            resolve: ['.themed.theme-light #context-menu'],
+            warnResolve: this.#warnResolve
          });
 
          const propsMenuItemLight = FoundryStyles.ext.get('#context-menu li.context-item:hover', {
             camelCase: true,
-            resolve: ['.themed.theme-light #context-menu']
+            resolve: ['.themed.theme-light #context-menu'],
+            warnResolve: this.#warnResolve
          });
 
          const inputBorder = props?.border ?? '1px solid var(--color-dark-6)';
@@ -249,17 +257,20 @@ class FVTTConfigure
           */
          const props = FoundryStyles.ext.get('input[type="text"]', {
             camelCase: true,
-            resolve: '.themed.theme-dark input'
+            resolve: '.themed.theme-dark input',
+            warnResolve: this.#warnResolve
          });
 
          const propsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
             camelCase: true,
-            resolve: ['.themed.theme-dark input', '.themed.theme-dark input:focus']
+            resolve: ['.themed.theme-dark input', '.themed.theme-dark input:focus'],
+            warnResolve: this.#warnResolve
          });
 
          const propsPlaceholder = FoundryStyles.ext.get('::placeholder', {
             camelCase: true,
-            resolve: '.themed.theme-dark input'
+            resolve: '.themed.theme-dark input',
+            warnResolve: this.#warnResolve
          });
 
          themeDarkRoot.setProperties({
@@ -297,17 +308,20 @@ class FVTTConfigure
           */
          const props = FoundryStyles.ext.get('input[type="text"]', {
             camelCase: true,
-            resolve: '.themed.theme-light input'
+            resolve: '.themed.theme-light input',
+            warnResolve: this.#warnResolve
          });
 
          const propsFocus = FoundryStyles.ext.get(['input[type="text"]', 'input[type="text"]:focus'], {
             camelCase: true,
-            resolve: ['.themed.theme-light input', '.themed.theme-light input:focus']
+            resolve: ['.themed.theme-light input', '.themed.theme-light input:focus'],
+            warnResolve: this.#warnResolve
          });
 
          const propsPlaceholder = FoundryStyles.ext.get('::placeholder', {
             camelCase: true,
-            resolve: '.themed.theme-light input'
+            resolve: '.themed.theme-light input',
+            warnResolve: this.#warnResolve
          });
 
          themeLight.setProperties({
@@ -335,22 +349,26 @@ class FVTTConfigure
 
       const propsMenuDark = FoundryStyles.ext.get('#context-menu', {
          camelCase: true,
-         resolve: ['.themed.theme-dark #context-menu']
+         resolve: ['.themed.theme-dark #context-menu'],
+         warnResolve: this.#warnResolve
       });
 
       const propsMenuItemDark = FoundryStyles.ext.get('#context-menu li.context-item:hover', {
          camelCase: true,
-         resolve: ['.themed.theme-dark #context-menu']
+         resolve: ['.themed.theme-dark #context-menu'],
+         warnResolve: this.#warnResolve
       });
 
       const propsMenuLight = FoundryStyles.ext.get('#context-menu', {
          camelCase: true,
-         resolve: ['.themed.theme-light #context-menu']
+         resolve: ['.themed.theme-light #context-menu'],
+         warnResolve: this.#warnResolve
       });
 
       const propsMenuItemLight = FoundryStyles.ext.get('#context-menu li.context-item:hover', {
          camelCase: true,
-         resolve: ['.themed.theme-light #context-menu']
+         resolve: ['.themed.theme-light #context-menu'],
+         warnResolve: this.#warnResolve
       });
 
       themeDarkRoot.setProperties({
