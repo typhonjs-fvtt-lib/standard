@@ -13,8 +13,7 @@ class FVTTConfigure
 
    static initialize()
    {
-      if (this.#initialized)
-      { return; }
+      if (this.#initialized) { return; }
 
       // Remove `0.2.x` and below root styles. -- TODO: REMOVE AT `0.5.0`
       document?.['#__tjs-root-styles']?.remove?.();
