@@ -1,7 +1,7 @@
 import { fade }               from 'svelte/transition';
 
 import { TJSDialog }          from '#runtime/svelte/application';
-import { TJSGlassPane }       from '#runtime/svelte/component/application';
+import { TJSGlassPane }       from '#runtime/svelte/component/container';
 import { TJSSvelte }          from '#runtime/svelte/util';
 import { A11yHelper }         from '#runtime/util/a11y';
 import { nextAnimationFrame } from '#runtime/util/animate';
