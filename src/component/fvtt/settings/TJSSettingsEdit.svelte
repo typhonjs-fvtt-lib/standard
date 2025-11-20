@@ -55,10 +55,10 @@
    import {
       applyStyles,
       padToVisualEdgeInsets }    from '#runtime/svelte/action/dom/style';
+   import { TJSScrollContainer } from '#runtime/svelte/component/container';
    import { TJSSvelte }          from '#runtime/svelte/util';
    import { isObject }           from '#runtime/util/object';
 
-   import { TJSScrollContainer } from '#standard/component/container';
    import { TJSSvgFolder }       from '#standard/component/folder';
 
    import SettingEntry           from './SettingEntry.svelte';
@@ -84,7 +84,7 @@
 </script>
 
 <main class="tjs-settings-edit tjs-content-vars"
-      use:padToVisualEdgeInsets={{ parent: true }}
+      use:padToVisualEdgeInsets={{ parent: { excludeClasses: ['tjs-scroll-container'] } }}
       use:applyStyles={styles}>
    <SettingsHeader />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
