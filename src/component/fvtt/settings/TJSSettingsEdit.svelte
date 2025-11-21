@@ -84,7 +84,7 @@
 </script>
 
 <main class="tjs-settings-edit tjs-content-vars"
-      use:padToVisualEdgeInsets={{ parent: { excludeClasses: ['tjs-scroll-container'] } }}
+      use:padToVisualEdgeInsets={{ parent: { stackingContext: true } }}
       use:applyStyles={styles}>
    <SettingsHeader />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
