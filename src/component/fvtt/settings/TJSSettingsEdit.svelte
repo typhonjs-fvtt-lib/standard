@@ -54,7 +54,7 @@
 
    import {
       applyStyles,
-      padToVisualEdgeInsets }    from '#runtime/svelte/action/dom/style';
+      applyVisualEdgeInsets }    from '#runtime/svelte/action/dom/style';
    import { TJSScrollContainer } from '#runtime/svelte/component/container';
    import { TJSSvelte }          from '#runtime/svelte/util';
    import { isObject }           from '#runtime/util/object';
@@ -84,8 +84,8 @@
 </script>
 
 <main class="tjs-settings-edit tjs-content-vars"
-      use:padToVisualEdgeInsets={{ parent: { stackingContext: true } }}
-      use:applyStyles={styles}>
+      use:applyStyles={styles}
+      use:applyVisualEdgeInsets={{ action: 'padTarget', parent: { stackingContext: true } }}>
    <SettingsHeader />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
       {#if uiSettings.topLevel.length}
