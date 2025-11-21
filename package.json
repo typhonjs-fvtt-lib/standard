@@ -50,14 +50,6 @@
       "types": "./_dist/component/standard/color/picker-colord/index.d.ts",
       "import": "./_dist/component/standard/color/picker-colord/index.js"
     },
-    "./component/container": {
-      "types": "./_dist/component/standard/container/index.d.ts",
-      "import": "./_dist/component/standard/container/index.js"
-    },
-    "./component/dom/focus": {
-      "types": "./_dist/component/standard/dom/focus/index.d.ts",
-      "import": "./_dist/component/standard/dom/focus/index.js"
-    },
     "./component/folder": {
       "types": "./_dist/component/standard/folder/index.d.ts",
       "import": "./_dist/component/standard/folder/index.js"
