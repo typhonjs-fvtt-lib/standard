@@ -358,11 +358,15 @@
       // If editor button is enabled then remove the menu / editing interface on save.
       const remove = typeof options?.button === 'boolean' ? options.button : true;
 
+      // Gather Foundry default PM plugins. v14+ has a different location.
+      const defaultPlugins = typeof foundry?.applications?.ux?.ProseMirrorEditor?.buildDefaultPlugins === 'function' ?
+       foundry?.applications?.ux?.ProseMirrorEditor?.buildDefaultPlugins() : ProseMirror.defaultPlugins;
+
       const editorOptions = {
          ...options,
 
          plugins: {
-            ...ProseMirror.defaultPlugins,
+            ...defaultPlugins,
 
             menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
                compact: typeof options?.menuCompact === 'boolean' ? options.menuCompact : false,
