@@ -603,6 +603,13 @@
    }
 
    /**
+    * Override Foundry core style for click to edit / pointer.
+    */
+   .tjs-editor:not(.editor-active).click-to-edit code-mirror:disabled :global(.cm-editor) {
+      cursor: var(--tjs-cursor-pointer, pointer);
+   }
+
+   /**
     * Defines cursor and box-shadow / outline when the editor is inactive and hovered, but not manually focused.
     */
    .tjs-editor:not(.editor-active):not(:focus-visible):hover {
