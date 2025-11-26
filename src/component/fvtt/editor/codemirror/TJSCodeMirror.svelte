@@ -606,7 +606,7 @@
     * Override Foundry core style for click to edit / pointer.
     */
    .tjs-editor:not(.editor-active).click-to-edit code-mirror:disabled :global(.cm-editor) {
-      cursor: var(--tjs-cursor-pointer, pointer);
+      cursor: var(--tjs-cursor-text, text);
    }
 
    /**
