@@ -343,8 +343,6 @@
     */
    function destroyEditor({ cancelled = true } = {})
    {
-      console.log(`!!! TJSCodeMirror - destroyEditor - cancelled: ${cancelled}`);
-
       if (editorActive)
       {
          editorActive = false;
@@ -382,8 +380,6 @@
     */
    async function initEditor()
    {
-      console.log(`!!! TJSCodeMirror - initEditor`);
-
       initialEditContent = typeof content === 'string' ? content : '';
 
       editorActive = true;
@@ -408,8 +404,6 @@
    {
       if (typeof content !== 'string') { return; }
 
-      console.log(`!!! TJSCodeMirror - onContentChanged - content: `, content);
-
       if (!editorActive && codeMirrorEl)
       {
          codeMirrorEl._setValue(content);
@@ -423,8 +417,6 @@
     */
    function onDocumentDeleted(document)
    {
-      console.log(`!!! TJSCodeMirror - onDocumentDeleted - document: `, document);
-
       if (isObject(options)) { options.document = void 0; }
 
       destroyEditor();
@@ -532,13 +524,9 @@
     */
    function saveEditor()
    {
-      console.log(`!!! TJSCodeMirror - saveEditor`);
-
       if (editorActive)
       {
          const editContent = codeMirrorEl._getValue();
-
-         console.log(`!!! TJSCodeMirror - saveEditor - editContent: `, editContent);
 
          // Save to document if available
          if ($doc && typeof options?.fieldName === 'string')
