@@ -195,7 +195,7 @@
     * When `options.button` & `editable` is true and the editor is not active and `clickToEdit` is false
     * enable the edit button.
     */
-   $: editorButton = !editorActive && editable && (typeof options?.button === 'boolean' ? options.button : true) &&
+   $: editorButton = editable && (typeof options?.button === 'boolean' ? options.button : true) &&
     !clickToEdit;
 
    /**
@@ -377,6 +377,21 @@
    }
 
    /**
+    * Handles edit / save button depending on editor state.
+    */
+   function onEditSaveButton()
+   {
+      if (editorActive)
+      {
+         saveEditor();
+      }
+      else
+      {
+         initEditor();
+      }
+   }
+
+   /**
     * Prevents `Escape` key or `Ctrl-s` from propagating when the editor is active preventing the app from being closed.
     * The `Escape` key is used to close the active editor first. Foundry by default when `Ctrl-s` is pressed as of v10
     * scrolls the canvas down which is undesired when saving an editor as well.
@@ -497,7 +512,7 @@
      tabindex=0>
    {#if editorButton}
       <!-- svelte-ignore a11y-missing-attribute a11y-click-events-have-key-events -->
-      <a class=editor-edit on:click={() => initEditor()} role=button tabindex=-1><i class="fas fa-edit"></i></a>
+      <a class=editor-edit on:click={onEditSaveButton} role=button tabindex=-1><i class={`fas ${editorActive ? 'fa-floppy-disk-circle-arrow-right' : 'fa-edit'}`}></i></a>
    {/if}
    <code-mirror bind:this={codeMirrorEl} class="source-editor" managed disabled></code-mirror>
 </div>
@@ -506,6 +521,8 @@
    .tjs-editor {
       display: var(--tjs-editor-display, flex);
       flex-direction: var(--tjs-editor-flex-direction, column);
+
+      /* Note CM editor has Foundry style for min-height as well. */
       min-height: var(--tjs-editor-min-height, 150px);
 
       background: var(--tjs-editor-background, none);
@@ -547,24 +564,9 @@
       outline: var(--tjs-editor-inactive-outline-hover);
    }
 
-   /**
-    * Defines user-select when the editor is inactive and hovered.
-    */
-   .tjs-editor:not(.editor-active):hover {
-      user-select: var(--tjs-editor-inactive-user-select-hover, text);
-   }
-
-   /**
-    * Defines cursor when the editor is not active, but configured for click to edit. Give the user some indication
-    * via showing the text cursor across the whole editor element.
-    */
-   .tjs-editor.click-to-edit:not(.editor-active):hover {
-      cursor: var(--tjs-editor-inactive-cursor-hover, text);
-   }
-
    .editor-edit {
-      right: var(--tjs-editor-edit-button-right, 5px);
-      top: var(--tjs-editor-edit-button-top, 0);
+      right: var(--tjs-editor-edit-button-right, 3px);
+      top: var(--tjs-editor-edit-button-top, 3px);
       z-index: 10;
 
       display: none;
@@ -579,10 +581,5 @@
 
    .tjs-editor:hover .editor-edit {
       display: inline-block;
-   }
-
-   /* Controls whether the editor content text is selectable when the editor is inactive. */
-   .tjs-editor:not(.editor-active) .source-editor {
-      user-select: var(--tjs-editor-inactive-user-select-hover, text);
    }
 </style>
