@@ -142,6 +142,14 @@
    /** @type {HTMLDivElement} */
    let editorEl;
 
+   /**
+    * Stores the initial editor content when editing begins. If editing is cancelled the CM web component is updated
+    * w/ this initial value.
+    *
+    * @type {string}
+    */
+   let initialEditContent = '';
+
    /** @type {string} */
    let keyCode;
 
@@ -250,12 +258,14 @@
       // Handle the case when the component is destroyed / IE application closed, but the editor isn't saved.
       if (editorActive)
       {
-         saveEditor({ remove: typeof options?.button === 'boolean' ? options.button : true });
+         saveEditor();
       }
       else
       {
          destroyEditor();
       }
+
+      // TODO: Likely cleanup / destroy TJSDocument here.
    });
 
    /**
@@ -264,47 +274,49 @@
     */
    onMount(() =>
    {
-      if (editable && !editorButton && !clickToEdit) { initEditor(); }
+      // TODO: Setup initial CM web component settings.
 
-      console.log(`!!! TJSCodeMirror - onMount - codeMirrorEl: `, codeMirrorEl);
-      console.log(`!!! TJSCodeMirror - onMount - Object.keys(codeMirrorEl): `, Object.keys(codeMirrorEl));
-      console.log(`!!! TJSCodeMirror - onMount - codeMirrorEl.language: `, codeMirrorEl.language);
+      onContentChanged(content);
+
+      if (editable && !editorButton && !clickToEdit) { initEditor(); }
    });
 
    /**
     * Destroys any active editor.
+    *
+    * @param {object} [options] -
+    *
+    * @param {boolean} [options.cancelled] - When true, reset initial content before editing / fire cancelled event.
     */
-   function destroyEditor(fireCancel = true)
+   function destroyEditor({ cancelled = true } = {})
    {
-      console.log(`!!! TJSCodeMirror - destroyEditor - fireCancel: ${fireCancel}`);
+      console.log(`!!! TJSCodeMirror - destroyEditor - cancelled: ${cancelled}`);
 
       if (editorActive)
       {
          editorActive = false;
-      }
 
-      // if (editor)
-      // {
-      //    editor.destroy();
-      //    editor = void 0;
-      //
-      //    // Post on next macrotask to allow any event propagation for `Escape` key to trigger first.
-      //    setTimeout(() => { editorActive = false; }, 0);
-      //
-      //    // If the editor was initialized by keyboard action then focus it after a short delay to allow the template
-      //    // to update.
-      //    if (keyFocused)
-      //    {
-      //       keyFocused = false;
-      //
-      //       setTimeout(() =>
-      //       {
-      //          if (CrossRealm.browser.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
-      //       }, 100);
-      //    }
-      //
-      //    if (fireCancel) { dispatch('editor:cancel'); }
-      // }
+         if (cancelled)
+         {
+            if (codeMirrorEl) { codeMirrorEl._setValue(initialEditContent); }
+
+            initialEditContent = '';
+
+            dispatch('editor:cancel');
+         }
+
+         // If the editor was initialized by keyboard action then focus it after a short delay to allow the template
+         // to update.
+         if (keyFocused)
+         {
+            keyFocused = false;
+
+            setTimeout(() =>
+            {
+               if (CrossRealm.browser.isHTMLElement(editorEl) && editorEl?.isConnected) { editorEl.focus(); }
+            }, 100);
+         }
+      }
    }
 
    /**
@@ -316,48 +328,17 @@
    {
       console.log(`!!! TJSCodeMirror - initEditor`);
 
-      // // If editor button is enabled then remove the menu / editing interface on save.
-      // const remove = typeof options?.button === 'boolean' ? options.button : true;
-      //
-      // // Gather Foundry default PM plugins. v14+ has a different location.
-      // const defaultPlugins = typeof foundry?.applications?.ux?.ProseMirrorEditor?.buildDefaultPlugins === 'function' ?
-      //  foundry?.applications?.ux?.ProseMirrorEditor?.buildDefaultPlugins() : ProseMirror.defaultPlugins;
-      //
-      // const editorOptions = {
-      //    ...options,
-      //
-      //    plugins: {
-      //       ...defaultPlugins,
-      //
-      //       menu: ProseMirror.ProseMirrorMenu.build(ProseMirror.defaultSchema, {
-      //          compact: typeof options?.menuCompact === 'boolean' ? options.menuCompact : false,
-      //          destroyOnSave: remove,
-      //          onSave: () => saveEditor({ remove })
-      //       }),
-      //
-      //       keyMaps: Plugins.TJSKeyMaps.build(ProseMirror.defaultSchema, {
-      //          onSave: () => saveEditor({ remove }),
-      //          onQuit: () => destroyEditor()
-      //       }),
-      //
-      //       tjsPasteRawUUID: Plugins.TJSPasteUUID.build(),
-      //
-      //       ...(isObject(options?.plugins) ? options.plugins : {})
-      //    }
-      // };
+      initialEditContent = content;
 
       editorActive = true;
 
-      // Editor is now active; wait until the template updates w/ new bound `editorContentEl`.
+      // Editor is now active; wait until the template updates.
       await tick();
 
-      // editor = await foundry.applications.ux.ProseMirrorEditor.create(editorContentEl, content, editorOptions);
+      codeMirrorEl.scrollTo(0, 0);
 
-      // `.editor-container` div is added automatically; add inline style to set margin to 0.
-      // const containerEl = editorEl.querySelector('.editor-container');
-      // if (containerEl) { containerEl.style = 'margin: var(--tjs-editor-container-margin, 0)'; }
-
-      // editor.view.focus();
+      // Focus CM editor.
+      codeMirrorEl.querySelector('.cm-content')?.focus();
 
       dispatch('editor:start');
    }
@@ -367,27 +348,27 @@
     */
    function onClick()
    {
-      console.log(`!!! TJSCodeMirror - onClick - 0`);
+      console.log(`!!! TJSCodeMirror - onClick - 0 - clickToEdit: ${clickToEdit}`);
 
       if (!editorActive && clickToEdit)
       {
-         console.log(`!!! TJSCodeMirror - onClick - 1`);
-
          initEditor();
       }
    }
 
    /**
-    * Separated into a standalone method so applying async value to enriched content doesn't double trigger a reactive
-    * statement twice.
+    * Separated into a standalone method.
     *
     * @param {string}   content - Content prop.
-    *
-    * @returns {Promise<void>}
     */
-   async function onContentChanged(content)
+   function onContentChanged(content)
    {
       console.log(`!!! TJSCodeMirror - onContentChanged - content: `, content);
+
+      if (!editorActive && codeMirrorEl)
+      {
+         codeMirrorEl._setValue(content);
+      }
    }
 
    /**
@@ -477,44 +458,31 @@
 
    /**
     * Saves the editor contents to the associated document or updates content directly.
-    *
-    * @param {object}   [opts] - Optional parameters.
-    *
-    * @param {boolean}  [opts.remove=true] - Removes the editor.
     */
-   function saveEditor({ remove = true } = {})
+   function saveEditor()
    {
-      console.log(`!!! TJSCodeMirror - saveEditor - remove: ${remove}`);
+      console.log(`!!! TJSCodeMirror - saveEditor`);
 
       if (editorActive)
       {
          const editContent = codeMirrorEl._getValue();
+
          console.log(`!!! TJSCodeMirror - saveEditor - editContent: `, editContent);
 
-         editorActive = false;
+         // Save to document if available
+         if ($doc && typeof options?.fieldName === 'string')
+         {
+            $doc.update({ [options.fieldName]: editContent })
+         }
+         else // Otherwise save to content.
+         {
+            content = editContent;
+         }
+
+         dispatch('editor:save', { content: editContent });
+
+         destroyEditor({ cancelled: false });
       }
-      // if (editor)
-      // {
-      //    if (editor.isDirty())
-      //    {
-      //       let data = ProseMirror.dom.serializeString(editor.view.state.doc);
-      //
-      //       // Save to document if available
-      //       if ($doc && typeof options?.fieldName === 'string')
-      //       {
-      //          $doc.update({ [options.fieldName]: data })
-      //       }
-      //       else // Otherwise save to content.
-      //       {
-      //          content = data;
-      //       }
-      //
-      //       dispatch('editor:save', { content: data });
-      //    }
-      //
-      //    // Remove the editor
-      //    if (remove) { destroyEditor(false); }
-      // }
    }
 </script>
 
