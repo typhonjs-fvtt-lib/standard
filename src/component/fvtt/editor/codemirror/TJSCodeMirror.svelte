@@ -537,11 +537,6 @@
 </div>
 
 <style>
-   form {
-      width: 100%;
-      height: 100%;
-   }
-
    .tjs-editor {
       display: var(--tjs-editor-display, flex);
       flex-direction: var(--tjs-editor-flex-direction, column);
@@ -601,14 +596,6 @@
       cursor: var(--tjs-editor-inactive-cursor-hover, text);
    }
 
-   /*.editor-content {*/
-   /*    overflow: var(--tjs-editor-content-overflow, auto);*/
-   /*    padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);*/
-
-   /*    !* For Firefox. *!*/
-   /*    scrollbar-width: thin;*/
-   /*}*/
-
    .editor-edit {
       right: var(--tjs-editor-edit-button-right, 5px);
       top: var(--tjs-editor-edit-button-top, 0);
@@ -628,56 +615,8 @@
       display: inline-block;
    }
 
-   /*.editor-enriched {*/
-   /*    padding: var(--tjs-editor-content-padding, 0 0 0 0.25em);*/
-   /*}*/
-
    /* Controls whether the editor content text is selectable when the editor is inactive. */
-   .tjs-editor:not(.editor-active) .editor-enriched {
+   .tjs-editor:not(.editor-active) .source-editor {
       user-select: var(--tjs-editor-inactive-user-select-hover, text);
-   }
-
-   /* Don't add an initial margin top to first paragraph element in `.editor-content`. */
-   .tjs-editor .editor-container .editor-content :global(p:first-of-type) {
-      margin-top: 0;
-   }
-
-   .tjs-editor .editor-enriched :global(p:first-of-type) {
-      margin-top: 0;
-   }
-
-   /* Do add an initial margin top to first paragraph element in `section.secret`. */
-   .tjs-editor .editor-container .editor-content :global(section.secret p:first-of-type) {
-      margin-top: 0.5em;
-   }
-
-   .tjs-editor .editor-enriched :global(section.secret p:first-of-type) {
-      margin-top: 0.5em;
-   }
-
-   /* Provides global styles scoped to `.tjs-editor` for dynamic `.editor-menu` element */
-   .tjs-editor :global(.editor-menu) {
-      background: var(--tjs-editor-toolbar-background, var(--menu-background));
-      border-radius: var(--tjs-editor-toolbar-border-radius, 6px);
-      box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
-      margin-bottom: 0.25em;
-      padding: var(--tjs-editor-toolbar-padding, 2px 0);
-      width: var(--tjs-editor-toolbar-width, 100%);
-
-      transition: box-shadow 500ms ease-in-out;
-   }
-
-   /* Removes the awkward 1rem padding from core */
-   .tjs-editor.prosemirror.editing-source :global(textarea) {
-      padding: 0;
-   }
-
-   /* Core theming support */
-   :global(.themed.theme-dark) .tjs-editor :global(.editor-menu) {
-      box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(120 110 130 / 38%), 0 8px 8px -4px rgb(120 110 130 / 22%));
-   }
-
-   :global(.themed.theme-light) .tjs-editor :global(.editor-menu) {
-      box-shadow: var(--tjs-editor-toolbar-box-shadow, 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%));
    }
 </style>
