@@ -112,6 +112,8 @@
     */
    export let options = {};
 
+   const s_CM_ALLOWED_LANGUAGES = new Set(['html', 'javascript', 'json', 'markdown', 'plain']);
+
    const application = getContext('#external')?.application;
 
    const applicationActiveWindow = application?.reactive?.storeUIState?.activeWindow ?? writable(globalThis);
@@ -150,11 +152,32 @@
     */
    let initialEditContent = '';
 
+   /**
+    * CM indentation.
+    *
+    * @type {number}
+    */
+   let indent = 0;
+
    /** @type {string} */
    let keyCode;
 
    /** @type {boolean} */
    let keyFocused = false;
+
+   /**
+    * CM language support.
+    *
+    * @type {string}
+    */
+   let language = 'plain';
+
+   /**
+    * CM no wrap option.
+    *
+    * @type {boolean}
+    */
+   let nowrap = false;
 
    /**
     * When the active window changes the editor needs to be saved for better PM / plugin support.
@@ -199,9 +222,36 @@
     !clickToEdit;
 
    /**
+    * CM line indentation.
+    */
+   $:
+   {
+      indent = Number.isInteger(options?.indent) && options?.indent >= 0 && options?.indent <= 8 ? options.indent : 0;
+      if (codeMirrorEl) { codeMirrorEl.indent = indent; }
+   }
+
+   /**
+    * CM line indentation.
+    */
+   $:
+   {
+      language = typeof options?.language === 'string' && s_CM_ALLOWED_LANGUAGES.has(options?.language) ? options.language : 'plain';
+      if (codeMirrorEl) { codeMirrorEl.language = language; }
+   }
+
+   /**
     * Allows another KeyboardEvent.code to be used to activate the editor.
     */
    $: keyCode = typeof options?.keyCode === 'string' ? options.keyCode : 'Enter';
+
+   /**
+    * CM no wrap support.
+    */
+   $:
+   {
+      nowrap = typeof options?.nowrap === 'boolean' ? options.nowrap : false;
+      if (codeMirrorEl) { codeMirrorEl.nowrap = nowrap; }
+   }
 
    /**
     * Respond to changes in `options.document`
@@ -274,7 +324,9 @@
     */
    onMount(() =>
    {
-      // TODO: Setup initial CM web component settings.
+      codeMirrorEl.language = language;
+      codeMirrorEl.indent = indent;
+      codeMirrorEl.nowrap = nowrap;
 
       onContentChanged(content);
 

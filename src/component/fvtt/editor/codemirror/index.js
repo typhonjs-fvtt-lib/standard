@@ -20,7 +20,14 @@ export { default as TJSCodeMirror }   from './TJSCodeMirror.svelte';
  *
  * @property {string}    [fieldName] A field name to load and save to / from associated document. IE `a.b.c`.
  *
+ * @property {number}    [indent=2] A positive integer between 0 and 8. Defines code mirror indentation.
+ *
  * @property {string}    [keyCode='Enter'] Defines the key event code to activate the editor when focused.
+ *
+ * @property {boolean}   [nowrap=false] When true code mirror will not wrap lines.
+ *
+ * @property {string}    [language='plain'] Defines code mirror language support. Options include: `html`,
+ * `javascript`, `json`, `markdown`, `plain`.
  *
  * @property {{ [key: string]: string | null }} [styles] Additional CSS property names and values to set as inline
  * styles. This is useful for dynamically overriding any built in styles and in particular setting CSS variables
