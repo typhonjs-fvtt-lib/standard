@@ -298,7 +298,10 @@
 
          if (cancelled)
          {
-            if (codeMirrorEl) { codeMirrorEl._setValue(initialEditContent); }
+            // There is a possibility that document data / content could have changed externally.
+            const actualContent = initialEditContent !== content ? content : initialEditContent;
+
+            if (codeMirrorEl) { codeMirrorEl._setValue(actualContent); }
 
             initialEditContent = '';
 
@@ -328,7 +331,7 @@
    {
       console.log(`!!! TJSCodeMirror - initEditor`);
 
-      initialEditContent = content;
+      initialEditContent = typeof content === 'string' ? content : '';
 
       editorActive = true;
 
@@ -350,6 +353,8 @@
     */
    function onContentChanged(content)
    {
+      if (typeof content !== 'string') { return; }
+
       console.log(`!!! TJSCodeMirror - onContentChanged - content: `, content);
 
       if (!editorActive && codeMirrorEl)
