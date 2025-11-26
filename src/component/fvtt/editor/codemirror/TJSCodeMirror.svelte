@@ -1,7 +1,7 @@
 <script>
    /**
     * Provides a reactive wrapper for Foundry CodeMirror editor support. Allows editing Foundry document data or
-    * directly from content prop.
+    * directly from `content` prop.
     *
     * ### Props
     * There are no required props, but the following are available to set:
@@ -30,7 +30,7 @@
     * The following CSS variables control the associated styles with the default values:
     *
     * ```
-    * `.editor` HTMLDivElement:
+    * `.tjs-editor` HTMLDivElement:
     * ---------------------------------
     * --tjs-editor-background - none
     * --tjs-editor-border - none
@@ -41,11 +41,11 @@
     * --tjs-editor-transition
     * --tjs-editor-width - 100%
     *
-    * `.editor` HTMLDivElement; properties available when activated:
+    * `.tjs-editor` HTMLDivElement; properties available when activated:
     * ---------------------------------
-    * --tjs-editor-active-box-shadow, unset; Foundry default: 0 0 5px var(--color-shadow-primary)
+    * --tjs-editor-active-box-shadow, unset
     * --tjs-editor-active-outline - unset
-    * --tjs-editor-active-overflow - unset; When inactive the editor overflow is auto; when active overflow is unset.
+    * --tjs-editor-active-overflow - unset
     *
     * `.editor` HTMLDivElement; properties available when inactive, but manually focused:
     * ---------------------------------
@@ -55,32 +55,13 @@
     *
     * `.editor` HTMLDivElement; properties available when inactive, but hovered:
     * ---------------------------------
-    * --tjs-editor-inactive-cursor-hover - text
     * --tjs-editor-inactive-box-shadow-hover - unset
     * --tjs-editor-inactive-outline-hover - unset
-    * --tjs-editor-inactive-user-select-hover - text
-    *
-    * `.editor-content` HTMLDivElement; when editing - the content overflow is set to auto:
-    * ---------------------------------
-    * --tjs-editor-content-overflow - auto
-    * --tjs-editor-content-padding - 0 0 0 0.25em
-    *
-    * `.editor-container` HTMLDivElement; when editing - removes default margins.
-    * ---------------------------------
-    * --tjs-editor-container-margin - 0
     *
     * .editor-edit; Defines the position of the edit button from top / right absolute positioning:
     * ---------------------------------
-    * --tjs-editor-edit-button-right - 5px
-    * --tjs-editor-edit-button-top - 0
-    *
-    * .editor-menu; Defines the toolbar / menu.
-    * ---------------------------------
-    * --tjs-editor-toolbar-background - rgba(0, 0, 0, 0.1)
-    * --tjs-editor-toolbar-border-radius - 6px
-    * --tjs-editor-toolbar-box-shadow - 0 2px 2px -2px rgb(34 47 62 / 10%), 0 8px 8px -4px rgb(34 47 62 / 7%)
-    * --tjs-editor-toolbar-padding - 2px 0
-    * --tjs-editor-toolbar-width - 100%
+    * --tjs-editor-edit-button-right - 3px
+    * --tjs-editor-edit-button-top - 3px
     * ```
     * @componentDocumentation
     */
