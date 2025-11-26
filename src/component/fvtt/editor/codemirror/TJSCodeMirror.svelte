@@ -146,7 +146,7 @@
 
    /**
     * Stores the initial editor content when editing begins. If editing is cancelled the CM web component is updated
-    * w/ this initial value.
+    * w/ this initial value unless content changed externally.
     *
     * @type {string}
     */
@@ -315,7 +315,8 @@
          destroyEditor();
       }
 
-      // TODO: Likely cleanup / destroy TJSDocument here.
+      // Ensure TJSDocument is unlinked.
+      doc.destroy();
    });
 
    /**

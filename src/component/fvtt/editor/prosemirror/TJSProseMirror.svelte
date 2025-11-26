@@ -308,6 +308,9 @@
       {
          destroyEditor();
       }
+
+      // Ensure TJSDocument is unlinked.
+      doc.destroy();
    });
 
    /**
