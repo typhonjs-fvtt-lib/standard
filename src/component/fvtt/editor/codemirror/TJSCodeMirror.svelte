@@ -344,19 +344,6 @@
    }
 
    /**
-    * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
-    */
-   function onClick()
-   {
-      console.log(`!!! TJSCodeMirror - onClick - 0 - clickToEdit: ${clickToEdit}`);
-
-      if (!editorActive && clickToEdit)
-      {
-         initEditor();
-      }
-   }
-
-   /**
     * Separated into a standalone method.
     *
     * @param {string}   content - Content prop.
@@ -457,6 +444,17 @@
    }
 
    /**
+    * Potentially handles initializing the editor when it is not active and `options.clickToEdit` is true.
+    */
+   function onPointerdown()
+   {
+      if (!editorActive && clickToEdit)
+      {
+         initEditor();
+      }
+   }
+
+   /**
     * Saves the editor contents to the associated document or updates content directly.
     */
    function saveEditor()
@@ -492,7 +490,7 @@
      class:click-to-edit={clickToEdit}
      class:editor-active={editorActive}
      use:applyStyles={options?.styles}
-     on:click={onClick}
+     on:pointerdown={onPointerdown}
      on:keydown={onKeydown}
      on:keyup={onKeyup}
      role=textbox
