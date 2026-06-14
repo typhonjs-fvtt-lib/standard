@@ -11,7 +11,7 @@
 
    import { hasSetter } from '#runtime/util/object';
 
-   /** @type {object} */
+   /** @type {TJSGameSettingsWithUI.UISetting.Data} */
    export let setting = void 0;
 
    const store = setting.store;
@@ -37,13 +37,20 @@
    {
       try
       {
-         const value = event?.target?.value;
+         const valueStr = event?.target?.value;
 
+         // Cleaned value w/ type for the associated data field.
+         const value = setting.dataField.clean(valueStr);
+
+         // Validate cleaned value.
          const err = setting.dataField.validate(value, { fallback: false });
          if (err instanceof foundry.data.validation.DataModelValidationFailure)
          {
             // This can raise false positives depending on coercion.
-            // console.warn(err.toString());
+            if (err?.message)
+            {
+               console.warn(`Setting data field (${setting.key}) validation error: ${err.toString()}`);
+            }
 
             // Reset with old value.
             setValue($store);
