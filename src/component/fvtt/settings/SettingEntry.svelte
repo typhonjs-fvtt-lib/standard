@@ -16,7 +16,7 @@
       TJSInputCheckbox,
       TJSSelect }                   from '#standard/component/form';
 
-   /** @type {object} */
+   /** @type {TJSGameSettingsWithUI.UISetting.Data} */
    export let setting = void 0;
 
    const store = setting.store;
