@@ -183,6 +183,7 @@ class FVTTConfigure
             '--tjs-component-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
             '--tjs-component-overlay-background': props?.background ?? 'var(--color-cool-4)',
 
+            '--tjs-content-background': 'hsl(from var(--tjs-component-background) h s calc(l - 2))',
             '--tjs-content-border': '1px solid var(--color-light-6)',
             '--tjs-content-border-thicker': '2px solid var(--color-light-6)',
 
@@ -231,6 +232,7 @@ class FVTTConfigure
             '--tjs-component-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
             '--tjs-component-overlay-background': props?.background ?? 'rgba(0, 0, 0, 0.1)',
 
+            '--tjs-content-background': 'hsl(from var(--tjs-component-background) h s calc(l + 4))',
             '--tjs-content-border': '1px solid var(--color-dark-4)',
             '--tjs-content-border-thicker': '2px solid var(--color-dark-4)',
 
