@@ -29,7 +29,9 @@ class FVTTConfigure
             themeLight: '.themed.theme-light',
 
             // Style patterns.
-            '.tjs-panel-content': 'body .tjs-panel-content'
+            '.tjs-panel-content': 'body .tjs-panel-content',
+            '.tjs-panel-content--flex-col': 'body .tjs-panel-content--flex-col',
+            '.tjs-panel-legend': 'body .tjs-panel-legend'
          }
       });
 
@@ -485,9 +487,10 @@ class FVTTConfigure
        * Root shared variables for style patterns.
        */
       themeDarkRoot.setProperties({
-         // For all panel style patterns.
-         '--tjs-panel-border-radius': '0.25rem',
-         '--tjs-panel-padding': '0.5rem',
+         // For all panel style patterns; use Foundry CSS vars.
+         '--tjs-content-gap': 'var(--spacer-16)',
+         '--tjs-panel-border-radius': 'var(--spacer-8)',
+         '--tjs-panel-padding': 'var(--spacer-16)'
       });
    }
 
@@ -499,12 +502,26 @@ class FVTTConfigure
    static #stylePatterns(manager)
    {
       const panelContent = manager.get('.tjs-panel-content');
+      const panelContentFlexCol = manager.get('.tjs-panel-content--flex-col');
+      const panelLegend = manager.get('.tjs-panel-legend');
 
       panelContent.setProperties({
          background: 'var(--tjs-content-background)',
          border: 'var(--tjs-content-border)',
          'border-radius': 'var(--tjs-panel-border-radius)',
          padding: 'var(--tjs-panel-padding)'
+      });
+
+      panelContentFlexCol.setProperties({
+         display: 'flex',
+         'flex-direction': 'column',
+         'flex-wrap': 'nowrap',
+         gap: 'var(--tjs-content-gap, 1rem)'
+      });
+
+      panelLegend.setProperties({
+         'font-weight': 'bold',
+         'font-size': 'var(--font-size-15)'  // Use Foundry font weight size.
       });
    }
 
