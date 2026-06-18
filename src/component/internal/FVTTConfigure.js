@@ -26,7 +26,10 @@ class FVTTConfigure
             // Ideally `:root` would be used, but Foundry defines dark them CSS vars in `body`. For scoping reasons
             // `body` must be used to make these core vars accessible to TRL CSS vars.
             themeDark: 'body, .themed.theme-dark',
-            themeLight: '.themed.theme-light'
+            themeLight: '.themed.theme-light',
+
+            // Style patterns.
+            '.tjs-panel-content': 'body .tjs-panel-content'
          }
       });
 
@@ -59,6 +62,9 @@ class FVTTConfigure
 
       // All popup / menu components.
       this.#popup(themeDarkRoot, themeLight);
+
+      // Initialize all style patterns.
+      this.#stylePatterns(manager);
 
       // Handle `PopOut!` module hooks to allow applications to pop out to their own browser window ------------------
 
@@ -469,11 +475,36 @@ class FVTTConfigure
       /**
        * Assign all TyphonJS thematic CSS variables.
        */
-
       themeDarkRoot.setProperties({
          // For components w/ transparent background checkered pattern.
          '--tjs-checkerboard-background-dark': 'rgb(205, 205, 205)',
          '--tjs-checkerboard-background-10': `url('data:image/svg+xml;utf8,<svg preserveAspectRatio="none"  viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="5" height="5" fill="transparent" /><rect x="5" y="5" width="5" height="5" fill="transparent" /><rect x="5" y="0" width="5" height="5" fill="white" /><rect x="0" y="5" width="5" height="5" fill="white" /></svg>') 0 0 / 10px 10px, var(--tjs-checkerboard-background-dark, rgb(205, 205, 205))`
+      });
+
+      /**
+       * Root shared variables for style patterns.
+       */
+      themeDarkRoot.setProperties({
+         // For all panel style patterns.
+         '--tjs-panel-border-radius': '0.25rem',
+         '--tjs-panel-padding': '0.5rem',
+      });
+   }
+
+   /**
+    * Initializes various style patterns / global classes across themes.
+    *
+    * @param {StyleManager}   manager - Standard style manager.
+    */
+   static #stylePatterns(manager)
+   {
+      const panelContent = manager.get('.tjs-panel-content');
+
+      panelContent.setProperties({
+         background: 'var(--tjs-content-background)',
+         border: 'var(--tjs-content-border)',
+         'border-radius': 'var(--tjs-panel-border-radius)',
+         padding: 'var(--tjs-panel-padding)'
       });
    }
 
