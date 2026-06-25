@@ -31,6 +31,7 @@ class FVTTConfigure
             // Style patterns.
             '.tjs-panel-content': 'body .tjs-panel-content',
             '.tjs-panel-content--flex-col': 'body .tjs-panel-content--flex-col',
+            '.tjs-panel-content--flex-row': 'body .tjs-panel-content--flex-row',
             '.tjs-panel-legend': 'body .tjs-panel-legend'
          }
       });
@@ -503,6 +504,7 @@ class FVTTConfigure
    {
       const panelContent = manager.get('.tjs-panel-content');
       const panelContentFlexCol = manager.get('.tjs-panel-content--flex-col');
+      const panelContentFlexRow = manager.get('.tjs-panel-content--flex-row');
       const panelLegend = manager.get('.tjs-panel-legend');
 
       panelContent.setProperties({
@@ -515,6 +517,13 @@ class FVTTConfigure
       panelContentFlexCol.setProperties({
          display: 'flex',
          'flex-direction': 'column',
+         'flex-wrap': 'nowrap',
+         gap: 'var(--tjs-content-gap, 1rem)'
+      });
+
+      panelContentFlexRow.setProperties({
+         display: 'flex',
+         'flex-direction': 'row',
          'flex-wrap': 'nowrap',
          gap: 'var(--tjs-content-gap, 1rem)'
       });
