@@ -184,14 +184,20 @@ class FVTTConfigure
             '--tjs-side-slide-layer-item-host-color': 'var(--color-text-primary)',
 
             // Color / theme related.
+            '--_tjs-component-background': `hsl(from ${props?.background ?? 'var(--color-cool-4)'} h s calc(l - 8))`,
             '--tjs-component-background': `hsl(from ${props?.background ?? 'var(--color-cool-4)'} h s calc(l - 8))`,
+            '--_tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l - 2))`,
             '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l - 2))`,
+            '--_tjs-component-background-highlight': `hsl(from ${props?.background ?? 'var(--color-cool-4)'} h s calc(l + 6))`,
             '--tjs-component-background-highlight': `hsl(from ${props?.background ?? 'var(--color-cool-4)'} h s calc(l + 6))`,
             '--tjs-component-border': defaultMenuBorder,
             '--tjs-component-border-thicker': defaultMenuBorderThicker,
+            '--_tjs-component-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
             '--tjs-component-primary-color': propsMenuDark?.color ?? 'var(--color-text-secondary)',
+            '--_tjs-component-overlay-background': props?.background ?? 'var(--color-cool-4)',
             '--tjs-component-overlay-background': props?.background ?? 'var(--color-cool-4)',
 
+            '--_tjs-content-background': 'hsl(from var(--tjs-component-background) h s calc(l - 2))',
             '--tjs-content-background': 'hsl(from var(--tjs-component-background) h s calc(l - 2))',
             '--tjs-content-border': '1px solid var(--color-light-6)',
             '--tjs-content-border-thicker': '2px solid var(--color-light-6)',
@@ -233,14 +239,20 @@ class FVTTConfigure
 
          themeLight.setProperties({
             // Color / theme related.
+            '--_tjs-component-background': `hsl(from ${propsMenuLight?.background ?? '#d9d8c8'} h s calc(l - 4))`,
             '--tjs-component-background': `hsl(from ${propsMenuLight?.background ?? '#d9d8c8'} h s calc(l - 4))`,
+            '--_tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l + 2))`,
             '--tjs-component-background-alt': `hsl(from var(--tjs-component-background) h s calc(l + 2))`,
+            '--_tjs-component-background-highlight': propsMenuItemLight?.background ?? '#f0f0e0',
             '--tjs-component-background-highlight': propsMenuItemLight?.background ?? '#f0f0e0',
             '--tjs-component-border': inputBorder,
             '--tjs-component-border-thicker': inputBorderThicker,
+            '--_tjs-component-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
             '--tjs-component-primary-color': propsMenuLight?.color ?? 'var(--color-text-secondary)',
+            '--_tjs-component-overlay-background': props?.background ?? 'rgba(0, 0, 0, 0.1)',
             '--tjs-component-overlay-background': props?.background ?? 'rgba(0, 0, 0, 0.1)',
 
+            '--_tjs-content-background': 'hsl(from var(--tjs-component-background) h s calc(l + 4))',
             '--tjs-content-background': 'hsl(from var(--tjs-component-background) h s calc(l + 4))',
             '--tjs-content-border': '1px solid var(--color-dark-4)',
             '--tjs-content-border-thicker': '2px solid var(--color-dark-4)',
