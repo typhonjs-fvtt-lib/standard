@@ -488,10 +488,10 @@ class FVTTConfigure
        * Root shared variables for style patterns.
        */
       themeDarkRoot.setProperties({
-         // For all panel style patterns; use Foundry CSS vars.
-         '--tjs-content-gap': 'var(--spacer-16)',
-         '--tjs-panel-border-radius': 'var(--spacer-8)',
-         '--tjs-panel-padding': 'var(--spacer-16)'
+         // For all panel style patterns; use Foundry CSS vars. `--spacer-XXX` added in v14.
+         '--tjs-content-gap': 'var(--spacer-16, 1rem)',
+         '--tjs-panel-border-radius': 'var(--spacer-8, 0.5rem)',
+         '--tjs-panel-padding': 'var(--spacer-16, 1rem)'
       });
    }
 
