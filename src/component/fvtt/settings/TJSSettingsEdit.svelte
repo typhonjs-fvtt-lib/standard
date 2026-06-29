@@ -144,6 +144,8 @@
       --tjs-folder-contents-border-top-open: var(--tjs-settings-edit-folder-border-top-open, var(--tjs-content-border-thicker));
       --tjs-folder-contents-margin: none;
       --tjs-folder-contents-padding: none;
+      --tjs-folder-summary-background: var(--tjs-settings-edit-folder-summary-background, inherit);
+      --tjs-folder-summary-background-open: var(--tjs-settings-edit-folder-summary-background-open, inherit);
       --tjs-folder-summary-width: 100%;
       --tjs-folder-summary-margin: var(--tjs-settings-edit-folder-summary-margin, 0);
 
@@ -157,9 +159,9 @@
    }
 
    section.tjs-settings-edit-section {
-      background: var(--tjs-settings-edit-section-background, var(--tjs-component-background));
+      background: var(--tjs-settings-edit-section-background, var(--tjs-content-background));
       border: var(--tjs-settings-edit-section-border, var(--tjs-content-border-thicker));
-      border-radius: var(--tjs-settings-edit-section-border-radius, var(--tjs-component-border-radius));
+      border-radius: var(--tjs-settings-edit-section-border-radius, var(--tjs-panel-border-radius));
    }
 
    section.tjs-settings-edit-content {

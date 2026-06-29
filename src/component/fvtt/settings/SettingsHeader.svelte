@@ -23,7 +23,7 @@
 
       padding-right: 1rem;
 
-      background: var(--tjs-settings-edit-section-background, var(--tjs-component-background-alt));
+      background: var(--tjs-settings-menu-background, var(--tjs-component-background-alt));
       border-bottom: var(--tjs-component-border);
       filter: drop-shadow(0px 3px 3px var(--tjs-component-color-shadow));
    }
