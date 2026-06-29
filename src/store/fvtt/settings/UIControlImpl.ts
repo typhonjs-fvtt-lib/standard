@@ -189,6 +189,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
    #destroy(settings: TJSGameSettingsWithUI.Data): void
    {
       let requiresClientReload: boolean | undefined = false;
+      let requiresUserReload: boolean | undefined = false;
       let requiresWorldReload: boolean | undefined = false;
 
       if (Array.isArray(settings.topLevel))
@@ -199,6 +200,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             if (current === setting.initialValue) { continue; }
 
             requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
+            requiresUserReload ||= (setting.scope === 'user') && setting.requiresReload;
             requiresWorldReload ||= (setting.scope === 'world') && setting.requiresReload;
          }
       }
@@ -215,13 +217,17 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
                   if (current === setting.initialValue) { continue; }
 
                   requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
+                  requiresUserReload ||= (setting.scope === 'user') && setting.requiresReload;
                   requiresWorldReload ||= (setting.scope === 'world') && setting.requiresReload;
                }
             }
          }
       }
 
-      if (requiresClientReload || requiresWorldReload) { this.#reloadConfirm({ world: requiresWorldReload }); }
+      if (requiresClientReload || requiresUserReload || requiresWorldReload)
+      {
+         this.#reloadConfirm({ world: requiresWorldReload });
+      }
 
       this.#showSettings = false;
       this.#showSettingsSet(this.#showSettings);
@@ -530,8 +536,6 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
       let title = localize('SETTINGS.ReloadPromptTitle');
       let label = localize('SETTINGS.ReloadPromptBody');
 
-      // Foundry v9 doesn't have the reload lang keys, so substitute just for English translation.
-      // TODO: FOUNDRY_V9 - remove when support for v9 is dropped.
       title = title !== 'SETTINGS.ReloadPromptTitle' ? title : 'Reload Application?';
       label = label !== 'SETTINGS.ReloadPromptBody' ? label :
        'Some of the changed settings require a reload of the application to take effect. Would you like to reload now?';
