@@ -63,7 +63,7 @@
 
    import SettingEntry           from './SettingEntry.svelte';
    import SettingEntryDataField  from './SettingEntryDataField.svelte';
-   import SettingsHeader         from './SettingsHeader.svelte';
+   import SettingsMenu           from './SettingsMenu.svelte';
 
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
    export let settings = void 0;
@@ -86,7 +86,7 @@
 <main class="tjs-settings-edit tjs-content-vars"
       use:applyStyles={styles}
       use:applyVisualEdgeInsets={{ action: 'padTarget', parent: { stackingContext: true } }}>
-   <SettingsHeader />
+   <SettingsMenu />
    <TJSScrollContainer scrollTop={uiSettings.storeScrollbar}>
       {#if uiSettings.topLevel.length}
          <section class="tjs-settings-edit-section tjs-settings-edit-content">
