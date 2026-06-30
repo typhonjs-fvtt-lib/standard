@@ -20,13 +20,19 @@
 
    let activeFieldEl;
 
+   // Tracks whether the activeEl is a custom web component.
+   let isCustomEl = false;
+
    onMount(() =>
    {
       if (setting.dataFieldEl)
       {
          formEl.appendChild(setting.dataFieldEl);
          const activeEl = formEl.querySelector(`[name="${setting.id}"]`);
+
          if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
+
+         if (typeof activeEl?.tagName === 'string' && activeEl.tagName.includes('-')) { isCustomEl = true; }
       }
    });
 
@@ -37,6 +43,12 @@
    {
       try
       {
+         // Foundry custom web components do not set event target type for change events. Ignore any internal change
+         // events that are specifically from input events internal to these web components.
+         // For instance for the HueField / internal range input we must ignore value changes from the release of the
+         // range slider.
+         if (isCustomEl && event?.target?.type !== void 0) { return; }
+
          const valueStr = event?.target?.value;
 
          // Cleaned value w/ type for the associated data field.
