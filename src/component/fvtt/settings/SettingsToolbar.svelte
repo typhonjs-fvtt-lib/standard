@@ -1,8 +1,12 @@
 <script>
    import { TJSIconButton } from '#standard/component/button';
 
+   /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI.Data} */
+   export let uiSettings;
+
    const resetButton = {
-      icon: 'fas fa-arrow-rotate-left'
+      icon: 'fas fa-arrow-rotate-left',
+      onPress: () => uiSettings?.resetCurrent()
    }
 </script>
 
