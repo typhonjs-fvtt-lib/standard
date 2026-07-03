@@ -197,46 +197,9 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
     */
    #destroy(settings: TJSGameSettingsWithUI.Data): void
    {
-      let requiresClientReload: boolean | undefined = false;
-      let requiresUserReload: boolean | undefined = false;
-      let requiresWorldReload: boolean | undefined = false;
+      const { requiresUserReload, requiresWorldReload } = this.#requireReload(settings.allSettings)
 
-      if (Array.isArray(settings.topLevel))
-      {
-         for (const setting of settings.topLevel)
-         {
-            const current: unknown = globalThis.game.settings.get(setting.namespace, setting.key);
-            if (current === setting.initialValue) { continue; }
-
-            requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
-            requiresUserReload ||= (setting.scope === 'user') && setting.requiresReload;
-            requiresWorldReload ||= (setting.scope === 'world') && setting.requiresReload;
-         }
-      }
-
-      if (Array.isArray(settings.folders))
-      {
-         for (const folder of settings.folders)
-         {
-            if (Array.isArray(folder.settings))
-            {
-               for (const setting of folder.settings)
-               {
-                  const current = globalThis.game.settings.get(setting.namespace, setting.key);
-                  if (current === setting.initialValue) { continue; }
-
-                  requiresClientReload ||= (setting.scope === 'client') && setting.requiresReload;
-                  requiresUserReload ||= (setting.scope === 'user') && setting.requiresReload;
-                  requiresWorldReload ||= (setting.scope === 'world') && setting.requiresReload;
-               }
-            }
-         }
-      }
-
-      if (requiresClientReload || requiresUserReload || requiresWorldReload)
-      {
-         this.#reloadConfirm({ world: requiresWorldReload });
-      }
+      if (requiresUserReload || requiresWorldReload) { this.#reloadConfirm({ world: requiresWorldReload }); }
 
       this.#showSettings = false;
       this.#showSettingsSet(this.#showSettings);
@@ -572,6 +535,33 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
       // Reload locally.
       window.location.reload();
+   }
+
+   /**
+    * Checks given UISetting data if any of the given settings require a reload of Foundry.
+    *
+    * @param settingData - Settings to verify.
+    *
+    * @returns Object containing `requiresUserReload` / `requiresWorldReload`.
+    */
+   #requireReload(settingData: TJSGameSettingsWithUI.UISetting.Data[]):
+    { requiresUserReload: boolean, requiresWorldReload: boolean }
+   {
+      let requiresUserReload: boolean | undefined = false;
+      let requiresWorldReload: boolean | undefined = false;
+
+      for (const setting of settingData)
+      {
+         if (!setting.requiresReload) { continue; }
+
+         const current: unknown = globalThis.game.settings.get(setting.namespace, setting.key);
+         if (current === setting.initialValue) { continue; }
+
+         requiresUserReload ||= (setting.scope === 'client' || setting.scope === 'user');
+         requiresWorldReload ||= (setting.scope === 'world');
+      }
+
+      return { requiresUserReload, requiresWorldReload };
    }
 
    /**
