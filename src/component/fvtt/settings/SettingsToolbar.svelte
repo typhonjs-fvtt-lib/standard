@@ -4,14 +4,22 @@
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI.Data} */
    export let uiSettings;
 
-   const resetButton = {
+   const resetCurrent = {
+      icon: 'fas fa-clock-rotate-left',
+      tooltip: 'Reset Current Changes',
+      onPress: () => uiSettings?.resetCurrent({ confirm: true })
+   }
+
+   const resetDefault = {
       icon: 'fas fa-arrow-rotate-left',
-      onPress: () => uiSettings?.resetCurrent()
+      tooltip: 'Reset To Defaults',
+      onPress: () => uiSettings?.resetDefault({ confirm: true })
    }
 </script>
 
 <section>
-   <TJSIconButton button={resetButton} />
+   <TJSIconButton button={resetCurrent} />
+   <TJSIconButton button={resetDefault} />
 </section>
 
 <style lang=scss>
@@ -19,16 +27,15 @@
       --tjs-icon-button-diameter: 1.5rem;
 
       display: flex;
-      justify-content: end;
+      justify-content: start;
       align-items: center;
       height: 2rem;
       min-height: 2rem;
-      z-index: 10;
+      padding: 0 var(--tjs-content-gap-half, 0.5rem);
+      gap: 0.75rem;
 
-      padding-right: 1rem;
-
-      background: var(--tjs-settings-menu-background, var(--tjs-component-background-alt));
-      border-bottom: var(--tjs-component-border);
-      filter: drop-shadow(0px 3px 3px var(--tjs-component-color-shadow));
+      background: var(--tjs-settings-edit-toolbar-background, var(--tjs-component-background-alt));
+      border-bottom: var(--tjs-settings-edit-toolbar-border-bottom, var(--tjs-component-border));
+      filter: var(--tjs-settings-edit-toolbar-filter, drop-shadow(0px 3px 3px var(--tjs-component-color-shadow)));
    }
 </style>

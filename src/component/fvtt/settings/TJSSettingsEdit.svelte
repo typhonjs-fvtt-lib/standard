@@ -92,7 +92,7 @@
       {#if uiSettings.topLevel.length}
          <section class="tjs-settings-edit-section tjs-settings-edit-content">
             {#each uiSettings.topLevel as setting (setting.key)}
-               {#if setting.dataFieldEl}
+               {#if setting.dataField}
                   <SettingEntryDataField {setting} />
                {:else}
                   <SettingEntry {setting} />
@@ -105,7 +105,7 @@
             <TJSSvgFolder label={folder.label} store={folder.store}>
                <section class=tjs-settings-edit-content>
                   {#each folder.settings as setting (setting.key)}
-                     {#if setting.dataFieldEl}
+                     {#if setting.dataField}
                         <SettingEntryDataField {setting} />
                      {:else}
                         <SettingEntry {setting} />

@@ -92,6 +92,11 @@ declare namespace TJSGameSettingsWithUI {
       folders: Data.Folder[];
 
       /**
+       * All settings regardless of top level or in folders.
+       */
+      allSettings: UISetting.Data[];
+
+      /**
        * Top level settings data.
        */
       topLevel: UISetting.Data[];
@@ -109,7 +114,29 @@ declare namespace TJSGameSettingsWithUI {
       /**
        * The bound destroy callback function for received of `TJSGameSettingsWithUI.Data` instance.
        */
-      destroy?: Function;
+      destroy?: () => void;
+
+      /**
+       * Resets any current changes made to settings since the UIControl data has been initialized.
+       *
+       * @param options - Options.
+       *
+       * @param options.confirm - When true show a confirmation dialog.
+       *
+       * @returns Whether settings were reset.
+       */
+      resetCurrent?: (options: { confirm?: boolean }) => Promise<boolean>;
+
+      /**
+       * Resets all settings to initial default values.
+       *
+       * @param options - Options.
+       *
+       * @param options.confirm - When true show a confirmation dialog.
+       *
+       * @returns Whether settings were reset.
+       */
+      resetDefault?: (options: { confirm?: boolean }) => Promise<boolean>;
    };
 
    export namespace Options {
@@ -191,15 +218,40 @@ declare namespace TJSGameSettingsWithUI {
          name: string;
          hint: string;
          type: string;
+
+         store: MinimalWritable<unknown>;
+
+         /**
+          * Default value of setting.
+          */
+         defaultValue: any;
+
+         /**
+          * Initial value of setting when UISetting data created.
+          */
+
+         initialValue: any;
+
+         scope: 'client' | 'user' | 'world';
+
+         /**
+          * Does the setting require a reload of the window?
+          */
+         requiresReload?: boolean;
+
+         /**
+          * Creates the associated DataField form element.
+          */
+         createDataFieldEl?: (initialValue?: any) => HTMLElement;
+
+         /**
+          * Any associated DataField.
+          */
+         dataField?: fvtt.DataField;
+
          componentType: string;
          filePicker?: string;
          range?: { min: number, max: number, step: number };
-         store: MinimalWritable<unknown>;
-         initialValue: any;
-         scope: 'client' | 'user' | 'world';
-         requiresReload?: boolean;
-         dataField?: object;
-         dataFieldEl?: HTMLElement;
          buttonData?: ButtonData;
          inputData?: InputData;
          selectData?: SelectData;

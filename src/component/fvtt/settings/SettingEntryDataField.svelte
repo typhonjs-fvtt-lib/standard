@@ -12,7 +12,7 @@
    import { hasSetter } from '#runtime/util/object';
 
    /** @type {TJSGameSettingsWithUI.UISetting.Data} */
-   export let setting = void 0;
+   export let setting;
 
    const store = setting.store;
 
@@ -25,14 +25,22 @@
 
    onMount(() =>
    {
-      if (setting.dataFieldEl)
+      if (setting.dataField)
       {
-         formEl.appendChild(setting.dataFieldEl);
-         const activeEl = formEl.querySelector(`[name="${setting.id}"]`);
+         const dataFieldEl = setting.createDataFieldEl($store);
 
-         if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
+         // Use rAF to all element to finish creation.
+         requestAnimationFrame(() =>
+         {
+            formEl.appendChild(dataFieldEl);
 
-         if (typeof activeEl?.tagName === 'string' && activeEl.tagName.includes('-')) { isCustomEl = true; }
+            const activeEl = formEl.querySelector(`[name="${setting.id}"]`);
+
+            if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
+
+            // Check if root element is a compound Foundry web component.
+            if (typeof activeEl?.tagName === 'string' && activeEl.tagName.includes('-')) { isCustomEl = true; }
+         })
       }
    });
 
@@ -85,6 +93,8 @@
     */
    function setValue(uncleanValue)
    {
+      if (!activeFieldEl) { return; }
+
       try
       {
          const value = setting.dataField.clean(uncleanValue);
@@ -94,19 +104,22 @@
          const err = setting.dataField.validate(value, { fallback: false });
          if (!(err instanceof foundry.data.validation.DataModelValidationFailure))
          {
-            if (typeof activeFieldEl._setValue === 'function')
+            if (typeof activeFieldEl?._setValue === 'function')
             {
                activeFieldEl._setValue(value);
             }
             else
             {
-               activeFieldEl.value = value;
+               activeFieldEl.value = value ?? '';
             }
 
-            if (typeof activeFieldEl._refresh === 'function') { activeFieldEl._refresh(); }
+            if (typeof activeFieldEl?._refresh === 'function') { activeFieldEl._refresh(); }
          }
       }
-      catch { /**/ }
+      catch (err)
+      {
+         console.warn(err);
+      }
    }
 </script>
 <form bind:this={formEl}

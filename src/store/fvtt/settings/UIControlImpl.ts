@@ -171,11 +171,20 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
    create(options?: TJSGameSettingsWithUI.Options.Create): TJSGameSettingsWithUI.Data
    {
       const settings: TJSGameSettingsWithUI.Data = this.#parseSettings(options);
-      const destroy: Function = (): void => this.#destroy(settings);
+
+      const destroy: TJSGameSettingsWithUI.Data['destroy'] = (): void => this.#destroy(settings);
+
+      const resetCurrent: TJSGameSettingsWithUI.Data['resetCurrent'] =
+       (options): Promise<boolean> => this.#resetCurrent(settings, options);
+
+      const resetDefault: TJSGameSettingsWithUI.Data['resetDefault'] =
+       (options): Promise<boolean> => this.#resetDefault(settings, options);
 
       return {
          ...settings,
-         destroy
+         destroy,
+         resetCurrent,
+         resetDefault
       };
    }
 
@@ -346,13 +355,14 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
          const store: MinimalWritable<unknown> = this.#settings.getStore(setting.key)!;
 
+         const defaultValue = setting.options.default;
          const initialValue = globalThis.game.settings.get(setting.namespace, setting.key);
 
          let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
          let selectData: TJSGameSettingsWithUI.UISetting.SelectData | undefined;
 
-         let dataField: object | undefined;
-         let dataFieldEl: HTMLElement | undefined = void 0;
+         let dataField: fvtt.DataField | undefined;
+         let createDataFieldEl: TJSGameSettingsWithUI.UISetting.Data['createDataFieldEl'] | undefined;
 
          let componentType: string = 'text';
 
@@ -379,19 +389,25 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          {
             try
             {
-               const groupOptions = {
-                  rootId: id,
-                  label: setting.options.name,
-                  hint: setting.options.hint,
-                  units: setting.options.units
-               }
-
-               dataFieldEl = setting.options.type.toFormGroup(groupOptions, {value: initialValue});
                dataField = setting.options.type;
 
-               if (!CrossRealm.browser.isHTMLElement(dataFieldEl))
+               // DataField element creation function.
+               createDataFieldEl = (currentValue = initialValue) =>
                {
-                  console.error(`Unable to create form element for key: ${setting.key}`);
+                  const groupOptions = {
+                     rootId: id,
+                     label: setting.options.name,
+                     hint: setting.options.hint,
+                     units: setting.options.units
+                  }
+
+                  return setting.options.type.toFormGroup(groupOptions, { value: currentValue });
+               }
+
+               // Ensure the data field element can be created.
+               if (!CrossRealm.browser.isHTMLElement(createDataFieldEl()))
+               {
+                  console.error(`Unable to create data field form element for key: ${setting.key}`);
                   continue;
                }
             }
@@ -438,15 +454,16 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             filePicker,
             range,
             store,
+            defaultValue,
             initialValue,
             scope: setting.options.scope,
             requiresReload: typeof setting.options.requiresReload === 'boolean' ? setting.options.requiresReload :
              false,
             buttonData,
+            createDataFieldEl,
             dataField,
-            dataFieldEl,
             inputData,
-            selectData
+            selectData,
          });
       }
 
@@ -524,6 +541,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
       }
 
       return {
+         allSettings: uiSettings,
          storeScrollbar,
          topLevel,
          folders,
@@ -554,6 +572,64 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
       // Reload locally.
       window.location.reload();
+   }
+
+   /**
+    * Resets any current changes made to settings since the UIControl data has been initialized.
+    */
+   async #resetCurrent(settings: TJSGameSettingsWithUI.Data, { confirm = false }): Promise<boolean>
+   {
+      if (confirm)
+      {
+         let title = localize('TYPHONJS.TJSGameSettingsUI.resetCurrent.title');
+         let label = localize('TYPHONJS.TJSGameSettingsUI.resetCurrent.label');
+
+         title = title !== 'TYPHONJS.TJSGameSettingsUI.resetCurrent.title' ? title : 'Reset Current Changes?';
+         label = label !== 'TYPHONJS.TJSGameSettingsUI.resetCurrent.label' ? label :
+          'Reset current changes since the game settings panel has been activated?';
+
+         const reset = await TJSDialog.confirm({
+            modal: true,
+            draggable: false,
+            title,
+            content: `<p>${label}</p>`
+         });
+
+         if (!reset) { return false; }
+      }
+
+      for (const setting of settings.allSettings) { setting.store.set(setting.initialValue); }
+
+      return true;
+   }
+
+   /**
+    * Resets all settings to initial default values.
+    */
+   async #resetDefault(settings: TJSGameSettingsWithUI.Data, { confirm = false }): Promise<boolean>
+   {
+      if (confirm)
+      {
+         let title = localize('TYPHONJS.TJSGameSettingsUI.resetDefault.title');
+         let label = localize('TYPHONJS.TJSGameSettingsUI.resetDefault.label');
+
+         title = title !== 'TYPHONJS.TJSGameSettingsUI.resetDefault.title' ? title : 'Reset Defaults?';
+         label = label !== 'TYPHONJS.TJSGameSettingsUI.resetDefault.label' ? label :
+          'Reset all settings to default values?';
+
+         const reset = await TJSDialog.confirm({
+            modal: true,
+            draggable: false,
+            title,
+            content: `<p>${label}</p>`
+         });
+
+         if (!reset) { return false; }
+      }
+
+      for (const setting of settings.allSettings) { setting.store.set(setting.defaultValue); }
+
+      return true;
    }
 
    /**
