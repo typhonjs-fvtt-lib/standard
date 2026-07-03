@@ -81,33 +81,29 @@
    /**
     * Update value of active data field element after data validation.
     *
-    * @param {unknown}  value - Value to set.
+    * @param {unknown}  uncleanValue - Uncleaned value to set.
     */
-   function setValue(value)
+   function setValue(uncleanValue)
    {
       try
       {
+         const value = setting.dataField.clean(uncleanValue);
+
          if (activeFieldEl?.value === value) { return; }
 
-         // The Foundry data validators work with strings, so try the `toString` value first.
-         // For instance the `Color` special Foundry / number won't validate unless `toString` is used.
-         if (typeof value?.toString === 'function')
-         {
-            const strValue = value.toString();
-
-            const err = setting.dataField.validate(strValue, { fallback: false });
-            if (!(err instanceof foundry.data.validation.DataModelValidationFailure))
-            {
-               activeFieldEl.value = strValue;
-               return;
-            }
-         }
-
-         // Fallback attempt at straight validation.
          const err = setting.dataField.validate(value, { fallback: false });
          if (!(err instanceof foundry.data.validation.DataModelValidationFailure))
          {
-            activeFieldEl.value = value;
+            if (typeof activeFieldEl._setValue === 'function')
+            {
+               activeFieldEl._setValue(value);
+            }
+            else
+            {
+               activeFieldEl.value = value;
+            }
+
+            if (typeof activeFieldEl._refresh === 'function') { activeFieldEl._refresh(); }
          }
       }
       catch { /**/ }
