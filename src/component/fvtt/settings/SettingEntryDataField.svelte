@@ -16,7 +16,7 @@
 
    const store = setting.store;
 
-   let formEl;
+   let divEl;
 
    let activeFieldEl;
 
@@ -32,9 +32,9 @@
          // Use rAF to all element to finish creation.
          requestAnimationFrame(() =>
          {
-            formEl.appendChild(dataFieldEl);
+            divEl.appendChild(dataFieldEl);
 
-            const activeEl = formEl.querySelector(`[name="${setting.id}"]`);
+            const activeEl = divEl.querySelector(`[name="${setting.id}"]`);
 
             if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
 
@@ -122,8 +122,7 @@
       }
    }
 </script>
-<form bind:this={formEl}
+<div bind:this={divEl}
       class='standard-form'
-      on:change|preventDefault|stopPropagation={onChange}
-      on:submit|preventDefault|stopPropagation={() => null}>
-</form>
+      on:change|preventDefault|stopPropagation={onChange}>
+</div>
