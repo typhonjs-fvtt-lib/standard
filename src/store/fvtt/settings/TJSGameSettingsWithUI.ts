@@ -215,8 +215,11 @@ declare namespace TJSGameSettingsWithUI {
          namespace: string;
          folder?: string;
          key: string;
+
          name: string;
          hint: string;
+         units: string;
+
          type: string;
 
          store: MinimalWritable<unknown>;
@@ -240,14 +243,9 @@ declare namespace TJSGameSettingsWithUI {
          requiresReload?: boolean;
 
          /**
-          * Creates the associated DataField form element.
-          */
-         createDataFieldEl?: (initialValue?: any) => HTMLElement;
-
-         /**
           * Any associated DataField.
           */
-         dataField?: fvtt.DataField;
+         datafield?: fvtt.DataField;
 
          componentType: string;
          filePicker?: string;

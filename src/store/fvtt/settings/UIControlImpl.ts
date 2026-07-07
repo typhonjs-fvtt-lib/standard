@@ -324,8 +324,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
          let selectData: TJSGameSettingsWithUI.UISetting.SelectData | undefined;
 
-         let dataField: fvtt.DataField | undefined;
-         let createDataFieldEl: TJSGameSettingsWithUI.UISetting.Data['createDataFieldEl'] | undefined;
+         let datafield: fvtt.DataField | undefined;
 
          let componentType: string = 'text';
 
@@ -352,27 +351,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          {
             try
             {
-               dataField = setting.options.type;
-
-               // DataField element creation function.
-               createDataFieldEl = (currentValue = initialValue) =>
-               {
-                  const groupOptions = {
-                     rootId: id,
-                     label: setting.options.name,
-                     hint: setting.options.hint,
-                     units: setting.options.units
-                  }
-
-                  return setting.options.type.toFormGroup(groupOptions, { value: currentValue });
-               }
-
-               // Ensure the data field element can be created.
-               if (!CrossRealm.browser.isHTMLElement(createDataFieldEl()))
-               {
-                  console.error(`Unable to create data field form element for key: ${setting.key}`);
-                  continue;
-               }
+               datafield = setting.options.type;
             }
             catch (err: unknown)
             {
@@ -414,18 +393,17 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             hint: localize(setting.options?.hint ?? ''),
             units: localize(setting.options?.units ?? ''),
             type,
-            componentType,
-            filePicker,
-            range,
             store,
             defaultValue,
             initialValue,
             scope: setting.options.scope,
             requiresReload: typeof setting.options.requiresReload === 'boolean' ? setting.options.requiresReload :
              false,
+            datafield,
+            componentType,
+            filePicker,
+            range,
             buttonData,
-            createDataFieldEl,
-            dataField,
             inputData,
             selectData,
          });

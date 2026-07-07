@@ -60,9 +60,9 @@
    import { isObject }           from '#runtime/util/object';
 
    import { TJSSvgFolder }       from '#standard/component/folder';
+   import { TJSDataFieldGroup }  from '#standard/component/fvtt/datafield';
 
    import SettingEntry           from './SettingEntry.svelte';
-   import SettingEntryDataField  from './SettingEntryDataField.svelte';
    import SettingsToolbar        from './SettingsToolbar.svelte';
 
    /** @type {import('#standard/store/fvtt/settings').TJSGameSettingsWithUI} */
@@ -92,8 +92,8 @@
       {#if uiSettings.topLevel.length}
          <section class="tjs-settings-edit-section tjs-settings-edit-content">
             {#each uiSettings.topLevel as setting (setting.key)}
-               {#if setting.dataField}
-                  <SettingEntryDataField {setting} />
+               {#if setting.datafield}
+                  <TJSDataFieldGroup datafield={setting.datafield} groupConfig={{ rootId: setting.id, label: setting.name, hint: setting.hint, units: setting.units }} store={setting.store} />
                {:else}
                   <SettingEntry {setting} />
                {/if}
@@ -105,8 +105,8 @@
             <TJSSvgFolder label={folder.label} store={folder.store}>
                <section class=tjs-settings-edit-content>
                   {#each folder.settings as setting (setting.key)}
-                     {#if setting.dataField}
-                        <SettingEntryDataField {setting} />
+                     {#if setting.datafield}
+                        <TJSDataFieldGroup datafield={setting.datafield} groupConfig={{ rootId: setting.id, label: setting.name, hint: setting.hint, units: setting.units }} store={setting.store} />
                      {:else}
                         <SettingEntry {setting} />
                      {/if}
