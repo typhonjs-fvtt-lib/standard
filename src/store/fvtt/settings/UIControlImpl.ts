@@ -412,6 +412,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             key: setting.key,
             name: localize(setting.options?.name ?? ''),
             hint: localize(setting.options?.hint ?? ''),
+            units: localize(setting.options?.units ?? ''),
             type,
             componentType,
             filePicker,

@@ -36,7 +36,12 @@
 <section class=tjs-settings-edit-entry>
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>
-       <span class=label>{setting.name}</span>
+       <span class=label>
+          {setting.name}
+          {#if setting.units}
+             <span class=units>({setting.units})</span>
+          {/if}
+       </span>
        <span class=content class:checkbox={setting.componentType === 'checkbox'}>
         {#if setting.componentType === 'checkbox'}
             <TJSInputCheckbox {store} />
@@ -84,6 +89,11 @@
        font-size: var(--tjs-settings-edit-entry-label-font-size, inherit);
        font-weight: bold;
        line-height: var(--tjs-settings-edit-entry-label-line-height, var(--input-height));
+    }
+
+    .units {
+       color: var(--tjs-settings-edit-entry-units-color, var(--color-text-subtle));
+       font-size: var(--tjs-settings-edit-entry-units-font-size, var(--font-size-12));
     }
 
     p {
