@@ -39,15 +39,15 @@
    {
       if (datafield)
       {
-         const datafieldEl = datafield.toFormGroup(groupConfig,
+         const formgroupEl = datafield.toFormGroup(groupConfig,
           Object.assign({}, inputConfig ?? {}, { value: $store }));
 
          // Use rAF to all element to finish creation.
          requestAnimationFrame(() =>
          {
-            divEl.appendChild(datafieldEl);
+            divEl.appendChild(formgroupEl);
 
-            const activeEl = divEl.querySelector(`[name="${config.rootId}"]`);
+            const activeEl = divEl.querySelector(`[name="${groupConfig.rootId}"]`);
 
             if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
 

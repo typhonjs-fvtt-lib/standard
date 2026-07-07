@@ -9,8 +9,6 @@
     */
    import { onMount }   from '#svelte';
 
-   import { hasSetter } from '#runtime/util/object';
-
    /** @type {fvtt.DataField} */
    export let datafield;
 
@@ -38,12 +36,13 @@
          {
             divEl.appendChild(datafieldEl);
 
-            const activeEl = divEl.querySelector(`[name="${config.rootId}"]`);
-
-            if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
+            activeFieldEl = datafieldEl;
 
             // Check if root element is a compound Foundry web component.
-            if (typeof activeEl?.tagName === 'string' && activeEl.tagName.includes('-')) { isCustomEl = true; }
+            if (typeof activeFieldEl?.tagName === 'string' && activeFieldEl.tagName.includes('-'))
+            {
+               isCustomEl = true;
+            }
          })
       }
    });
