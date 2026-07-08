@@ -67,6 +67,13 @@
    let containerTag = 'div';
 
    /**
+    * Defines an error message to display inline when misconfigured.
+    *
+    * @type {string | undefined}
+    */
+   let errorMessage;
+
+   /**
     * Tracks whether the activeFieldEl is a custom web component.
     *
     * @type {boolean}
@@ -84,6 +91,8 @@
 
       console.log(`!!! TJSDataFieldInput - $datafield`)
 
+      errorMessage = void 0;
+
       containerTag = (datafield instanceof foundry.data.fields.JavaScriptField) ||
        (datafield instanceof foundry.data.fields.JSONField) ? 'form' : 'div';
 
@@ -96,6 +105,8 @@
 
       console.log(`!!! TJSDataFieldInput - $inputConfig`)
 
+      errorMessage = void 0;
+
       loadEl = true;
    }
 
@@ -104,6 +115,8 @@
        isMinimalWritableStore(store) ? store : writable(void 0);
 
       console.log(`!!! TJSDataFieldInput - $store`)
+
+      errorMessage = void 0;
 
       loadEl = true;
    }
@@ -136,6 +149,16 @@
       if (datafield)
       {
          let currentValue = $store;
+
+         errorMessage = void 0;
+
+         // Detect if the given DataField has an input element.
+         if (!datafield.constructor.hasFormSupport)
+         {
+            resetContainer();
+            errorMessage = `No input element for ${datafield.constructor.name}`;
+            return;
+         }
 
          // Validate current value and reset to initial value from data field as necessary.
          const err = datafield.validate(currentValue, { fallback: false });
@@ -175,16 +198,12 @@
          }
          else
          {
-            activeFieldEl = void 0;
-            containerEl.replaceChildren();
-            $store = void 0;
+            resetContainer();
          }
       }
       else
       {
-         activeFieldEl = void 0;
-         containerEl.replaceChildren();
-         $store = void 0;
+         resetContainer();
       }
    }
 
@@ -243,6 +262,13 @@
       }
    }
 
+   function resetContainer()
+   {
+      activeFieldEl = void 0;
+      containerEl?.replaceChildren();
+      $store = void 0;
+   }
+
    /**
     * Update value of active DataField input element after data validation.
     *
@@ -294,6 +320,21 @@
    }
 </script>
 
-<!-- The core `code-mirror` component specifically searches for the closest `form` -->
-<svelte:element this={containerTag} bind:this={containerEl} on:change|preventDefault|stopPropagation={onChange}>
-</svelte:element>
+{#if errorMessage}
+<div class="tjs-panel-content tjs-panel-content--flex-row tjs-content-error">
+   {errorMessage}
+</div>
+{:else}
+   <!-- The core `code-mirror` component specifically searches for the closest `form` -->
+   <svelte:element this={containerTag} bind:this={containerEl} on:change|preventDefault|stopPropagation={onChange}>
+   </svelte:element>
+{/if}
+
+<style lang=css>
+   .tjs-content-error {
+      background: var(--tjs-content-error-background);
+      border-color: var(--tjs-content-error-border-color);
+      color: var(--tjs-content-error-color);
+      padding: var(--tjs-content-gap-half, 0.5rem);
+   }
+</style>
