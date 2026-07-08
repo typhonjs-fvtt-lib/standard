@@ -1,11 +1,8 @@
 <script>
    /**
-    * Creates a reactive wrapper around the Foundry {@link fvtt.DataField} form input.
+    * Creates a reactive wrapper around the associated Foundry {@link fvtt.DataField} input element.
     *
     * @componentDescription
-    *
-    * @privateRemarks
-    * Since this is specifically for Foundry we directly associate w/ the form CSS vars below.
     */
    import { writable }                 from '#svelte/store';
 
@@ -13,38 +10,82 @@
    import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
 
    /**
+    * Combined configuration object for all props.
+    *
     * @type {import('./types').TJSDataFieldInputOptions}
     */
    export let input = void 0;
 
-   /** @type {fvtt.DataField} */
+   /**
+    * The associated Foundry {@link fvtt.DataField}.
+    *
+    * @type {fvtt.DataField}
+    */
    export let datafield = void 0;
 
-   /** @type {fvtt.FormInputConfig} */
+   /**
+    * The optional {@link fvtt.FormInputConfig} for the associated data field input construction.
+    *
+    * @type {fvtt.FormInputConfig}
+    */
    export let inputConfig = void 0;
 
-   /** @type {import('#runtime/svelte/store/util').MinimalWritable<unknown>} */
+   /**
+    * The store receiving value changes. You may bind to or provide a custom store.
+    *
+    * @type {import('#runtime/svelte/store/util').MinimalWritable<unknown>}
+    */
    export let store = void 0;
 
-   /** @type {boolean} */
+   /**
+    * If / when the associated {@link DataField} is changed reset the store to the initial value for the DataField.
+    *
+    * @type {boolean}
+    */
    export let resetInitial = void 0;
 
-   let loadEl = false;
-
-   let containerEl;
-
-   let containerTag = 'div';
-
+   /**
+    * When a data field input is mounted this references the active input source element.
+    *
+    * @type {HTMLElement | undefined}
+    */
    let activeFieldEl;
 
-   // Tracks whether the activeEl is a custom web component.
+   /**
+    * Stores the associated container element. This is usually a div element, but the core code mirror web component
+    * specifically requires a form element.
+    *
+    * @type {HTMLDivElement | HTMLFormElement | undefined}
+    */
+   let containerEl;
+
+   /**
+    * Sets the `svelte:element` tag for the appropriate container element.
+    *
+    * @type {string}
+    */
+   let containerTag = 'div';
+
+   /**
+    * Tracks whether the activeFieldEl is a custom web component.
+    *
+    * @type {boolean}
+    */
    let isCustomEl = false;
+
+   /**
+    * A boolean flag to signal a reload of the associated data field input is required.
+    */
+   let loadEl = false;
 
    $: {
       datafield = isObject(input) && input.datafield instanceof foundry.data.fields.DataField ? input.datafield :
        datafield instanceof foundry.data.fields.DataField ? datafield : void 0;
 
       console.log(`!!! TJSDataFieldInput - $datafield`)
+
+      containerTag = (datafield instanceof foundry.data.fields.JavaScriptField) ||
+       (datafield instanceof foundry.data.fields.JSONField) ? 'form' : 'div';
 
       loadEl = true;
    }
@@ -84,6 +125,9 @@
       setValue($store);
    }
 
+   /**
+    * Dynamically loads the associated input element for the current DataField.
+    */
    function loadDatafieldEl()
    {
       console.log(`!!! TJSDataFieldInput - loadDatafieldEl - 0`);
@@ -144,6 +188,11 @@
       }
    }
 
+   /**
+    * Handles any change events from children input elements.
+    *
+    * @param {ChangeEvent} event - Change event from child input element.
+    */
    function onChange(event)
    {
       try
@@ -195,7 +244,7 @@
    }
 
    /**
-    * Update value of active data field element after data validation.
+    * Update value of active DataField input element after data validation.
     *
     * @param {unknown}  uncleanValue - Uncleaned value to set.
     */
