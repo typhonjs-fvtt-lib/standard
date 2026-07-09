@@ -1,2 +1,2 @@
-export { default as TJSDataFieldGroup } from './TJSDataFieldGroup.svelte';
-export { default as TJSDataFieldInput } from './TJSDataFieldInput.svelte';
+export { default as TJSDataField } from './TJSDataField.svelte';
+export { default as TJSDocDataField } from './TJSDocDataField.svelte';
