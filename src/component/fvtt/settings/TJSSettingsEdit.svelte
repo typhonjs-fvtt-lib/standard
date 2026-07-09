@@ -93,7 +93,7 @@
          <section class="tjs-settings-edit-section tjs-settings-edit-content">
             {#each uiSettings.topLevel as setting (setting.key)}
                {#if setting.datafield}
-                  <TJSDataFieldGroup datafield={setting.datafield} groupConfig={{ rootId: setting.id, label: setting.name, hint: setting.hint, units: setting.units }} store={setting.store} />
+                  <TJSDataFieldGroup datafield={setting.datafield} groupConfig={{ label: setting.name, hint: setting.hint, units: setting.units }} store={setting.store} />
                {:else}
                   <SettingEntry {setting} />
                {/if}
@@ -106,7 +106,7 @@
                <section class=tjs-settings-edit-content>
                   {#each folder.settings as setting (setting.key)}
                      {#if setting.datafield}
-                        <TJSDataFieldGroup datafield={setting.datafield} groupConfig={{ rootId: setting.id, label: setting.name, hint: setting.hint, units: setting.units }} store={setting.store} />
+                        <TJSDataFieldGroup datafield={setting.datafield} groupConfig={{ label: setting.name, hint: setting.hint, units: setting.units }} store={setting.store} />
                      {:else}
                         <SettingEntry {setting} />
                      {/if}
