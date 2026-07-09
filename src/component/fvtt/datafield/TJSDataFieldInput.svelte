@@ -6,8 +6,8 @@
     */
    import { writable }                 from '#svelte/store';
 
-   import { isObject }                 from '#runtime/util/object';
    import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+   import { isObject }                 from '#runtime/util/object';
 
    /**
     * Combined configuration object for all props.
