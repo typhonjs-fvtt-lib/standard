@@ -183,7 +183,7 @@
 
          if (datafieldEl)
          {
-            // Use rAF to all element to finish creation.
+            // Use rAF so all elements finish creation.
             requestAnimationFrame(() =>
             {
                containerEl.replaceChildren(datafieldEl);
@@ -238,10 +238,10 @@
          const err = datafield.validate(newValue, { fallback: false });
          if (err instanceof foundry.data.validation.DataModelValidationFailure)
          {
-            // This can raise false positives depending on coercion.
             if (err?.message)
             {
-               // console.warn(`Setting data field (${setting.key}) validation error: ${err.toString()}`);
+               // TODO: Perhaps fire a validation error event.
+               // console.warn(``);
             }
 
             console.log(`!!! TJSDataFieldInput - onChange - A - newValue validate error - old $store:`, $store);
@@ -253,7 +253,7 @@
          {
             console.log(`!!! TJSDataFieldInput - onChange - B - before store.set - newValue:`, newValue);
 
-            store.set(newValue);
+            $store = newValue;
          }
       }
       catch (err)
@@ -262,11 +262,15 @@
       }
    }
 
+   /**
+    * Resets state / removes children content from container.
+    */
    function resetContainer()
    {
       activeFieldEl = void 0;
       containerEl?.replaceChildren();
-      $store = void 0;
+
+      if (resetInitial) { $store = void 0; }
    }
 
    /**
@@ -326,7 +330,9 @@
 </div>
 {:else}
    <!-- The core `code-mirror` component specifically searches for the closest `form` -->
-   <svelte:element this={containerTag} bind:this={containerEl} on:change|preventDefault|stopPropagation={onChange}>
+   <svelte:element this={containerTag}
+                   bind:this={containerEl}
+                   on:change|preventDefault|stopPropagation={onChange}>
    </svelte:element>
 {/if}
 
