@@ -10,11 +10,13 @@
     */
    import { writable }                 from '#svelte/store';
 
+   import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+
    import {
       hasSetter,
       isObject }                       from '#runtime/util/object';
 
-   import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+   import { Hashing }                  from '#runtime/util';
 
    /**
     * Combined configuration object for all props.
@@ -99,6 +101,12 @@
     */
    let loadEl = false;
 
+   /**
+    * Any defined `rootId` from `groupConfig` if defined otherwise create random ID to assign during form group
+    * construction.
+    */
+   let uniqueId = createUniqueId();
+
    $: {
       datafield = isObject(input) && input.datafield instanceof foundry.data.fields.DataField ? input.datafield :
        datafield instanceof foundry.data.fields.DataField ? datafield : void 0;
@@ -118,6 +126,8 @@
        isObject(groupConfig) ? groupConfig : void 0;
 
       console.log(`!!! TJSDataFieldGroup - $groupConfig`)
+
+      uniqueId = createUniqueId();
 
       errorMessage = void 0;
 
@@ -164,6 +174,15 @@
    }
 
    /**
+    * Uses any defined `rootId` from `groupConfig` if defined otherwise create random ID to assign during form group
+    * construction.
+    */
+   function createUniqueId()
+   {
+      return typeof groupConfig?.rootId === 'string' ? groupConfig.rootId : `unique-${Hashing.uuidv4()}`;
+   }
+
+   /**
     * Dynamically loads the associated input element for the current DataField.
     */
    function loadFormgroupEl()
@@ -199,7 +218,7 @@
 
          try
          {
-            formgroupEl = datafield.toFormGroup(groupConfig,
+            formgroupEl = datafield.toFormGroup(Object.assign({}, groupConfig, { rootId: uniqueId }),
              Object.assign({}, inputConfig ?? {}, { value: currentValue }));
          }
          catch (err)
