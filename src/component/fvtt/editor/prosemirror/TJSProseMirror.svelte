@@ -134,7 +134,7 @@
 
    import { applyStyles }  from '#runtime/svelte/action/dom/style';
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
-   import { isDocument }   from '#runtime/types/fvtt-shim/guard';
+   import { isDocument }   from '#runtime/types/fvtt-shim/predicate';
    import {
       isObject,
       safeAccess }         from '#runtime/util/object';

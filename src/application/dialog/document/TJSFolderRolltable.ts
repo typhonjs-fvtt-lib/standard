@@ -1,5 +1,5 @@
 import { TJSDialog }                from '#runtime/svelte/application';
-import { isFolder }                 from '#runtime/types/fvtt-shim/guard';
+import { isFolder }                 from '#runtime/types/fvtt-shim/predicate';
 import { localize }                 from '#runtime/util/i18n';
 import { hasSetter }                from '#runtime/util/object';
 

@@ -2,7 +2,7 @@
    import { getContext }   from '#svelte';
 
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
-   import { isFolder }     from '#runtime/types/fvtt-shim/guard';
+   import { isFolder }     from '#runtime/types/fvtt-shim/predicate';
    import { localize }     from '#runtime/util/i18n';
 
    export let document = void 0;

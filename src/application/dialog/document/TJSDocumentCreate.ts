@@ -2,7 +2,7 @@ import { TJSDialog }             from '#runtime/svelte/application';
 
 import {
    isDocumentClass,
-   isFolderClass }               from '#runtime/types/fvtt-shim/guard';
+   isFolderClass }               from '#runtime/types/fvtt-shim/predicate';
 
 import { localize }              from '#runtime/util/i18n';
 

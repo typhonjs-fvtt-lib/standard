@@ -1,7 +1,7 @@
 <script>
    import { getContext }      from '#svelte';
 
-   import { isDocumentClass } from '#runtime/types/fvtt-shim/guard';
+   import { isDocumentClass } from '#runtime/types/fvtt-shim/predicate';
    import { localize }        from '#runtime/util/i18n';
 
    import { selectOptions }   from './util.js';

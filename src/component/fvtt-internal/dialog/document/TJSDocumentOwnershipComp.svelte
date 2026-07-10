@@ -5,7 +5,7 @@
 
    import {
       isDocument,
-      isFolder }              from '#runtime/types/fvtt-shim/guard';
+      isFolder }              from '#runtime/types/fvtt-shim/predicate';
 
    import { localize }        from '#runtime/util/i18n';
 

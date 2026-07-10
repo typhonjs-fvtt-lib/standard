@@ -2,7 +2,7 @@
    import { getContext }   from '#svelte';
 
    import { TJSDocument }  from '#runtime/svelte/store/fvtt/document';
-   import { isDocument }   from '#runtime/types/fvtt-shim/guard';
+   import { isDocument }   from '#runtime/types/fvtt-shim/predicate';
    import { localize }     from '#runtime/util/i18n';
 
    /** @type {fvtt.ClientDocument} */
