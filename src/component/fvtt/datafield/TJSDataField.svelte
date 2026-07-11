@@ -1,8 +1,13 @@
 <script>
    /**
-    * Creates a reactive wrapper around the Foundry direct input or form group configuration for a
-    * {@link fvtt.DataField}. By supplying `groupConfig` the form group is created {@link fvtt.FormGroupConfig}
+    * `TJSDataField` provides a reactive Svelte wrapper around Foundry VTT {@link fvtt.DataField} instances,
+    * supporting dynamic DataField changes, bindable stores, and automatic synchronization between DataField cleaned
+    * values and store-specific runtime representations when required.
+    *
+    * By supplying `groupConfig` the form group is created {@link fvtt.FormGroupConfig}
     * where you may specify the `label`, `hint`, and `units` or additional configuration like `stacked`.
+    *
+    * Review {@link import('./types').TJSDataFieldOptions} for a detailed description of optional configuration.
     *
     * @componentDescription
     */
@@ -142,6 +147,17 @@
    let errorMessage;
 
    /**
+    * Potentially converts cleaned values from the data field to match the underlying store value.
+    *
+    * Currently, this is just a special case for the Foundry Color instance as ColorField represents the color string.
+    * If the store value is initially a Color instance when it is updated `fromCleanValue` will translate a color string
+    * back to a Color instance. See {@link configureValueAdapter} which is invoked when the datafield changes.
+    *
+    * @type {(value: unknown) => unknown}
+    */
+   let fromCleanedValue = (value) => value;
+
+   /**
     * Tracks whether the active field element is a custom web component.
     */
    let isCustomEl = false;
@@ -274,7 +290,43 @@
     */
    function requestReload(datafieldChanged)
    {
+      if (datafieldChanged) { configureValueAdapter(); }
+
       reloadRequest = { revision: reloadRequest.revision + 1, datafieldChanged };
+   }
+
+   /**
+    * Configures value adaptation between cleaned DataField values and the current store representation.
+    *
+    * When a DataField uses a runtime representation different from its cleaned value this method selects an
+    * appropriate adapter so values written back to the store preserve the original representation.
+    *
+    * Presently, only `Color` coercion is handled with ColorField. If the store currently holds a Color instance this
+    * method selects an adapter to convert color strings back to Color instances. If the store holds a color string
+    * then it stays a color string.
+    *
+    * This method is invoked whenever the effective DataField changes via {@link requestReload}.
+    */
+   function configureValueAdapter()
+   {
+      if (!isDataField(props.datafield))
+      {
+         fromCleanedValue = (value) => value;
+         return ;
+      }
+
+      const storeValue = $store;
+
+      if (props.datafield instanceof foundry.data.fields.ColorField)
+      {
+         if (isObject(storeValue) && storeValue instanceof foundry.utils.Color)
+         {
+            fromCleanedValue = (value) => foundry.utils.Color.from(value);
+            return;
+         }
+      }
+
+      fromCleanedValue = (value) => value;
    }
 
    /**
@@ -318,7 +370,7 @@
          {
             const initialValue = props.datafield.getInitialValue();
 
-            if ($store !== initialValue) { $store = initialValue; }
+            if ($store !== initialValue) { $store = fromCleanedValue(initialValue); }
          }
 
          errorMessage = `No input element for ${props.datafield.constructor.name}`;
@@ -326,29 +378,31 @@
          return;
       }
 
-      let currentValue = $store;
+      const storeValue = $store;
 
       errorMessage = void 0;
 
       const resetForDatafield = request.datafieldChanged && props.resetInitial;
 
-      const validationFailure = props.datafield.validate(currentValue, { fallback: false });
+      let cleanValue = props.datafield.clean(storeValue);
+
+      const validationFailure = props.datafield.validate(cleanValue, { fallback: false });
 
       if (resetForDatafield || isDataModelValidationFailure(validationFailure))
       {
-         currentValue = props.datafield.getInitialValue();
+         cleanValue = props.datafield.getInitialValue();
 
          // Keep store in sync.
-         if ($store !== currentValue) { $store = currentValue; }
+         if ($store !== cleanValue) { $store = fromCleanedValue(cleanValue); }
       }
 
       if (isObject(props.groupConfig))
       {
-         loadFormGroupEl(currentValue, targetContainer, generation);
+         loadFormGroupEl(cleanValue, targetContainer, generation);
       }
       else
       {
-         loadDataFieldEl(currentValue, targetContainer, generation);
+         loadDataFieldEl(cleanValue, targetContainer, generation);
       }
    }
 
@@ -503,10 +557,10 @@
          const eventValue = eventTargetType === 'checkbox' ? /** @type {HTMLInputElement} */ (eventTarget).checked :
           /** @type {HTMLInputElement} */ (eventTarget).value;
 
-         // Clean may correct some bad user input, but not outright validation failure.
-         const newValue = props.datafield.clean(eventValue);
+         // Clean may sanitize some bad user input, but not outright validation failure.
+         const cleanValue = props.datafield.clean(eventValue);
 
-         const validationFailure = props.datafield.validate(newValue, { fallback: false });
+         const validationFailure = props.datafield.validate(cleanValue, { fallback: false });
 
          if (isDataModelValidationFailure(validationFailure))
          {
@@ -517,11 +571,11 @@
          }
          else
          {
-            $store = newValue;
+            $store = fromCleanedValue(cleanValue);
 
             // Sync the control with the canonical value returned by `clean`. This will be ignored if same value
             // otherwise will reset the control if the value has been cleaned, but differs from UI state.
-            setValue(newValue);
+            setValue(cleanValue);
          }
       }
       catch (err)
@@ -554,21 +608,21 @@
 
       try
       {
-         const newValue = props.datafield.clean(uncleanValue);
+         const cleanValue = props.datafield.clean(uncleanValue);
 
-         if (activeFieldEl.value === newValue) { return; }
+         if (activeFieldEl.value === cleanValue) { return; }
 
-         const validationFailure = props.datafield.validate(newValue, { fallback: false });
+         const validationFailure = props.datafield.validate(cleanValue, { fallback: false });
 
          if (isDataModelValidationFailure(validationFailure)) { return; }
 
          if (typeof activeFieldEl._setValue === 'function')
          {
-            activeFieldEl._setValue(newValue);
+            activeFieldEl._setValue(cleanValue);
          }
          else
          {
-            activeFieldEl.value = newValue ?? '';
+            activeFieldEl.value = cleanValue ?? '';
          }
 
          if (typeof activeFieldEl._refresh === 'function') { activeFieldEl._refresh(); }
