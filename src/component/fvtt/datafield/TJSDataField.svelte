@@ -289,13 +289,27 @@
       if (!isDataField(props.datafield))
       {
          resetContainer(targetContainer);
+
+         // No DataField present potentially reset store.
+         if (request.datafieldChanged && props.resetInitial && $store !== void 0) { $store = void 0; }
+
          return;
       }
 
       if (!props.datafield.constructor.hasFormSupport)
       {
          resetContainer(targetContainer);
+
+         // Potentially sync store to initial value of the DataField even though it can't be displayed.
+         if (request.datafieldChanged && props.resetInitial)
+         {
+            const initialValue = props.datafield.getInitialValue();
+
+            if ($store !== initialValue) { $store = initialValue; }
+         }
+
          errorMessage = `No input element for ${props.datafield.constructor.name}`;
+
          return;
       }
 
