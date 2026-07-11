@@ -303,22 +303,25 @@
 
       errorMessage = void 0;
 
-      const validationFailure = props.datafield.validate(currentValue, { fallback: false });
-
       const resetForDatafield = request.datafieldChanged && props.resetInitial;
+
+      const validationFailure = props.datafield.validate(currentValue, { fallback: false });
 
       if (resetForDatafield || validationFailure instanceof foundry.data.validation.DataModelValidationFailure)
       {
          currentValue = props.datafield.getInitialValue();
+
+         // Keep store in sync.
+         if ($store !== currentValue) { $store = currentValue; }
       }
 
       if (isObject(props.groupConfig))
       {
-         loadFormGroupEl(currentValue, targetContainer, generation, resetForDatafield);
+         loadFormGroupEl(currentValue, targetContainer, generation);
       }
       else
       {
-         loadDataFieldEl(currentValue, targetContainer, generation, resetForDatafield);
+         loadDataFieldEl(currentValue, targetContainer, generation);
       }
    }
 
@@ -363,8 +366,6 @@
 
          activeFieldEl = datafieldEl;
          isCustomEl = isCustomElement(activeFieldEl);
-
-         if (updateStore) { $store = currentValue; }
       });
    }
 
@@ -376,10 +377,8 @@
     * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the form group.
     *
     * @param {number} generation - Current mount generation.
-    *
-    * @param {boolean} updateStore - Whether the resolved initial value should update the store.
     */
-   function loadFormGroupEl(currentValue, targetContainer, generation, updateStore)
+   function loadFormGroupEl(currentValue, targetContainer, generation)
    {
       /** @type {HTMLElement | undefined} */
       let formGroupEl;
@@ -424,8 +423,6 @@
          activeFieldEl = activeEl;
 
          isCustomEl = isCustomElement(activeFieldEl);
-
-         if (updateStore) { $store = currentValue; }
       });
    }
 
