@@ -73,7 +73,7 @@
    /**
     * Callback function that receives any {@link fvtt.DataModelValidationFailure} instances when validation fails.
     *
-    * @type {(err: fvtt.DataModelValidationFailure) => void | undefined}
+    * @type {import('./types').TJSDataFieldValidationCallback | undefined}
     */
    export let onValidationFailure = void 0;
 
@@ -428,18 +428,28 @@
 
       errorMessage = void 0;
 
-      const resetForDatafield = request.datafieldChanged && props.resetInitial;
-
       let cleanValue = props.datafield.clean(storeValue);
 
-      const validationFailure = props.datafield.validate(cleanValue, { fallback: false });
-
-      if (resetForDatafield || isDataModelValidationFailure(validationFailure))
+      if (request.datafieldChanged)
       {
-         cleanValue = props.datafield.getInitialValue();
+         const validationFailureClean = props.datafield.validate(cleanValue, { fallback: false });
+         const validationFailureStore = props.datafield.validate(storeValue, { fallback: false });
 
-         // Keep store in sync.
-         if ($store !== cleanValue) { $store = fromCleanedValue(cleanValue); }
+         if (props.resetInitial || isDataModelValidationFailure(validationFailureClean) ||
+          isDataModelValidationFailure(validationFailureStore))
+         {
+            cleanValue = props.datafield.getInitialValue();
+
+            if (storeValue !== cleanValue)
+            {
+               $store = fromCleanedValue(cleanValue);
+
+               if (!props.resetInitial && isDataModelValidationFailure(validationFailureStore))
+               {
+                  props?.onValidationFailure(validationFailureStore, { source: 'sync' });
+               }
+            }
+         }
       }
 
       if (isObject(props.groupConfig))
@@ -543,7 +553,7 @@
             // Set old store value on failure.
             setValue($store);
 
-            props.onValidationFailure?.(validationFailure);
+            props.onValidationFailure?.(validationFailure, { source: 'user' });
          }
          else
          {
