@@ -446,7 +446,7 @@
 
                if (!props.resetInitial && isDataModelValidationFailure(validationFailureStore))
                {
-                  props?.onValidationFailure(validationFailureStore, { source: 'sync' });
+                  props.onValidationFailure?.(validationFailureStore, { source: 'sync' });
                }
             }
          }
