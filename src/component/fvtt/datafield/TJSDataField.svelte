@@ -272,30 +272,6 @@
    $: if (activeFieldEl !== void 0) { setValue($store); }
 
    /**
-    * Determines whether a DataField requires a form container.
-    *
-    * @param {fvtt.DataField | undefined} value - DataField to test.
-    *
-    * @returns {boolean}
-    */
-   function requiresFormContainer(value)
-   {
-      return value instanceof foundry.data.fields.JavaScriptField || value instanceof foundry.data.fields.JSONField;
-   }
-
-   /**
-    * Creates a new element reconstruction request.
-    *
-    * @param {boolean} datafieldChanged - Whether the effective DataField changed.
-    */
-   function requestReload(datafieldChanged)
-   {
-      if (datafieldChanged) { configureValueAdapter(); }
-
-      reloadRequest = { revision: reloadRequest.revision + 1, datafieldChanged };
-   }
-
-   /**
     * Configures value adaptation between cleaned DataField values and the current store representation.
     *
     * When a DataField uses a runtime representation different from its cleaned value this method selects an
@@ -335,6 +311,76 @@
    function createUniqueId()
    {
       return typeof props.groupConfig?.rootId === 'string' ? props.groupConfig.rootId : `unique-${Hashing.uuidv4()}`;
+   }
+
+   /**
+    * Determines whether an element is a custom element.
+    *
+    * @param {HTMLElement | undefined} element - Element to test.
+    *
+    * @returns {boolean}
+    */
+   function isCustomElement(element)
+   {
+      return typeof element?.tagName === 'string' && element.tagName.includes('-');
+   }
+
+   /**
+    * Determines whether an asynchronous mount operation is still current.
+    *
+    * @param {number} generation - Mount generation being checked.
+    *
+    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Original target container.
+    *
+    * @returns {boolean}
+    */
+   function isCurrentMount(generation, targetContainer)
+   {
+      return generation === mountGeneration && targetContainer === containerEl;
+   }
+
+   /**
+    * Creates and mounts a standalone DataField input.
+    *
+    * @param {unknown} currentValue - Current input value.
+    *
+    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the input.
+    *
+    * @param {number} generation - Current mount generation.
+    *
+    * @param {boolean} updateStore - Whether the resolved initial value should update the store.
+    */
+   function loadDataFieldEl(currentValue, targetContainer, generation, updateStore)
+   {
+      /** @type {HTMLElement | undefined} */
+      let datafieldEl;
+
+      try
+      {
+         datafieldEl = props.datafield.toInput(Object.assign({ disabled: !props.enabled }, props.inputConfig ?? {},
+            { value: currentValue }));
+      }
+      catch (err)
+      {
+         errorMessage = typeof err?.message === 'string' ? err.message : String(err);
+         console.warn(err);
+      }
+
+      if (!datafieldEl)
+      {
+         resetContainer(targetContainer);
+         return;
+      }
+
+      requestAnimationFrame(() =>
+      {
+         if (!isCurrentMount(generation, targetContainer)) { return; }
+
+         targetContainer.replaceChildren(datafieldEl);
+
+         activeFieldEl = datafieldEl;
+         isCustomEl = isCustomElement(activeFieldEl);
+      });
    }
 
    /**
@@ -407,50 +453,6 @@
    }
 
    /**
-    * Creates and mounts a standalone DataField input.
-    *
-    * @param {unknown} currentValue - Current input value.
-    *
-    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the input.
-    *
-    * @param {number} generation - Current mount generation.
-    *
-    * @param {boolean} updateStore - Whether the resolved initial value should update the store.
-    */
-   function loadDataFieldEl(currentValue, targetContainer, generation, updateStore)
-   {
-      /** @type {HTMLElement | undefined} */
-      let datafieldEl;
-
-      try
-      {
-         datafieldEl = props.datafield.toInput(Object.assign({ disabled: !props.enabled }, props.inputConfig ?? {},
-          { value: currentValue }));
-      }
-      catch (err)
-      {
-         errorMessage = typeof err?.message === 'string' ? err.message : String(err);
-         console.warn(err);
-      }
-
-      if (!datafieldEl)
-      {
-         resetContainer(targetContainer);
-         return;
-      }
-
-      requestAnimationFrame(() =>
-      {
-         if (!isCurrentMount(generation, targetContainer)) { return; }
-
-         targetContainer.replaceChildren(datafieldEl);
-
-         activeFieldEl = datafieldEl;
-         isCustomEl = isCustomElement(activeFieldEl);
-      });
-   }
-
-   /**
     * Creates and mounts a DataField form group.
     *
     * @param {unknown} currentValue - Current input value.
@@ -508,32 +510,6 @@
    }
 
    /**
-    * Determines whether an asynchronous mount operation is still current.
-    *
-    * @param {number} generation - Mount generation being checked.
-    *
-    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Original target container.
-    *
-    * @returns {boolean}
-    */
-   function isCurrentMount(generation, targetContainer)
-   {
-      return generation === mountGeneration && targetContainer === containerEl;
-   }
-
-   /**
-    * Determines whether an element is a custom element.
-    *
-    * @param {HTMLElement | undefined} element - Element to test.
-    *
-    * @returns {boolean}
-    */
-   function isCustomElement(element)
-   {
-      return typeof element?.tagName === 'string' && element.tagName.includes('-');
-   }
-
-   /**
     * Handles changes emitted by the active Foundry input.
     *
     * @param {Event} event - Change event.
@@ -582,6 +558,30 @@
       {
          console.warn(err);
       }
+   }
+
+   /**
+    * Creates a new element reconstruction request.
+    *
+    * @param {boolean} datafieldChanged - Whether the effective DataField changed.
+    */
+   function requestReload(datafieldChanged)
+   {
+      if (datafieldChanged) { configureValueAdapter(); }
+
+      reloadRequest = { revision: reloadRequest.revision + 1, datafieldChanged };
+   }
+
+   /**
+    * Determines whether a DataField requires a form container.
+    *
+    * @param {fvtt.DataField | undefined} value - DataField to test.
+    *
+    * @returns {boolean}
+    */
+   function requiresFormContainer(value)
+   {
+      return value instanceof foundry.data.fields.JavaScriptField || value instanceof foundry.data.fields.JSONField;
    }
 
    /**
