@@ -42,6 +42,13 @@
    export let datafield = void 0;
 
    /**
+    * Is the component enabled.
+    *
+    * @type {boolean}
+    */
+   export let enabled = void 0;
+
+   /**
     * Useful for setting the major form areas for `label`, `hint`, and `units`.
     *
     * @type {fvtt.FormGroupConfig | undefined}
@@ -76,6 +83,7 @@
     */
    const props = {
       datafield: void 0,
+      enabled: true,
       groupConfig: void 0,
       inputConfig: void 0,
       resetInitial: false
@@ -140,6 +148,11 @@
    let previousDatafield;
 
    /**
+    * @type {boolean}
+    */
+   let previousEnabled;
+
+   /**
     * @type {fvtt.FormGroupConfig | undefined}
     */
    let previousGroupConfig;
@@ -169,6 +182,8 @@
     */
    $: props.datafield = resolveByPredicate(isDataField, datafield, inputOptions.datafield);
 
+   $: props.enabled = resolveByPredicate(isBoolean, enabled, inputOptions.enabled) ?? true;
+
    $: props.groupConfig = resolveByPredicate(isObject, groupConfig, inputOptions.groupConfig);
 
    $: props.inputConfig = resolveByPredicate(isObject, inputConfig, inputOptions.inputConfig);
@@ -196,12 +211,14 @@
     */
    $: {
       const datafieldChanged = props.datafield !== previousDatafield;
+      const enabledChanged = props.enabled !== previousEnabled;
       const groupConfigChanged = props.groupConfig !== previousGroupConfig;
       const inputConfigChanged = props.inputConfig !== previousInputConfig;
 
-      if (datafieldChanged || groupConfigChanged || inputConfigChanged)
+      if (datafieldChanged || enabledChanged || groupConfigChanged || inputConfigChanged)
       {
          previousDatafield = props.datafield;
+         previousEnabled = props.enabled;
          previousGroupConfig = props.groupConfig;
          previousInputConfig = props.inputConfig;
 
@@ -323,7 +340,8 @@
 
       try
       {
-         datafieldEl = props.datafield.toInput(Object.assign({}, props.inputConfig ?? {}, { value: currentValue }));
+         datafieldEl = props.datafield.toInput(Object.assign({ disabled: !props.enabled }, props.inputConfig ?? {},
+          { value: currentValue }));
       }
       catch (err)
       {
@@ -369,7 +387,7 @@
       try
       {
          formGroupEl = props.datafield.toFormGroup(Object.assign({}, props.groupConfig, { rootId: uniqueId }),
-          Object.assign({}, props.inputConfig ?? {}, { value: currentValue }));
+          Object.assign({ disabled: !props.enabled }, props.inputConfig ?? {}, { value: currentValue }));
       }
       catch (err)
       {
