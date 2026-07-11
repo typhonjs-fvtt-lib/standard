@@ -468,6 +468,8 @@
 
          if (!CrossRealm.browser.isHTMLElement(eventTarget)) { return; }
 
+         if (!isDataField(props.datafield)) { return; }
+
          const eventTargetType = /** @type {HTMLInputElement} */ (eventTarget).type;
 
          // Foundry custom web components do not set event target type for their own change event. Ignore change events
