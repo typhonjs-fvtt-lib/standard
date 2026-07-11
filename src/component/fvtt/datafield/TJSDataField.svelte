@@ -17,11 +17,14 @@
 
    import {
       isBoolean,
+      isFunction,
       resolveByPredicate }             from '#runtime/util/predicate';
 
    import { CrossRealm }               from '#runtime/util/realm';
 
-   import { isDataField }              from '#runtime/types/fvtt-shim/predicate';
+   import {
+      isDataField,
+      isDataModelValidationFailure }   from '#runtime/types/fvtt-shim/predicate';
 
    import { Hashing }                  from '#runtime/util';
 
@@ -63,6 +66,13 @@
    export let inputConfig = void 0;
 
    /**
+    * Callback function that receives any {@link fvtt.DataModelValidationFailure} instances when validation fails.
+    *
+    * @type {(err: fvtt.DataModelValidationFailure) => void | undefined}
+    */
+   export let onValidationFailure = void 0;
+
+   /**
     * If / when the associated {@link fvtt.DataField} changes, reset the store to the initial value for the DataField.
     *
     * @type {boolean | undefined}
@@ -86,6 +96,7 @@
       enabled: true,
       groupConfig: void 0,
       inputConfig: void 0,
+      onValidationFailure: void 0,
       resetInitial: false
    };
 
@@ -187,6 +198,8 @@
    $: props.groupConfig = resolveByPredicate(isObject, groupConfig, inputOptions.groupConfig);
 
    $: props.inputConfig = resolveByPredicate(isObject, inputConfig, inputOptions.inputConfig);
+
+   $: props.onValidationFailure = resolveByPredicate(isFunction, onValidationFailure, inputOptions.onValidationFailure);
 
    $: props.resetInitial = resolveByPredicate(isBoolean, resetInitial, inputOptions.resetInitial) ?? false;
 
@@ -321,7 +334,7 @@
 
       const validationFailure = props.datafield.validate(currentValue, { fallback: false });
 
-      if (resetForDatafield || validationFailure instanceof foundry.data.validation.DataModelValidationFailure)
+      if (resetForDatafield || isDataModelValidationFailure(validationFailure))
       {
          currentValue = props.datafield.getInitialValue();
 
@@ -490,20 +503,25 @@
          const eventValue = eventTargetType === 'checkbox' ? /** @type {HTMLInputElement} */ (eventTarget).checked :
           /** @type {HTMLInputElement} */ (eventTarget).value;
 
+         // Clean may correct some bad user input, but not outright validation failure.
          const newValue = props.datafield.clean(eventValue);
 
          const validationFailure = props.datafield.validate(newValue, { fallback: false });
 
-         if (validationFailure instanceof foundry.data.validation.DataModelValidationFailure)
+         if (isDataModelValidationFailure(validationFailure))
          {
             // Set old store value on failure.
             setValue($store);
 
-            // TODO: Consider firing bubbled validation error event
+            props.onValidationFailure?.(validationFailure);
          }
          else
          {
             $store = newValue;
+
+            // Sync the control with the canonical value returned by `clean`. This will be ignored if same value
+            // otherwise will reset the control if the value has been cleaned, but differs from UI state.
+            setValue(newValue);
          }
       }
       catch (err)
@@ -542,7 +560,7 @@
 
          const validationFailure = props.datafield.validate(newValue, { fallback: false });
 
-         if (validationFailure instanceof foundry.data.validation.DataModelValidationFailure) { return; }
+         if (isDataModelValidationFailure(validationFailure)) { return; }
 
          if (typeof activeFieldEl._setValue === 'function')
          {
