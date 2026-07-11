@@ -1,79 +1,97 @@
 <script>
    /**
-    * Creates a reactive wrapper around the Foundry form group configuration for a {@link fvtt.DataField}. By supplying
-    * a {@link fvtt.FormGroupConfig} you may specify the `label`, `hint`, and `units`.
+    * Creates a reactive wrapper around the Foundry direct input or form group configuration for a
+    * {@link fvtt.DataField}. By supplying `groupConfig` the form group is created {@link fvtt.FormGroupConfig}
+    * where you may specify the `label`, `hint`, and `units` or additional configuration like `stacked`.
     *
     * @componentDescription
-    *
-    * @privateRemarks
-    * Since this is specifically for Foundry we directly associate w/ the form CSS vars below.
     */
    import { writable }                 from '#svelte/store';
 
    import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+   import { PropBindingControl }       from '#runtime/svelte/util';
 
    import {
       hasSetter,
       isObject }                       from '#runtime/util/object';
+
+   import {
+      isBoolean,
+      resolveByPredicate }             from '#runtime/util/predicate';
+
+   import { CrossRealm }               from '#runtime/util/realm';
+
+   import { isDataField }              from '#runtime/types/fvtt-shim/predicate';
 
    import { Hashing }                  from '#runtime/util';
 
    /**
     * Combined configuration object for all props.
     *
-    * @type {import('./types').TJSDataFieldOptions}
+    * Individual props take precedence over corresponding properties defined in `input`.
+    *
+    * @type {import('./types').TJSDataFieldOptions | undefined}
     */
    export let input = void 0;
 
    /**
     * The associated Foundry {@link fvtt.DataField}.
     *
-    * @type {fvtt.DataField}
+    * @type {fvtt.DataField | undefined}
     */
    export let datafield = void 0;
 
    /**
     * Useful for setting the major form areas for `label`, `hint`, and `units`.
     *
-    * @type {fvtt.FormGroupConfig}
+    * @type {fvtt.FormGroupConfig | undefined}
     */
    export let groupConfig = void 0;
 
    /**
     * The optional {@link fvtt.FormInputConfig} for the associated data field input construction.
     *
-    * @type {fvtt.FormInputConfig}
+    * @type {fvtt.FormInputConfig | undefined}
     */
    export let inputConfig = void 0;
 
    /**
-    * If / when the associated {@link DataField} is changed reset the store to the initial value for the DataField.
+    * If / when the associated {@link fvtt.DataField} changes, reset the store to the initial value for the DataField.
     *
-    * @type {boolean}
+    * @type {boolean | undefined}
     */
    export let resetInitial = void 0;
 
    /**
     * The store receiving value changes. You may bind to or provide a custom store.
     *
-    * @type {import('#runtime/svelte/store/util').MinimalWritable<unknown>}
+    * @type {import('#runtime/svelte/store/util').MinimalWritable<unknown> | undefined}
     */
    export let store = void 0;
 
    /**
+    * Effective resolved component properties.
+    *
     * @type {import('./types').TJSDataFieldOptions}
     */
    const props = {
       datafield: void 0,
       groupConfig: void 0,
       inputConfig: void 0,
-      resetInitial: void 0,
-   }
+      resetInitial: false
+   };
 
    /**
-    * @type {import('#runtime/svelte/store/util').MinimalWritable<unknown>}
+    * Resolves the effective store while preserving values published through the bindable `store` property.
     */
-   let propsStore = void 0;
+   const storeControl = new PropBindingControl(isMinimalWritableStore, writable(void 0));
+
+   /**
+    * Normalized combined component options.
+    *
+    * @type {import('./types').TJSDataFieldOptions}
+    */
+   let inputOptions = {};
 
    /**
     * When a data field input is mounted this references the active input source element.
@@ -83,7 +101,7 @@
    let activeFieldEl;
 
    /**
-    * Stores the associated container element. This is usually a div element, but the core code mirror web component
+    * Stores the associated container element. This is usually a div element, but the core `code-mirror` web component
     * specifically requires a form element.
     *
     * @type {HTMLDivElement | HTMLFormElement | undefined}
@@ -93,7 +111,7 @@
    /**
     * Sets the `svelte:element` tag for the appropriate container element.
     *
-    * @type {string}
+    * @type {'div' | 'form'}
     */
    let containerTag = 'div';
 
@@ -105,145 +123,200 @@
    let errorMessage;
 
    /**
-    * Tracks whether the activeFieldEl is a custom web component.
-    *
-    * @type {boolean}
+    * Tracks whether the active field element is a custom web component.
     */
    let isCustomEl = false;
 
    /**
-    * A boolean flag to signal a reload of the associated data field input is required.
-    */
-   let loadEl = false;
-
-   /**
-    * Any defined `rootId` from `groupConfig` if defined otherwise create random ID to assign during form group
-    * construction.
+    * Any defined `rootId` from `groupConfig`; otherwise a generated unique ID.
     */
    let uniqueId = createUniqueId();
 
-   $: {
-      props.datafield = isObject(input) && input.datafield instanceof foundry.data.fields.DataField ? input.datafield :
-       datafield instanceof foundry.data.fields.DataField ? datafield : void 0;
-
-      console.log(`!!! TJSDataField - $datafield`)
-
-      errorMessage = void 0;
-
-      containerTag = (props.datafield instanceof foundry.data.fields.JavaScriptField) ||
-       (props.datafield instanceof foundry.data.fields.JSONField) ? 'form' : 'div';
-
-      loadEl = true;
-   }
-
-   $: {
-      props.groupConfig = isObject(input) && isObject(input.groupConfig) ? input.groupConfig :
-       isObject(groupConfig) ? groupConfig : void 0;
-
-      console.log(`!!! TJSDataField - $groupConfig`)
-
-      uniqueId = createUniqueId();
-
-      errorMessage = void 0;
-
-      loadEl = true;
-   }
-
-   $: {
-      props.inputConfig = isObject(input) && isObject(input.inputConfig) ? input.inputConfig :
-       isObject(inputConfig) ? inputConfig : void 0;
-
-      console.log(`!!! TJSDataField - $inputConfig`)
-
-      errorMessage = void 0;
-
-      loadEl = true;
-   }
-
-   $: {
-      propsStore = isObject(input) && isMinimalWritableStore(input.store) ? input.store :
-       isMinimalWritableStore(store) ? store : writable(void 0);
-
-      console.log(`!!! TJSDataField - $store`)
-
-      errorMessage = void 0;
-
-      loadEl = true;
-   }
-
-   $: props.resetInitial = isObject(input) && typeof input.resetInitial === 'boolean' ? input.resetInitial :
-    typeof resetInitial === 'boolean' ? resetInitial : false;
-
    /**
-    * Loads the current associated input when `containerEl` is defined and `loadEl` is true.
+    * Previous construction properties used to detect effective changes.
+    *
+    * @type {fvtt.DataField | undefined}
     */
-   $: if (containerEl && loadEl) { loadPayloadEl(); }
+   let previousDatafield;
 
-   // When store changes attempt to update web component / active element.
-   // $: if (activeFieldEl) { setValue($propsStore); }
-   $: if (activeFieldEl !== void 0)
-   {
-      console.log(`!!! TJSDataField - $activeFieldEl - changed - invoke setValue - $propsStore: ${$propsStore}`);
+   /**
+    * @type {fvtt.FormGroupConfig | undefined}
+    */
+   let previousGroupConfig;
 
-      setValue($propsStore);
+   /**
+    * @type {fvtt.FormInputConfig | undefined}
+    */
+   let previousInputConfig;
+
+   /**
+    * Describes the latest request to reconstruct the hosted Foundry element.
+    */
+   let reloadRequest = { revision: 0, datafieldChanged: false };
+
+   /**
+    * Invalidates stale asynchronous mount callbacks.
+    */
+   let mountGeneration = 0;
+
+   /**
+    * Normalize the combined input separately from resolution of the individual exported props.
+    */
+   $: inputOptions = isObject(input) ? input : {};
+
+   /**
+    * Resolve effective props. Valid individual props take precedence over values supplied through `input`.
+    */
+   $: props.datafield = resolveByPredicate(isDataField, datafield, inputOptions.datafield);
+
+   $: props.groupConfig = resolveByPredicate(isObject, groupConfig, inputOptions.groupConfig);
+
+   $: props.inputConfig = resolveByPredicate(isObject, inputConfig, inputOptions.inputConfig);
+
+   $: props.resetInitial = resolveByPredicate(isBoolean, resetInitial, inputOptions.resetInitial) ?? false;
+
+   $: store = storeControl.resolve(store, inputOptions.store);
+
+   /*
+    * The container tag is derived exclusively from the effective DataField.
+    *
+    * Changing `containerTag` causes Svelte to replace the `svelte:element`. The new `containerEl` binding then causes
+    * the current reload request to be processed against the new container.
+    */
+   $: containerTag = requiresFormContainer(props.datafield) ? 'form' : 'div';
+
+   /**
+    * Only construction properties trigger reconstruction.
+    *
+    * - DataField changes require a new Foundry element.
+    * - Group configuration changes require a new form group.
+    * - Input configuration changes require a new input element.
+    *
+    * Store and resetInitial changes do not independently reconstruct the element.
+    */
+   $: {
+      const datafieldChanged = props.datafield !== previousDatafield;
+      const groupConfigChanged = props.groupConfig !== previousGroupConfig;
+      const inputConfigChanged = props.inputConfig !== previousInputConfig;
+
+      if (datafieldChanged || groupConfigChanged || inputConfigChanged)
+      {
+         previousDatafield = props.datafield;
+         previousGroupConfig = props.groupConfig;
+         previousInputConfig = props.inputConfig;
+
+         if (groupConfigChanged) { uniqueId = createUniqueId(); }
+
+         errorMessage = void 0;
+
+         requestReload(datafieldChanged);
+      }
    }
 
    /**
-    * Uses any defined `rootId` from `groupConfig` if defined otherwise create random ID to assign during form group
-    * construction.
+    * Process the latest construction request whenever both a request and a current container are available.
+    *
+    * This also reruns when Svelte replaces the container because its tag changes between `div` and `form`.
+    */
+   $: if (containerEl && reloadRequest.revision > 0) { loadPayloadEl(reloadRequest, containerEl); }
+
+   /**
+    * Store value changes update the existing active element directly rather than reconstructing it.
+    */
+   $: if (activeFieldEl !== void 0) { setValue($store); }
+
+   /**
+    * Determines whether a DataField requires a form container.
+    *
+    * @param {fvtt.DataField | undefined} value - DataField to test.
+    *
+    * @returns {boolean}
+    */
+   function requiresFormContainer(value)
+   {
+      return value instanceof foundry.data.fields.JavaScriptField || value instanceof foundry.data.fields.JSONField;
+   }
+
+   /**
+    * Creates a new element reconstruction request.
+    *
+    * @param {boolean} datafieldChanged - Whether the effective DataField changed.
+    */
+   function requestReload(datafieldChanged)
+   {
+      reloadRequest = { revision: reloadRequest.revision + 1, datafieldChanged };
+   }
+
+   /**
+    * @returns {string} Uses any defined `rootId` from `groupConfig`; otherwise creates a random ID.
     */
    function createUniqueId()
    {
-      return typeof props?.groupConfig?.rootId === 'string' ? props.groupConfig.rootId : `unique-${Hashing.uuidv4()}`;
+      return typeof props.groupConfig?.rootId === 'string' ? props.groupConfig.rootId : `unique-${Hashing.uuidv4()}`;
    }
 
    /**
     * Dynamically loads the associated input element for the current DataField.
+    *
+    * @param {{ revision: number, datafieldChanged: boolean }} request - Current reload request.
+    *
+    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the element.
     */
-   function loadPayloadEl()
+   function loadPayloadEl(request, targetContainer)
    {
-      console.log(`!!! TJSDataField - loadPayloadEl - 0 - props.datafield: `, props.datafield);
-      loadEl = false;
+      const generation = ++mountGeneration;
 
-      // Ensure data field is available.
-      if (!(props.datafield instanceof foundry.data.fields.DataField))
+      activeFieldEl = void 0;
+      isCustomEl = false;
+
+      if (!isDataField(props.datafield))
       {
-         resetContainer();
+         resetContainer(targetContainer);
          return;
       }
 
-      // Detect if the given DataField has an input element.
       if (!props.datafield.constructor.hasFormSupport)
       {
-         resetContainer();
+         resetContainer(targetContainer);
          errorMessage = `No input element for ${props.datafield.constructor.name}`;
          return;
       }
 
-      let currentValue = $propsStore;
+      let currentValue = $store;
 
       errorMessage = void 0;
 
-      // Validate current value and reset to initial value from data field as necessary.
-      const err = props.datafield.validate(currentValue, { fallback: false });
-      if (props.resetInitial || (err instanceof foundry.data.validation.DataModelValidationFailure))
+      const validationFailure = props.datafield.validate(currentValue, { fallback: false });
+
+      const resetForDatafield = request.datafieldChanged && props.resetInitial;
+
+      if (resetForDatafield || validationFailure instanceof foundry.data.validation.DataModelValidationFailure)
       {
-         console.log(`!!! TJSDataField - loadPayloadEl - A1 - current store value: `, currentValue);
          currentValue = props.datafield.getInitialValue();
-         console.log(`!!! TJSDataField - loadPayloadEl - A2 - new current initial value: `, currentValue);
       }
 
       if (isObject(props.groupConfig))
       {
-         loadFormgroupEl(currentValue);
+         loadFormGroupEl(currentValue, targetContainer, generation, resetForDatafield);
       }
       else
       {
-         loadDatafieldEl(currentValue);
+         loadDataFieldEl(currentValue, targetContainer, generation, resetForDatafield);
       }
    }
 
-   function loadDatafieldEl(currentValue)
+   /**
+    * Creates and mounts a standalone DataField input.
+    *
+    * @param {unknown} currentValue - Current input value.
+    *
+    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the input.
+    *
+    * @param {number} generation - Current mount generation.
+    *
+    * @param {boolean} updateStore - Whether the resolved initial value should update the store.
+    */
+   function loadDataFieldEl(currentValue, targetContainer, generation, updateStore)
    {
       /** @type {HTMLElement | undefined} */
       let datafieldEl;
@@ -254,111 +327,152 @@
       }
       catch (err)
       {
-         errorMessage = err.toString();
+         errorMessage = typeof err?.message === 'string' ? err.message : String(err);
          console.warn(err);
       }
 
-      if (datafieldEl)
+      if (!datafieldEl)
       {
-         // Use rAF so all elements finish creation.
-         requestAnimationFrame(() =>
-         {
-            containerEl.replaceChildren(datafieldEl);
-
-            activeFieldEl = datafieldEl;
-
-            // Check if root element is a compound Foundry web component.
-            isCustomEl = typeof activeFieldEl?.tagName === 'string' && activeFieldEl.tagName.includes('-');
-
-            if (props.resetInitial) { $propsStore = currentValue; }
-         })
+         resetContainer(targetContainer);
+         return;
       }
-      else
+
+      requestAnimationFrame(() =>
       {
-         resetContainer();
-      }
+         if (!isCurrentMount(generation, targetContainer)) { return; }
+
+         targetContainer.replaceChildren(datafieldEl);
+
+         activeFieldEl = datafieldEl;
+         isCustomEl = isCustomElement(activeFieldEl);
+
+         if (updateStore) { $store = currentValue; }
+      });
    }
 
-   function loadFormgroupEl(currentValue)
+   /**
+    * Creates and mounts a DataField form group.
+    *
+    * @param {unknown} currentValue - Current input value.
+    *
+    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the form group.
+    *
+    * @param {number} generation - Current mount generation.
+    *
+    * @param {boolean} updateStore - Whether the resolved initial value should update the store.
+    */
+   function loadFormGroupEl(currentValue, targetContainer, generation, updateStore)
    {
       /** @type {HTMLElement | undefined} */
-      let formgroupEl;
+      let formGroupEl;
 
       try
       {
-         formgroupEl = props.datafield.toFormGroup(Object.assign({}, props.groupConfig, { rootId: uniqueId }),
+         formGroupEl = props.datafield.toFormGroup(Object.assign({}, props.groupConfig, { rootId: uniqueId }),
           Object.assign({}, props.inputConfig ?? {}, { value: currentValue }));
       }
       catch (err)
       {
+         errorMessage = typeof err?.message === 'string' ? err.message : String(err);
          console.warn(err);
       }
 
-      if (formgroupEl)
+      if (!formGroupEl)
       {
-         // Use rAF so all elements finish creation.
-         requestAnimationFrame(() =>
+         resetContainer(targetContainer);
+         return;
+      }
+
+      requestAnimationFrame(() =>
+      {
+         if (!isCurrentMount(generation, targetContainer)) { return; }
+
+         targetContainer.replaceChildren(formGroupEl);
+
+         // Find the element that has a CSS ID that starts with the unique ID.
+         let activeEl;
+
+         const elements = targetContainer.querySelectorAll(`[id^="${CSS.escape(uniqueId)}"]`);
+
+         for (const element of elements)
          {
-            containerEl.replaceChildren(formgroupEl);
+            if (hasSetter(element, 'value'))
+            {
+               activeEl = element;
+               break;
+            }
+         }
 
-            const activeEl = containerEl.querySelector(`[name="${uniqueId}"]`);
+         activeFieldEl = activeEl;
 
-            if (hasSetter(activeEl, 'value')) { activeFieldEl = activeEl; }
+         isCustomEl = isCustomElement(activeFieldEl);
 
-            // Check if root element is a compound Foundry web component.
-            isCustomEl = typeof activeFieldEl?.tagName === 'string' && activeFieldEl.tagName.includes('-');
-
-            if (props.resetInitial) { $propsStore = currentValue; }
-         })
-      }
-      else
-      {
-         resetContainer();
-      }
+         if (updateStore) { $store = currentValue; }
+      });
    }
 
+   /**
+    * Determines whether an asynchronous mount operation is still current.
+    *
+    * @param {number} generation - Mount generation being checked.
+    *
+    * @param {HTMLDivElement | HTMLFormElement} targetContainer - Original target container.
+    *
+    * @returns {boolean}
+    */
+   function isCurrentMount(generation, targetContainer)
+   {
+      return generation === mountGeneration && targetContainer === containerEl;
+   }
+
+   /**
+    * Determines whether an element is a custom element.
+    *
+    * @param {HTMLElement | undefined} element - Element to test.
+    *
+    * @returns {boolean}
+    */
+   function isCustomElement(element)
+   {
+      return typeof element?.tagName === 'string' && element.tagName.includes('-');
+   }
+
+   /**
+    * Handles changes emitted by the active Foundry input.
+    *
+    * @param {Event} event - Change event.
+    */
    function onChange(event)
    {
       try
       {
-         const eventTargetType = event?.target?.type;
+         const eventTarget = event.target;
 
-         console.log(`!!! TJSDataField - onChange - 0 - isCustomEl: ${isCustomEl}; eventTargetType: ${eventTargetType}`)
+         if (!CrossRealm.browser.isHTMLElement(eventTarget)) { return; }
 
-         // Foundry custom web components do not set event target type for change events. Ignore any internal change
-         // events that are specifically from input events internal to these web components.
-         // For instance for the HueField / internal range input we must ignore value changes from the release of the
-         // range slider.
+         const eventTargetType = /** @type {HTMLInputElement} */ (eventTarget).type;
+
+         // Foundry custom web components do not set event target type for their own change event. Ignore change events
+         // originating from internal native inputs.
          if (isCustomEl && typeof eventTargetType === 'string') { return; }
 
-         const eventValue = eventTargetType === 'checkbox' ? event?.target.checked : event?.target?.value;
+         const eventValue = eventTargetType === 'checkbox' ? /** @type {HTMLInputElement} */ (eventTarget).checked :
+          /** @type {HTMLInputElement} */ (eventTarget).value;
 
-         // Cleaned value w/ type for the associated data field.
          const newValue = props.datafield.clean(eventValue);
 
-         console.log(`!!! TJSDataField - onChange - 1 - eventValue: `, eventValue);
-         console.log(`!!! TJSDataField - onChange - 2 - cleaned newValue:`, newValue);
+         const validationFailure = props.datafield.validate(newValue, { fallback: false });
 
-         // Validate cleaned value.
-         const err = props.datafield.validate(newValue, { fallback: false });
-         if (err instanceof foundry.data.validation.DataModelValidationFailure)
+         if (validationFailure instanceof foundry.data.validation.DataModelValidationFailure)
          {
-            if (err?.message)
-            {
-               // TODO: Perhaps fire a validation error event.
-               // console.warn(``);
-            }
+            // Set old store value on failure.
+            setValue($store);
 
-            console.log(`!!! TJSDataField - onChange - A - newValue validate error - old $propsStore:`, $propsStore);
-
-            // Reset with old value.
-            setValue($propsStore);
+            // TODO: Consider firing bubbled validation error event
          }
          else
          {
-            console.log(`!!! TJSDataField - onChange - B - before propsStore.set - newValue:`, newValue);
-
-            $propsStore = newValue;
+            $store = newValue;
          }
       }
       catch (err)
@@ -368,59 +482,47 @@
    }
 
    /**
-    * Resets state / removes children content from container.
+    * Resets state and removes child content from the given container.
+    *
+    * @param {HTMLDivElement | HTMLFormElement | undefined} [targetContainer] Container to clear.
     */
-   function resetContainer()
+   function resetContainer(targetContainer = containerEl)
    {
       activeFieldEl = void 0;
-      containerEl?.replaceChildren();
+      isCustomEl = false;
 
-      if (props.resetInitial) { $propsStore = void 0; }
+      targetContainer?.replaceChildren();
    }
 
    /**
-    * Update value of active data field element after data validation.
+    * Updates the value of the active data field element after validation.
     *
-    * @param {unknown}  uncleanValue - Uncleaned value to set.
+    * @param {unknown} uncleanValue - Uncleaned value to set.
     */
    function setValue(uncleanValue)
    {
-      console.log(`!!! TJSDataField - setValue - 0`);
-
-      if (!activeFieldEl) { return; }
-
-      console.log(`!!! TJSDataField - setValue - 1 - uncleanValue:`, uncleanValue);
+      if (!activeFieldEl || !props.datafield) { return; }
 
       try
       {
          const newValue = props.datafield.clean(uncleanValue);
 
-         if (activeFieldEl?.value === newValue) { return; }
+         if (activeFieldEl.value === newValue) { return; }
 
-         const err = props.datafield.validate(newValue, { fallback: false });
-         if (!(err instanceof foundry.data.validation.DataModelValidationFailure))
+         const validationFailure = props.datafield.validate(newValue, { fallback: false });
+
+         if (validationFailure instanceof foundry.data.validation.DataModelValidationFailure) { return; }
+
+         if (typeof activeFieldEl._setValue === 'function')
          {
-            if (typeof activeFieldEl?._setValue === 'function')
-            {
-               console.log(`!!! TJSDataField - setValue - A1 - _setValue (newValue):`, newValue);
-
-               activeFieldEl._setValue(newValue);
-            }
-            else
-            {
-               console.log(`!!! TJSDataField - setValue - A2 - .value = (newValue):`, newValue);
-
-               activeFieldEl.value = newValue ?? '';
-            }
-
-            // if (typeof activeFieldEl?._refresh === 'function') { activeFieldEl._refresh(); }
-            if (typeof activeFieldEl?._refresh === 'function')
-            {
-               console.log(`!!! TJSDataField - setValue - B - _refresh`);
-
-               activeFieldEl._refresh();
-            }
+            activeFieldEl._setValue(newValue);
          }
+         else
+         {
+            activeFieldEl.value = newValue ?? '';
+         }
+
+         if (typeof activeFieldEl._refresh === 'function') { activeFieldEl._refresh(); }
       }
       catch (err)
       {
@@ -428,17 +530,17 @@
       }
    }
 </script>
+
 {#if errorMessage}
-   <div class="tjs-panel-content tjs-panel-content--flex-row tjs-content-error">
-      {errorMessage}
-   </div>
+   <div class="tjs-panel-content tjs-panel-content--flex-row tjs-content-error">{errorMessage}</div>
 {:else}
-   <!-- The core `code-mirror` component specifically searches for the closest `form` -->
-   <svelte:element this={containerTag}
-                   class="tjs-content-datafield standard-form"
-                   bind:this={containerEl}
-                   on:change|preventDefault|stopPropagation={onChange}>
-   </svelte:element>
+   <!-- The core `code-mirror` web component specifically searches for the closest form. -->
+   <svelte:element
+      this={containerTag}
+      class="tjs-content-datafield standard-form"
+      bind:this={containerEl}
+      on:change|preventDefault|stopPropagation={onChange}
+   />
 {/if}
 
 <style lang=css>
