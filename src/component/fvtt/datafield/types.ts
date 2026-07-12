@@ -30,8 +30,8 @@ interface TJSDataFieldOptions<T = unknown>
    inputConfig?: fvtt.FormInputConfig<T>;
 
    /**
-    * Callback function that receives any {@link fvtt.DataModelValidationFailure} instances when validation fails
-    * during user change of data in `onChange` event handling.
+    * Callback invoked when DataField validation fails while processing user input or synchronizing an existing store
+    * value with a changed DataField.
     */
    onValidationFailure?: TJSDataFieldValidationCallback;
 
@@ -57,6 +57,10 @@ interface TJSDataFieldOptions<T = unknown>
 
 /**
  * Callback invoked when DataField validation fails.
+ *
+ * @param err - Foundry validation failure returned by the DataField.
+ *
+ * @param context - Context identifying the origin of the failure.
  */
 type TJSDataFieldValidationCallback =
  (err: fvtt.DataModelValidationFailure, context: TJSDataFieldValidationContext) => void;

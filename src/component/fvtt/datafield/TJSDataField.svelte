@@ -9,6 +9,12 @@
     *
     * Review {@link import('./types').TJSDataFieldOptions} for a detailed description of optional configuration.
     *
+    * @privateRemarks
+    * Note: Value adapters, {@link valueAdapters}, are configured when the effective DataField or bindable store
+    * changes. If the underlying store value later transitions to a different runtime representation while the same
+    * store instance remains bound, the adapter is not reconfigured. This is currently intentional, as value
+    * representation is determined when the DataField / store pairing is established.
+    *
     * @componentDescription
     */
    import { writable }                 from '#svelte/store';
@@ -50,46 +56,59 @@
    export let datafield = void 0;
 
    /**
-    * Is the component enabled.
+    * Whether the associated input is enabled.
     *
-    * @type {boolean}
+    * @type {boolean | undefined}
     */
    export let enabled = void 0;
 
    /**
-    * Useful for setting the major form areas for `label`, `hint`, and `units`.
+    * Optional configuration used when constructing a DataField form group.
     *
     * @type {fvtt.FormGroupConfig | undefined}
     */
    export let groupConfig = void 0;
 
    /**
-    * The optional {@link fvtt.FormInputConfig} for the associated data field input construction.
+    * Optional configuration used when constructing the associated DataField input element.
     *
     * @type {fvtt.FormInputConfig | undefined}
     */
    export let inputConfig = void 0;
 
    /**
-    * Callback function that receives any {@link fvtt.DataModelValidationFailure} instances when validation fails.
+    * Callback invoked when DataField validation fails while processing user input or synchronizing an existing store
+    * value with a changed DataField.
     *
     * @type {import('./types').TJSDataFieldValidationCallback | undefined}
     */
    export let onValidationFailure = void 0;
 
    /**
-    * If / when the associated {@link fvtt.DataField} changes, reset the store to the initial value for the DataField.
+    * When true and the effective DataField changes, synchronize the store to that field’s initial value. When no
+    * valid DataField is available, synchronize the store to undefined.
+    *
+    * When false, the existing store value is preserved across DataField changes whenever it remains compatible with
+    * the new DataField. Otherwise, the store is synchronized to the initial value of the new DataField.
     *
     * @type {boolean | undefined}
     */
    export let resetInitial = void 0;
 
    /**
-    * The store receiving value changes. You may bind to or provide a custom store.
+    * Writable store synchronized with the DataField value.
+    *
+    * The component automatically updates the store when user input changes and reacts to external store updates by
+    * synchronizing with the hosted DataField.
     *
     * @type {import('#runtime/svelte/store/util').MinimalWritable<unknown> | undefined}
     */
    export let store = void 0;
+
+   /**
+    * @type {(value: unknown) => unknown}
+    */
+   const identityFn = (value) => value;
 
    /**
     * Effective resolved component properties.
@@ -103,6 +122,22 @@
       inputConfig: void 0,
       onValidationFailure: void 0,
       resetInitial: false
+   };
+
+   /**
+    * Potentially converts cleaned values from the data field to match the underlying store value. Also provides
+    * store sync conversion for validation testing.
+    *
+    * Currently, this is just a special case for the Foundry Color instance as ColorField represents the color string.
+    * If the store value is initially a Color instance when it is updated `fromCleaned` will translate a color string
+    * back to a Color instance. See {@link configureValueAdapter} which is invoked when either the effective DataField
+    * or bindable store changes.
+    *
+    * @type {{ fromCleaned: (value: unknown) => unknown, fromStore: (value: unknown) => unknown }}
+    */
+   const valueAdapters = {
+      fromCleaned: identityFn,
+      fromStore: identityFn
    };
 
    /**
@@ -145,17 +180,6 @@
     * @type {string | undefined}
     */
    let errorMessage;
-
-   /**
-    * Potentially converts cleaned values from the data field to match the underlying store value.
-    *
-    * Currently, this is just a special case for the Foundry Color instance as ColorField represents the color string.
-    * If the store value is initially a Color instance when it is updated `fromCleanValue` will translate a color string
-    * back to a Color instance. See {@link configureValueAdapter} which is invoked when the datafield changes.
-    *
-    * @type {(value: unknown) => unknown}
-    */
-   let fromCleanedValue = (value) => value;
 
    /**
     * Tracks whether the active field element is a custom web component.
@@ -207,7 +231,10 @@
    /**
     * Resolve effective props. Valid individual props take precedence over values supplied through `input`.
     */
-   $: props.datafield = resolveByPredicate(isDataField, datafield, inputOptions.datafield);
+   $: {
+      props.datafield = resolveByPredicate(isDataField, datafield, inputOptions.datafield);
+      configureValueAdapter();
+   }
 
    $: props.enabled = resolveByPredicate(isBoolean, enabled, inputOptions.enabled) ?? true;
 
@@ -219,7 +246,10 @@
 
    $: props.resetInitial = resolveByPredicate(isBoolean, resetInitial, inputOptions.resetInitial) ?? false;
 
-   $: store = storeControl.resolve(store, inputOptions.store);
+   $: {
+      store = storeControl.resolve(store, inputOptions.store);
+      configureValueAdapter();
+   }
 
    /*
     * The container tag is derived exclusively from the effective DataField.
@@ -232,9 +262,10 @@
    /**
     * Only construction properties trigger reconstruction.
     *
-    * - DataField changes require a new Foundry element.
-    * - Group configuration changes require a new form group.
-    * - Input configuration changes require a new input element.
+    * - DataField changes.
+    * - Enabled state changes.
+    * - Group configuration changes.
+    * - Input configuration changes.
     *
     * Store and resetInitial changes do not independently reconstruct the element.
     */
@@ -281,28 +312,22 @@
     * method selects an adapter to convert color strings back to Color instances. If the store holds a color string
     * then it stays a color string.
     *
-    * This method is invoked whenever the effective DataField changes via {@link requestReload}.
+    * This method is invoked when the effective DataField or bindable store changes.
     */
    function configureValueAdapter()
    {
-      if (!isDataField(props.datafield))
-      {
-         fromCleanedValue = (value) => value;
-         return ;
-      }
+      valueAdapters.fromCleaned = identityFn;
+      valueAdapters.fromStore = identityFn;
 
       const storeValue = $store;
 
-      if (props.datafield instanceof foundry.data.fields.ColorField)
+      if (props.datafield instanceof foundry.data.fields.ColorField && isObject(storeValue) &&
+       storeValue instanceof foundry.utils.Color)
       {
-         if (isObject(storeValue) && storeValue instanceof foundry.utils.Color)
-         {
-            fromCleanedValue = (value) => foundry.utils.Color.from(value);
-            return;
-         }
+         valueAdapters.fromCleaned = (value) => foundry.utils.Color.from(value);
+         valueAdapters.fromStore = (value) => isObject(value) && value instanceof foundry.utils.Color ?
+          value.toString() : value;
       }
-
-      fromCleanedValue = (value) => value;
    }
 
    /**
@@ -347,10 +372,8 @@
     * @param {HTMLDivElement | HTMLFormElement} targetContainer - Container receiving the input.
     *
     * @param {number} generation - Current mount generation.
-    *
-    * @param {boolean} updateStore - Whether the resolved initial value should update the store.
     */
-   function loadDataFieldEl(currentValue, targetContainer, generation, updateStore)
+   function loadDataFieldEl(currentValue, targetContainer, generation)
    {
       /** @type {HTMLElement | undefined} */
       let datafieldEl;
@@ -415,8 +438,9 @@
          if (request.datafieldChanged && props.resetInitial)
          {
             const initialValue = props.datafield.getInitialValue();
+            const nextStoreValue = valueAdapters.fromCleaned(initialValue);
 
-            if ($store !== initialValue) { $store = fromCleanedValue(initialValue); }
+            if ($store !== nextStoreValue) { $store = nextStoreValue; }
          }
 
          errorMessage = `No input element for ${props.datafield.constructor.name}`;
@@ -428,26 +452,40 @@
 
       errorMessage = void 0;
 
-      let cleanValue = props.datafield.clean(storeValue);
+      let cleanValue;
 
-      if (request.datafieldChanged)
+      if (request.datafieldChanged && props.resetInitial)
       {
-         const validationFailureClean = props.datafield.validate(cleanValue, { fallback: false });
-         const validationFailureStore = props.datafield.validate(storeValue, { fallback: false });
+         cleanValue = props.datafield.getInitialValue();
 
-         if (props.resetInitial || isDataModelValidationFailure(validationFailureClean) ||
-          isDataModelValidationFailure(validationFailureStore))
+         const nextStoreValue = valueAdapters.fromCleaned(cleanValue);
+
+         if (storeValue !== nextStoreValue) { $store = nextStoreValue; }
+      }
+      else  // Handle `resetInitial` false case verifying store synchronization after validation.
+      {
+         cleanValue = props.datafield.clean(storeValue);
+
+         if (request.datafieldChanged)
          {
-            cleanValue = props.datafield.getInitialValue();
+            const validationFailureClean = props.datafield.validate(cleanValue, { fallback: false });
 
-            if (storeValue !== cleanValue)
+            const validationFailureStore = props.datafield.validate(valueAdapters.fromStore(storeValue),
+             { fallback: false });
+
+            // Check store failure first then fallback to clean value failure.
+            const syncFailure = isDataModelValidationFailure(validationFailureStore) ? validationFailureStore :
+             isDataModelValidationFailure(validationFailureClean) ? validationFailureClean : void 0;
+
+            if (syncFailure)
             {
-               $store = fromCleanedValue(cleanValue);
+               cleanValue = props.datafield.getInitialValue();
 
-               if (!props.resetInitial && isDataModelValidationFailure(validationFailureStore))
-               {
-                  props.onValidationFailure?.(validationFailureStore, { source: 'sync' });
-               }
+               const nextStoreValue = valueAdapters.fromCleaned(cleanValue);
+
+               if (storeValue !== nextStoreValue) { $store = nextStoreValue; }
+
+               props.onValidationFailure?.(syncFailure, { source: 'sync' });
             }
          }
       }
@@ -557,7 +595,7 @@
          }
          else
          {
-            $store = fromCleanedValue(cleanValue);
+            $store = valueAdapters.fromCleaned(cleanValue);
 
             // Sync the control with the canonical value returned by `clean`. This will be ignored if same value
             // otherwise will reset the control if the value has been cleaned, but differs from UI state.
@@ -577,8 +615,6 @@
     */
    function requestReload(datafieldChanged)
    {
-      if (datafieldChanged) { configureValueAdapter(); }
-
       reloadRequest = { revision: reloadRequest.revision + 1, datafieldChanged };
    }
 
