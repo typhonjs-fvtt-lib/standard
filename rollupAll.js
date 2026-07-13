@@ -9,14 +9,19 @@ import upath               from 'upath';
 
 const sourcemap = true; // Defines whether source maps are generated.
 
-// Bundle all top level external package exports.
+/**
+ * Bundle all top level external package exports.
+ *
+ * @type {import('@typhonjs-build-test/esm-d-ts').GenerateConfig}}
+ */
 const dtsPluginOptions = {
    bundlePackageExports: true,
    dtsReplace: { '/\\/\\/ <reference.*\\/>': '' }, // Svelte v4 types currently add triple slash references.
    importsExternal: true,                          // For the direct component sub-path invocations.
 
-   // Filter out `types-fvtt-shim` warnings for `fvtt` namespace.
-   tsDiagnosticFilter: ({ message }) => message.includes(`Cannot find namespace 'fvtt'`)
+   // Filter out `types-fvtt-shim` warnings for `fvtt` namespace and PF2E foundry types.
+   tsDiagnosticFilter: ({ message }) => message.includes(`Cannot find namespace 'fvtt'`) ||
+    message.includes(`Cannot find name 'game'`) || message.includes(`Cannot find name 'foundry'`)
 };
 
 const rollupConfigs = [
