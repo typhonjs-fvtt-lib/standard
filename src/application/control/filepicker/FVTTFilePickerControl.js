@@ -12,7 +12,7 @@ import {
 import { CrossRealm }         from '#runtime/util/realm';
 
 /**
- * Provides managed control of the Foundry {@link fvtt.FilePicker} app simplifying asynchronous use cases. While the stock
+ * Provides managed control of the Foundry {@link fvtt!FilePicker} app simplifying asynchronous use cases. While the stock
  * FilePicker provides a callback it is not easy to make it asynchronous given that a user can close the app.
  * FVTTFilePickerControl enables a fully asynchronous workflow controlling one FilePicker instance at a time. When
  * {@link FVTTFilePickerControl.browse} is invoked any previous FilePicker instance is closed and Promise resolved.
@@ -581,7 +581,7 @@ export class FVTTFilePickerControl
 }
 
 /**
- * @typedef {object} FVTTFilePickerBrowseOptions - Foundry {@link fvtt.FilePicker} w/ expanded
+ * @typedef {object} FVTTFilePickerBrowseOptions - Foundry {@link fvtt!FilePicker} w/ expanded
  *          FVTTFilePickerControl options.
  *
  * @property {string} [type='any']         A type of file to target, in 'audio', 'image', 'video', 'imagevideo',
