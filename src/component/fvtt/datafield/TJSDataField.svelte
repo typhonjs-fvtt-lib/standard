@@ -20,7 +20,10 @@
    import { writable }                 from '#svelte/store';
 
    import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
-   import { PropBindingControl }       from '#runtime/svelte/util';
+
+   import {
+      PropBindingControl,
+      PropChangeTracker }              from '#runtime/svelte/util';
 
    import {
       hasSetter,
@@ -104,6 +107,21 @@
     * @type {import('#runtime/svelte/store/util').MinimalWritable<unknown> | undefined}
     */
    export let store = void 0;
+
+   /**
+    * Tracks effective properties that require reconstruction of the hosted Foundry element.
+    *
+    * The `undefined` initial mode preserves the prior first-check semantics of uninitialized local snapshots.
+    *
+    * @type {PropChangeTracker<
+    *    import('./types').TJSDataFieldOptions,
+    *    'datafield' | 'enabled' | 'groupConfig' | 'inputConfig'
+    * >}
+    */
+   const constructionChangeTracker = new PropChangeTracker({
+      keys: ['datafield', 'enabled', 'groupConfig', 'inputConfig'],
+      initialMode: 'undefined'
+   });
 
    /**
     * @type {(value: unknown) => unknown}
@@ -192,28 +210,6 @@
    let uniqueId = createUniqueId();
 
    /**
-    * Previous construction properties used to detect effective changes.
-    *
-    * @type {fvtt.DataField | undefined}
-    */
-   let previousDatafield;
-
-   /**
-    * @type {boolean}
-    */
-   let previousEnabled;
-
-   /**
-    * @type {fvtt.FormGroupConfig | undefined}
-    */
-   let previousGroupConfig;
-
-   /**
-    * @type {fvtt.FormInputConfig | undefined}
-    */
-   let previousInputConfig;
-
-   /**
     * Describes the latest request to reconstruct the hosted Foundry element.
     */
    let reloadRequest = { revision: 0, datafieldChanged: false };
@@ -267,26 +263,18 @@
     * - Group configuration changes.
     * - Input configuration changes.
     *
-    * Store and resetInitial changes do not independently reconstruct the element.
+    * `store` and `resetInitial` changes do not independently reconstruct the element.
     */
    $: {
-      const datafieldChanged = props.datafield !== previousDatafield;
-      const enabledChanged = props.enabled !== previousEnabled;
-      const groupConfigChanged = props.groupConfig !== previousGroupConfig;
-      const inputConfigChanged = props.inputConfig !== previousInputConfig;
+      const changes = constructionChangeTracker.check(props);
 
-      if (datafieldChanged || enabledChanged || groupConfigChanged || inputConfigChanged)
+      if (changes.changed)
       {
-         previousDatafield = props.datafield;
-         previousEnabled = props.enabled;
-         previousGroupConfig = props.groupConfig;
-         previousInputConfig = props.inputConfig;
-
-         if (groupConfigChanged) { uniqueId = createUniqueId(); }
+         if (changes.has('groupConfig')) { uniqueId = createUniqueId(); }
 
          errorMessage = void 0;
 
-         requestReload(datafieldChanged);
+         requestReload(changes.has('datafield'));
       }
    }
 
