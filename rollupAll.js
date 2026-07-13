@@ -211,6 +211,7 @@ for (const indexFile of indexFiles)
 
 await generateDTS({ input: '_dist/component/fvtt-internal/index.js', ...dtsPluginOptions });
 
+await generateDTS({ input: '_dist/component/fvtt/datafield/index.js', ...dtsPluginOptions });
 await generateDTS({ input: '_dist/component/fvtt/editor/index.js', ...dtsPluginOptions });
 await generateDTS({ input: '_dist/component/fvtt/filepicker/button/index.js', ...dtsPluginOptions });
 await generateDTS({ input: '_dist/component/fvtt/settings/index.js', ...dtsPluginOptions });
