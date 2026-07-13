@@ -4,7 +4,11 @@
     "module": "ES2022",
     "moduleResolution" : "bundler",
 
-    "allowJs": true // For VSCode
+    "allowJs": true, // For VSCode
+
+    "types": [
+      "@typhonjs-fvtt/runtime/types/fvtt-shim/pf2e"
+    ]
   },
   "exclude": ["node_modules"]
 }
