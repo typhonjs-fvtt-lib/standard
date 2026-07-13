@@ -1,13 +1,13 @@
 <script>
    /**
-    * `TJSDataField` provides a reactive Svelte wrapper around Foundry VTT {@link fvtt.DataField} instances,
+    * `TJSDataField` provides a reactive Svelte wrapper around Foundry VTT {@link fvtt!DataField} instances,
     * supporting dynamic DataField changes, bindable stores, and automatic synchronization between DataField cleaned
     * values and store-specific runtime representations when required.
     *
-    * By supplying `groupConfig` the form group is created {@link fvtt.FormGroupConfig}
+    * By supplying `groupConfig` the form group is created {@link fvtt!FormGroupConfig}
     * where you may specify the `label`, `hint`, and `units` or additional configuration like `stacked`.
     *
-    * Review {@link import('./types').TJSDataFieldOptions} for a detailed description of optional configuration.
+    * Review {@link TJSDataFieldOptions} for a detailed description of optional configuration.
     *
     * @privateRemarks
     * Note: Value adapters, {@link valueAdapters}, are configured when the effective DataField or bindable store
@@ -15,15 +15,16 @@
     * store instance remains bound, the adapter is not reconfigured. This is currently intentional, as value
     * representation is determined when the DataField / store pairing is established.
     *
-    * @componentDescription
+    * @componentDocumentation
     */
-   import { writable }                 from '#svelte/store';
 
-   import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
+   import { writable }                 from '#svelte/store';
 
    import {
       PropBindingControl,
-      PropChangeTracker }              from '#runtime/svelte/util';
+      PropChangeTracker }              from '#runtime/svelte/reactivity';
+
+   import { isMinimalWritableStore }   from '#runtime/svelte/store/util';
 
    import {
       hasSetter,
@@ -52,7 +53,7 @@
    export let input = void 0;
 
    /**
-    * The associated Foundry {@link fvtt.DataField}.
+    * The associated Foundry DataField.
     *
     * @type {fvtt.DataField | undefined}
     */
@@ -75,7 +76,7 @@
    /**
     * Optional configuration used when constructing the associated DataField input element.
     *
-    * @type {fvtt.FormInputConfig | undefined}
+    * @type {fvtt.FormInputConfig<unknown> | undefined}
     */
    export let inputConfig = void 0;
 
@@ -431,7 +432,7 @@
             if ($store !== nextStoreValue) { $store = nextStoreValue; }
          }
 
-         errorMessage = `No input element for ${props.datafield.constructor.name}`;
+         errorMessage = `No input element for \`${props.datafield.constructor.name}\`.`;
 
          return;
       }
