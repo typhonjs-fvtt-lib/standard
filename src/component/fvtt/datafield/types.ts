@@ -3,12 +3,12 @@ import type { MinimalWritable } from '#runtime/svelte/store/util';
 /**
  * Configuration options for {@link TJSDataField}.
  *
- * @template T - Input value type accepted by the associated {@link fvtt.FormInputConfig}.
+ * @template T - Input value type accepted by the associated {@link fvtt!FormInputConfig}.
  */
 interface TJSDataFieldOptions<T = unknown>
 {
    /**
-    * The associated Foundry {@link fvtt.DataField}.
+    * The associated Foundry DataField.
     */
    datafield?: fvtt.DataField;
 
