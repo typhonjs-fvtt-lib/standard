@@ -223,8 +223,8 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
 
       const uiSettings: TJSGameSettingsWithUI.UISetting.Data[] = [];
 
-      const canConfigure: boolean = globalThis.game.user.can('SETTINGS_MODIFY');
-      const isUserGM: boolean = globalThis.game.user.isGM;
+      const canConfigure: boolean = game.user.can('SETTINGS_MODIFY');
+      const isUserGM: boolean = game.user.isGM;
 
       for (const setting of this.#settings.data())
       {
@@ -318,7 +318,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
          const store: MinimalWritable<unknown> = this.#settings.getStore(setting.key)!;
 
          const defaultValue = setting.options.default;
-         const initialValue = globalThis.game.settings.get(setting.namespace, setting.key);
+         const initialValue = game.settings.get(setting.namespace, setting.key);
 
          let inputData: TJSGameSettingsWithUI.UISetting.InputData | undefined;
          let selectData: TJSGameSettingsWithUI.UISetting.SelectData | undefined;
@@ -388,9 +388,11 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
             namespace: setting.namespace,
             folder: setting.folder,
             key: setting.key,
-            name: localize(setting.options?.name ?? ''),
-            hint: localize(setting.options?.hint ?? ''),
-            units: localize(setting.options?.units ?? ''),
+            groupConfig: {
+               label: localize(setting.options?.name ?? ''),
+               hint: localize(setting.options?.hint ?? ''),
+               units: localize(setting.options?.units ?? '')
+            },
             type,
             store,
             defaultValue,
@@ -509,7 +511,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
       if (!reload) { return; }
 
       // Reload all connected clients. Note: Foundry v9 might not support this event.
-      if (world && globalThis.game.user.isGM) { globalThis.game.socket.emit('reload'); }
+      if (world && game.user.isGM) { game.socket.emit('reload'); }
 
       // Reload locally.
       window.location.reload();
@@ -532,7 +534,7 @@ export class UIControlImpl implements TJSGameSettingsWithUI.UIControl
       {
          if (!setting.requiresReload) { continue; }
 
-         const current: unknown = globalThis.game.settings.get(setting.namespace, setting.key);
+         const current: unknown = game.settings.get(setting.namespace, setting.key);
          if (current === setting.initialValue) { continue; }
 
          requiresUserReload ||= (setting.scope === 'client' || setting.scope === 'user');

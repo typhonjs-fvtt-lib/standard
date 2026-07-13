@@ -216,9 +216,10 @@ declare namespace TJSGameSettingsWithUI {
          folder?: string;
          key: string;
 
-         name: string;
-         hint: string;
-         units: string;
+         /**
+          * Holds label, hint, units data.
+          */
+         groupConfig: Omit<fvtt.FormGroupConfig, 'input'>;
 
          type: string;
 

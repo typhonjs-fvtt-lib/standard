@@ -37,9 +37,9 @@
     <!-- svelte-ignore a11y-label-has-associated-control -->
     <label>
        <span class=label>
-          {setting.name}
-          {#if setting.units}
-             <span class=units>({setting.units})</span>
+          {setting.groupConfig.label}
+          {#if setting.groupConfig.units}
+             <span class=units>({setting.groupConfig.units})</span>
           {/if}
        </span>
        <span class=content class:checkbox={setting.componentType === 'checkbox'}>
@@ -59,8 +59,8 @@
         {/if}
        </span>
     </label>
-    {#if setting.hint}
-        <p>{setting.hint}</p>
+    {#if setting.groupConfig.hint}
+        <p>{setting.groupConfig.hint}</p>
     {/if}
 </section>
 
