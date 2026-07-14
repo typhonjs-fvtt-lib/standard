@@ -682,6 +682,11 @@
 {/if}
 
 <style lang=css>
+   .tjs-content-datafield {
+      flex: var(--tjs-content-datafield-flex, 1);
+      width: var(--tjs-content-datafield-width, 100%);
+   }
+
    .tjs-content-error {
       background: var(--tjs-content-error-background);
       border-color: var(--tjs-content-error-border-color);
